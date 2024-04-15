@@ -1,15 +1,15 @@
 import React, { lazy, Suspense } from 'react'
 import styled from 'styled-components';
 
-import img1 from '../../assets/Nfts/bighead.svg';
-import img2 from '../../assets/Nfts/bighead-1.svg';
-import img3 from '../../assets/Nfts/bighead-2.svg';
-import img4 from '../../assets/Nfts/bighead-3.svg';
-import img5 from '../../assets/Nfts/bighead-4.svg';
-import img6 from '../../assets/Nfts/bighead-5.svg';
-import img7 from '../../assets/Nfts/bighead-6.svg';
-import img8 from '../../assets/Nfts/bighead-7.svg';
-import img9 from '../../assets/Nfts/bighead-8.svg';
+// import img1 from '../../assets/Nfts/bighead.svg';
+// import img2 from '../../assets/Nfts/bighead-1.svg';
+// import img3 from '../../assets/Nfts/bighead-2.svg';
+// import img4 from '../../assets/Nfts/bighead-3.svg';
+// import img5 from '../../assets/Nfts/bighead-4.svg';
+// import img6 from '../../assets/Nfts/bighead-5.svg';
+// import img7 from '../../assets/Nfts/bighead-6.svg';
+// import img8 from '../../assets/Nfts/bighead-7.svg';
+// import img9 from '../../assets/Nfts/bighead-8.svg';
 import Loading from '../Loading';
 // import ConfettiComponent from '../Confetti';
 
@@ -133,7 +133,65 @@ const MemberComponent = ({img, name=" ",position=" "}) => {
     </Item>
   )
 }
+const SubTextContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem auto;
+  width: 80%;
 
+  @media (max-width: 64em) {
+    flex-direction: column;
+    width: 100%;
+  }
+`;
+
+const SubTextColumn = styled.div`
+  flex: 1;
+  padding: 0 1rem;
+
+  @media (max-width: 64em) {
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+`;
+
+const SubTitle = styled.h3`
+  font-size: ${(props) => props.theme.fontlg};
+  text-transform: capitalize;
+  color: ${(props) => props.theme.textWhite};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto;
+  border-bottom: 2px solid ${(props) => props.theme.textWhite};
+  width: 80%;
+
+  @media (max-width: 40em){
+    text-align: center;
+    font-size: ${(props) => props.theme.fontxl};
+
+}
+`;
+
+const SubText = styled.p`
+  font-size: ${(props) => props.theme.fontlg};
+  color: ${(props) => props.theme.textWhite};
+  align-self: flex-start;
+  width: 80%;
+  margin: 1rem auto;
+  font-weight: 400;
+  @media (max-width: 64em) {
+    width: 100%;
+    text-align: center;
+    font-size: ${(props) => props.theme.fontmd};
+  }
+  @media (max-width: 40em) {
+    font-size: ${(props) => props.theme.fontmd};
+  }
+  @media (max-width: 30em) {
+    font-size: ${(props) => props.theme.fontsm};
+  }
+`;
 
 const Team = () => {
   return (
@@ -141,19 +199,28 @@ const Team = () => {
     <Suspense fallback={<Loading />}>
     </Suspense>
       <Title>Education / Courses</Title>
-      {/* <Container>
-        <MemberComponent img={img1}  name="SKYBLAZE" position="founder" />
-        <MemberComponent img={img2}  name="MEGNUM" position="Co-Founder" />
-        <MemberComponent img={img3}  name="MONKEY KING" position="Director" />
-        <MemberComponent img={img4}  name="BLACK PANTHER" position="manager" />
-        <MemberComponent img={img5}  name="DEATHSTROKE" position="artist" />
-        <MemberComponent img={img6}  name="LAZY KONG" position="social media manager" />
-        <MemberComponent img={img7}  name="CYBER PUNK" position="Blockchain Specialist" />
-        <MemberComponent img={img8}  name="MONK" position="Web3 Developer" />
-        <MemberComponent img={img9}  name="BANANA" position="Graphic Designer" />
-        
-
-      </Container> */}
+      <SubTextContainer>
+        <SubTextColumn>
+          <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00" rel="noreferrer">
+          Principles and Practices of Blockchain (technical)</a></SubTitle>
+          <SubText>
+          This course aims to provide individuals with a comprehensive, hands-on overview of blockchain technology and 
+          decentralized applications from a developer perspective. From basic cryptography concepts and blockchain use 
+          cases to the latest developments in the technical field, this course will provide students with the necessary 
+          skills and tools to pursue opportunities in the technology field.
+          </SubText>
+        </SubTextColumn>
+        <SubTextColumn>
+          <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=129%20&course_subtitle=00" rel="noreferrer">
+          Introduction to Blockchain (non-technical)</a></SubTitle>          
+          <SubText>
+          This course aims to provide individuals with a comprehensive general overview of a wide range of blockchain 
+          technologies and applications. From the basics of how blockchain and bitcoin works to current developments in 
+          L1s, Defi, NFTs, Gaming, Consumer markets, Enterprise Solutions, this syllabus will equip participants with basic 
+          knowledge to understand the blockchain-space. No prior CS experience needed.
+          </SubText>
+        </SubTextColumn>
+      </SubTextContainer>
     </Section>
   )
 }
