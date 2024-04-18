@@ -1,15 +1,11 @@
 import React, { lazy, Suspense } from 'react'
 import styled from 'styled-components';
 
-// import img1 from '../../assets/Nfts/bighead.svg';
-// import img2 from '../../assets/Nfts/bighead-1.svg';
-// import img3 from '../../assets/Nfts/bighead-2.svg';
-// import img4 from '../../assets/Nfts/bighead-3.svg';
-// import img5 from '../../assets/Nfts/bighead-4.svg';
-// import img6 from '../../assets/Nfts/bighead-5.svg';
-// import img7 from '../../assets/Nfts/bighead-6.svg';
-// import img8 from '../../assets/Nfts/bighead-7.svg';
-// import img9 from '../../assets/Nfts/bighead-8.svg';
+import img1 from '../../assets/images/1.jpg';
+import img2 from '../../assets/images/2.jpg';
+import img3 from '../../assets/images/3.jpg';
+import img4 from '../../assets/images/4.jpg';
+import img5 from '../../assets/images/5.jpg';
 import Loading from '../Loading';
 // import ConfettiComponent from '../Confetti';
 
@@ -149,6 +145,10 @@ const SubTextColumn = styled.div`
   flex: 1;
   padding: 0 1rem;
 
+  img {
+    width: 100%;
+  }
+
   @media (max-width: 64em) {
     padding: 0;
     margin-bottom: 1rem;
@@ -209,6 +209,7 @@ const Team = () => {
           cases to the latest developments in the technical field, this course will provide students with the necessary 
           skills and tools to pursue opportunities in the technology field.
           </SubText>
+          <img src={img2} alt="img2" />
         </SubTextColumn>
         <SubTextColumn>
           <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=129%20&course_subtitle=00" rel="noreferrer">
@@ -219,6 +220,7 @@ const Team = () => {
           L1s, Defi, NFTs, Gaming, Consumer markets, Enterprise Solutions, this syllabus will equip participants with basic 
           knowledge to understand the blockchain-space. No prior CS experience needed.
           </SubText>
+          <img src={img5} alt="img5" />
         </SubTextColumn>
       </SubTextContainer>
     </Section>

@@ -30,7 +30,7 @@ const Title = styled.h1`
 `;
 const Container = styled.div`
   width: 70%;
-  height: 250vh;
+  height: 150vw;
   background-color: ${(props) => props.theme.body};
   margin: 0 auto;
   display: flex;
@@ -38,10 +38,20 @@ const Container = styled.div`
   align-items: center;
   position: relative;
 
+  @media (max-width: 95em) {
+    height: 170vw;
+  }
+  @media (max-width: 84em) {
+    height: 200vw;
+  }
+  @media (max-width: 72em) {
+    height: 250vw;
+  }
   @media (max-width: 64em) {
     width: 80%;
+    height: 400vh;
   }
-  @media (max-width: 48em) {
+  @media (max-width: 52em) {
     width: 90%;
   }
 `;
@@ -69,6 +79,10 @@ const Items = styled.ul`
     justify-content: start;
     @media (max-width: 48em) {
       justify-content: center;
+    }
+
+    ul {
+        list-style-type: none;
     }
 
     div {

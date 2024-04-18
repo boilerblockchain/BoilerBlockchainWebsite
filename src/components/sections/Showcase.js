@@ -132,6 +132,9 @@ const Wrapper = styled.div`
  display: flex;
  justify-content: space-between; /* Distribute items evenly along the main axis */
  padding: 20px; /* Add padding to the wrapper */
+ @media (max-width: 48em) {
+    flex-direction: column; /* Change direction to vertical on smaller screens */
+  }
 `;
 
 

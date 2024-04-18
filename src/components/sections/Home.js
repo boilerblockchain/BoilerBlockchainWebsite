@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import styled from 'styled-components'
 import Loading from '../Loading';
+import Carousel from '../Carousel';
 
 const CoverVideo = lazy(() => import('../CoverVideo'));
 const TypeWriterText = lazy(() => import('../TypeWriterText'));
@@ -26,7 +27,7 @@ align-items: center;
   width: 85%;
 }
 @media (max-width: 48em) {
-  flex-direction: column-reverse;
+  flex-direction: column;
   width: 100%;
   &>*:first-child{
     width: 100%;
@@ -34,8 +35,17 @@ align-items: center;
   }
 }
 `
-const Box = styled.div`
-width: 50%;
+const BoxLeft = styled.div`
+width: 40%;
+height: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+`
+
+const BoxRight = styled.div`
+width: 60%;
 height: 100%;
 display: flex;
 flex-direction: column;
@@ -50,15 +60,16 @@ const Home = () => {
   return (
     <Section id="home">
       <Container>
-      <Box>
+      <BoxLeft>
         <Suspense fallback={<Loading />}>
           <TypeWriterText /></Suspense>
-        </Box>
-        <Box>
-        {/* <Suspense fallback={<Loading />}>
-          <CoverVideo /></Suspense> */}
+        </BoxLeft>
+        <BoxRight>
+        <Suspense fallback={<Loading />}>
+          <Carousel />
+        </Suspense>
           
-        </Box>
+        </BoxRight>
 
       </Container>
     </Section>

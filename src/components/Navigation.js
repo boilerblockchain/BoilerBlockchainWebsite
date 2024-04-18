@@ -45,7 +45,7 @@ const Menu = styled.ul`
     width: 100vw;
     height: ${(props) => `calc(100vh - ${props.theme.navHeight})`};
     z-index: 50;
-    background-color: ${(props) => `rgba(${props.theme.bodyRgba},0.85)`};
+    background-color: ${(props) => `rgba(0,0,0,0.4)`};
     backdrop-filter: blur(2px);
 
     transform: ${(props) =>

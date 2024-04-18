@@ -3,7 +3,7 @@
 export const light = {
     
     // body:"#fff",
-    body: "linear-gradient(to right top, #7e47bc, #854dcb, #8d52da, #ac4ed3, #c64acb, #dc47c2, #f54aa0, #fe5b83, #fc726d, #f28960);",
+    body: "linear-gradient(to right top, #5b3093, #5a2e95, #5a2c96, #592a98, #58289a, #4d34a1, #423da6, #3446ab, #1357af, #0065af, #1171ab, #337ca6);",
     text: "#202020", // black shade
     textWhite: "#fff",
     bodyRgba : "255, 255, 255",

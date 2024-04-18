@@ -149,7 +149,7 @@ const Banner = () => {
         </ImgContainer> */}
         <Title>Join  <br /> Boiler Blockchain  </Title>
         <BtnContainer>
-        <JoiNow href={"/#"} target='_blank'>
+        <JoiNow href={"https://linktr.ee/boilerBC"} target='_blank'>
             Join Now
         </JoiNow>
 

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@fontsource/akaya-telivigala": "^5.0.8",
+    "@fontsource/lato": "^5.0.20",
     "@fontsource/sora": "^5.0.15",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
@@ -13,6 +14,7 @@
     "react": "^18.2.0",
     "react-confetti": "^6.0.1",
     "react-dom": "^18.2.0",
+    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.1",
     "react-twitter-embed": "^4.0.4",

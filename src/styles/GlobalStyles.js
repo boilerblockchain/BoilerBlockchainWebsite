@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import "@fontsource/akaya-telivigala"
 import "@fontsource/sora"
+import "@fontsource/lato"
 
 
 
@@ -21,7 +22,7 @@ html{
 }
 
 body{
-    font-family: 'Sora', sans-serif;
+    font-family: 'Lato', sans-serif;
     overflow-x: hidden;
     height: 100%;
     background-image: ${props => props.theme.body};

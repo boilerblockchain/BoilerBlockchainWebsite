@@ -5,7 +5,7 @@ import Button from "../Button";
 import { light, dark } from "../../styles/Themes";
 import Loading from "../Loading";
 
-const Carousel = lazy(() => import("../Carousel"));
+const Carousel = lazy(() => import("../Carousel2"));
 
 const Section = styled.section`
   min-height: 100vh;
@@ -18,7 +18,7 @@ const Section = styled.section`
   overflow: hidden;
 `;
 const Container = styled.div`
-  width: 75%;
+  width: 80%;
   margin: 0 auto;
   /* background-color: lightblue; */
 
@@ -64,6 +64,7 @@ const Title = styled.h2`
   align-self: flex-start;
   width: 80%;
   margin: 0 auto;
+  margin-right: 0;
 
   @media (max-width: 64em) {
     width: 100%;
@@ -82,6 +83,7 @@ const SubText = styled.p`
   align-self: flex-start;
   width: 80%;
   margin: 1rem auto;
+  margin-right: 0;
   font-weight: 400;
   @media (max-width: 64em) {
     width: 100%;
@@ -101,6 +103,8 @@ const SubTextLight = styled.p`
   align-self: flex-start;
   width: 80%;
   margin: 1rem auto;
+  margin-right: 0;
+  margin-top: 0rem;
   font-weight: 400;
 
   @media (max-width: 64em) {
@@ -118,6 +122,7 @@ const SubTextLight = styled.p`
 const ButtonContainer = styled.div`
   width: 80%;
   margin: 1rem auto;
+  margin-right: 0;
   display: flex;
   justify-content: flex-start;
 
@@ -136,16 +141,16 @@ const About = () => {
     <Section id="about">
       <Container>
         <Box>
-          {/* <Suspense fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
             <Carousel />{" "}
-          </Suspense>{" "} */}
+          </Suspense>{" "}
         </Box>
         <Box>
           <Title>
             Welcome To <br /> Boiler Blockchain!
           </Title>
-          <SubText> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consequat nisl felis, et scelerisque felis porta quis. Ut cursus, nibh sit amet malesuada consequat</SubText>
-          <SubTextLight>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consequat nisl felis, et scelerisque felis porta quis. Ut cursus, nibh sit amet malesuada consequat, mauris nisi imperdiet risus, vitae hendrerit elit lectus</SubTextLight>
+          <SubText>Boiler Blockchain is Purdue's premier student-led organization dedicated to advancing blockchain technology. We equip students with practical knowledge and hands-on experience to excel in this revolutionary field.</SubText>
+          <SubTextLight>Join us to explore the potential of blockchain through education, innovation, and collaboration. Our diverse activities, from technical courses to hackathons, prepare you to lead in the blockchain ecosystem. Dive into our projects showcased on the side to see the impact of our vibrant community.</SubTextLight>
           <ButtonContainer>
             <ThemeProvider theme={dark}>
               <Button text="JOIN OUR DISCORD" link="https://discord.com/invite/YdBH68uXUQ" newTab={true} />
