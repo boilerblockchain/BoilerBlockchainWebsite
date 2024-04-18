@@ -1,12 +1,14 @@
-#Make Sure You Have node Installed
-https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+## Prerequisites
+Make sure you have Node.js installed. You can download and install it from [here](https://nodejs.org/).
 
-#Run this is terminal
-'''
+## Installation
+Run the following command in your terminal to install the necessary dependencies:
+
+```bash
 npm install
-'''
+```
+## Launch
+Run the following command in your terminal to launch:
 
-#Run This to Launch
-'''
+```bash
 npm start
-'''
