@@ -1,34 +1,33 @@
-import React, { useRef } from 'react'
-import styled, { keyframes } from 'styled-components'
+import React from 'react'
+import styled, { ThemeProvider } from 'styled-components'
+import { TwitterTimelineEmbed } from 'react-twitter-embed';
+import Button from "../Button";
+import { dark } from "../../styles/Themes";
 
-import img1 from '../../assets/Nfts/bighead.svg';
-import img2 from '../../assets/Nfts/bighead-1.svg';
-import img3 from '../../assets/Nfts/bighead-2.svg';
-import img4 from '../../assets/Nfts/bighead-3.svg';
-import img5 from '../../assets/Nfts/bighead-4.svg';
-import img6 from '../../assets/Nfts/bighead-5.svg';
-import img7 from '../../assets/Nfts/bighead-6.svg';
-import img8 from '../../assets/Nfts/bighead-7.svg';
-import img9 from '../../assets/Nfts/bighead-8.svg';
-import img10 from '../../assets/Nfts/bighead-9.svg';
-import ETH from '../../assets/icons8-ethereum-48.png'
+
+
+
+
 
 const Title = styled.h1`
-  font-size: ${(props) => props.theme.fontxxl};
-  text-transform: capitalize;
-  color: ${(props) => props.theme.textWhite};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem auto;
-  border-bottom: 2px solid ${(props) => props.theme.textWhite};
-  width: fit-content;
+ font-size: ${(props) => props.theme.fontxxl};
+ text-transform: capitalize;
+ color: ${(props) => props.theme.textWhite};
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin: 1rem auto;
+ border-bottom: 2px solid ${(props) => props.theme.textWhite};
+ width: fit-content;
 
-  @media (max-width: 40em){
-    font-size: ${(props) => props.theme.fontxl};
+
+ @media (max-width: 40em){
+   font-size: ${(props) => props.theme.fontxl};
+
 
 }
 `;
+
 
 const Section = styled.section`
 min-height: 100vh;
@@ -41,145 +40,205 @@ align-items: center;
 position: relative;
 overflow: hidden;
 
+
 &>*:first-child{
-  animation-duration: 20s;
+ animation-duration: 20s;
 
-  @media (max-width: 30em){
-    animation-duration: 15s;
 
-  }
+ @media (max-width: 30em){
+   animation-duration: 15s;
+
+
+ }
 }
 &>*:last-child{
-  animation-duration: 15s;
-  @media (max-width: 30em){
-    animation-duration: 10s;
-
-  }
-}
-`
-const move = keyframes`
-0%{ transform: translateX(100%)   };
-100%{ transform: translateX(-100%)   }
-
-`
-
-const Row = styled.div`
-/* background-color: lightblue; */
-white-space: nowrap;
-box-sizing:content-box;
-margin: 2rem 0;
-display: flex;
-
-animation: ${move}  linear infinite ${props => props.direction};
+ animation-duration: 15s;
+ @media (max-width: 30em){
+   animation-duration: 10s;
 
 
-`
-const ImgContainer = styled.div`
-width: 15rem;
-margin: 0 1rem;
-background-color:${props => props.theme.body};
-
-border-radius: 20px;
-cursor: pointer;
-
-@media (max-width: 48em){
-  width: 12rem;
-  }
-  @media (max-width: 30em){
-  width: 10rem;
-  }
-
-img{
-  width: 100%;
-  height: auto;
+ }
 }
 `
 
-const Details = styled.div`
-display: flex;
-justify-content: space-between;
-padding: 0.8rem 1rem;
-background-color: ${props => props.theme.text};
-border: 2px solid ${props => `rgba(${props.theme.bodyRgba},0.5)`};
 
-border-bottom-left-radius: 20px;
-border-bottom-right-radius: 20px;
 
-span{
-  font-size: ${props => props.theme.fontsm};
-  color:${props => `rgba(${props.theme.bodyRgba},0.5)`};
-  font-weight:600;
-  line-height: 1.5rem;
+
+const Header = styled.h2`
+ font-size: ${(props) => props.theme.fontxl};
+ text-transform: capitalize;
+ margin: 0;
+ color: ${(props) => props.theme.textWhite};
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin: 1rem auto;
+ border-bottom: 2px solid ${(props) => props.theme.textWhite};
+ width: fit-content;
+
+
+ @media (max-width: 40em){
+   font-size: ${(props) => props.theme.fontxl};
 }
+`;
 
-h1{
-  font-size: ${props => props.theme.fontmd};
-  color: ${props => props.theme.body};
-  font-weight:600;
+const Smallheader = styled.h2`
+ font-size: ${(props) => props.theme.fontxl};
+ text-transform: capitalize;
+ margin: 0;
+ color: ${(props) => props.theme.textWhite};
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin: 1rem auto;
+ width: fit-content;
 
-  @media (max-width: 30em){
-    font-size: ${props => props.theme.fontsm};
 
-  }
-
+ @media (max-width: 40em){
+   font-size: ${(props) => props.theme.fontxl};
 }
-
-`
-
-const Price = styled.div`
-display: flex;
-justify-content: flex-start;
-align-items: center;
-
-img{
-  width: 1rem;
-  height: auto;
-
-}
-`
-
-const NftItem = ({img, number=0, price=0, passRef}) => {
-
-let play = (e) => {
-  passRef.current.style.animationPlayState = 'running';
-}
-let pause = (e) => {
-  passRef.current.style.animationPlayState = 'paused';
-}
+`;
+const ButtonContainer = styled.div`
+ width: 80%;
+ margin: 1rem auto;
+ display: flex;
+ justify-content: center;
+   padding: 10px;
 
 
-  return(
-    <ImgContainer   onMouseOver={e => pause(e) }  onMouseOut={e => play(e) }  >
-      <img width={500} height={400}  src={img} alt="The Weirdos" />
-      <Details>
-        <div>
-          <span>Weirdos</span> <br />
-          <h1>#{number}</h1>
-        </div>
+ @media (max-width: 64em) {
+   width: 100%;
+   justify-content: center;
 
-        <div>
-          <span>Price</span>
-          <Price>
-          <img width={200} height={200}  src={ETH} alt="ETH" />
-          <h1>{Number(price).toFixed(1)}</h1>
-          </Price>
-        </div>
-      </Details>
-    </ImgContainer>
-  )
-} 
+
+   button {
+     margin: 0 auto;
+   }
+ }
+`;
+
+const Divider = styled.div`
+  text-align: center;
+  margin: 20px 0;
+`;
+
+const DividerText = styled.span`
+  font-size: 40px;
+  color: ${(props) => props.theme.textWhite}; /* Adjust color as needed */
+`;
+
+
+const Wrapper = styled.div`
+ display: flex;
+ justify-content: space-between; /* Distribute items evenly along the main axis */
+ padding: 20px; /* Add padding to the wrapper */
+`;
+
+
+const RectangleStyle = styled.div`
+ width: 88%; /* Adjust width as needed */
+ max-width: 1200px; /* Limit maximum width */
+ height: auto;
+ border-radius: 10px;
+ border: 0.05em solid ${(props) => `rgba(${props.theme.bodyRgba}, 0.5)`}; /* Use em unit for border thickness */
+ color: ${(props) => `rgb(${props.theme.bodyRgba})`};
+ text-align: center;
+ font-size: 1em;
+ padding: 10px;
+ margin: 2%;
+`;
+const RectangleComponent = (props) => {
+  const childrenArray = React.Children.toArray(props.children);
+  const childrenCount = childrenArray.length;
+
+  return (
+    <RectangleStyle theme={props.theme}>
+      {childrenArray.map((child, index) => (
+        <React.Fragment key={index}>
+          {index > 0 && <br />} {/* Add line break between components */}
+          {React.cloneElement(child, {
+            style: { marginBottom: '10px', lineHeight: '1.5' } // Adjust line height for increased spacing
+          })}
+        </React.Fragment>
+      ))}
+    </RectangleStyle>
+  );
+};
+
 
 
 const Showcase = () => {
 
-  const Row1Ref = useRef(null);
-  const Row2Ref = useRef(null);
-
-  return(
+  return (
     <Section id="showcase">
-        <Title>Research and Delegations</Title>
+      <Wrapper style={{ paddingTop: '0' }}>
+        <RectangleComponent>
+          <Header>Research</Header>
+          <div>
+            <p style={{ fontSize: '16px', }}>
+              The Research is at the forefront of blockchain research, exploring the intricate mechanics and real-world applications of decentralized technology. Our team of students and researchers collaborates on cutting-edge projects spanning various areas, including:
+            </p>
+            <ul style={{ listStylePosition: 'inside', padding: 0, margin: 0, fontSize: '16px' }}>
+              <li>Consensus algorithms</li>
+              <li>Smart contracts</li>
+              <li>Scalability solutions</li>
+              <li>Decentralized applications</li>
+            </ul>
+            <p style={{ fontSize: '16px', }}>
+              We delve into diverse industries, such as finance, healthcare, and supply chain management, to uncover the transformative potential of blockchain. Through interdisciplinary collaboration and innovative thinking, we strive to push the boundaries of blockchain technology and drive positive change in the world. Join us as we pave the way for the future of decentralized innovation.
+            </p>
+          </div>
+        </RectangleComponent>
+
+
+        <Divider>
+          <DividerText>x</DividerText>
+        </Divider>
+        
+
+        <RectangleComponent>
+          <Header>Delegations</Header>
+          <div>
+            <p style={{ fontSize: '16px', }}>
+              The Delegations Team at Purdue University is dedicated to advancing research in decentralized governance and consensus mechanisms. Comprised of enthusiastic students and researchers, our team explores the intricacies of delegated proof-of-stake (DPoS), liquid democracy, and other innovative governance models within blockchain networks. Our research focuses on:
+            </p>
+            <ul style={{ listStylePosition: 'inside', padding: 0, margin: 0, fontSize: '16px' }}>
+              <li>Delegated proof-of-stake (DPoS)</li>
+              <li>Liquid democracy</li>
+              <li>Innovative governance models</li>
+            </ul>
+            <p style={{ fontSize: '16px', }}>
+              We investigate the scalability, security, and decentralization implications of delegation protocols, aiming to enhance the efficiency and inclusivity of decentralized decision-making processes. Through rigorous analysis and experimentation, we contribute to the evolution of decentralized governance frameworks, paving the way for more resilient and democratic blockchain ecosystems. Join us in shaping the future of decentralized governance through research and collaboration.
+            </p>
+          </div>
+        </RectangleComponent>
+
+
+      </Wrapper>
+
+      <Smallheader>Follow the Research and Delegation team on Social Media!</Smallheader>
+
+      <div style={{ width: '40%', minWidth: '300px' }}> {/* Adjust the width as needed */}
+        <TwitterTimelineEmbed
+          sourceType="profile"
+          screenName="BoilerChain"
+          options={{ height: 350 }} />
+      </div>
+
+
+      <ButtonContainer>
+        <ThemeProvider theme={dark}>
+          <Button text="FOLLOW ON MEDIUM" link="https://boilerblockchain.medium.com/" newTab={true} />
+        </ThemeProvider>
+      </ButtonContainer>
+
+
     </Section>
+
+
+
   )
 }
+
 
 export default Showcase
