@@ -1,5 +1,5 @@
 
-
+import { useRef } from 'react';
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark, light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
@@ -15,19 +15,28 @@ import Faq from "./components/sections/Faq";
 import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
+  const aboutRef = useRef(null);
+  const scrollToAbout = () => {
+    if (aboutRef.current) {
+      aboutRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
   return (
     <main>
       <ThemeProvider theme={light}>
-      <GlobalStyles />
-          <Navigation />
-          <Home />
+        <GlobalStyles />
+        <Navigation />
+        <Home onScrollToNext={scrollToAbout} />
+        <section ref={aboutRef}>
           <About />
-          <Hackathons />
-          <Showcase />
-          <Team />
-          {/* <Faq /> */}
-          <Footer />
-          <ScrollToTop />
+        </section>
+        <Hackathons />
+        <Showcase />
+        <Team />
+        {/* <Faq /> */}
+        <Footer />
+        <ScrollToTop />
       </ThemeProvider>
     </main>
   );
