@@ -1,8 +1,8 @@
-
 import { useRef } from 'react';
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark, light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
+import styled from 'styled-components';
 
 import Navigation from "./components/Navigation";
 import About from "./components/sections/About";
@@ -14,6 +14,38 @@ import Showcase from "./components/sections/Showcase";
 import Faq from "./components/sections/Faq";
 import ScrollToTop from "./components/ScrollToTop";
 
+// Styled wrappers for components to control z-index
+const NavigationWrapper = styled.div`
+  position: relative;
+  z-index: 20; /* Higher z-index for Navigation */
+`;
+
+const AboutSection = styled.section`
+  position: relative;
+  z-index: 10; /* Higher z-index to layer this section above others */
+`;
+
+const HackathonsSection = styled.section`
+  position: relative;
+  z-index: 15; /* Higher z-index for Hackathons */
+`;
+
+const TeamSection = styled.section`
+  position: relative;
+  z-index: 15; /* Higher z-index for Team */
+`;
+
+const ShowcaseSection = styled.section`
+  position: relative;
+  z-index: 12; /* Higher z-index to layer this section above others */
+`;
+
+
+const FooterWrapper = styled.footer`
+  position: relative;
+  z-index: 5; /* Footer z-index (can be lower if needed) */
+`;
+
 function App() {
   const aboutRef = useRef(null);
   const scrollToAbout = () => {
@@ -21,21 +53,42 @@ function App() {
       aboutRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  
+
   return (
     <main>
       <ThemeProvider theme={light}>
         <GlobalStyles />
-        <Navigation />
+        {/* Higher z-index applied to Navigation */}
+        <NavigationWrapper>
+          <Navigation />
+        </NavigationWrapper>
+
         <Home onScrollToNext={scrollToAbout} />
-        <section ref={aboutRef}>
+
+        {/* Higher z-index applied to About section */}
+        <AboutSection ref={aboutRef}>
           <About />
-        </section>
-        <Hackathons />
-        <Showcase />
-        <Team />
-        {/* <Faq /> */}
-        <Footer />
+        </AboutSection>
+
+        {/* Higher z-index applied to Hackathons section */}
+        <HackathonsSection>
+          <Hackathons />
+        </HackathonsSection>
+
+        <ShowcaseSection>
+          <Showcase />
+        </ShowcaseSection>
+
+        {/* Higher z-index applied to Team section */}
+        <TeamSection>
+          <Team />
+        </TeamSection>
+
+        {/* Footer with controlled z-index */}
+        <FooterWrapper>
+          <Footer />
+        </FooterWrapper>
+
         <ScrollToTop />
       </ThemeProvider>
     </main>

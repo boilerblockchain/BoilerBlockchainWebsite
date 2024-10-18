@@ -1,84 +1,75 @@
-import React, { lazy, Suspense } from 'react'
-import styled from 'styled-components'
-import { useEffect, useState, useCallback } from "react";
+import React, { lazy, Suspense, useState, useEffect, useCallback } from 'react';
+import styled from 'styled-components';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
-import Loading from '../Loading';
-import Carousel from '../Carousel';
 
 const CoverVideo = lazy(() => import('../CoverVideo'));
 const TypeWriterText = lazy(() => import('../TypeWriterText'));
 
 const Section = styled.section`
-min-height: ${props => `calc(100vh - ${props.theme.navHeight})`   };
-width: 100vw;
-position: relative;
-background-color: ${props => props.theme.body};
-`
+  min-height: 100vh;
+  width: 100vw;
+  position: relative;
+  background-color: ${props => props.theme.body};
+`;
 
 const Container = styled.div`
-width: 75%;
-min-height: 80vh;
-margin: 0 auto;
-/* background-color: lightblue; */
+  width: 75%;
+  min-height: 80vh;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-display: flex;
-justify-content: center;
-align-items: center;
-
-@media (max-width: 64em) {
-  width: 85%;
-}
-@media (max-width: 48em) {
-  flex-direction: column;
-  width: 100%;
-  &>*:first-child{
-    width: 100%;
-    margin-top: 2rem;
+  @media (max-width: 64em) {
+    width: 85%;
   }
-}
-`
+  @media (max-width: 48em) {
+    flex-direction: column;
+    width: 100%;
+    &>*:first-child {
+      width: 100%;
+      margin-top: 2rem;
+    }
+  }
+`;
+
 const BoxLeft = styled.div`
-width: 40%;
-height: 100%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-`
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const BoxRight = styled.div`
-width: 60%;
-height: 100%;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-`
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
-const Home = () => {
-  const [scrollY, setScrollY] = useState(0);
-  const [isPastThreshold, setIsPastThreshold] = useState(false);
-  const [sectionPosition, setSectionPosition] = useState("100vh");
-
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine); // Load tsparticles engine
-    await loadPolygonPath(engine); // Load the polygon path generator
-  }, []);
+const Home = ({ onScrollToNext }) => {
+  const [opacity, setOpacity] = useState(1);
 
   const handleScroll = () => {
-    const y = window.scrollY;
-    setScrollY(y);
+    const scrollPosition = window.scrollY;
+    const fadeOutStart = 0; // The point where fade-out starts (top of page)
+    const fadeOutEnd = window.innerHeight; // The point where fade-out ends (before About section)
+    const fadeOutRange = fadeOutEnd - fadeOutStart;
 
-    if (y > 400) {
-      setIsPastThreshold(true);
-      const newPosition = `${Math.max(100 - (y - 400) / 2, 0)}vh`;
-      setSectionPosition(newPosition);
+    if (scrollPosition <= fadeOutStart) {
+      setOpacity(1); // Fully visible at the top of the page
+    } else if (scrollPosition >= fadeOutEnd) {
+      setOpacity(0); // Fully invisible after scroll passes the first section
     } else {
-      setIsPastThreshold(false);
-      setSectionPosition("100vh");
+      const fadePercentage = (fadeOutEnd - scrollPosition) / fadeOutRange;
+      setOpacity(fadePercentage); // Gradually fade out based on scroll
     }
   };
 
@@ -87,6 +78,11 @@ const Home = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+    await loadPolygonPath(engine);
   }, []);
 
   const handleScrollToNext = () => {
@@ -128,6 +124,8 @@ const Home = () => {
             height: "100vh",
             width: "100vw",
             zIndex: 2,
+            opacity: opacity, // Dynamic opacity
+            transition: "opacity 0.5s ease-out", // Smooth transition
           }}
         >
           <h1
@@ -201,45 +199,9 @@ const Home = () => {
           </defs>
         </svg>
       </div>
-
-      {/* <div
-        style={{
-          position: "fixed",
-          top: sectionPosition,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: "#333",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 10,
-          transition: "top 0.5s ease-out",
-        }}
-      >
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          top: "200vh",
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: "#555",
-          color: "#fff",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 10,
-          transition: "top 0.5s ease-out",
-        }}
-      >
-      </div> */}
     </Section>
-  )
-}
+  );
+};
 
 const particlesOptions = {
   autoPlay: true,
@@ -302,4 +264,4 @@ const particlesOptions = {
   motion: { disable: false, reduce: { factor: 10, value: true } },
 };
 
-export default Home
+export default Home;

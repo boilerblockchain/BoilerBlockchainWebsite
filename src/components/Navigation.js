@@ -10,10 +10,15 @@ const NavBar = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   width: 85%;
   height: ${(props) => props.theme.navHeight};
   margin: 0 auto;
+  position: fixed; /* Make the navbar fixed */
+  top: 0; /* Stick it to the top */
+  left: 0;
+  right: 0;
+  z-index: 100; /* Ensure it stays above other content */
+  background-color: ${(props) => props.theme.body}; /* Ensure background stays visible */
 
   .mobile {
     display: none;
@@ -28,6 +33,7 @@ const NavBar = styled.nav`
     }
   }
 `;
+
 const Menu = styled.ul`
   display: flex;
   justify-content: space-between;
