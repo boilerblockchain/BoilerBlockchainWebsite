@@ -6,19 +6,21 @@ const Section = styled.section`
   width: 100vw;
   background-color: ${(props) => props.theme.body};
 `;
+
 const NavBar = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 85%;
+  width: 100vw; /* Set to 100% of the viewport width */
   height: ${(props) => props.theme.navHeight};
-  margin: 0 auto;
-  position: fixed; /* Make the navbar fixed */
-  top: 0; /* Stick it to the top */
+  margin: 0;
+  padding: 0 1rem; /* Add padding to the sides to prevent content from touching the edges */
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 100; /* Ensure it stays above other content */
-  background-color: ${(props) => props.theme.body}; /* Ensure background stays visible */
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
 
   .mobile {
     display: none;
@@ -36,13 +38,14 @@ const NavBar = styled.nav`
 
 const Menu = styled.ul`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* Align links to the left */
   align-items: center;
   list-style: none;
-
+  margin-left: 55%;
+  margin-right: auto;
+  
   @media (max-width: 64em) {
     /* 1024 px */
-
     position: fixed;
     top: ${(props) => props.theme.navHeight};
     left: 0;
@@ -61,6 +64,7 @@ const Menu = styled.ul`
     justify-content: center;
 
     touch-action: none;
+    padding-left: 0; /* Reset padding for mobile view */
   }
 `;
 

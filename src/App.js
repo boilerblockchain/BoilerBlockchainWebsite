@@ -65,12 +65,10 @@ function App() {
 
         <Home onScrollToNext={scrollToAbout} />
 
-        {/* Higher z-index applied to About section */}
         <AboutSection ref={aboutRef}>
           <About />
         </AboutSection>
 
-        {/* Higher z-index applied to Hackathons section */}
         <HackathonsSection>
           <Hackathons />
         </HackathonsSection>
@@ -79,12 +77,10 @@ function App() {
           <Showcase />
         </ShowcaseSection>
 
-        {/* Higher z-index applied to Team section */}
         <TeamSection>
           <Team />
         </TeamSection>
 
-        {/* Footer with controlled z-index */}
         <FooterWrapper>
           <Footer />
         </FooterWrapper>

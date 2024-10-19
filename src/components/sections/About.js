@@ -5,7 +5,7 @@ import Button from "../Button";
 import { light, dark } from "../../styles/Themes";
 import Loading from "../Loading";
 
-const Carousel = lazy(() => import("../Carousel2"));
+const Carousel = lazy(() => import("../Carousel"));
 
 const Section = styled.section`
   min-height: 100vh;

@@ -59,17 +59,17 @@ const Home = ({ onScrollToNext }) => {
 
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
-    const fadeOutStart = 0; // The point where fade-out starts (top of page)
-    const fadeOutEnd = window.innerHeight; // The point where fade-out ends (before About section)
+    const fadeOutStart = 0;
+    const fadeOutEnd = window.innerHeight;
     const fadeOutRange = fadeOutEnd - fadeOutStart;
 
     if (scrollPosition <= fadeOutStart) {
-      setOpacity(1); // Fully visible at the top of the page
+      setOpacity(1);
     } else if (scrollPosition >= fadeOutEnd) {
-      setOpacity(0); // Fully invisible after scroll passes the first section
+      setOpacity(0);
     } else {
       const fadePercentage = (fadeOutEnd - scrollPosition) / fadeOutRange;
-      setOpacity(fadePercentage); // Gradually fade out based on scroll
+      setOpacity(fadePercentage);
     }
   };
 
