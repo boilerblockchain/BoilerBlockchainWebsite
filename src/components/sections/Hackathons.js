@@ -21,7 +21,6 @@ const Title = styled.h1`
   justify-content: center;
   align-items: center;
   margin: 2rem auto;
-  border-bottom: 2px solid ${(props) => props.theme.textWhite};
   width: fit-content;
 
   @media (max-width: 40em) {
@@ -241,7 +240,7 @@ const Hackathons = () => {
 
   return (
     <Section id="hackathons">
-      <Title>Hackathon Projects / Prizes</Title>
+      <Title>Hackathon Highlights</Title>
       <Container>
         <SvgContainer>
           <DrawSvg />

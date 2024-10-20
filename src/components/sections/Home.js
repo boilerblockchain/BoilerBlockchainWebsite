@@ -56,7 +56,9 @@ const BoxRight = styled.div`
 
 const Home = ({ onScrollToNext }) => {
   const [opacity, setOpacity] = useState(1);
+  const [scale, setScale] = useState(1); // New state to track scale
 
+  // Handle scroll effect for opacity and scaling
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
     const fadeOutStart = 0;
@@ -65,11 +67,15 @@ const Home = ({ onScrollToNext }) => {
 
     if (scrollPosition <= fadeOutStart) {
       setOpacity(1);
+      setScale(1); // Reset scale when at the top
     } else if (scrollPosition >= fadeOutEnd) {
       setOpacity(0);
+      setScale(3); // Max scale when fully scrolled past the section
     } else {
       const fadePercentage = (fadeOutEnd - scrollPosition) / fadeOutRange;
       setOpacity(fadePercentage);
+      const scalePercentage = 1 + (1 - fadePercentage) * 2; // Scale from 1 to 3
+      setScale(scalePercentage);
     }
   };
 
@@ -80,17 +86,11 @@ const Home = ({ onScrollToNext }) => {
     };
   }, []);
 
+  // Initialize particles
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
     await loadPolygonPath(engine);
   }, []);
-
-  const handleScrollToNext = () => {
-    window.scrollTo({
-      top: window.innerHeight,
-      behavior: 'smooth',
-    });
-  };
 
   return (
     <Section id="home">
@@ -111,12 +111,13 @@ const Home = ({ onScrollToNext }) => {
           }}
         />
 
+        {/* Main content container */}
         <div
           style={{
             position: "fixed",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: `translate(-50%, -50%) scale(${scale})`, // Apply scaling correctly while keeping it centered
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -124,8 +125,8 @@ const Home = ({ onScrollToNext }) => {
             height: "100vh",
             width: "100vw",
             zIndex: 2,
-            opacity: opacity, // Dynamic opacity
-            transition: "opacity 0.5s ease-out", // Smooth transition
+            opacity: opacity, // Dynamic opacity change based on scroll
+            transition: "opacity 0.5s ease-out, transform 0.5s ease-out", // Smooth transition
           }}
         >
           <h1
@@ -137,12 +138,12 @@ const Home = ({ onScrollToNext }) => {
               marginBottom: "2rem",
             }}
           >
-            This is Boiler <br />
-            BlockChain
+            This is <br /> <span>Boiler BlockChain</span>
           </h1>
 
+          {/* Downward Arrow Button for Scroll */}
           <button
-            onClick={handleScrollToNext}
+            onClick={onScrollToNext} // Function passed from parent to scroll to next section
             style={{
               background: "transparent",
               border: "none",
@@ -166,6 +167,7 @@ const Home = ({ onScrollToNext }) => {
           </button>
         </div>
 
+        {/* Inline styles for SVG and animations */}
         <style jsx>{`
           .arrow-svg {
             stroke: white;
@@ -190,6 +192,7 @@ const Home = ({ onScrollToNext }) => {
           }
         `}</style>
 
+        {/* SVG for gradient stroke */}
         <svg width="0" height="0">
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -203,6 +206,7 @@ const Home = ({ onScrollToNext }) => {
   );
 };
 
+// Particle configuration
 const particlesOptions = {
   autoPlay: true,
   background: {

@@ -1,247 +1,178 @@
-import React from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import React from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 import { TwitterTimelineEmbed } from 'react-twitter-embed';
 import Button from "../Button";
 import { dark } from "../../styles/Themes";
 
-
-
-
-
-
-const Title = styled.h1`
- font-size: ${(props) => props.theme.fontxxl};
- text-transform: capitalize;
- color: ${(props) => props.theme.textWhite};
- display: flex;
- justify-content: center;
- align-items: center;
- margin: 1rem auto;
- border-bottom: 2px solid ${(props) => props.theme.textWhite};
- width: fit-content;
-
-
- @media (max-width: 40em){
-   font-size: ${(props) => props.theme.fontxl};
-
-
-}
-`;
-
-
+// Section Wrapper with dark background
 const Section = styled.section`
-min-height: 100vh;
-width: 100vw;
-background-color: ${props => props.theme.text};
-display: flex;
-flex-direction: column;
-// justify-content: center;
-align-items: center;
-position: relative;
-overflow: hidden;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: ${(props) => props.theme.body}; /* Dark background */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 3rem 1.5rem;
+`;
 
-
-&>*:first-child{
- animation-duration: 20s;
-
-
- @media (max-width: 30em){
-   animation-duration: 15s;
-
-
- }
-}
-&>*:last-child{
- animation-duration: 15s;
- @media (max-width: 30em){
-   animation-duration: 10s;
-
-
- }
-}
-`
-
-
-
-
+// Title with light text color
 const Header = styled.h2`
- font-size: ${(props) => props.theme.fontxl};
- text-transform: capitalize;
- margin: 0;
- color: ${(props) => props.theme.textWhite};
- display: flex;
- justify-content: center;
- align-items: center;
- margin: 1rem auto;
- border-bottom: 2px solid ${(props) => props.theme.textWhite};
- width: fit-content;
+  font-size: ${(props) => props.theme.fontxxl};
+  text-transform: capitalize;
+  color: ${(props) => props.theme.textWhite}; /* Light text for dark theme */
+  margin-bottom: 1.5rem;
+`;
 
+// Modern Card for each content block with darker background and shadow
+// Card with gradient border
+// Card with gradient border, fixed height and width
+const Card = styled.div`
+background-color: ${(props) => props.theme.textDark}; /* Dark card background */
+border-radius: 10px;
+padding: 2rem;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Darker shadow for depth */
+transition: transform 0.3s ease;
+border: 2px solid transparent; /* Transparent border */
+background-image: linear-gradient(#000, #000), linear-gradient(to right, #8a2be2, #ff1493); /* Gradient border */
+background-origin: border-box;
+background-clip: padding-box, border-box; /* Apply gradient to the border */
+flex: 1; /* Allow flexbox to adjust width equally */
+min-width: 300px; /* Set a minimum width to avoid shrinking too much */
+max-width: 500px; /* Set a maximum width */
+height: 100%; /* Ensure both cards have the same height */
 
- @media (max-width: 40em){
-   font-size: ${(props) => props.theme.fontxl};
+&:hover {
+  transform: translateY(-10px);
+}
+
+@media (max-width: 768px) {
+  max-width: 100%; /* Adjust for smaller screens */
 }
 `;
 
-const Smallheader = styled.h2`
- font-size: ${(props) => props.theme.fontxl};
- text-transform: capitalize;
- margin: 0;
- color: ${(props) => props.theme.textWhite};
- display: flex;
- justify-content: center;
- align-items: center;
- margin: 1rem auto;
- width: fit-content;
+// Container to hold cards side by side with equal width
+const CardContainer = styled.div`
+display: flex;
+justify-content: space-between;
+align-items: stretch; /* Ensure equal height cards */
+gap: 1rem; /* Add some spacing between the cards */
+max-width: 1200px;
+width: 100%;
+height: 400px; /* Set a fixed height for the container so cards will match */
+margin: 5% 0;
 
-
- @media (max-width: 40em){
-   font-size: ${(props) => props.theme.fontxl};
+@media (max-width: 768px) {
+  flex-direction: column; /* Stack cards vertically on smaller screens */
+  height: auto; /* Allow auto height on smaller screens */
 }
 `;
+
+
+// Sub-heading inside card
+const SubHeading = styled.h3`
+  font-size: ${(props) => props.theme.fontxl};
+  color: ${(props) => props.theme.textWhite};
+  margin-bottom: 1rem;
+`;
+
+// Body Text with lighter color for readability
+const Text = styled.p`
+  font-size: 1rem;
+  color: ${(props) => props.theme.textWhite};
+  line-height: 1.6;
+  margin-bottom: 1rem;
+`;
+
+// List for topics with lighter color and spacing
+const List = styled.ul`
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: ${(props) => props.theme.textWhite};
+`;
+
+// List item style
+const ListItem = styled.li`
+  margin-bottom: 0.5rem;
+`;
+
+// Simple Divider
+const Divider = styled.hr`
+  width: 100%;
+  border: 0;
+  height: 1px;
+  background: ${(props) => props.theme.textWhite}; /* Light color for divider */
+  margin: 3rem 0;
+`;
+
 const ButtonContainer = styled.div`
- width: 80%;
- margin: 1rem auto;
- display: flex;
- justify-content: center;
-   padding: 10px;
-
-
- @media (max-width: 64em) {
-   width: 100%;
-   justify-content: center;
-
-
-   button {
-     margin: 0 auto;
-   }
- }
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 `;
 
-const Divider = styled.div`
-  text-align: center;
-  margin: 20px 0;
+// Small sub-heading for social media
+const Smallheader = styled.h4`
+  font-size: ${(props) => props.theme.fontlg};
+  color: ${(props) => props.theme.textWhite};
+  margin-bottom: 1.5rem;
 `;
 
-const DividerText = styled.span`
-  font-size: 40px;
-  color: ${(props) => props.theme.textWhite}; /* Adjust color as needed */
-`;
-
-
-const Wrapper = styled.div`
- display: flex;
- justify-content: space-between; /* Distribute items evenly along the main axis */
- padding: 20px; /* Add padding to the wrapper */
- @media (max-width: 48em) {
-    flex-direction: column; /* Change direction to vertical on smaller screens */
-  }
-`;
-
-
-const RectangleStyle = styled.div`
- width: 88%; /* Adjust width as needed */
- max-width: 1200px; /* Limit maximum width */
- height: auto;
- border-radius: 10px;
- border: 0.05em solid ${(props) => `rgba(${props.theme.bodyRgba}, 0.5)`}; /* Use em unit for border thickness */
- color: ${(props) => `rgb(${props.theme.bodyRgba})`};
- text-align: center;
- font-size: 1em;
- padding: 10px;
- margin: 2%;
-`;
-const RectangleComponent = (props) => {
-  const childrenArray = React.Children.toArray(props.children);
-  const childrenCount = childrenArray.length;
-
+const Showcase = () => {
   return (
-    <RectangleStyle theme={props.theme}>
-      {childrenArray.map((child, index) => (
-        <React.Fragment key={index}>
-          {index > 0 && <br />} {/* Add line break between components */}
-          {React.cloneElement(child, {
-            style: { marginBottom: '10px', lineHeight: '1.5' } // Adjust line height for increased spacing
-          })}
-        </React.Fragment>
-      ))}
-    </RectangleStyle>
+    <ThemeProvider theme={dark}>
+      <Section id="showcase">
+        <Header>Blockchain Research at Purdue</Header>
+        <CardContainer>
+          {/* Research Card */}
+          <Card>
+            <SubHeading>Research</SubHeading>
+            <Text>
+              Our research explores the mechanics and real-world applications of decentralized blockchain technology. We collaborate across industries and disciplines to develop solutions in:
+            </Text>
+            <List>
+              <ListItem>Consensus algorithms</ListItem>
+              <ListItem>Smart contracts</ListItem>
+              <ListItem>Scalability solutions</ListItem>
+              <ListItem>Decentralized applications</ListItem>
+            </List>
+            <Text>
+              We focus on industries like finance, healthcare, and supply chain management to uncover blockchain’s transformative potential.
+            </Text>
+          </Card>
+
+          {/* Delegation Card */}
+          <Card>
+            <SubHeading>Delegations</SubHeading>
+            <Text>
+              The Delegations team investigates decentralized governance and delegation protocols such as:
+            </Text>
+            <List>
+              <ListItem>Delegated proof-of-stake (DPoS)</ListItem>
+              <ListItem>Liquid democracy</ListItem>
+              <ListItem>Innovative governance models</ListItem>
+            </List>
+            <Text>
+              We enhance blockchain decision-making efficiency, making decentralized systems more inclusive and secure.
+            </Text>
+          </Card>
+        </CardContainer>
+
+        <Divider />
+
+        {/* Social Media Section */}
+        <Smallheader>Follow the Research and Delegations Team on Social Media!</Smallheader>
+        <div style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }}>
+          <TwitterTimelineEmbed sourceType="profile" screenName="BoilerChain" options={{ height: 350 }} />
+        </div>
+
+        <ButtonContainer>
+          <Button text="FOLLOW ON MEDIUM" link="https://boilerblockchain.medium.com/" newTab={true} />
+        </ButtonContainer>
+      </Section>
+    </ThemeProvider>
   );
 };
 
-
-
-const Showcase = () => {
-
-  return (
-    <Section id="showcase">
-      <Wrapper style={{ paddingTop: '0' }}>
-        <RectangleComponent>
-          <Header>Research</Header>
-          <div>
-            <p style={{ fontSize: '16px', }}>
-              The Research is at the forefront of blockchain research, exploring the intricate mechanics and real-world applications of decentralized technology. Our team of students and researchers collaborates on cutting-edge projects spanning various areas, including:
-            </p>
-            <ul style={{ listStylePosition: 'inside', padding: 0, margin: 0, fontSize: '16px' }}>
-              <li>Consensus algorithms</li>
-              <li>Smart contracts</li>
-              <li>Scalability solutions</li>
-              <li>Decentralized applications</li>
-            </ul>
-            <p style={{ fontSize: '16px', }}>
-              We delve into diverse industries, such as finance, healthcare, and supply chain management, to uncover the transformative potential of blockchain. Through interdisciplinary collaboration and innovative thinking, we strive to push the boundaries of blockchain technology and drive positive change in the world. Join us as we pave the way for the future of decentralized innovation.
-            </p>
-          </div>
-        </RectangleComponent>
-
-
-        <Divider>
-          <DividerText>x</DividerText>
-        </Divider>
-        
-
-        <RectangleComponent>
-          <Header>Delegations</Header>
-          <div>
-            <p style={{ fontSize: '16px', }}>
-              The Delegations Team at Purdue University is dedicated to advancing research in decentralized governance and consensus mechanisms. Comprised of enthusiastic students and researchers, our team explores the intricacies of delegated proof-of-stake (DPoS), liquid democracy, and other innovative governance models within blockchain networks. Our research focuses on:
-            </p>
-            <ul style={{ listStylePosition: 'inside', padding: 0, margin: 0, fontSize: '16px' }}>
-              <li>Delegated proof-of-stake (DPoS)</li>
-              <li>Liquid democracy</li>
-              <li>Innovative governance models</li>
-            </ul>
-            <p style={{ fontSize: '16px', }}>
-              We investigate the scalability, security, and decentralization implications of delegation protocols, aiming to enhance the efficiency and inclusivity of decentralized decision-making processes. Through rigorous analysis and experimentation, we contribute to the evolution of decentralized governance frameworks, paving the way for more resilient and democratic blockchain ecosystems. Join us in shaping the future of decentralized governance through research and collaboration.
-            </p>
-          </div>
-        </RectangleComponent>
-
-
-      </Wrapper>
-
-      <Smallheader>Follow the Research and Delegation team on Social Media!</Smallheader>
-
-      <div style={{ width: '40%', minWidth: '300px' }}> {/* Adjust the width as needed */}
-        <TwitterTimelineEmbed
-          sourceType="profile"
-          screenName="BoilerChain"
-          options={{ height: 350 }} />
-      </div>
-
-
-      <ButtonContainer>
-        <ThemeProvider theme={dark}>
-          <Button text="FOLLOW ON MEDIUM" link="https://boilerblockchain.medium.com/" newTab={true} />
-        </ThemeProvider>
-      </ButtonContainer>
-
-
-    </Section>
-
-
-
-  )
-}
-
-
-export default Showcase
+export default Showcase;

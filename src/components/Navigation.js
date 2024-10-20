@@ -72,7 +72,8 @@ const MenuItem = styled.li`
   margin: 0 1rem;
   color: ${(props) => props.theme.textWhite};
   cursor: pointer;
-
+  font-size: 1.2rem;
+  
   &::after {
     content: " ";
     display: block;
@@ -93,12 +94,11 @@ const MenuItem = styled.li`
     }
   }
 `;
+
 const HamburgerMenu = styled.span`
   width: ${(props) => (props.click ? "2rem" : "1.5rem")};
-
   height: 2px;
   background: ${(props) => props.theme.textWhite};
-
   position: absolute;
   top: 2rem;
   left: 50%;
@@ -106,16 +106,13 @@ const HamburgerMenu = styled.span`
     props.click
       ? "translateX(-50%) rotate(90deg)"
       : "translateX(-50%) rotate(0)"};
-
   display: none;
   justify-content: center;
   align-items: center;
-
   cursor: pointer;
   transition: all 0.3s ease;
 
   @media (max-width: 64em) {
-    /* 1024 px */
     display: flex;
   }
 
@@ -143,15 +140,35 @@ const HamburgerMenu = styled.span`
 const Navigation = () => {
   const [click, setClick] = useState(false);
 
+  // Custom scroll function with controlled duration
+  const customScroll = (id, duration) => {
+    const element = document.getElementById(id);
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+
+    const animateScroll = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animateScroll);
+    };
+
+    const easeInOutQuad = (t, b, c, d) => {
+      t /= d / 2;
+      if (t < 1) return (c / 2) * t * t + b;
+      t--;
+      return (-c / 2) * (t * (t - 2) - 1) + b;
+    };
+
+    requestAnimationFrame(animateScroll);
+  };
+
+  // Use custom scroll for each section
   const scrollTo = (id) => {
-    let element = document.getElementById(id);
-
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-
+    customScroll(id, 1500); // Adjust the duration here (1500ms = 1.5 seconds)
     setClick(!click);
   };
 
@@ -168,7 +185,6 @@ const Navigation = () => {
           <MenuItem onClick={() => scrollTo("hackathons")}>Hackathons</MenuItem>
           <MenuItem onClick={() => scrollTo("showcase")}>Research</MenuItem>
           <MenuItem onClick={() => scrollTo("team")}>Courses</MenuItem>
-          {/* <MenuItem onClick={() => scrollTo("faq")}>Faq</MenuItem> */}
           <MenuItem>
             <div className="mobile"></div>
           </MenuItem>

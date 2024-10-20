@@ -8,7 +8,7 @@ import Loading from "../Loading";
 const Carousel = lazy(() => import("../Carousel"));
 
 const Section = styled.section`
-  min-height: 100vh;
+  min-height: 100vh; /* Full viewport height */
   width: 100%;
   background-color: ${(props) => props.theme.text};
   display: flex;
@@ -17,18 +17,17 @@ const Section = styled.section`
   position: relative;
   overflow: hidden;
 `;
+
 const Container = styled.div`
   width: 80%;
+  height: 100%; /* Ensure it takes the full height of its parent */
   margin: 0 auto;
-  /* background-color: lightblue; */
-
   display: flex;
   justify-content: center;
   align-items: center;
   @media (max-width: 70em) {
     width: 85%;
   }
-
   @media (max-width: 64em) {
     width: 100%;
     flex-direction: column;
@@ -43,9 +42,10 @@ const Container = styled.div`
     }
   }
 `;
+
 const Box = styled.div`
   width: 50%;
-  height: 100%;
+  height: 100%; /* Ensures each box takes up full height */
   min-height: 60vh;
   display: flex;
   flex-direction: column;
