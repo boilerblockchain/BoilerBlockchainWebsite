@@ -28,6 +28,7 @@ body{
     background-image: ${props => props.theme.body};
     background-size: 100% 100%;
     animation: Gradient 1s linear infinite;
+    overflow-x: hidden;
 }
 
 @keyframes Gradient {

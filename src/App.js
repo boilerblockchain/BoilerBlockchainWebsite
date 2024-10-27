@@ -104,8 +104,7 @@ function App() {
           <Footer />
         </FooterWrapper>
 
-        {/* Scroll to Top Component */}
-        <ScrollToTop />
+        {/* <ScrollToTop /> */}
       </ThemeProvider>
     </main>
   );

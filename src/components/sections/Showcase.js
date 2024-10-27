@@ -8,63 +8,75 @@ import { dark } from "../../styles/Themes";
 const Section = styled.section`
   min-height: 100vh;
   width: 100vw;
-  background-color: ${(props) => props.theme.body}; /* Dark background */
+  background-color: ${(props) => props.theme.body};
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  padding: 3rem 1.5rem;
+  padding: 3rem 1rem;
+  box-sizing: border-box; /* Include padding and borders in the width */
+
+  @media (max-width: 480px) {
+    padding: 2rem 0.5rem;
+  }
 `;
 
 // Title with light text color
 const Header = styled.h2`
   font-size: ${(props) => props.theme.fontxxl};
   text-transform: capitalize;
-  color: ${(props) => props.theme.textWhite}; /* Light text for dark theme */
+  color: ${(props) => props.theme.textWhite};
   margin-bottom: 1.5rem;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: ${(props) => props.theme.fontxl}; /* Reduce font size on tablets */
+  }
+  @media (max-width: 480px) {
+    font-size: ${(props) => props.theme.fontlg}; /* Further reduce font size on phones */
+  }
 `;
 
-// Modern Card for each content block with darker background and shadow
-// Card with gradient border
-// Card with gradient border, fixed height and width
 const Card = styled.div`
-background-color: ${(props) => props.theme.textDark}; /* Dark card background */
-border-radius: 10px;
-padding: 2rem;
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Darker shadow for depth */
-transition: transform 0.3s ease;
-border: 2px solid transparent; /* Transparent border */
-background-image: linear-gradient(#000, #000), linear-gradient(to right, #8a2be2, #ff1493); /* Gradient border */
-background-origin: border-box;
-background-clip: padding-box, border-box; /* Apply gradient to the border */
-flex: 1; /* Allow flexbox to adjust width equally */
-min-width: 300px; /* Set a minimum width to avoid shrinking too much */
-max-width: 500px; /* Set a maximum width */
-height: 100%; /* Ensure both cards have the same height */
+  background-color: ${(props) => props.theme.textDark};
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+  border: 2px solid transparent;
+  background-image: linear-gradient(#000, #000), linear-gradient(to right, #8a2be2, #ff1493);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  flex: 1;
+  max-width: 100%; /* Full width on smaller screens */
 
-&:hover {
-  transform: translateY(-10px);
-}
+  &:hover {
+    transform: translateY(-10px);
+  }
 
-@media (max-width: 768px) {
-  max-width: 100%; /* Adjust for smaller screens */
-}
+  @media (max-width: 768px) {
+    max-width: 100%; /* Ensure no overflow on smaller screens */
+    padding: 1.5rem;
+  }
+  @media (max-width: 480px) {
+    padding: 1rem; /* Reduce padding for very small screens */
+  }
 `;
 
-// Container to hold cards side by side with equal width
+
 const CardContainer = styled.div`
 display: flex;
 justify-content: space-between;
-align-items: stretch; /* Ensure equal height cards */
-gap: 1rem; /* Add some spacing between the cards */
-max-width: 1200px;
+align-items: stretch;
+gap: 1rem;
 width: 100%;
-height: 400px; /* Set a fixed height for the container so cards will match */
+height: 400px;
 margin: 5% 0;
 
 @media (max-width: 768px) {
-  flex-direction: column; /* Stack cards vertically on smaller screens */
+  flex-direction: column; /* Stack cards vertically on tablets and smaller screens */
   height: auto; /* Allow auto height on smaller screens */
+  width 90%;
 }
 `;
 
@@ -74,6 +86,13 @@ const SubHeading = styled.h3`
   font-size: ${(props) => props.theme.fontxl};
   color: ${(props) => props.theme.textWhite};
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: ${(props) => props.theme.fontlg};
+  }
+  @media (max-width: 480px) {
+    font-size: ${(props) => props.theme.fontmd};
+  }
 `;
 
 // Body Text with lighter color for readability
@@ -82,6 +101,13 @@ const Text = styled.p`
   color: ${(props) => props.theme.textWhite};
   line-height: 1.6;
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+  }
 `;
 
 // List for topics with lighter color and spacing
@@ -90,6 +116,10 @@ const List = styled.ul`
   margin-left: 1.5rem;
   margin-bottom: 1rem;
   color: ${(props) => props.theme.textWhite};
+
+  @media (max-width: 480px) {
+    margin-left: 1rem;
+  }
 `;
 
 // List item style
@@ -102,8 +132,12 @@ const Divider = styled.hr`
   width: 100%;
   border: 0;
   height: 1px;
-  background: ${(props) => props.theme.textWhite}; /* Light color for divider */
+  background: ${(props) => props.theme.textWhite};
   margin: 3rem 0;
+
+  @media (max-width: 480px) {
+    margin: 2rem 0; /* Reduce margin on smaller screens */
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -158,18 +192,7 @@ const Showcase = () => {
             </Text>
           </Card>
         </CardContainer>
-
         <Divider />
-
-        {/* Social Media Section */}
-        <Smallheader>Follow the Research and Delegations Team on Social Media!</Smallheader>
-        <div style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }}>
-          <TwitterTimelineEmbed sourceType="profile" screenName="BoilerChain" options={{ height: 350 }} />
-        </div>
-
-        <ButtonContainer>
-          <Button text="FOLLOW ON MEDIUM" link="https://boilerblockchain.medium.com/" newTab={true} />
-        </ButtonContainer>
       </Section>
     </ThemeProvider>
   );

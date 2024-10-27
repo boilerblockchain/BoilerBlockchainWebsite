@@ -13,205 +13,158 @@ import Loading from '../Loading';
 
 
 const Section = styled.section`
-min-height: 100vh;
-width: 100vw;
-background-color: ${props => props.theme.body};
-position: relative;
-overflow: hidden;
-`
+  min-height: 100vh;
+  width: 100vw;
+  background-color: ${(props) => props.theme.body};
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const Title = styled.h1`
   font-size: ${(props) => props.theme.fontxxl};
-  text-transform: capitalize;
+  text-transform: uppercase;
   color: ${(props) => props.theme.textWhite};
+  font-weight: 700;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1rem auto;
-  border-bottom: 2px solid ${(props) => props.theme.textWhite};
+  margin: 2rem auto;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid ${(props) => props.theme.textWhite};
+  letter-spacing: 2px;
   width: fit-content;
 
-  @media (max-width: 40em){
+  @media (max-width: 40em) {
     font-size: ${(props) => props.theme.fontxl};
-
-}
+  }
 `;
 
-const Container = styled.div`
-width: 75%;
-margin: 2rem auto;
-
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-
-@media (max-width: 64em){
-width: 80%;
-}
-@media (max-width: 48em){
-width: 90%;
-justify-content: center;
-}
-`
-
-const Item = styled.div`
-width: calc(20rem - 4vw);
-padding: 1rem 0;
-color: ${props => props.theme.body};
-margin: 2rem 1rem;
-position: relative;
-z-index:5;
-
-backdrop-filter: blur(4px);
-
-border: 2px solid ${props => props.theme.textWhite};
-border-radius: 20px;
-
-&:hover{
-  img{
-    transform: translateY(-2rem) scale(1.2);
-  }
-}
-
-@media (max-width: 30em){
-width: 70vw;
-}
-
-`
-
-const ImageContainer = styled.div`
-width: 80%;
-margin: 0 auto;
-background-color:${props => props.theme.carouselColor};
-border: 1px solid ${props => props.theme.textWhite};
-padding: 1rem;
-
-border-radius: 20px;
-cursor: pointer;
-
-img{
-  width: 100%;
-  height: auto;
-transition: all 0.3s ease;
-
-}
-`
-
-const Name = styled.h2`
-font-size: ${props => props.theme.fontlg};
-display: flex;
-align-items: center;
-justify-content: center;
-text-transform: uppercase;
-color: ${props => props.theme.textWhite};
-margin-top: 1rem;
-`
-
-const Position = styled.h2`
-font-size: ${props => props.theme.fontmd};
-display: flex;
-align-items: center;
-justify-content: center;
-text-transform: capitalize;
-color: ${props => `rgba(255,255,255,0.9)`};
-font-weight:400;
-`
-
-const MemberComponent = ({img, name=" ",position=" "}) => {
-
-  return(
-    <Item>
-      <ImageContainer>
-        <img width={500} height={400}  src={img} alt={name} />
-      </ImageContainer>
-      <Name>{name}</Name>
-      <Position>{position}</Position>
-    </Item>
-  )
-}
 const SubTextContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin: 1rem auto;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column; /* Stack items vertically on mobile */
+  margin: 2rem auto;
   width: 80%;
+  gap: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 15px;
 
-  @media (max-width: 64em) {
-    flex-direction: column;
-    width: 100%;
+  @media (min-width: 769px) {
+    flex-direction: row; /* Row layout for larger screens */
+    justify-content: space-between;
+    width: 80%;
   }
 `;
 
 const SubTextColumn = styled.div`
   flex: 1;
-  padding: 0 1rem;
+  padding: 1rem;
+  
+  &:first-child {
+    order: 2;
+    max-width: 50%;
+  }
+  &:last-child {
+    max-width: 50%;
+  }
 
   img {
     width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 
-  @media (max-width: 64em) {
+  @media (max-width: 768px) {
+    order: initial;
+    max-width: 100%;
     padding: 0;
     margin-bottom: 1rem;
+    text-align: center;
   }
 `;
 
 const SubTitle = styled.h3`
   font-size: ${(props) => props.theme.fontlg};
-  text-transform: capitalize;
   color: ${(props) => props.theme.textWhite};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem auto;
-  border-bottom: 2px solid ${(props) => props.theme.textWhite};
-  width: 80%;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0.5rem 0;
+  border-bottom: 1px solid ${(props) => props.theme.textWhite};
+  width: 100%;
+  text-align: left;
+  letter-spacing: 1.5px; /* Adds modern spacing */
+  
+  a {
+    color: ${(props) => props.theme.textWhite};
+    text-decoration: none;
+    transition: color 0.3s ease;
 
-  @media (max-width: 40em){
+    &:hover {
+      color: ${(props) => props.theme.accentColor}; /* Accent color on hover */
+    }
+  }
+
+  @media (max-width: 40em) {
+    font-size: ${(props) => props.theme.fontmd};
     text-align: center;
-    font-size: ${(props) => props.theme.fontxl};
-
-}
+  }
 `;
 
 const SubText = styled.p`
-  font-size: ${(props) => props.theme.fontlg};
+  font-size: ${(props) => props.theme.fontmd};
   color: ${(props) => props.theme.textWhite};
-  align-self: flex-start;
-  width: 80%;
-  margin: 1rem auto;
-  font-weight: 400;
-  @media (max-width: 64em) {
-    width: 100%;
-    text-align: center;
-    font-size: ${(props) => props.theme.fontmd};
-  }
-  @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontmd};
-  }
-  @media (max-width: 30em) {
+  margin: 1rem 0;
+  line-height: 1.6;
+  text-align: left;
+
+  @media (max-width: 768px) {
     font-size: ${(props) => props.theme.fontsm};
+    text-align: center;
   }
 `;
 
 const Team = () => {
   return (
     <Section id="team">
-    <Suspense fallback={<Loading />}>
-    </Suspense>
-      <Title>Education / Courses</Title>
+      <Suspense fallback={<Loading />} />
+      <Title>Educational Courses</Title>
       <SubTextContainer>
         <SubTextColumn>
-          <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00" rel="noreferrer">
-          Principles and Practices of Blockchain (technical)</a></SubTitle>
-          <SubText>
-          This course aims to provide individuals with a comprehensive, hands-on overview of blockchain technology and 
-          decentralized applications from a developer perspective. From basic cryptography concepts and blockchain use 
-          cases to the latest developments in the technical field, this course will provide students with the necessary 
-          skills and tools to pursue opportunities in the technology field.
-          </SubText>
-          <img src={img2} alt="img2" />
+          <img src={img2} alt="Blockchain Course" />
         </SubTextColumn>
         <SubTextColumn>
+          <SubTitle>
+            <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00" rel="noreferrer">
+              Principles and Practices of Blockchain (Technical)
+            </a>
+          </SubTitle>
+          <SubText>
+            This course aims to provide individuals with a comprehensive, hands-on overview of blockchain technology and decentralized applications from a developer perspective. From basic cryptography concepts and blockchain use cases to the latest developments in the technical field, this course will provide students with the necessary skills and tools to pursue opportunities in the technology field.
+          </SubText>
+        </SubTextColumn>
+      </SubTextContainer>
+    </Section>
+  );
+};
+
+export default Team;
+
+
+
+
+ {/* <SubTextColumn>
           <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=129%20&course_subtitle=00" rel="noreferrer">
           Introduction to Blockchain (non-technical)</a></SubTitle>          
           <SubText>
@@ -221,10 +174,4 @@ const Team = () => {
           knowledge to understand the blockchain-space. No prior CS experience needed.
           </SubText>
           <img src={img5} alt="img5" />
-        </SubTextColumn>
-      </SubTextContainer>
-    </Section>
-  )
-}
-
-export default Team
+        </SubTextColumn> */}
