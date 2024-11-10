@@ -43,7 +43,7 @@ const Menu = styled.ul`
   list-style: none;
   margin-right: 2rem;
   padding: 0;
-  
+
   @media (max-width: 64em) {
     position: fixed;
     top: ${(props) => props.theme.navHeight};
@@ -55,7 +55,8 @@ const Menu = styled.ul`
     background-color: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(2px);
 
-    transform: ${(props) => (props.click ? "translateY(0)" : "translateY(100%)")};
+    transform: ${(props) =>
+      props.click ? "translateY(0)" : "translateY(100%)"};
     transition: transform 0.3s ease;
     flex-direction: column;
     justify-content: center;
@@ -103,7 +104,7 @@ const HamburgerMenu = styled.div`
   z-index: 100;
   margin-right: 2rem;
   margin-top: 2rem;
-  
+
   @media (min-width: 64em) {
     display: none;
   }
@@ -115,26 +116,29 @@ const HamburgerMenu = styled.div`
     transition: all 0.3s ease;
 
     &:nth-child(1) {
-      transform: ${(props) => (props.click ? "rotate(45deg) translateY(7px)" : "rotate(0)")};
+      transform: ${(props) =>
+        props.click ? "rotate(45deg) translateY(7px)" : "rotate(0)"};
     }
 
     &:nth-child(2) {
-      opacity: ${(props) => (props.click ? "0" : "1")}; /* Hide the middle line when clicked */
+      opacity: ${(props) =>
+        props.click ? "0" : "1"}; /* Hide the middle line when clicked */
     }
 
     &:nth-child(3) {
-      transform: ${(props) => (props.click ? "rotate(-45deg) translateY(-7px)" : "rotate(0)")};
+      transform: ${(props) =>
+        props.click ? "rotate(-45deg) translateY(-7px)" : "rotate(0)"};
     }
   }
 `;
-
 
 const Navigation = () => {
   const [click, setClick] = useState(false);
 
   const customScroll = (id, duration) => {
     const element = document.getElementById(id);
-    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset;
+    const targetPosition =
+      element.getBoundingClientRect().top + window.pageYOffset;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     let startTime = null;

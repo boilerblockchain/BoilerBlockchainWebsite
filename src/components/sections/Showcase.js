@@ -1,6 +1,6 @@
-import React from 'react';
-import styled, { ThemeProvider } from 'styled-components';
-import { TwitterTimelineEmbed } from 'react-twitter-embed';
+import React from "react";
+import styled, { ThemeProvider } from "styled-components";
+import { TwitterTimelineEmbed } from "react-twitter-embed";
 import Button from "../Button";
 import { dark } from "../../styles/Themes";
 
@@ -30,10 +30,12 @@ const Header = styled.h2`
   text-align: center;
 
   @media (max-width: 768px) {
-    font-size: ${(props) => props.theme.fontxl}; /* Reduce font size on tablets */
+    font-size: ${(props) =>
+      props.theme.fontxl}; /* Reduce font size on tablets */
   }
   @media (max-width: 480px) {
-    font-size: ${(props) => props.theme.fontlg}; /* Further reduce font size on phones */
+    font-size: ${(props) =>
+      props.theme.fontlg}; /* Further reduce font size on phones */
   }
 `;
 
@@ -44,7 +46,8 @@ const Card = styled.div`
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease;
   border: 2px solid transparent;
-  background-image: linear-gradient(#000, #000), linear-gradient(to right, #8a2be2, #ff1493);
+  background-image: linear-gradient(#000, #000),
+    linear-gradient(to right, #8a2be2, #ff1493);
   background-origin: border-box;
   background-clip: padding-box, border-box;
   flex: 1;
@@ -63,7 +66,6 @@ const Card = styled.div`
   }
 `;
 
-
 const CardContainer = styled.div`
 display: flex;
 justify-content: space-between;
@@ -79,7 +81,6 @@ margin: 5% 0;
   width 90%;
 }
 `;
-
 
 // Sub-heading inside card
 const SubHeading = styled.h3`
@@ -163,7 +164,9 @@ const Showcase = () => {
           <Card>
             <SubHeading>Research</SubHeading>
             <Text>
-              Our research explores the mechanics and real-world applications of decentralized blockchain technology. We collaborate across industries and disciplines to develop solutions in:
+              Our research explores the mechanics and real-world applications of
+              decentralized blockchain technology. We collaborate across
+              industries and disciplines to develop solutions in:
             </Text>
             <List>
               <ListItem>Consensus algorithms</ListItem>
@@ -172,7 +175,8 @@ const Showcase = () => {
               <ListItem>Decentralized applications</ListItem>
             </List>
             <Text>
-              We focus on industries like finance, healthcare, and supply chain management to uncover blockchain’s transformative potential.
+              We focus on industries like finance, healthcare, and supply chain
+              management to uncover blockchain’s transformative potential.
             </Text>
           </Card>
 
@@ -180,7 +184,8 @@ const Showcase = () => {
           <Card>
             <SubHeading>Delegations</SubHeading>
             <Text>
-              The Delegations team investigates decentralized governance and delegation protocols such as:
+              The Delegations team investigates decentralized governance and
+              delegation protocols such as:
             </Text>
             <List>
               <ListItem>Delegated proof-of-stake (DPoS)</ListItem>
@@ -188,7 +193,8 @@ const Showcase = () => {
               <ListItem>Innovative governance models</ListItem>
             </List>
             <Text>
-              We enhance blockchain decision-making efficiency, making decentralized systems more inclusive and secure.
+              We enhance blockchain decision-making efficiency, making
+              decentralized systems more inclusive and secure.
             </Text>
           </Card>
         </CardContainer>

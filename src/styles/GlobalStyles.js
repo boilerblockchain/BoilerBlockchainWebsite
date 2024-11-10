@@ -1,17 +1,16 @@
 import { createGlobalStyle } from "styled-components";
-import "@fontsource/akaya-telivigala"
-import "@fontsource/sora"
-import "@fontsource/lato"
-
-
-
+import "@fontsource/akaya-telivigala";
+import "@fontsource/sora";
+import "@fontsource/lato";
 
 const GlobalStyles = createGlobalStyle`
 
-${'' /* 
+${
+  "" /* 
 *{
     outline: 1px solid red !important;
-} */}
+} */
+}
 
 html{
     scroll-behavior: smooth;
@@ -25,7 +24,7 @@ body{
     font-family: 'Lato', sans-serif;
     overflow-x: hidden;
     height: 100%;
-    background-image: ${props => props.theme.body};
+    background-image: ${(props) => props.theme.body};
     background-size: 100% 100%;
     animation: Gradient 1s linear infinite;
     overflow-x: hidden;
@@ -49,6 +48,6 @@ a{
     color: inherit;
     text-decoration:none;
 }
-`
+`;
 
 export default GlobalStyles;

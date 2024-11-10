@@ -1,16 +1,15 @@
-import React, { lazy, Suspense } from 'react'
-import styled from 'styled-components';
+import React, { lazy, Suspense } from "react";
+import styled from "styled-components";
 
-import img1 from '../../assets/images/1.jpg';
-import img2 from '../../assets/images/2.jpg';
-import img3 from '../../assets/images/3.jpg';
-import img4 from '../../assets/images/4.jpg';
-import img5 from '../../assets/images/5.jpg';
-import Loading from '../Loading';
+import img1 from "../../assets/images/1.jpg";
+import img2 from "../../assets/images/2.jpg";
+import img3 from "../../assets/images/3.jpg";
+import img4 from "../../assets/images/4.jpg";
+import img5 from "../../assets/images/5.jpg";
+import Loading from "../Loading";
 // import ConfettiComponent from '../Confetti';
 
 // const ConfettiComponent = lazy(() => import("../Confetti"));
-
 
 const Section = styled.section`
   min-height: 100vh;
@@ -66,7 +65,7 @@ const SubTextContainer = styled.div`
 const SubTextColumn = styled.div`
   flex: 1;
   padding: 1rem;
-  
+
   &:first-child {
     order: 2;
     max-width: 50%;
@@ -105,7 +104,7 @@ const SubTitle = styled.h3`
   width: 100%;
   text-align: left;
   letter-spacing: 1.5px; /* Adds modern spacing */
-  
+
   a {
     color: ${(props) => props.theme.textWhite};
     text-decoration: none;
@@ -146,12 +145,21 @@ const Team = () => {
         </SubTextColumn>
         <SubTextColumn>
           <SubTitle>
-            <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00" rel="noreferrer">
+            <a
+              href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00"
+              rel="noreferrer"
+            >
               Principles and Practices of Blockchain (Technical)
             </a>
           </SubTitle>
           <SubText>
-            This course aims to provide individuals with a comprehensive, hands-on overview of blockchain technology and decentralized applications from a developer perspective. From basic cryptography concepts and blockchain use cases to the latest developments in the technical field, this course will provide students with the necessary skills and tools to pursue opportunities in the technology field.
+            This course aims to provide individuals with a comprehensive,
+            hands-on overview of blockchain technology and decentralized
+            applications from a developer perspective. From basic cryptography
+            concepts and blockchain use cases to the latest developments in the
+            technical field, this course will provide students with the
+            necessary skills and tools to pursue opportunities in the technology
+            field.
           </SubText>
         </SubTextColumn>
       </SubTextContainer>
@@ -161,10 +169,8 @@ const Team = () => {
 
 export default Team;
 
-
-
-
- {/* <SubTextColumn>
+{
+  /* <SubTextColumn>
           <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=129%20&course_subtitle=00" rel="noreferrer">
           Introduction to Blockchain (non-technical)</a></SubTitle>          
           <SubText>
@@ -174,4 +180,5 @@ export default Team;
           knowledge to understand the blockchain-space. No prior CS experience needed.
           </SubText>
           <img src={img5} alt="img5" />
-        </SubTextColumn> */}
+        </SubTextColumn> */
+}

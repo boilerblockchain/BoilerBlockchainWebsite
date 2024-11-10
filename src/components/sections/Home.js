@@ -1,18 +1,18 @@
-import React, { lazy, Suspense, useState, useEffect, useCallback } from 'react';
-import styled from 'styled-components';
+import React, { lazy, Suspense, useState, useEffect, useCallback } from "react";
+import styled from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
 
-const CoverVideo = lazy(() => import('../CoverVideo'));
-const TypeWriterText = lazy(() => import('../TypeWriterText'));
+const CoverVideo = lazy(() => import("../CoverVideo"));
+const TypeWriterText = lazy(() => import("../TypeWriterText"));
 
 const Section = styled.section`
   min-height: 100vh;
   width: 100vw;
   position: relative;
-  background-color: ${props => props.theme.body};
+  background-color: ${(props) => props.theme.body};
 `;
 
 const Container = styled.div`
@@ -29,7 +29,7 @@ const Container = styled.div`
   @media (max-width: 48em) {
     flex-direction: column;
     width: 100%;
-    &>*:first-child {
+    & > *:first-child {
       width: 100%;
       margin-top: 2rem;
     }
@@ -95,9 +95,16 @@ const Home = ({ onScrollToNext }) => {
   return (
     <Section id="home">
       <div style={{ position: "relative", minHeight: "200vh", width: "100vw" }}>
-        {useMemo(() => (
-          <Particles id="tsparticles" init={particlesInit} options={particlesOptions} />
-        ), [particlesInit])}
+        {useMemo(
+          () => (
+            <Particles
+              id="tsparticles"
+              init={particlesInit}
+              options={particlesOptions}
+            />
+          ),
+          [particlesInit],
+        )}
 
         <div
           style={{
@@ -173,14 +180,17 @@ const Home = ({ onScrollToNext }) => {
             stroke: white;
             stroke-width: 2;
             fill: none;
-            transition: stroke 0.3s ease, transform 0.3s ease;
+            transition:
+              stroke 0.3s ease,
+              transform 0.3s ease;
           }
           button:hover .arrow-svg {
             stroke: url(#grad1);
             transform: scale(1.2);
           }
           @keyframes bounce {
-            0%, 100% {
+            0%,
+            100% {
               transform: translateY(0);
             }
             50% {
@@ -196,8 +206,14 @@ const Home = ({ onScrollToNext }) => {
         <svg width="0" height="0">
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: "#7120b0", stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: "#9d20b0", stopOpacity: 1 }} />
+              <stop
+                offset="0%"
+                style={{ stopColor: "#7120b0", stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: "#9d20b0", stopOpacity: 1 }}
+              />
             </linearGradient>
           </defs>
         </svg>

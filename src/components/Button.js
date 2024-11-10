@@ -37,7 +37,7 @@ const Btn = styled.a`
   }
 `;
 
-const Button = ({ text, link="#", newTab = false }) => {
+const Button = ({ text, link = "#", newTab = false }) => {
   return (
     <Btn
       href={link}

@@ -4,7 +4,7 @@ import styled, { ThemeProvider } from "styled-components";
 import Button from "../Button";
 import { light, dark } from "../../styles/Themes";
 import Loading from "../Loading";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const Carousel = lazy(() => import("../Carousel"));
 
@@ -150,16 +150,32 @@ const About = () => {
           <Title>
             Welcome To <br /> Boiler Blockchain!
           </Title>
-          <SubText>Boiler Blockchain is Purdue's premier student-led organization dedicated to advancing blockchain technology. We equip students with practical knowledge and hands-on experience to excel in this revolutionary field.</SubText>
-          <SubTextLight>Join us to explore the potential of blockchain through education, innovation, and collaboration. Our diverse activities, from technical courses to hackathons, prepare you to lead in the blockchain ecosystem. Dive into our projects showcased on the side to see the impact of our vibrant community.</SubTextLight>
+          <SubText>
+            Boiler Blockchain is Purdue's premier student-led organization
+            dedicated to advancing blockchain technology. We equip students with
+            practical knowledge and hands-on experience to excel in this
+            revolutionary field.
+          </SubText>
+          <SubTextLight>
+            Join us to explore the potential of blockchain through education,
+            innovation, and collaboration. Our diverse activities, from
+            technical courses to hackathons, prepare you to lead in the
+            blockchain ecosystem. Dive into our projects showcased on the side
+            to see the impact of our vibrant community.
+          </SubTextLight>
           <ButtonContainer>
             <ThemeProvider theme={dark}>
-              <Button text="Learn More" link="/about" newTab={false} /> {/* Not sure if we should make a new tab here */}
+              <Button text="Learn More" link="/about" newTab={false} />{" "}
+              {/* Not sure if we should make a new tab here */}
             </ThemeProvider>
           </ButtonContainer>
           <ButtonContainer>
             <ThemeProvider theme={dark}>
-              <Button text="JOIN OUR DISCORD" link="https://discord.com/invite/YdBH68uXUQ" newTab={true} />
+              <Button
+                text="JOIN OUR DISCORD"
+                link="https://discord.com/invite/YdBH68uXUQ"
+                newTab={true}
+              />
             </ThemeProvider>
           </ButtonContainer>
         </Box>

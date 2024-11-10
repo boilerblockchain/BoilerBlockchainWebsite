@@ -1,8 +1,8 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark, light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
-import styled from 'styled-components';
+import styled from "styled-components";
 
 import Navigation from "./components/Navigation";
 import About from "./components/sections/About";
@@ -22,7 +22,8 @@ const NavigationWrapper = styled.div`
 
 const SectionWrapper = styled.section`
   position: relative;
-  z-index: ${props => props.zIndex || 1}; /* Dynamic z-index for different sections */
+  z-index: ${(props) =>
+    props.zIndex || 1}; /* Dynamic z-index for different sections */
 `;
 
 const FooterWrapper = styled.footer`
@@ -35,7 +36,8 @@ function App() {
 
   // Custom scroll function to control duration
   const customScroll = (targetRef, duration) => {
-    const targetPosition = targetRef.current.getBoundingClientRect().top + window.pageYOffset;
+    const targetPosition =
+      targetRef.current.getBoundingClientRect().top + window.pageYOffset;
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     let startTime = null;
@@ -51,9 +53,9 @@ function App() {
     // Ease in-out function for smooth animation
     const easeInOutQuad = (t, b, c, d) => {
       t /= d / 2;
-      if (t < 1) return c / 2 * t * t + b;
+      if (t < 1) return (c / 2) * t * t + b;
       t--;
-      return -c / 2 * (t * (t - 2) - 1) + b;
+      return (-c / 2) * (t * (t - 2) - 1) + b;
     };
 
     requestAnimationFrame(animateScroll);

@@ -1,14 +1,10 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-
-// Import images
-import img5 from '../../assets/images/5.jpg';
-import img6 from '../../assets/images/6.jpg';
-import img7 from '../../assets/images/7.jpg';
-import img8 from '../../assets/images/8.jpg';
-import img9 from '../../assets/images/9.jpg';
-import img10 from '../../assets/images/10.jpg';
+import React from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import img5 from "../../assets/images/5.jpg";
+import img6 from "../../assets/images/6.jpg";
+import img7 from "../../assets/images/7.jpg";
+import img9 from "../../assets/images/9.jpg";
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -40,7 +36,7 @@ const HeroTitle = styled.h1`
   color: #ffffff;
   text-align: center;
   margin-bottom: 1.5rem;
-  
+
   @media (max-width: 40em) {
     font-size: ${(props) => props.theme.fontxl};
   }
@@ -73,7 +69,7 @@ const ContentBlock = styled.div`
   border: 1px solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
-  
+
   h2 {
     color: #ffffff;
     font-size: ${(props) => props.theme.fontxl};
@@ -114,7 +110,7 @@ const ImageContainer = styled.div`
   min-height: 300px;
   border-radius: 15px;
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -157,7 +153,7 @@ const BackButton = styled(Link)`
 
 const DiscordButton = styled.a`
   display: inline-block;
-  background: linear-gradient(45deg, #7289DA, #5865F2);
+  background: linear-gradient(45deg, #7289da, #5865f2);
   color: white;
   padding: 1rem 2rem;
   border-radius: 8px;
@@ -187,19 +183,35 @@ const AboutPage = () => {
       <Container>
         <HeroTitle>Who Are We?</HeroTitle>
         <HeroSubtitle>
-          Boiler Blockchain is Purdue's premier student-led organization dedicated to advancing blockchain technology
-          through innovation, education, and community.
+          Boiler Blockchain is Purdue's premier student-led organization
+          dedicated to advancing blockchain technology through innovation,
+          education, and community.
         </HeroSubtitle>
 
         <Grid>
           <ContentBlock>
             <h2>About Us</h2>
-            <p>At Boiler Blockchain, we're building the future of Web3 at Purdue University.</p>
+            <p>
+              At Boiler Blockchain, we're building the future of Web3 at Purdue
+              University.
+            </p>
             <List>
-              <li>Leading student-run blockchain organization fostering innovation and learning since 2021</li>
-              <li>Collaborative environment bringing together developers, researchers, and industry partners</li>
-              <li>Strong focus on practical implementation and real-world applications</li>
-              <li>Active community of 200+ members from diverse academic backgrounds</li>
+              <li>
+                Leading student-run blockchain organization fostering innovation
+                and learning since 2021
+              </li>
+              <li>
+                Collaborative environment bringing together developers,
+                researchers, and industry partners
+              </li>
+              <li>
+                Strong focus on practical implementation and real-world
+                applications
+              </li>
+              <li>
+                Active community of 200+ members from diverse academic
+                backgrounds
+              </li>
             </List>
           </ContentBlock>
 
@@ -213,23 +225,52 @@ const AboutPage = () => {
 
           <ContentBlock>
             <h2>Hackathons & Innovation</h2>
-            <p>Creating breakthrough blockchain solutions through competitive innovation.</p>
+            <p>
+              Creating breakthrough blockchain solutions through competitive
+              innovation.
+            </p>
             <List>
-              <li>Annual flagship hackathon with over $10,000 in prizes and industry sponsorships</li>
-              <li>Focused tracks in DeFi, NFTs, Web3 infrastructure, and social impact</li>
-              <li>Direct mentorship from experienced developers and industry professionals</li>
-              <li>Opportunity to develop projects with real-world implementation potential</li>
+              <li>
+                Annual flagship hackathon with over $10,000 in prizes and
+                industry sponsorships
+              </li>
+              <li>
+                Focused tracks in DeFi, NFTs, Web3 infrastructure, and social
+                impact
+              </li>
+              <li>
+                Direct mentorship from experienced developers and industry
+                professionals
+              </li>
+              <li>
+                Opportunity to develop projects with real-world implementation
+                potential
+              </li>
             </List>
           </ContentBlock>
 
           <ContentBlock>
             <h2>Learning & Development</h2>
-            <p>Comprehensive blockchain education from fundamentals to advanced implementation.</p>
+            <p>
+              Comprehensive blockchain education from fundamentals to advanced
+              implementation.
+            </p>
             <List>
-              <li>Structured technical workshops covering Ethereum, Solidity, and Web3 development</li>
-              <li>Hands-on experience with smart contracts and decentralized applications</li>
-              <li>Access to industry-standard tools and development frameworks</li>
-              <li>Collaborative learning environment with peer programming sessions</li>
+              <li>
+                Structured technical workshops covering Ethereum, Solidity, and
+                Web3 development
+              </li>
+              <li>
+                Hands-on experience with smart contracts and decentralized
+                applications
+              </li>
+              <li>
+                Access to industry-standard tools and development frameworks
+              </li>
+              <li>
+                Collaborative learning environment with peer programming
+                sessions
+              </li>
             </List>
           </ContentBlock>
 
@@ -245,17 +286,27 @@ const AboutPage = () => {
             <h2>Community & Network</h2>
             <p>Building lasting connections in the blockchain ecosystem.</p>
             <List>
-              <li>Regular networking events with industry professionals and alumni</li>
-              <li>Opportunities to join specialized project teams and research groups</li>
-              <li>Mentorship program connecting experienced members with newcomers</li>
-              <li>Social events and collaborative learning sessions to strengthen community bonds</li>
+              <li>
+                Regular networking events with industry professionals and alumni
+              </li>
+              <li>
+                Opportunities to join specialized project teams and research
+                groups
+              </li>
+              <li>
+                Mentorship program connecting experienced members with newcomers
+              </li>
+              <li>
+                Social events and collaborative learning sessions to strengthen
+                community bonds
+              </li>
             </List>
           </ContentBlock>
         </Grid>
 
-        <DiscordButton 
-          href="https://discord.com/invite/YdBH68uXUQ" 
-          target="_blank" 
+        <DiscordButton
+          href="https://discord.com/invite/YdBH68uXUQ"
+          target="_blank"
           rel="noopener noreferrer"
         >
           Join Our Discord

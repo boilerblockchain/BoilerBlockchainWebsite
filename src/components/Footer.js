@@ -1,194 +1,201 @@
-import React, { lazy, Suspense } from 'react'
-import styled from 'styled-components'
+import React, { lazy, Suspense } from "react";
+import styled from "styled-components";
 // import Banner from './Banner'
-import Logo from './Logo'
+import Logo from "./Logo";
 
-import Discord from '../Icons/Discord'
-import Instagram from '../Icons/Instagram'
-import Twitter from '../Icons/Twitter'
-import LinkedIn from '../Icons/LinkedIn'
-import Medium from '../Icons/Medium'
-import Github from '../Icons/Github'
-import Loading from './Loading'
+import Discord from "../Icons/Discord";
+import Instagram from "../Icons/Instagram";
+import Twitter from "../Icons/Twitter";
+import LinkedIn from "../Icons/LinkedIn";
+import Medium from "../Icons/Medium";
+import Github from "../Icons/Github";
+import Loading from "./Loading";
 
 const Banner = lazy(() => import("./Banner"));
 
-
 const Section = styled.section`
-min-height: 100vh;
-width: 100vw;
-background-color: ${props => props.theme.text};
-position: relative;
-color: ${(props) => props.theme.textWhite};
+  min-height: 100vh;
+  width: 100vw;
+  background-color: ${(props) => props.theme.text};
+  position: relative;
+  color: ${(props) => props.theme.textWhite};
 
-display: flex;
-/* justify-content: center; */
-/* align-items: center; */
-flex-direction: column;
-`
+  display: flex;
+  /* justify-content: center; */
+  /* align-items: center; */
+  flex-direction: column;
+`;
 
 const Container = styled.div`
-width: 75%;
-margin: 2rem auto;
-display: flex;
-justify-content: space-between;
-align-items: center;
+  width: 75%;
+  margin: 2rem auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-border-bottom: 1px solid ${(props) => props.theme.textWhite};
+  border-bottom: 1px solid ${(props) => props.theme.textWhite};
 
-@media (max-width: 48em) {
-width: 90%;
+  @media (max-width: 48em) {
+    width: 90%;
 
-h1{
-font-size: ${props => props.theme.fontxxxl};
-
-}
-}
-`
+    h1 {
+      font-size: ${(props) => props.theme.fontxxxl};
+    }
+  }
+`;
 const Left = styled.div`
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
-@media (max-width: 48em) {
-width: 100%;
-}
-`
+  @media (max-width: 48em) {
+    width: 100%;
+  }
+`;
 
 const IconList = styled.div`
-display: flex;
-align-items: center;
-margin: 1rem auto;
+  display: flex;
+  align-items: center;
+  margin: 1rem auto;
 
-&>*{
-  padding-right: 0.5rem;
-  transition: all 0.2s ease;
+  & > * {
+    padding-right: 0.5rem;
+    transition: all 0.2s ease;
 
-  &:hover{
-    transform: scale(1.2);
+    &:hover {
+      transform: scale(1.2);
+    }
   }
-}
-`
+`;
 const MenuItems = styled.ul`
-list-style:none;
-width: 50%;
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-grid-template-rows: repeat(3, 1fr);
-grid-gap: 1rem;
+  list-style: none;
+  width: 50%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-gap: 1rem;
 
-@media (max-width: 48em) {
-display: none;
-}
-`
+  @media (max-width: 48em) {
+    display: none;
+  }
+`;
 const Item = styled.li`
-width: fit-content;
-cursor: pointer;
+  width: fit-content;
+  cursor: pointer;
 
-&::after{
-  content: ' ';
-  display: block;
-  width: 0%;
-  height: 2px;
-  background: ${props => props.theme.textWhite};
-  transition: width 0.3s ease;
-}
-&:hover::after{
-  width: 100%;
-}
-`
+  &::after {
+    content: " ";
+    display: block;
+    width: 0%;
+    height: 2px;
+    background: ${(props) => props.theme.textWhite};
+    transition: width 0.3s ease;
+  }
+  &:hover::after {
+    width: 100%;
+  }
+`;
 
 const Bottom = styled.div`
-width: 75%;
-margin: 0 auto;
-display: flex;
-justify-content: space-between;
-align-items: center;
+  width: 75%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-a{
-  text-decoration:underline;
-}
-@media (max-width: 48em) {
-flex-direction: column;
-width: 100%;
+  a {
+    text-decoration: underline;
+  }
+  @media (max-width: 48em) {
+    flex-direction: column;
+    width: 100%;
 
-span{
-  margin-bottom: 1rem;
-}
-}
-`
+    span {
+      margin-bottom: 1rem;
+    }
+  }
+`;
 
 const Footer = () => {
-
   const scrollTo = (id) => {
-
     let element = document.getElementById(id);
-  
+
     element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-      inline: 'nearest'
-    })
-  }
-  
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
+  };
+
   return (
     <Section>
-      
-<Suspense fallback={<Loading />}>
-<Banner /> </Suspense>
+      <Suspense fallback={<Loading />}>
+        <Banner />{" "}
+      </Suspense>
 
       <Container>
-    <Left> 
-    <Logo />
-    <IconList>
-      <a href="https://discord.com/invite/YdBH68uXUQ" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='discord'
-      >
-        <Discord />
-      </a>
-      <a href="https://www.instagram.com/boilerblockchain/" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='instagram'
-      >
-        <Instagram />
-      </a>
-      <a href="https://twitter.com/boilerchain" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='twitter'
-      >
-        <Twitter />
-      </a>
-      <a href="https://www.linkedin.com/company/boilerblockchain/" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='linkedin'
-      >
-        <LinkedIn />
-      </a>
-      <a href="https://boilerblockchain.medium.com/" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='medium'
-      >
-        <Medium />
-      </a>
-      <a href="https://github.com/boilerblockchain/" target='_blank' 
-      rel="noopener noreferrer"
-      aria-label='github'
-      >
-        <Github />
-      </a>
-    </IconList>
-    </Left>
-    <MenuItems>
-    <Item onClick={() => scrollTo('home')}  >Home</Item>
-          <Item onClick={() => scrollTo('about')}  >About</Item>
-          <Item onClick={() => scrollTo('hackathons')}  >Hackathons</Item>
-          <Item onClick={() => scrollTo('showcase')}  >Research</Item>
-          <Item onClick={() => scrollTo('team')}  >Courses</Item>
+        <Left>
+          <Logo />
+          <IconList>
+            <a
+              href="https://discord.com/invite/YdBH68uXUQ"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="discord"
+            >
+              <Discord />
+            </a>
+            <a
+              href="https://www.instagram.com/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="instagram"
+            >
+              <Instagram />
+            </a>
+            <a
+              href="https://twitter.com/boilerchain"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="twitter"
+            >
+              <Twitter />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="linkedin"
+            >
+              <LinkedIn />
+            </a>
+            <a
+              href="https://boilerblockchain.medium.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="medium"
+            >
+              <Medium />
+            </a>
+            <a
+              href="https://github.com/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="github"
+            >
+              <Github />
+            </a>
+          </IconList>
+        </Left>
+        <MenuItems>
+          <Item onClick={() => scrollTo("home")}>Home</Item>
+          <Item onClick={() => scrollTo("about")}>About</Item>
+          <Item onClick={() => scrollTo("hackathons")}>Hackathons</Item>
+          <Item onClick={() => scrollTo("showcase")}>Research</Item>
+          <Item onClick={() => scrollTo("team")}>Courses</Item>
           {/* <Item onClick={() => scrollTo('faq')}  >Faq</Item> */}
-
-    </MenuItems>
+        </MenuItems>
       </Container>
       {/* <Bottom>
         <span>
@@ -201,7 +208,7 @@ const Footer = () => {
         </span>
       </Bottom> */}
     </Section>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
