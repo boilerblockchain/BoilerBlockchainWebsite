@@ -4,9 +4,34 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
+import "../../index.css";
 
 const CoverVideo = lazy(() => import('../CoverVideo'));
 const TypeWriterText = lazy(() => import('../TypeWriterText'));
+
+/* TODO:
+- Change font of "This is Boiler Blockchain"
+- Switch to a simpler home page layout with lesser movement/chaos
+  - start particles with somewhere on the right and decrease opacity as the approach left/as they move
+  - hero section on the leftz`
+  - bolder font
+  - "This is" much smaller above "Boiler Blockchain"
+  - "Blockchain" purple text
+- change the transition of hero from zoom in to just regular scroll
+- Welcome to Boiler BC section:
+  - Make the carousel cooler: vertical auto-scrolling
+  - Change text
+  - Add icons
+- Hackathon Highlights:
+  - left: text about hackathon highlights
+  - right: prizes won (animate number)
+  - bottom strip: auto-scrolling list of hackathons where we've participated
+- Courses:
+  - left: number of students taught
+  - right: little about the course
+- links to discord, twitter, instagram 
+*/
+
 
 const Section = styled.section`
   min-height: 100vh;
@@ -55,36 +80,6 @@ const BoxRight = styled.div`
 `;
 
 const Home = ({ onScrollToNext }) => {
-  const [opacity, setOpacity] = useState(1);
-  const [scale, setScale] = useState(1); // New state to track scale
-
-  // Handle scroll effect for opacity and scaling
-  const handleScroll = () => {
-    const scrollPosition = window.scrollY;
-    const fadeOutStart = 0;
-    const fadeOutEnd = window.innerHeight;
-    const fadeOutRange = fadeOutEnd - fadeOutStart;
-
-    if (scrollPosition <= fadeOutStart) {
-      setOpacity(1);
-      setScale(1); // Reset scale when at the top
-    } else if (scrollPosition >= fadeOutEnd) {
-      setOpacity(0);
-      setScale(3); // Max scale when fully scrolled past the section
-    } else {
-      const fadePercentage = (fadeOutEnd - scrollPosition) / fadeOutRange;
-      setOpacity(fadePercentage);
-      const scalePercentage = 1 + (1 - fadePercentage) * 2; // Scale from 1 to 3
-      setScale(scalePercentage);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   // Initialize particles
   const particlesInit = useCallback(async (engine) => {
@@ -114,10 +109,7 @@ const Home = ({ onScrollToNext }) => {
         {/* Main content container */}
         <div
           style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: `translate(-50%, -50%) scale(${scale})`, // Apply scaling correctly while keeping it centered
+            position: "relative",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -125,22 +117,15 @@ const Home = ({ onScrollToNext }) => {
             height: "100vh",
             width: "100vw",
             zIndex: 2,
-            opacity: opacity, // Dynamic opacity change based on scroll
-            transition: "opacity 0.5s ease-out, transform 0.5s ease-out", // Smooth transition
           }}
         >
-          <h1
-            style={{
-              color: "#fff",
-              fontSize: "clamp(4rem, 10vw, 8rem)",
-              textAlign: "center",
-              lineHeight: "1.2",
-              marginBottom: "2rem",
-            }}
+          <h1 className='text-4xl font-display text-center text-zinc-200 animate-fade-in mt-12'
           >
-            This is <br /> <span>Boiler BlockChain</span>
+            This is
           </h1>
-
+          <h1 className='text-white text-8xl font-display mt-6 mb-32 animate-fade-in'>
+            BOILER <span className='text-purple-700'> BLOCKCHAIN </span>
+          </h1>
           {/* Downward Arrow Button for Scroll */}
           <button
             onClick={onScrollToNext} // Function passed from parent to scroll to next section
@@ -148,7 +133,6 @@ const Home = ({ onScrollToNext }) => {
               background: "transparent",
               border: "none",
               cursor: "pointer",
-              padding: "1rem",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -236,7 +220,7 @@ const particlesOptions = {
     },
     move: {
       enable: true,
-      speed: 3,
+      speed: 2,
       path: {
         enable: true,
         options: {
@@ -262,7 +246,7 @@ const particlesOptions = {
   },
   emitters: {
     autoPlay: true,
-    rate: { quantity: 20, delay: 0.25 },
+    rate: { quantity: 15, delay: 0.25},
     position: { x: 50, y: 50 },
   },
   motion: { disable: false, reduce: { factor: 10, value: true } },

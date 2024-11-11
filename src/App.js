@@ -11,8 +11,7 @@ import Hackathons from "./components/sections/Hackathons";
 import Team from "./components/sections/Team";
 import Footer from "./components/Footer";
 import Showcase from "./components/sections/Showcase";
-import Faq from "./components/sections/Faq";
-import ScrollToTop from "./components/ScrollToTop";
+
 
 // Styled wrappers for components to control z-index and layout
 const NavigationWrapper = styled.div`
@@ -67,7 +66,7 @@ function App() {
   };
 
   return (
-    <main>
+    <main className='bg-gradient-to-tl from-black via-zinc-900/50 to-black/14'>
       <ThemeProvider theme={light}>
         <GlobalStyles />
 
