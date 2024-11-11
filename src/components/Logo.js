@@ -5,7 +5,7 @@ import BBLogo from "../assets/bb_transparent.png";
 const Logo = () => {
   return (
     <Link to="/">
-      <img width={100} height={100} src={BBLogo} alt="BB Logo" />
+        <img width={50} height={50} src={BBLogo} alt="BB Logo" />
     </Link>
   );
 };

@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@fontsource/akaya-telivigala": "^5.0.8",
+    "@fontsource/inter": "^5.1.0",
     "@fontsource/lato": "^5.0.20",
     "@fontsource/sora": "^5.0.15",
+    "@fontsource/tomorrow": "^5.1.0",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -56,5 +58,10 @@
   "main": "index.js",
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.48",
+    "tailwindcss": "^3.4.14"
+  }
 }

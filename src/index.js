@@ -4,6 +4,8 @@ import "../node_modules/normalize.css/normalize.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import AboutPage from "./components/sections/AboutPage";
+import '@fontsource/inter';
+import '@fontsource/tomorrow/600.css';
 
 const root = createRoot(document.getElementById("root"));
 
