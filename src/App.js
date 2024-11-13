@@ -13,7 +13,6 @@ import Footer from "./components/Footer";
 import Showcase from "./components/sections/Showcase";
 
 
-// Styled wrappers for components to control z-index and layout
 const NavigationWrapper = styled.div`
   position: relative;
   z-index: 20; /* Higher z-index for Navigation */
@@ -31,9 +30,8 @@ const FooterWrapper = styled.footer`
 `;
 
 function App() {
-  const aboutRef = useRef(null); // Create ref for About section
+  const aboutRef = useRef(null);
 
-  // Custom scroll function to control duration
   const customScroll = (targetRef, duration) => {
     const targetPosition =
       targetRef.current.getBoundingClientRect().top + window.pageYOffset;
@@ -49,7 +47,6 @@ function App() {
       if (timeElapsed < duration) requestAnimationFrame(animateScroll);
     };
 
-    // Ease in-out function for smooth animation
     const easeInOutQuad = (t, b, c, d) => {
       t /= d / 2;
       if (t < 1) return (c / 2) * t * t + b;
@@ -60,10 +57,9 @@ function App() {
     requestAnimationFrame(animateScroll);
   };
 
-  // Scroll to About section using the custom scroll function
   const scrollToAbout = () => {
     if (aboutRef.current) {
-      customScroll(aboutRef, 2000); // Adjust the duration (2000ms = 2 seconds)
+      customScroll(aboutRef, 2000);
     }
   };
 
@@ -72,40 +68,32 @@ function App() {
       <ThemeProvider theme={light}>
         <GlobalStyles />
 
-        {/* Higher z-index applied to Navigation */}
         <NavigationWrapper>
           <Navigation />
         </NavigationWrapper>
 
-        {/* Home Component */}
         <Home onScrollToNext={scrollToAbout} />
 
-        {/* About Section with ref */}
         <SectionWrapper ref={aboutRef} zIndex={10}>
           <About />
         </SectionWrapper>
 
-        {/* Hackathons Section */}
         <SectionWrapper zIndex={15}>
           <Hackathons />
         </SectionWrapper>
 
-        {/* Showcase Section */}
         <SectionWrapper zIndex={12}>
           <Showcase />
         </SectionWrapper>
 
-        {/* Team Section */}
         <SectionWrapper zIndex={15}>
           <Team />
         </SectionWrapper>
 
-        {/* Footer */}
         <FooterWrapper>
           <Footer />
         </FooterWrapper>
 
-        {/* <ScrollToTop /> */}
       </ThemeProvider>
     </main>
   );
