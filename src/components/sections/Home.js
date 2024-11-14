@@ -6,8 +6,7 @@ import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
 import "../../index.css";
 
-const CoverVideo = lazy(() => import('../CoverVideo'));
-const TypeWriterText = lazy(() => import('../TypeWriterText'));
+
 
 /* TODO:
 - Change font of "This is Boiler Blockchain"
@@ -18,10 +17,12 @@ const TypeWriterText = lazy(() => import('../TypeWriterText'));
   - "This is" much smaller above "Boiler Blockchain"
   - "Blockchain" purple text
 - change the transition of hero from zoom in to just regular scroll
+- change nav bar, make it sleeker + effects
 - Welcome to Boiler BC section:
   - Make the carousel cooler: vertical auto-scrolling
   - Change text
-  - Add icons
+  - Add icons (Hackathon, research projects, technical courses)
+DONE
 - Hackathon Highlights:
   - left: text about hackathon highlights
   - right: prizes won (animate number)
@@ -40,45 +41,6 @@ const Section = styled.section`
   background-color: ${(props) => props.theme.body};
 `;
 
-const Container = styled.div`
-  width: 75%;
-  min-height: 80vh;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 64em) {
-    width: 85%;
-  }
-  @media (max-width: 48em) {
-    flex-direction: column;
-    width: 100%;
-    & > *:first-child {
-      width: 100%;
-      margin-top: 2rem;
-    }
-  }
-`;
-
-const BoxLeft = styled.div`
-  width: 40%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const BoxRight = styled.div`
-  width: 60%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Home = ({ onScrollToNext }) => {
 
   // Initialize particles
@@ -89,7 +51,7 @@ const Home = ({ onScrollToNext }) => {
 
   return (
     <Section id="home">
-      <div style={{ position: "relative", minHeight: "200vh", width: "100vw" }}>
+      <div style={{ position: "relative", height: "100vh", width: "100vw", background: "rgba(0, 0, 0, 0.3)"}}>
         {useMemo(
           () => (
             <Particles
@@ -100,18 +62,6 @@ const Home = ({ onScrollToNext }) => {
           ),
           [particlesInit],
         )}
-
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.3)",
-            zIndex: 1,
-          }}
-        />
 
         {/* Main content container */}
         <div

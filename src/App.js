@@ -11,6 +11,8 @@ import Hackathons from "./components/sections/Hackathons";
 import Team from "./components/sections/Team";
 import Footer from "./components/Footer";
 import Showcase from "./components/sections/Showcase";
+import LandingSection from "./components/sections/about_temp";
+import HackathonSummary from "./components/sections/hackathons_summary";
 
 
 // Styled wrappers for components to control z-index and layout
@@ -82,12 +84,13 @@ function App() {
 
         {/* About Section with ref */}
         <SectionWrapper ref={aboutRef} zIndex={10}>
-          <About />
+          {/* <About /> */}
+          <LandingSection/>
         </SectionWrapper>
 
         {/* Hackathons Section */}
         <SectionWrapper zIndex={15}>
-          <Hackathons />
+          <HackathonSummary />
         </SectionWrapper>
 
         {/* Showcase Section */}

@@ -9,6 +9,7 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'], 
         display: ['Tomorrow', 'sans-serif'], 
+        mont: ['Montserrat', 'sans-serif']
       },
       animation: {
 				"fade-in": "fade-in 3s ease-in-out forwards",
