@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+
+
 import img5 from "../../assets/images/5.jpg";
 import img6 from "../../assets/images/6.jpg";
 import img7 from "../../assets/images/7.jpg";
 import img9 from "../../assets/images/9.jpg";
+
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -14,6 +19,7 @@ const PageSection = styled.section`
   overflow: hidden;
   padding-top: 4rem;
 `;
+
 
 const Container = styled.div`
   width: 85%;
@@ -26,10 +32,12 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
+
   @media (max-width: 70em) {
     width: 90%;
   }
 `;
+
 
 const HeroTitle = styled.h1`
   font-size: ${(props) => props.theme.fontxxl};
@@ -37,10 +45,12 @@ const HeroTitle = styled.h1`
   text-align: center;
   margin-bottom: 1.5rem;
 
+
   @media (max-width: 40em) {
     font-size: ${(props) => props.theme.fontxl};
   }
 `;
+
 
 const HeroSubtitle = styled.p`
   font-size: ${(props) => props.theme.fontlg};
@@ -51,24 +61,27 @@ const HeroSubtitle = styled.p`
   opacity: 0.9;
 `;
 
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   width: 100%;
 
+
   @media (max-width: 64em) {
     grid-template-columns: 1fr;
   }
 `;
 
+
 const ContentBlock = styled.div`
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 15px;
+  background: linear-gradient(to right, rgba(255, 0, 204, 0.05), rgba(51, 51, 204, 0.05));
   padding: 2rem;
   border: 1px solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
+
 
   h2 {
     color: #ffffff;
@@ -76,17 +89,25 @@ const ContentBlock = styled.div`
     margin-bottom: 1.5rem;
   }
 
+
   p {
     color: #ffffff;
     font-size: ${(props) => props.theme.fontlg};
     margin-bottom: 1.5rem;
     line-height: 1.6;
   }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
 `;
+
 
 const List = styled.ul`
   list-style: none;
   padding: 0;
+
 
   li {
     color: #ffffff;
@@ -96,6 +117,7 @@ const List = styled.ul`
     font-size: ${(props) => props.theme.fontmd};
     line-height: 1.6;
 
+
     &:before {
       content: "→";
       margin-right: 1rem;
@@ -104,6 +126,7 @@ const List = styled.ul`
   }
 `;
 
+
 const ImageContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -111,12 +134,14 @@ const ImageContainer = styled.div`
   border-radius: 15px;
   overflow: hidden;
 
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 `;
+
 
 const BackButton = styled(Link)`
   position: fixed;
@@ -136,14 +161,17 @@ const BackButton = styled(Link)`
   z-index: 100;
   backdrop-filter: blur(10px);
 
+
   &:before {
     content: "←";
     color: #ffffff;
   }
 
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
   }
+
 
   @media (max-width: 40em) {
     padding: 0.8rem 1rem;
@@ -151,24 +179,29 @@ const BackButton = styled(Link)`
   }
 `;
 
-const DiscordButton = styled.a`
+
+
+
+const LinkButton = styled.a`
   display: inline-block;
-  background: linear-gradient(45deg, #7289da, #5865f2);
+  margin: 0 auto;
+  background-color: transparent;
   color: white;
   padding: 1rem 2rem;
-  border-radius: 8px;
   text-decoration: none;
   font-size: ${(props) => props.theme.fontlg};
-  margin-top: 4rem;
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-  border: none;
+  transition: box-shadow 0.3s ease;
+  border: 1px solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
   cursor: pointer;
+  text-align: center;
+
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 20px rgba(114, 137, 218, 0.3);
+    box-shadow: 0 0 10px 2px #ff00cc, 0 0 20px 4px #3333cc;
   }
+
 
   @media (max-width: 40em) {
     font-size: ${(props) => props.theme.fontmd};
@@ -176,9 +209,63 @@ const DiscordButton = styled.a`
   }
 `;
 
+
+
+
+const ParticlesBackground = ({ keyId }) => {
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+  }, []);
+
+
+  return (
+    <Particles
+      key={keyId} // Unique key for each instance
+      init={particlesInit}
+      options={{
+        background: { color: "#000000" },
+        particles: {
+          color: { value: "#ffffff" },
+          links: {
+            color: "#ff00cc",
+            distance: 150,
+            enable: true,
+            opacity: 0.4,
+            width: 1,
+          },
+          move: { enable: true, speed: 1 },
+          number: { value: 100 },
+          size: { value: 2 },
+          opacity: { value: 0.5 },
+        },
+      }}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
+      }}
+    />
+  );
+};
+
+
+
+
 const AboutPage = () => {
+  const [particleKey, setParticleKey] = useState(Date.now());
+
+
+  useEffect(() => {
+    setParticleKey(Date.now());
+  }, []);
+
+
   return (
     <PageSection>
+      <ParticlesBackground keyId={particleKey} />
       <BackButton to="/">Back</BackButton>
       <Container>
         <HeroTitle>Who Are We?</HeroTitle>
@@ -187,6 +274,7 @@ const AboutPage = () => {
           dedicated to advancing blockchain technology through innovation,
           education, and community.
         </HeroSubtitle>
+
 
         <Grid>
           <ContentBlock>
@@ -213,15 +301,27 @@ const AboutPage = () => {
                 backgrounds
               </li>
             </List>
+            <div className="button-container">
+    <LinkButton
+      href="https://discord.com/invite/YdBH68uXUQ"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Join Our Discord
+    </LinkButton>
+  </div>
           </ContentBlock>
+
 
           <ImageContainer>
             <img src={img6} alt="about" />
           </ImageContainer>
 
+
           <ImageContainer>
             <img src={img7} alt="Hackathons" />
           </ImageContainer>
+
 
           <ContentBlock>
             <h2>Hackathons & Innovation</h2>
@@ -246,8 +346,20 @@ const AboutPage = () => {
                 Opportunity to develop projects with real-world implementation
                 potential
               </li>
+             
+         
             </List>
+            <div className="button-container">
+            <LinkButton
+          // href="https://discord.com/invite/YdBH68uXUQ" // link to hackathons page
+          // target="_blank"
+          // rel="noopener noreferrer"
+        >
+          Hackathons
+          </LinkButton>
+          </div>
           </ContentBlock>
+
 
           <ContentBlock>
             <h2>Learning & Development</h2>
@@ -272,15 +384,27 @@ const AboutPage = () => {
                 sessions
               </li>
             </List>
+            <div className="button-container">
+            <LinkButton
+          // href="https://discord.com/invite/YdBH68uXUQ" // link to classes page
+          // target="_blank"
+          // rel="noopener noreferrer"
+           >
+          Classes
+          </LinkButton>
+          </div>
           </ContentBlock>
+
 
           <ImageContainer>
             <img src={img5} alt="Learning" />
           </ImageContainer>
 
+
           <ImageContainer>
             <img src={img9} alt="Community" />
           </ImageContainer>
+
 
           <ContentBlock>
             <h2>Community & Network</h2>
@@ -301,19 +425,26 @@ const AboutPage = () => {
                 community bonds
               </li>
             </List>
+            {/* <LinkButton
+          // href="https://discord.com/invite/YdBH68uXUQ" // maybe add button here for schedule
+          // target="_blank"
+          // rel="noopener noreferrer"
+           >
+
+
+          </LinkButton> */}
           </ContentBlock>
         </Grid>
 
-        <DiscordButton
-          href="https://discord.com/invite/YdBH68uXUQ"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join Our Discord
-        </DiscordButton>
+
+       
       </Container>
     </PageSection>
   );
 };
 
+
 export default AboutPage;
+
+
+
