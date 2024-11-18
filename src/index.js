@@ -7,6 +7,7 @@ import AboutPage from "./components/sections/AboutPage";
 import Devs from './components/sections/Devs';
 import '@fontsource/inter';
 import '@fontsource/tomorrow/600.css';
+import EducationPage from './components/sections/EducationPage.js'
 
 const root = createRoot(document.getElementById("root"));
 
@@ -14,6 +15,7 @@ root.render(
   <BrowserRouter>
     <Routes>
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/education" element={<EducationPage />} />
       <Route path="/devs" element={<Devs />} />
       <Route path="/" element={<App />} />
     </Routes>

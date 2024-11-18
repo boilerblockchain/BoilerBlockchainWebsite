@@ -40,25 +40,50 @@ const Container = styled.div`
 
 
 const HeroTitle = styled.h1`
-  font-size: ${(props) => props.theme.fontxxl};
+  font-size: 6rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1.5rem;
-
+  margin-bottom: 2rem;
+  margin-top: 1.5rem;
+  font-weight: bold;
+  font-family:'Tomorrow', sans-serif; 
+  animation: fadeIn 1s ease-in;
 
   @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontxl};
+    font-size: 4rem;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 `;
 
 
 const HeroSubtitle = styled.p`
-  font-size: ${(props) => props.theme.fontlg};
-  color: #ffffff;
+  font-size: ${props => props.theme.fontxl};
+  color: rgba(255, 255, 255, 0.8);
   text-align: center;
   max-width: 800px;
   margin: 0 auto 4rem auto;
-  opacity: 0.9;
+  font-family: 'Tomorrow', sans-serif;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 `;
 
 
@@ -76,25 +101,27 @@ const Grid = styled.div`
 
 
 const ContentBlock = styled.div`
-  background: linear-gradient(to right, rgba(255, 0, 204, 0.05), rgba(51, 51, 204, 0.05));
+  background: linear-gradient(to right, rgba(255, 0, 204, 0.03), rgba(51, 51, 204, 0.03));
   padding: 2rem;
   border: 1px solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
-
+  backdrop-filter: blur(5px);
 
   h2 {
     color: #ffffff;
-    font-size: ${(props) => props.theme.fontxl};
+    font-size: 2.75rem;
     margin-bottom: 1.5rem;
+    font-family: 'Tomorrow', sans-serif;
+    font-weight: bold;
   }
 
-
   p {
-    color: #ffffff;
-    font-size: ${(props) => props.theme.fontlg};
+    color: rgba(255, 255, 255, 0.8); 
+    font-size: ${props => props.theme.fontlg};
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    font-family: 'Tomorrow', sans-serif;
   }
   .button-container {
     display: flex;
@@ -217,10 +244,9 @@ const ParticlesBackground = ({ keyId }) => {
     await loadFull(engine);
   }, []);
 
-
   return (
     <Particles
-      key={keyId} // Unique key for each instance
+      key={keyId}
       init={particlesInit}
       options={{
         background: { color: "#000000" },
@@ -230,13 +256,13 @@ const ParticlesBackground = ({ keyId }) => {
             color: "#ff00cc",
             distance: 150,
             enable: true,
-            opacity: 0.4,
+            opacity: 0.2, // Reduced from 0.4
             width: 1,
           },
           move: { enable: true, speed: 1 },
-          number: { value: 100 },
+          number: { value: 80 }, // Reduced from 100
           size: { value: 2 },
-          opacity: { value: 0.5 },
+          opacity: { value: 0.3 }, // Reduced from 0.5
         },
       }}
       style={{
