@@ -1,15 +1,37 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-
+import { motion, useInView } from "framer-motion";
 
 import img5 from "../../assets/images/5.jpg";
 import img6 from "../../assets/images/6.jpg";
 import img7 from "../../assets/images/7.jpg";
 import img9 from "../../assets/images/9.jpg";
 
+const fadeInUp = {
+  initial: {
+    y: 60,
+    opacity: 0
+  },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -21,7 +43,7 @@ const PageSection = styled.section`
 `;
 
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   width: 85%;
   max-width: 1400px;
   margin: 0 auto;
@@ -31,7 +53,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  font-family: 'Tomorrow', sans-serif;
 
   @media (max-width: 70em) {
     width: 90%;
@@ -87,12 +109,11 @@ const HeroSubtitle = styled.p`
 `;
 
 
-const Grid = styled.div`
+const Grid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
   width: 100%;
-
 
   @media (max-width: 64em) {
     grid-template-columns: 1fr;
@@ -100,13 +121,18 @@ const Grid = styled.div`
 `;
 
 
-const ContentBlock = styled.div`
+const ContentBlock = styled(motion.div)`
   background: linear-gradient(to right, rgba(255, 0, 204, 0.03), rgba(51, 51, 204, 0.03));
   padding: 2rem;
   border: 1px solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
   backdrop-filter: blur(5px);
+  font-family: 'Tomorrow', sans-serif;
+
+  * {
+    font-family: 'Tomorrow', sans-serif;
+  }
 
   h2 {
     color: #ffffff;
@@ -154,7 +180,7 @@ const List = styled.ul`
 `;
 
 
-const ImageContainer = styled.div`
+const ImageContainer  = styled(motion.div)`
   width: 100%;
   height: 100%;
   min-height: 300px;
@@ -209,7 +235,7 @@ const BackButton = styled(Link)`
 
 
 
-const LinkButton = styled.a`
+const LinkButton  = styled(motion.div)`
   display: inline-block;
   margin: 0 auto;
   background-color: transparent;
@@ -279,198 +305,199 @@ const ParticlesBackground = ({ keyId }) => {
 
 
 
-
 const AboutPage = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
-
 
   useEffect(() => {
     setParticleKey(Date.now());
   }, []);
 
-
   return (
     <PageSection>
       <ParticlesBackground keyId={particleKey} />
       <BackButton to="/">Back</BackButton>
-      <Container>
-        <HeroTitle>Who Are We?</HeroTitle>
-        <HeroSubtitle>
-          Boiler Blockchain is Purdue's premier student-led organization
-          dedicated to advancing blockchain technology through innovation,
-          education, and community.
-        </HeroSubtitle>
-
-
-        <Grid>
-          <ContentBlock>
-            <h2>About Us</h2>
-            <p>
-              At Boiler Blockchain, we're building the future of Web3 at Purdue
-              University.
-            </p>
-            <List>
-              <li>
-                Leading student-run blockchain organization fostering innovation
-                and learning since 2021
-              </li>
-              <li>
-                Collaborative environment bringing together developers,
-                researchers, and industry partners
-              </li>
-              <li>
-                Strong focus on practical implementation and real-world
-                applications
-              </li>
-              <li>
-                Active community of 200+ members from diverse academic
-                backgrounds
-              </li>
-            </List>
-            <div className="button-container">
-    <LinkButton
-      href="https://discord.com/invite/YdBH68uXUQ"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Join Our Discord
-    </LinkButton>
-  </div>
-          </ContentBlock>
-
-
-          <ImageContainer>
-            <img src={img6} alt="about" />
-          </ImageContainer>
-
-
-          <ImageContainer>
-            <img src={img7} alt="Hackathons" />
-          </ImageContainer>
-
-
-          <ContentBlock>
-            <h2>Hackathons & Innovation</h2>
-            <p>
-              Creating breakthrough blockchain solutions through competitive
-              innovation.
-            </p>
-            <List>
-              <li>
-                Annual flagship hackathon with over $10,000 in prizes and
-                industry sponsorships
-              </li>
-              <li>
-                Focused tracks in DeFi, NFTs, Web3 infrastructure, and social
-                impact
-              </li>
-              <li>
-                Direct mentorship from experienced developers and industry
-                professionals
-              </li>
-              <li>
-                Opportunity to develop projects with real-world implementation
-                potential
-              </li>
-             
-         
-            </List>
-            <div className="button-container">
-            <LinkButton
-          // href="https://discord.com/invite/YdBH68uXUQ" // link to hackathons page
-          // target="_blank"
-          // rel="noopener noreferrer"
+      
+      <Container
+        initial="initial"
+        animate="animate"
+        variants={staggerContainer}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
         >
-          Hackathons
-          </LinkButton>
-          </div>
-          </ContentBlock>
+          <HeroTitle>Who Are We?</HeroTitle>
+          <HeroSubtitle>
+            Boiler Blockchain is Purdue's premier student-led organization
+            dedicated to advancing blockchain technology through innovation,
+            education, and community.
+          </HeroSubtitle>
+        </motion.div>
 
+        <Grid
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          {[
+            {
+              title: "About Us",
+              content: "At Boiler Blockchain, we're building the future of Web3 at Purdue University.",
+              image: img6,
+              list: [
+                "Leading student-run blockchain organization fostering innovation and learning since 2021",
+                "Collaborative environment bringing together developers, researchers, and industry partners",
+                "Strong focus on practical implementation and real-world applications",
+                "Active community of 200+ members from diverse academic backgrounds"
+              ],
+              button: {
+                text: "Join Our Discord",
+                link: "https://discord.com/invite/YdBH68uXUQ"
+              },
+              imageFirst: false
+            },
+            {
+              title: "Hackathons & Innovation",
+              content: "Creating breakthrough blockchain solutions through competitive innovation.",
+              image: img7,
+              list: [
+                "Annual flagship hackathon with over $10,000 in prizes and industry sponsorships",
+                "Focused tracks in DeFi, NFTs, Web3 infrastructure, and social impact",
+                "Direct mentorship from experienced developers and industry professionals",
+                "Opportunity to develop projects with real-world implementation potential"
+              ],
+              button: {
+                text: "Hackathons",
+                link: "#"
+              },
+              imageFirst: true
+            },
+            {
+              title: "Learning & Development",
+              content: "Comprehensive blockchain education from fundamentals to advanced implementation.",
+              image: img5,
+              list: [
+                "Structured technical workshops covering Ethereum, Solidity, and Web3 development",
+                "Hands-on experience with smart contracts and decentralized applications",
+                "Access to industry-standard tools and development frameworks",
+                "Collaborative learning environment with peer programming sessions"
+              ],
+              button: {
+                text: "Education",
+                link: "/education"
+              },
+              imageFirst: false
+            },
+            {
+              title: "Community & Network",
+              content: "Building lasting connections in the blockchain ecosystem.",
+              image: img9,
+              list: [
+                "Regular networking events with industry professionals and alumni",
+                "Opportunities to join specialized project teams and research groups",
+                "Mentorship program connecting experienced members with newcomers",
+                "Social events and collaborative learning sessions to strengthen community bonds"
+              ],
+              button: {
+                text: "Join Our Discord",
+                link: "https://discord.com/invite/YdBH68uXUQ"
+              },
+              imageFirst: true
+            }
+          ].map((section, index) => {
+            const ScrollAnimatedSection = ({ children }) => {
+              const ref = useRef(null);
+              const isInView = useInView(ref, { once: true, margin: "-100px" });
+              
+              return (
+                <motion.div
+                  ref={ref}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  {children}
+                </motion.div>
+              );
+            };
 
-          <ContentBlock>
-            <h2>Learning & Development</h2>
-            <p>
-              Comprehensive blockchain education from fundamentals to advanced
-              implementation.
-            </p>
-            <List>
-              <li>
-                Structured technical workshops covering Ethereum, Solidity, and
-                Web3 development
-              </li>
-              <li>
-                Hands-on experience with smart contracts and decentralized
-                applications
-              </li>
-              <li>
-                Access to industry-standard tools and development frameworks
-              </li>
-              <li>
-                Collaborative learning environment with peer programming
-                sessions
-              </li>
-            </List>
-            <div className="button-container">
-            <LinkButton
-          // href="https://discord.com/invite/YdBH68uXUQ" // link to classes page
-          // target="_blank"
-          // rel="noopener noreferrer"
-           >
-          Classes
-          </LinkButton>
-          </div>
-          </ContentBlock>
+            const content = (
+              <ContentBlock
+                variants={fadeInUp}
+                custom={index}
+                initial="initial"
+                animate="animate"
+              >
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  {section.title}
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  {section.content}
+                </motion.p>
+                <List>
+                  {section.list.map((item, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + i * 0.1 }}
+                    >
+                      {item}
+                    </motion.li>
+                  ))}
+                </List>
+                {section.button && (
+                  <div className="button-container">
+                    <LinkButton
+                      as={motion.a}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      href={section.button.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {section.button.text}
+                    </LinkButton>
+                  </div>
+                )}
+              </ContentBlock>
+            );
 
+            const image = (
+              <ImageContainer
+                as={motion.div}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <img src={section.image} alt={section.title} />
+              </ImageContainer>
+            );
 
-          <ImageContainer>
-            <img src={img5} alt="Learning" />
-          </ImageContainer>
-
-
-          <ImageContainer>
-            <img src={img9} alt="Community" />
-          </ImageContainer>
-
-
-          <ContentBlock>
-            <h2>Community & Network</h2>
-            <p>Building lasting connections in the blockchain ecosystem.</p>
-            <List>
-              <li>
-                Regular networking events with industry professionals and alumni
-              </li>
-              <li>
-                Opportunities to join specialized project teams and research
-                groups
-              </li>
-              <li>
-                Mentorship program connecting experienced members with newcomers
-              </li>
-              <li>
-                Social events and collaborative learning sessions to strengthen
-                community bonds
-              </li>
-            </List>
-            {/* <LinkButton
-          // href="https://discord.com/invite/YdBH68uXUQ" // maybe add button here for schedule
-          // target="_blank"
-          // rel="noopener noreferrer"
-           >
-
-
-          </LinkButton> */}
-          </ContentBlock>
+            return (
+              <React.Fragment key={section.title}>
+                <ScrollAnimatedSection>
+                  {section.imageFirst ? image : content}
+                </ScrollAnimatedSection>
+                <ScrollAnimatedSection>
+                  {section.imageFirst ? content : image}
+                </ScrollAnimatedSection>
+              </React.Fragment>
+            );
+          })}
         </Grid>
-
-
-       
       </Container>
     </PageSection>
   );
 };
 
-
 export default AboutPage;
-
-
-
