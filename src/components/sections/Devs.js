@@ -1,8 +1,5 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
 import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
 
 const teamMembers = [
@@ -36,160 +33,125 @@ const teamMembers = [
   },
 ];
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  background-color: #0d0d0d;
+  background: #0d0d0d; /* Darker background close to black */
   color: #fff;
   min-height: 100vh;
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 2rem;
-  color: #fff;
   font-weight: bold;
   text-transform: uppercase;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 `;
 
-const SliderContainer = styled.div`
-  width: 80%;
-  margin-bottom: 2rem;
+const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  padding: 2rem;
 `;
 
-const ProfileImage = styled.img`
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid ${({ isActive }) => (isActive ? "#8a2be2" : "#333")};
-  opacity: ${({ isActive }) => (isActive ? "1" : "0.5")};
-  transition: transform 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+const Card = styled.div`
+  background: #1a1a1a; /* Slightly lighter than the main background */
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  animation: ${fadeIn} 0.8s ease forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.1); /* Enlarges the card slightly */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); /* Increases shadow for focus */
   }
 `;
 
-const ContentArea = styled.div`
-  background-color: #1a1a1a;
-  padding: 2rem 3rem;
-  border-radius: 12px;
-  width: 90%;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  margin-top: 2rem;
-`;
-
-const ImageWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-`;
-
-const ContentWrapper = styled.div`
-  flex: 3;
-  padding: 0 2rem;
-  color: #fff;
+const ProfileImage = styled.img`
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #e91e63; /* Accent color */
+  margin-bottom: 1rem;
+  object-fit: cover; /* Ensures proper cropping of image */
 `;
 
 const Name = styled.h2`
-  font-size: 1.8rem;
-  color: #8a2be2;
-  margin: 0;
-  font-weight: bold;
-`;
-
-const Role = styled.h3`
-  font-size: 1.2rem;
-  color: #bfbfbf;
-  margin: 0.2rem 0;
-  font-weight: normal;
-`;
-
-const Divider = styled.div`
-  width: 50px;
-  height: 2px;
-  background-color: #8a2be2;
+  font-size: 1.5rem;
+  color: #fff;
   margin: 0.5rem 0;
 `;
 
+const Role = styled.h3`
+  font-size: 1.1rem;
+  color: #bfbfbf;
+  margin: 0.3rem 0;
+`;
+
 const Bio = styled.p`
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #ccc;
-  margin: 1rem 0;
+  margin: 0.5rem 0 1rem 0;
 `;
 
 const SocialIcons = styled.div`
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  
+  justify-content: center;
+  gap: 1rem;
+
   & > a {
-    color: #8a2be2;
-    font-size: 1.2rem;
-    transition: color 0.3s;
+    color: #e91e63;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
 
     &:hover {
-      color: #e74c3c;
+      transform: scale(1.2);
+      color: #8a2be2; /* Alternate accent color */
     }
   }
 `;
 
 const TeamPage = () => {
-  const [selectedMember, setSelectedMember] = useState(teamMembers[0]);
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    centerMode: true,
-    centerPadding: "0px",
-    focusOnSelect: true,
-    beforeChange: (current, next) => setSelectedMember(teamMembers[next]),
-  };
-
   return (
     <PageContainer>
       <Title>Meet Our Team</Title>
-      
-      <SliderContainer>
-        <Slider {...settings}>
-          {teamMembers.map(member => (
-            <div key={member.id} onClick={() => setSelectedMember(member)}>
-              <ProfileImage 
-                src={member.image} 
-                alt={member.name} 
-                isActive={selectedMember.id === member.id}
-              />
-            </div>
-          ))}
-        </Slider>
-      </SliderContainer>
-      
-      <ContentArea>
-        <ImageWrapper>
-          <ProfileImage src={selectedMember.image} alt={selectedMember.name} isActive />
-        </ImageWrapper>
-        
-        <ContentWrapper>
-          <Name>{selectedMember.name}</Name>
-          <Role>{selectedMember.role}</Role>
-          <Divider />
-          <Bio>{selectedMember.bio}</Bio>
-          <SocialIcons>
-            <a href="#"><FaFacebook /></a>
-            <a href="#"><FaInstagram /></a>
-            <a href="#"><FaLinkedin /></a>
-            <a href="#"><FaWhatsapp /></a>
-          </SocialIcons>
-        </ContentWrapper>
-      </ContentArea>
+      <CardGrid>
+        {teamMembers.map((member) => (
+          <Card key={member.id}>
+            <ProfileImage src={member.image} alt={member.name} />
+            <Name>{member.name}</Name>
+            <Role>{member.role}</Role>
+            <Bio>{member.bio}</Bio>
+            <SocialIcons>
+              <a href="#"><FaFacebook /></a>
+              <a href="#"><FaInstagram /></a>
+              <a href="#"><FaLinkedin /></a>
+              <a href="#"><FaWhatsapp /></a>
+            </SocialIcons>
+          </Card>
+        ))}
+      </CardGrid>
     </PageContainer>
   );
 };
