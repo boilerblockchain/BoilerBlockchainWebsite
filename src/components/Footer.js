@@ -1,214 +1,97 @@
-import React, { lazy, Suspense } from "react";
-import styled from "styled-components";
-// import Banner from './Banner'
-import Logo from "./Logo";
-
+import React from 'react'
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";
 import LinkedIn from "../Icons/LinkedIn";
 import Medium from "../Icons/Medium";
 import Github from "../Icons/Github";
-import Loading from "./Loading";
 
-const Banner = lazy(() => import("./Banner"));
-
-const Section = styled.section`
-  min-height: 100vh;
-  width: 100vw;
-  background-color: ${(props) => props.theme.text};
-  position: relative;
-  color: ${(props) => props.theme.textWhite};
-
-  display: flex;
-  /* justify-content: center; */
-  /* align-items: center; */
-  flex-direction: column;
-`;
-
-const Container = styled.div`
-  width: 75%;
-  margin: 2rem auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  border-bottom: 1px solid ${(props) => props.theme.textWhite};
-
-  @media (max-width: 48em) {
-    width: 90%;
-
-    h1 {
-      font-size: ${(props) => props.theme.fontxxxl};
-    }
-  }
-`;
-const Left = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 48em) {
-    width: 100%;
-  }
-`;
-
-const IconList = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 1rem auto;
-
-  & > * {
-    padding-right: 0.5rem;
-    transition: all 0.2s ease;
-
-    &:hover {
-      transform: scale(1.2);
-    }
-  }
-`;
-const MenuItems = styled.ul`
-  list-style: none;
-  width: 50%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  grid-gap: 1rem;
-
-  @media (max-width: 48em) {
-    display: none;
-  }
-`;
-const Item = styled.li`
-  width: fit-content;
-  cursor: pointer;
-
-  &::after {
-    content: " ";
-    display: block;
-    width: 0%;
-    height: 2px;
-    background: ${(props) => props.theme.textWhite};
-    transition: width 0.3s ease;
-  }
-  &:hover::after {
-    width: 100%;
-  }
-`;
-
-const Bottom = styled.div`
-  width: 75%;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  a {
-    text-decoration: underline;
-  }
-  @media (max-width: 48em) {
-    flex-direction: column;
-    width: 100%;
-
-    span {
-      margin-bottom: 1rem;
-    }
-  }
-`;
-
-const Footer = () => {
-  const scrollTo = (id) => {
-    let element = document.getElementById(id);
-
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-  };
-
+export default function Footer() {
   return (
-    <Section>
-      <Suspense fallback={<Loading />}>
-        <Banner />{" "}
-      </Suspense>
+    <footer>
+      <div className="bg-purple-700 py-16 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {/* Bottom area */}
+          <div className="md:flex md:items-center md:justify-between">
 
-      <Container>
-        <Left>
-          <Logo />
-          <IconList>
-            <a
-              href="https://discord.com/invite/YdBH68uXUQ"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="discord"
-            >
-              <Discord />
-            </a>
-            <a
-              href="https://www.instagram.com/boilerblockchain/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="instagram"
-            >
-              <Instagram />
-            </a>
-            <a
-              href="https://twitter.com/boilerchain"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="twitter"
-            >
-              <Twitter />
-            </a>
-            <a
-              href="https://www.linkedin.com/company/boilerblockchain/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="linkedin"
-            >
-              <LinkedIn />
-            </a>
-            <a
-              href="https://boilerblockchain.medium.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="medium"
-            >
-              <Medium />
-            </a>
-            <a
-              href="https://github.com/boilerblockchain/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="github"
-            >
-              <Github />
-            </a>
-          </IconList>
-        </Left>
-        <MenuItems>
-          <Item onClick={() => scrollTo("home")}>Home</Item>
-          <Item onClick={() => scrollTo("about")}>About</Item>
-          <Item onClick={() => scrollTo("hackathons")}>Hackathons</Item>
-          <Item onClick={() => scrollTo("showcase")}>Research</Item>
-          <Item onClick={() => scrollTo("team")}>Courses</Item>
-          {/* <Item onClick={() => scrollTo('faq')}  >Faq</Item> */}
-        </MenuItems>
-      </Container>
-      {/* <Bottom>
-        <span>
-          &copy; {new Date().getFullYear()} Weirdos Club. All rights reserved.
-        </span>
-        <span>
-          Made with &#10084; by <a href="https://devdreaming.com/about" target="_blank" rel="dofollow noreferrer">
-            CodeBucks
-          </a>
-        </span>
-      </Bottom> */}
-    </Section>
+            {/* Social links */}
+            <ul className="flex mb-4 md:order-1 md:ml-4 md:mb-0">
+              <li>
+                <a
+                  href="https://discord.com/invite/YdBH68uXUQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="Discord"
+                >
+                  <Discord />
+                </a>
+              </li>
+              <li className="ml-4">
+                <a
+                  href="https://www.instagram.com/boilerblockchain/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="Instagram"
+                >
+                  <Instagram />
+                </a>
+              </li>
+              <li className="ml-4">
+                <a
+                  href="https://twitter.com/boilerchain"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="Twitter"
+                >
+                  <Twitter />
+                </a>
+              </li>
+              <li className="ml-4">
+                <a
+                  href="https://www.linkedin.com/company/boilerblockchain/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="LinkedIn"
+                >
+                  <LinkedIn />
+                </a>
+              </li>
+              <li className="ml-4">
+                <a
+                  href="https://boilerblockchain.medium.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="Medium"
+                >
+                  <Medium />
+                </a>
+              </li>
+              <li className="ml-4">
+                <a
+                  href="https://github.com/boilerblockchain/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"
+                  aria-label="Github"
+                >
+                  <Github />
+                </a>
+              </li>
+            </ul>
+
+            {/* Copyrights note */}
+            <div className="text-gray-200 font-medium mr-4">
+              &copy; Boiler Blockchain
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </footer>
   );
-};
-
-export default Footer;
+}

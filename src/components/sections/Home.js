@@ -22,15 +22,16 @@ import "../../index.css";
   - Make the carousel cooler: vertical auto-scrolling
   - Change text
   - Add icons (Hackathon, research projects, technical courses)
-DONE
 - Hackathon Highlights:
   - left: text about hackathon highlights
   - right: prizes won (animate number)
   - bottom strip: auto-scrolling list of hackathons where we've participated
+DONE
 - Courses:
   - left: number of students taught
   - right: little about the course
-- links to discord, twitter, instagram 
+- Footer:
+  - links to discord, twitter, instagram 
 */
 
 

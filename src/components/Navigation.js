@@ -54,7 +54,7 @@ const Navigation = () => {
             {['about', 'hackathons', 'research', 'courses'].map((item) => (
               <a
                 key={item}
-                href={`#${item}`}
+                href={`/${item}`}
                 className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in capitalize"
                 onClick={(e) => {
                   e.preventDefault();

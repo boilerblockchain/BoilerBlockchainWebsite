@@ -13,6 +13,7 @@ import Footer from "./components/Footer";
 import Showcase from "./components/sections/Showcase";
 import LandingSection from "./components/sections/about_temp";
 import HackathonSummary from "./components/sections/hackathons_summary";
+import CTASection from "./components/sections/join_discord";
 
 
 const NavigationWrapper = styled.div`
@@ -85,13 +86,15 @@ function App() {
           <HackathonSummary />
         </SectionWrapper>
 
-        <SectionWrapper zIndex={12}>
+        {/* <SectionWrapper zIndex={12}>
           <Showcase />
-        </SectionWrapper>
+        </SectionWrapper> */}
 
         <SectionWrapper zIndex={15}>
           <Team />
         </SectionWrapper>
+
+        <CTASection />
 
         <FooterWrapper>
           <Footer />

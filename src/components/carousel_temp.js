@@ -57,7 +57,7 @@ export const AutoScrollCarousel = () => {
         {duplicatedImages.map((image, index) => (
           <div
             key={index}
-            className="w-full flex-shrink-0 mb-4"
+            className="w-full flex-shrink-0 mb-4 no-select"
             style={{ height: `${IMAGE_HEIGHT}px`, width: `${IMAGE_WIDTH}px` }}
           >
             <img

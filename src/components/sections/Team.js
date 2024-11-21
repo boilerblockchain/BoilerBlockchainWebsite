@@ -1,184 +1,129 @@
-import React, { lazy, Suspense } from "react";
-import styled from "styled-components";
+import React, { useEffect, useState, useRef } from 'react';
 
-import img1 from "../../assets/images/1.jpg";
-import img2 from "../../assets/images/2.jpg";
-import img3 from "../../assets/images/3.jpg";
-import img4 from "../../assets/images/4.jpg";
-import img5 from "../../assets/images/5.jpg";
-import Loading from "../Loading";
-// import ConfettiComponent from '../Confetti';
+const CoursesSection = () => {
+  const TOTAL_STUDENTS = 150;
+  const [countStudents, setCountStudents] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const containerRef = useRef(null);
 
-// const ConfettiComponent = lazy(() => import("../Confetti"));
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          startCountAnimation();
+          setHasAnimated(true);
+        }
+      },
+      {
+        threshold: 0.2,
+      }
+    );
 
-const Section = styled.section`
-  min-height: 100vh;
-  width: 100vw;
-  background-color: ${(props) => props.theme.body};
-  position: relative;
-  overflow: hidden;
-  padding: 2rem 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Title = styled.h1`
-  font-size: ${(props) => props.theme.fontxxl};
-  text-transform: uppercase;
-  color: ${(props) => props.theme.textWhite};
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 2rem auto;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid ${(props) => props.theme.textWhite};
-  letter-spacing: 2px;
-  width: fit-content;
-
-  @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontxl};
-  }
-`;
-
-const SubTextContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column; /* Stack items vertically on mobile */
-  margin: 2rem auto;
-  width: 80%;
-  gap: 1rem;
-  padding: 2rem;
-  backdrop-filter: blur(2px);
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 15px;
-
-  @media (min-width: 769px) {
-    flex-direction: row; /* Row layout for larger screens */
-    justify-content: space-between;
-    width: 80%;
-  }
-`;
-
-const SubTextColumn = styled.div`
-  flex: 1;
-  padding: 1rem;
-
-  &:first-child {
-    order: 2;
-    max-width: 50%;
-  }
-  &:last-child {
-    max-width: 50%;
-  }
-
-  img {
-    width: 100%;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
-
-    &:hover {
-      transform: scale(1.05);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
-  }
 
-  @media (max-width: 768px) {
-    order: initial;
-    max-width: 100%;
-    padding: 0;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-`;
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [hasAnimated]);
 
-const SubTitle = styled.h3`
-  font-size: ${(props) => props.theme.fontlg};
-  color: ${(props) => props.theme.textWhite};
-  font-weight: 600;
-  text-transform: uppercase;
-  margin: 0.5rem 0;
-  border-bottom: 1px solid ${(props) => props.theme.textWhite};
-  width: 100%;
-  text-align: left;
-  letter-spacing: 1.5px; /* Adds modern spacing */
+  const startCountAnimation = () => {
+    const duration = 3000;
+    const steps = 50;
+    const stepTime = duration / steps;
 
-  a {
-    color: ${(props) => props.theme.textWhite};
-    text-decoration: none;
-    transition: color 0.3s ease;
+    let currentStep = 0;
 
-    &:hover {
-      color: ${(props) => props.theme.accentColor}; /* Accent color on hover */
-    }
-  }
+    const interval = setInterval(() => {
+      currentStep++;
 
-  @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontmd};
-    text-align: center;
-  }
-`;
+      if (currentStep <= steps) {
+        const progress = currentStep / steps;
+        setCountStudents(Math.floor(TOTAL_STUDENTS * progress));
+      } else {
+        clearInterval(interval);
+      }
+    }, stepTime);
+  };
 
-const SubText = styled.p`
-  font-size: ${(props) => props.theme.fontmd};
-  color: ${(props) => props.theme.textWhite};
-  margin: 1rem 0;
-  line-height: 1.6;
-  text-align: left;
-
-  @media (max-width: 768px) {
-    font-size: ${(props) => props.theme.fontsm};
-    text-align: center;
-  }
-`;
-
-const Team = () => {
   return (
-    <Section id="team">
-      <Suspense fallback={<Loading />} />
-      <Title>Educational Courses</Title>
-      <SubTextContainer>
-        <SubTextColumn>
-          <img src={img2} alt="Blockchain Course" />
-        </SubTextColumn>
-        <SubTextColumn>
-          <SubTitle>
-            <a
-              href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00"
-              rel="noreferrer"
-            >
-              Principles and Practices of Blockchain (Technical)
-            </a>
-          </SubTitle>
-          <SubText>
-            This course aims to provide individuals with a comprehensive,
-            hands-on overview of blockchain technology and decentralized
-            applications from a developer perspective. From basic cryptography
-            concepts and blockchain use cases to the latest developments in the
-            technical field, this course will provide students with the
-            necessary skills and tools to pursue opportunities in the technology
-            field.
-          </SubText>
-        </SubTextColumn>
-      </SubTextContainer>
-    </Section>
+    <div className="bg-black text-white px-8 pb-28" ref={containerRef}>
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          {/* Left Column - Enhanced Student Counter */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-purple-900/20 blur-3xl rounded-full"></div>
+            <div className="relative bg-gradient-to-br from-purple-900/40 to-purple-900/10 rounded-3xl p-12 backdrop-blur-sm border border-purple-700/20">
+              <div className="flex flex-col items-center space-y-6">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 left-0 w-24 h-24 bg-purple-500/10 rounded-full blur-xl"></div>
+                <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-700/10 rounded-full blur-xl"></div>
+                
+                {/* Counter Content */}
+                <div className="relative">
+                  <div className="text-7xl font-display bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+                    {countStudents}+
+                  </div>
+                  <div className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+                </div>
+                
+                <div className="text-xl text-gray-300 font-mont tracking-wide">
+                  Students Empowered
+                </div>
+                
+                {/* Additional Stats */}
+                <div className="pt-8 grid grid-cols-2 gap-8 w-full">
+                  <div className="text-center">
+                    <div className="text-2xl font-display text-purple-400">12</div>
+                    <div className="text-sm text-gray-400 font-mont">Weeks Course</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-display text-purple-400">4</div>
+                    <div className="text-sm text-gray-400 font-mont">Credits</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Course Description */}
+          <div className="space-y-8">
+            <div className="space-y-2">
+              <div className="text-purple-500 font-mont text-sm tracking-wider uppercase pt-4">Our Courses</div>
+            </div>
+            
+            <div className="space-y-6">
+              <h2 className="text-2xl font-display">
+                <a className="text-white transition-colors duration-300">
+                  Principles and Practices of Blockchain (Technical)
+                </a>
+              </h2>
+              <p className="text-gray-400 font-mont text-base leading-relaxed">
+                This course provides a comprehensive, hands-on overview of blockchain technology
+                and decentralized applications from a developer's perspective. From basic cryptography
+                concepts and blockchain use cases to the latest developments in the technical field,
+                this course equips students with the necessary skills and tools to pursue opportunities
+                in technology.
+              </p>
+              <div className="pt-8">
+                <a
+                  href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300"
+                  >
+                  Learn More
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default Team;
-
-{
-  /* <SubTextColumn>
-          <SubTitle> <a href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=129%20&course_subtitle=00" rel="noreferrer">
-          Introduction to Blockchain (non-technical)</a></SubTitle>          
-          <SubText>
-          This course aims to provide individuals with a comprehensive general overview of a wide range of blockchain 
-          technologies and applications. From the basics of how blockchain and bitcoin works to current developments in 
-          L1s, Defi, NFTs, Gaming, Consumer markets, Enterprise Solutions, this syllabus will equip participants with basic 
-          knowledge to understand the blockchain-space. No prior CS experience needed.
-          </SubText>
-          <img src={img5} alt="img5" />
-        </SubTextColumn> */
-}
+export default CoursesSection;
