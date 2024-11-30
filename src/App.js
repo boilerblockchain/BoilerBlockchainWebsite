@@ -1,25 +1,18 @@
 import { useRef } from "react";
 import GlobalStyles from "./styles/GlobalStyles";
-import { dark, light } from "./styles/Themes";
+import { light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
 import styled from "styled-components";
 
 import Navigation from "./components/Navigation";
-import About from "./components/sections/About";
 import Home from "./components/sections/Home";
 import Hackathons from "./components/sections/Hackathons";
-import Team from "./components/sections/Team";
+import Team from "./components/sections/courses";
 import Footer from "./components/Footer";
 import Showcase from "./components/sections/Showcase";
-import LandingSection from "./components/sections/about_temp";
+import About from "./components/sections/about_section";
 import HackathonSummary from "./components/sections/hackathons_summary";
 import CTASection from "./components/sections/join_discord";
-
-
-const NavigationWrapper = styled.div`
-  position: relative;
-  z-index: 20; /* Higher z-index for Navigation */
-`;
 
 const SectionWrapper = styled.section`
   position: relative;
@@ -62,7 +55,7 @@ function App() {
 
   const scrollToAbout = () => {
     if (aboutRef.current) {
-      customScroll(aboutRef, 2000);
+      customScroll(aboutRef, 200);
     }
   };
 
@@ -71,17 +64,10 @@ function App() {
       <ThemeProvider theme={light}>
         <GlobalStyles />
 
-        <NavigationWrapper>
-          <Navigation />
-        </NavigationWrapper>
-
+        <Navigation />
         <Home onScrollToNext={scrollToAbout} />
-
-        <SectionWrapper ref={aboutRef} zIndex={10}>
-          {/* <About /> */}
-          <LandingSection/>
-        </SectionWrapper>
-
+        <About/>
+        
         <SectionWrapper zIndex={15}>
           <HackathonSummary />
         </SectionWrapper>

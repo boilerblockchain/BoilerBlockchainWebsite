@@ -1,11 +1,10 @@
-import React, { lazy, Suspense, useState, useEffect, useCallback } from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
 import "../../index.css";
-
 
 
 /* TODO:
@@ -26,13 +25,18 @@ import "../../index.css";
   - left: text about hackathon highlights
   - right: prizes won (animate number)
   - bottom strip: auto-scrolling list of hackathons where we've participated
-DONE
 - Courses:
   - left: number of students taught
   - right: little about the course
 - Footer:
   - links to discord, twitter, instagram 
-*/
+DONE
+- logos
+- replace credits statistic with something
+- fix button
+- replace button with chevron-down
+- add the purple subtopic above topics in each section (look at courses.js)
+- make all the buttons consistent (learn more buttons vs Join Discord button)*/
 
 
 const Section = styled.section`

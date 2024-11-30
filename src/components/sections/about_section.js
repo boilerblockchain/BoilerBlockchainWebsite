@@ -2,14 +2,13 @@ import React, { Suspense } from 'react';
 import { AutoScrollCarousel } from '../carousel_temp';
 import { BookOpen, SearchCode, Wrench, ChartLine } from 'lucide-react';
 
-
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center w-full h-full">
     <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
   </div>
 );
 
-const LandingSection = () => {
+const About = () => {
   return (
     <section className="min-h-screen w-full bg-black flex flex-col justify-center items-center relative overflow-hidden">
       <div className="w-4/5 h-full mx-auto flex justify-center items-center lg:flex-row flex-col mb-24 mt-12">
@@ -60,4 +59,4 @@ const LandingSection = () => {
   );
 };
 
-export default LandingSection;
+export default About;

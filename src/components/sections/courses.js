@@ -77,7 +77,7 @@ const CoursesSection = () => {
                 {/* Additional Stats */}
                 <div className="pt-8 grid grid-cols-2 gap-8 w-full">
                   <div className="text-center">
-                    <div className="text-2xl font-display text-purple-400">12</div>
+                    <div className="text-2xl font-display text-purple-400">16</div>
                     <div className="text-sm text-gray-400 font-mont">Weeks Course</div>
                   </div>
                   <div className="text-center">
