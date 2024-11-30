@@ -95,7 +95,7 @@ const CoursesSection = () => {
               <div className="text-purple-500 font-mont text-sm tracking-wider uppercase pt-4">Our Courses</div>
             </div>
             
-            <div className="space-y-6">
+            <div className="space-y-8">
               <h2 className="text-2xl font-display">
                 <a className="text-white transition-colors duration-300">
                   Principles and Practices of Blockchain (Technical)

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { ArrowUpRight } from 'lucide-react';
 import { HackathonCarousel } from '../hackathons_carousel.js';
 
 const HackathonSummary = () => {

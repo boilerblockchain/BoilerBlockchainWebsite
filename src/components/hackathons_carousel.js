@@ -1,16 +1,25 @@
 import React from 'react';
+import ethSf22 from '../assets/logos/eth_sf_2022.png';
+import pennBlockchain from '../assets/logos/penn_blockchain.jpg';
+import ethDenver23 from '../assets/logos/eth_denver_2023.webp';
+import scalingEth23 from '../assets/logos/scaling_eth_2023.png';
+import ethOnline23 from '../assets/logos/ETHGlobal.png';
+import ethNyc23 from '../assets/logos/eth_nyc_2023(1).png';
+import ethDenver24 from '../assets/logos/eth_denver_2024.png';
+import ethSf24 from '../assets/logos/eth_sf_2024.png';
+import sui from '../assets/logos/sui.png';
 
 // Hackathon data structure
 const HACKATHONS = [
-  { title: "ETH San Francisco '22", logo: '/api/placeholder/200/200' },
-  { title: "Penn Blockchain", logo: '/api/placeholder/300/150' },
-  { title: "ETH Denver '23", logo: '/api/placeholder/150/300' },
-  { title: "Scaling ETH '23", logo: '/api/placeholder/400/100' },
-  { title: "ETH Online '23", logo: '/api/placeholder/100/400' },
-  { title: "ETH New York City '23", logo: '/api/placeholder/200/200' },
-  { title: "ETH Denver '24", logo: '/api/placeholder/300/150' },
-  { title: "ETH San Francisco '24", logo: '/api/placeholder/150/300' },
-  { title: "SUI Network Grants", logo: '/api/placeholder/400/100' },
+  { title: "ETH San Francisco '22", src: ethSf22 },
+  { title: "Penn Blockchain", src: pennBlockchain },
+  { title: "ETH Denver '23", src: ethDenver23 },
+  { title: "Scaling ETH '23", src: scalingEth23 },
+  { title: "ETH Online '23", src: ethOnline23 },
+  { title: "ETH New York City '23", src: ethNyc23 },
+  { title: "ETH Denver '24", src: ethDenver24 },
+  { title: "ETH San Francisco '24", src: ethSf24 },
+  { title: "SUI Network Grants", src: sui },
 ];
 
 const CAROUSEL_HEIGHT = 80; // Main height control
@@ -60,7 +69,7 @@ export const HackathonCarousel = () => {
                 }}
               >
                 <img
-                  src={hackathon.logo}
+                  src={hackathon.src}
                   alt={`${hackathon.title} logo`}
                   className="max-w-full max-h-full object-contain"
                 />
