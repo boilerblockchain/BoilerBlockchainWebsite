@@ -51,15 +51,13 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex justify-between gap-8 pr-6">
-            {['about', 'hackathons', 'research', 'courses'].map((item) => (
+            {['About', 'Courses', 'Devs'].map((item) => (
               <a
                 key={item}
-                href={`/${item}`}
-                className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in capitalize"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollTo(item);
-                }}
+                href={`/${item.toLowerCase()}`}
+                className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {item}
               </a>
@@ -86,15 +84,14 @@ const Navigation = () => {
           }`}
         >
           <div className="container mx-auto py-4">
-            {['home', 'about', 'hackathons', 'research', 'courses'].map((item) => (
+            {['About', 'Courses', 'Devs'].map((item) => (
               <a
                 key={item}
-                href={`#${item}`}
-                className="block py-3 px-6 text-zinc-400 hover:text-zinc-100 capitalize"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollTo(item);
-                }}
+                href={`/${item.toLowerCase()}`}
+                className="block py-3 px-6 text-zinc-400 hover:text-zinc-100"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item}
               </a>

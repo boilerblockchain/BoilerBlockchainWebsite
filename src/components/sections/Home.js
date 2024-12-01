@@ -4,8 +4,8 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { loadPolygonPath } from "@tsparticles/path-polygon";
 import { useMemo } from "react";
+import { ChevronDown } from "lucide-react";
 import "../../index.css";
-
 
 /* TODO:
 - Change font of "This is Boiler Blockchain"
@@ -30,13 +30,14 @@ import "../../index.css";
   - right: little about the course
 - Footer:
   - links to discord, twitter, instagram 
-DONE
 - logos
-- replace credits statistic with something
-- fix button
+- fix routes and links of Learn More buttons
+- fix herobutton
 - replace button with chevron-down
+DONE^
 - add the purple subtopic above topics in each section (look at courses.js)
-- make all the buttons consistent (learn more buttons vs Join Discord button)*/
+- replace credits statistic with something
+*/
 
 
 const Section = styled.section`
@@ -89,28 +90,9 @@ const Home = ({ onScrollToNext }) => {
             BOILER <span className='text-purple-700'> BLOCKCHAIN </span>
           </h1>
           {/* Downward Arrow Button for Scroll */}
-          <button
-            onClick={onScrollToNext} // Function passed from parent to scroll to next section
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="64"
-              height="64"
-              viewBox="0 0 24 24"
-              className="arrow-svg"
-            >
-              <circle cx="12" cy="12" r="10" className="arrow-circle" />
-              <path d="M12 8v8m0 0l-4-4m4 4l4-4" className="arrow-path" />
-            </svg>
-          </button>
+          <a href="#about">
+            <ChevronDown className="text-zinc-600 hover:text-zinc-200 hover:scale-110 duration-300" size={40} />
+          </a>
         </div>
 
         {/* Inline styles for SVG and animations */}

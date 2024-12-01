@@ -110,9 +110,9 @@ const CoursesSection = () => {
               </p>
               <div className="pt-8">
                 <a
-                  href="https://www.eventreg.purdue.edu/ec2k/courselisting.aspx?1=%20&master_ID=6311%20&course_area=1285%20&course_number=130%20&course_subtitle=00"
+                  href="/courses"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300"
                   >
                   Learn More

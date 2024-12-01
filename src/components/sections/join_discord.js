@@ -7,16 +7,13 @@ const CTASection = () => {
     <div className="bg-black text-white px-8 pt-24 pb-36">
       <div className="max-w-6xl mx-auto">
         <div className="relative">
-          {/* Background Elements */}
           <div className="absolute inset-0 bg-purple-900/10 blur-3xl rounded-3xl"></div>
           
           <div className="relative bg-gradient-to-br from-purple-900/10 to-purple-900/40 rounded-3xl p-12 backdrop-blur-sm border border-purple-700/30">
-            {/* Decorative Elements */}
             <div className="absolute top-0 left-0 w-32 h-32 bg-purple-500/10 rounded-full blur-xl"></div>
             <div className="absolute bottom-0 right-0 w-48 h-48 bg-purple-700/10 rounded-full blur-xl"></div>
             
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-12">
-              {/* Left Content */}
               <div className="flex-1 space-y-6 text-center md:text-left">
                 <h2 className="text-4xl font-display">
                   <span className="bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
@@ -25,11 +22,9 @@ const CTASection = () => {
                 </h2>
                 
                 <p className="text-gray-400 font-mont text-base max-w-xl">
-                  Connect with fellow blockchain enthusiasts, get exclusive updates, and access specialized resources in our growing Discord community.
+                  Connect with 400+ fellow blockchain enthusiasts, get exclusive updates, and access specialized resources in our growing Discord community.
                 </p>
               </div>
-              
-              {/* Right Content - CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href="https://discord.com/invite/YdBH68uXUQ"

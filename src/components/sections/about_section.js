@@ -10,7 +10,7 @@ const LoadingSpinner = () => (
 
 const About = () => {
   return (
-    <section className="min-h-screen w-full bg-black flex flex-col justify-center items-center relative overflow-hidden">
+    <section id="about" className="min-h-screen w-full bg-black flex flex-col justify-center items-center relative overflow-hidden">
       <div className="w-4/5 h-full mx-auto flex justify-center items-center lg:flex-row flex-col mb-24 mt-12">
         {/* Left side - Carousel */}
         <div className="w-1/2 pt-6 min-h-[60vh] flex flex-col justify-center items-center">
@@ -39,7 +39,7 @@ const About = () => {
               <span className="ml-3 mr-6"><SearchCode /></span> Development Projects
             </li>
             <li className="flex items-center mb-2">
-              <span className="ml-3 mr-6"><ChartLine /></span> Investments
+              <span className="ml-3 mr-6"><ChartLine /></span> Delegations and Investments
             </li>
           </ul>
 

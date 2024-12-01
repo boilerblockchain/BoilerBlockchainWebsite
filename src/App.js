@@ -26,55 +26,18 @@ const FooterWrapper = styled.footer`
 `;
 
 function App() {
-  const aboutRef = useRef(null);
-
-  const customScroll = (targetRef, duration) => {
-    const targetPosition =
-      targetRef.current.getBoundingClientRect().top + window.pageYOffset;
-    const startPosition = window.pageYOffset;
-    const distance = targetPosition - startPosition;
-    let startTime = null;
-
-    const animateScroll = (currentTime) => {
-      if (startTime === null) startTime = currentTime;
-      const timeElapsed = currentTime - startTime;
-      const run = easeInOutQuad(timeElapsed, startPosition, distance, duration);
-      window.scrollTo(0, run);
-      if (timeElapsed < duration) requestAnimationFrame(animateScroll);
-    };
-
-    const easeInOutQuad = (t, b, c, d) => {
-      t /= d / 2;
-      if (t < 1) return (c / 2) * t * t + b;
-      t--;
-      return (-c / 2) * (t * (t - 2) - 1) + b;
-    };
-
-    requestAnimationFrame(animateScroll);
-  };
-
-  const scrollToAbout = () => {
-    if (aboutRef.current) {
-      customScroll(aboutRef, 200);
-    }
-  };
-
   return (
     <main className='bg-gradient-to-tl from-black via-zinc-900/50 to-black/14'>
       <ThemeProvider theme={light}>
         <GlobalStyles />
 
         <Navigation />
-        <Home onScrollToNext={scrollToAbout} />
+        <Home />
         <About/>
         
         <SectionWrapper zIndex={15}>
           <HackathonSummary />
         </SectionWrapper>
-
-        {/* <SectionWrapper zIndex={12}>
-          <Showcase />
-        </SectionWrapper> */}
 
         <SectionWrapper zIndex={15}>
           <Team />
