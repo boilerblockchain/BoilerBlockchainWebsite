@@ -485,17 +485,17 @@ const EducationPage = () => {
             >
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Location</h4>
-                <p>WANG 2599</p>
+                <p>WANG 2579</p>
               </InfoCard>
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Schedule</h4>
-                <p>Tuesday @ 6 pm</p>
+                <p>Monday @ 5 pm</p>
               </InfoCard>
               <InfoCard className="large" as={motion.div} variants={fadeInUp}>
                 <h4>Course Staff</h4>
                 <p>
-                  {["Prof. Torres-Arias", "Vincent Palmerio", "Adithya Ganesh", 
-                    "Soham Jog", "Ansh Kothari (TA)", "Ansh Tandon (TA)"].map((staff, index) => (
+                  {["Prof. Mithuna thottethodi", "Vincent Palmerio", "Shivam Rastogi", "Adithya Ganesh",
+                    "Mugdha Patil (TA)", "Aditya Kuniyil Kattil (TA)"].map((staff, index) => (
                     <motion.span
                       key={staff}
                       initial={{ opacity: 0, y: 20 }}

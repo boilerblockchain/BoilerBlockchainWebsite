@@ -1,35 +1,71 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+import ethan from "../../assets/images/18_Ethan_Haeberle.jpg";
+import soham from "../../assets/images/16_Soham_Jog.jpg";
+import adithya from "../../assets/images/17_Adithya_Ganesh.jpg";
+import vincent from "../../assets/images/19_Vincent_Palmerio.jpg";
+import eli from "../../assets/images/20_Eli_Dubizh.jpg";
+import pradyumm from "../../assets/images/21_Pradyumn_Malik.jpg";
+import albert from "../../assets/images/22_Albert_Wu.jpg";
+import shivam from "../../assets/images/23_Shivam_Rastogi.jpg";
 
 const teamMembers = [
   {
     id: 1,
     name: "Ethan",
-    role: "Project Lead",
-    bio: "Ethan has over 5 years of experience in blockchain development.",
-    image: "https://t4.ftcdn.net/jpg/02/19/63/31/360_F_219633151_BW6TD8D1EA9OqZu4JgdmeJGg4JBaiAHj.jpg",
+    role: "Co-president",
+    bio: "<Add Description>",
+    image: ethan,
   },
   {
     id: 2,
     name: "Soham",
-    role: "Smart Contract Developer",
-    bio: "Soham is passionate about decentralized applications and DeFi.",
-    image: "https://media.istockphoto.com/id/1394347360/photo/confident-young-black-businesswoman-standing-at-a-window-in-an-office-alone.jpg?s=612x612&w=0&k=20&c=tOFptpFTIaBZ8LjQ1NiPrjKXku9AtERuWHOElfBMBvY=",
+    role: "Co-president",
+    bio: "<Add Description>",
+    image: soham,
   },
   {
     id: 3,
     name: "Adithya",
-    role: "Smart Contract Developer",
-    bio: "Adithya is passionate about decentralized applications and DeFi.",
-    image: "https://www.shutterstock.com/image-photo/headshot-close-portrait-indian-latin-260nw-2343004301.jpg",
+    role: "Head of Strategy",
+    bio: "<Add Description>",
+    image: adithya,
   },
   {
     id: 4,
     name: "Vincent",
-    role: "Smart Contract Developer",
-    bio: "Vincent is passionate about decentralized applications and DeFi.",
-    image: "https://media.istockphoto.com/id/1286810719/photo/smiling-cheerful-young-adult-african-american-ethnicity-man-looking-at-camera-standing-at.jpg?s=612x612&w=0&k=20&c=b9sWYITIZ_yjXB3m-Xftj-latPXQDhb5Roa0pA0JaNY=",
+    role: "Head of Development",
+    bio: "<Add Description>",
+    image: vincent,
+  },
+  {
+    id: 5,
+    name: "Eli",
+    role: "Head of Research and Investments",
+    bio: "<Add Description>",
+    image: eli,
+  },
+  {
+    id: 6,
+    name: "Pradyumm",
+    role: "Lead Governance Delegate",
+    bio: "<Add Description>",
+    image: pradyumm,
+  },
+  {
+    id: 7,
+    name: "Albert",
+    role: "Lead Governance Delegate",
+    bio: "<Add Description>",
+    image: albert,
+  },
+  {
+    id: 8,
+    name: "Shivam",
+    role: "Course Instructor",
+    bio: "<Add Description>",
+    image: shivam,
   },
 ];
 
@@ -49,7 +85,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  background: #0d0d0d; /* Darker background close to black */
+  background: #0d0d0d;
   color: #fff;
   min-height: 100vh;
 `;
@@ -71,7 +107,7 @@ const CardGrid = styled.div`
 `;
 
 const Card = styled.div`
-  background: #1a1a1a; /* Slightly lighter than the main background */
+  background: #1a1a1a;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -83,8 +119,8 @@ const Card = styled.div`
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    transform: scale(1.1); /* Enlarges the card slightly */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7); /* Increases shadow for focus */
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
   }
 `;
 
@@ -92,9 +128,9 @@ const ProfileImage = styled.img`
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  border: 3px solid #e91e63; /* Accent color */
+  border: 3px solid #e91e63; 
   margin-bottom: 1rem;
-  object-fit: cover; /* Ensures proper cropping of image */
+  object-fit: cover;
 `;
 
 const Name = styled.h2`
@@ -127,7 +163,7 @@ const SocialIcons = styled.div`
 
     &:hover {
       transform: scale(1.2);
-      color: #8a2be2; /* Alternate accent color */
+      color: #8a2be2; 
     }
   }
 `;
