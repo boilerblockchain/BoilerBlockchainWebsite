@@ -82,7 +82,7 @@ const CoursesSection = () => {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-display text-purple-400">4</div>
-                    <div className="text-sm text-gray-400 font-mont">Credits</div>
+                    <div className="text-sm text-gray-400 font-mont">Semesters</div>
                   </div>
                 </div>
               </div>
