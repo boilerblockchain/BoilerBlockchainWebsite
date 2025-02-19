@@ -25,8 +25,14 @@ const IMAGES = [
   { title: "Image 10", src: img10 },
 ];
 
-const IMAGE_HEIGHT = 325; // Main height control for each image
-const IMAGE_WIDTH = 550; // Width of the images
+const IMAGE_HEIGHT = {
+  mobile: 250,
+  desktop: 400
+};
+const IMAGE_WIDTH = {
+  mobile: 400,
+  desktop: 650
+};
 
 export const AutoScrollCarousel = () => {
   const duplicatedImages = [...IMAGES, ...IMAGES];
@@ -36,11 +42,20 @@ export const AutoScrollCarousel = () => {
     style.textContent = `
       @keyframes scrollVertical {
         0% { transform: translateY(0); }
-        100% { transform: translateY(calc(-${IMAGE_HEIGHT}px * ${IMAGES.length})) }
+        100% { transform: translateY(calc(-${IMAGE_HEIGHT.desktop}px * ${IMAGES.length})) }
       }
       .animate-scroll-vertical {
         animation: scrollVertical 120s linear infinite;
-        height: calc(${IMAGE_HEIGHT}px * ${IMAGES.length * 2});
+        height: calc(${IMAGE_HEIGHT.desktop}px * ${IMAGES.length * 2});
+      }
+      @media (max-width: 768px) {
+        @keyframes scrollVertical {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(calc(-${IMAGE_HEIGHT.mobile}px * ${IMAGES.length})) }
+        }
+        .animate-scroll-vertical {
+          height: calc(${IMAGE_HEIGHT.mobile}px * ${IMAGES.length * 2});
+        }
       }
     `;
     document.head.appendChild(style);
@@ -51,14 +66,16 @@ export const AutoScrollCarousel = () => {
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: `${IMAGE_HEIGHT * 2.25}px` }}>
+    <div className="relative w-full overflow-hidden h-[500px] md:h-[800px]">
       {/* Vertical Sliding Track */}
       <div className="animate-scroll-vertical">
         {duplicatedImages.map((image, index) => (
           <div
             key={index}
-            className="w-full flex-shrink-0 mb-4 no-select"
-            style={{ height: `${IMAGE_HEIGHT}px`, width: `${IMAGE_WIDTH}px` }}
+            className="w-full flex-shrink-0 mb-4 no-select mx-auto h-[250px] w-[400px] md:h-[400px] md:w-[650px]"
+            style={{
+              maxWidth: '100%'
+            }}
           >
             <img
               src={image.src}

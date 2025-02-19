@@ -4,16 +4,16 @@ import Logo from "./Logo";
 
 const Navigation = () => {
   const ref = useRef(null);
-  const [isIntersecting, setIntersecting] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    if (!ref.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIntersecting(entry.isIntersecting)
-    );
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
 
-    observer.observe(ref.current);
-    return () => observer.disconnect();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollTo = (id) => {
@@ -25,7 +25,10 @@ const Navigation = () => {
 
   return (
     <header ref={ref}>
-      <div className="fixed inset-x-0 top-0 z-50 bg-zinc-900 border-b border-zinc-800">
+      <div className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${isScrolled
+        ? 'bg-zinc-900/70 backdrop-blur-md border-b border-zinc-800/50'
+        : 'bg-transparent'
+        }`}>
         <div className="container flex items-center justify-between pl-8 pt-6 pb-4 mx-auto">
           <div className="flex items-center">
             <a

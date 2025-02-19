@@ -12,8 +12,17 @@ const About = () => {
   return (
     <section id="about" className="min-h-screen w-full bg-black flex flex-col justify-center items-center relative overflow-hidden">
       <div className="w-full md:w-4/5 h-full mx-auto flex flex-col lg:flex-row justify-center items-center gap-8 px-4 md:px-0 py-12">
-        {/* Content Section - Moved to top on mobile */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-4 order-1 lg:order-1">
+        {/* Carousel Section - Left on desktop, bottom on mobile */}
+        <div className="w-full lg:w-1/2 min-h-[40vh] lg:min-h-[70vh] flex flex-col justify-center items-center order-2 lg:order-1">
+          <Suspense fallback={<LoadingSpinner />}>
+            <div className="w-full max-w-[95vw] md:max-w-[90vw] lg:max-w-full px-4">
+              <AutoScrollCarousel />
+            </div>
+          </Suspense>
+        </div>
+
+        {/* Content Section - Right on desktop, top on mobile */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-4 order-1 lg:order-2">
           <h2 className="text-3xl md:text-4xl text-white w-full text-left font-display mb-6">
             Who are we?
           </h2>
@@ -50,15 +59,6 @@ const About = () => {
               Learn More
             </a>
           </div>
-        </div>
-
-        {/* Carousel Section - Moved to bottom on mobile */}
-        <div className="w-full lg:w-1/2 min-h-[40vh] lg:min-h-[60vh] flex flex-col justify-center items-center order-2 lg:order-1">
-          <Suspense fallback={<LoadingSpinner />}>
-            <div className="w-full max-w-[90vw] lg:max-w-full">
-              <AutoScrollCarousel />
-            </div>
-          </Suspense>
         </div>
       </div>
     </section>
