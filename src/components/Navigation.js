@@ -47,8 +47,8 @@ const Navigation = () => {
             </a>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex justify-between gap-8 pr-6">
+          {/* Navigation Links for all screens */}
+          <div className="flex justify-between gap-8 pr-6">
             {['About', 'Courses', 'Devs'].map((item) => (
               <a
                 key={item}
@@ -56,39 +56,6 @@ const Navigation = () => {
                 className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in"
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                {item}
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-100"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            <div className="space-y-2">
-              <span className={`block w-6 h-0.5 bg-current transform transition duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-current transition duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-6 h-0.5 bg-current transform transition duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
-            </div>
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        <div
-          className={`md:hidden absolute w-full bg-zinc-900/95 backdrop-blur transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'
-            }`}
-        >
-          <div className="container mx-auto py-4">
-            {['About', 'Courses', 'Devs'].map((item) => (
-              <a
-                key={item}
-                href={`/${item.toLowerCase()}`}
-                className="block py-3 px-6 text-zinc-400 hover:text-zinc-100"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item}
               </a>
