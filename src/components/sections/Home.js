@@ -57,7 +57,7 @@ const Home = ({ onScrollToNext }) => {
 
   return (
     <Section id="home">
-      <div style={{ position: "relative", height: "100vh", width: "100vw", background: "rgba(0, 0, 0, 0.3)"}}>
+      <div style={{ position: "relative", height: "100vh", width: "100vw", background: "rgba(0, 0, 0, 0.3)" }}>
         {useMemo(
           () => (
             <Particles
@@ -82,12 +82,12 @@ const Home = ({ onScrollToNext }) => {
             zIndex: 2,
           }}
         >
-          <h1 className='text-4xl font-display text-center text-zinc-200 animate-fade-in mt-12'
-          >
+          <h1 className='text-2xl font-display text-center text-zinc-200 animate-fade-in mt-12'>
             This is
           </h1>
-          <h1 className='text-white text-8xl font-display mt-6 mb-32 animate-fade-in'>
-            BOILER <span className='text-purple-700'> BLOCKCHAIN </span>
+          <h1 className='text-white text-5xl md:text-7xl sm:text-5xl xs:text-4xl font-display mt-4 mb-24 animate-fade-in text-center'>
+            <span className='block mb-2'>BOILER</span>
+            <span className='block text-purple-700'>BLOCKCHAIN</span>
           </h1>
           {/* Downward Arrow Button for Scroll */}
           <a href="#about">
@@ -199,7 +199,7 @@ const particlesOptions = {
   },
   emitters: {
     autoPlay: true,
-    rate: { quantity: 15, delay: 0.25},
+    rate: { quantity: 15, delay: 0.25 },
     position: { x: 50, y: 50 },
   },
   motion: { disable: false, reduce: { factor: 10, value: true } },

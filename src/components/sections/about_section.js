@@ -11,50 +11,56 @@ const LoadingSpinner = () => (
 const About = () => {
   return (
     <section id="about" className="min-h-screen w-full bg-black flex flex-col justify-center items-center relative overflow-hidden">
-      <div className="w-4/5 h-full mx-auto flex justify-center items-center lg:flex-row flex-col mb-24 mt-12">
-        {/* Left side - Carousel */}
-        <div className="w-1/2 pt-6 min-h-[60vh] flex flex-col justify-center items-center">
-          <Suspense fallback={<LoadingSpinner />}>
-            <AutoScrollCarousel />
-          </Suspense>
-        </div>
-        
-        <div className="w-1/2 min-h-[60vh] flex flex-col justify-center items-center px-8">
-          <h2 className="text-3xl md:text-4xl lg:text-4xl text-white self-start w-4/5 mx-auto lg:text-left text-center font-display">
+      <div className="w-full md:w-4/5 h-full mx-auto flex flex-col lg:flex-row justify-center items-center gap-8 px-4 md:px-0 py-12">
+        {/* Content Section - Moved to top on mobile */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-4 order-1 lg:order-1">
+          <h2 className="text-3xl md:text-4xl text-white w-full text-left font-display mb-6">
             Who are we?
           </h2>
-          
-          <p className="text-base text-gray-400 self-start w-4/5 mx-auto mt-8 lg:text-left text-center font-mont">
+
+          <p className="text-base text-gray-400 w-full text-left font-mont mb-6">
             Boiler Blockchain is Purdue's leading student organization for blockchain technology. At Boiler Blockchain, you can take part in:
           </p>
 
-          <ul className="w-4/5 mx-auto mt-4 text-gray-400 font-mont list-none">
-            <li className="flex items-center mb-2">
-              <span className="ml-3 mr-6"><BookOpen /></span>  Technical Courses
+          <ul className="w-full text-gray-400 font-mont list-none mb-6">
+            <li className="flex items-center mb-4">
+              <span className="mr-4"><BookOpen className="w-5 h-5" /></span>
+              <span>Technical Courses</span>
             </li>
-            <li className="flex items-center mb-2">
-              <span className="ml-3 mr-6"><Wrench /></span> Hackathons
+            <li className="flex items-center mb-4">
+              <span className="mr-4"><Wrench className="w-5 h-5" /></span>
+              <span>Hackathons</span>
             </li>
-            <li className="flex items-center mb-2">
-              <span className="ml-3 mr-6"><SearchCode /></span> Development Projects
+            <li className="flex items-center mb-4">
+              <span className="mr-4"><SearchCode className="w-5 h-5" /></span>
+              <span>Development Projects</span>
             </li>
-            <li className="flex items-center mb-2">
-              <span className="ml-3 mr-6"><ChartLine /></span> Delegations and Investments
+            <li className="flex items-center mb-4">
+              <span className="mr-4"><ChartLine className="w-5 h-5" /></span>
+              <span>Delegations and Investments</span>
             </li>
           </ul>
 
-          <p className="text-gray-400 self-start w-4/5 mx-auto mt-6 font-mont lg:text-left text-center">
+          <p className="text-gray-400 w-full text-left font-mont mb-6">
             Join our community and connect with like-minded peers. <a href="https://discord.com/invite/YdBH68uXUQ" target="_blank" rel="noopener noreferrer" className="underline text-blue-400 hover:text-blue-300">Join our Discord</a>.
           </p>
 
-          <div className="w-4/5 mx-auto mt-10 flex lg:justify-start justify-center">
-            <a href="/about" className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300">
+          <div className="w-full">
+            <a href="/about" className="inline-block font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300">
               Learn More
             </a>
           </div>
         </div>
-      </div>
 
+        {/* Carousel Section - Moved to bottom on mobile */}
+        <div className="w-full lg:w-1/2 min-h-[40vh] lg:min-h-[60vh] flex flex-col justify-center items-center order-2 lg:order-1">
+          <Suspense fallback={<LoadingSpinner />}>
+            <div className="w-full max-w-[90vw] lg:max-w-full">
+              <AutoScrollCarousel />
+            </div>
+          </Suspense>
+        </div>
+      </div>
     </section>
   );
 };
