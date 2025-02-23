@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-
+// 
 const CoursesSection = () => {
   const TOTAL_STUDENTS = 150;
   const [countStudents, setCountStudents] = useState(0);
