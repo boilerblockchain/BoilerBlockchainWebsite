@@ -1,6 +1,12 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp } from 'react-icons/fa';
+import React, { useCallback } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { FaGithub, FaDiscord, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
+
+// Import images
 import ethan from "../../assets/images/18_Ethan_Haeberle.jpg";
 import soham from "../../assets/images/16_Soham_Jog.jpg";
 import adithya from "../../assets/images/17_Adithya_Ganesh.jpg";
@@ -10,185 +16,561 @@ import pradyumm from "../../assets/images/21_Pradyumn_Malik.jpg";
 import albert from "../../assets/images/22_Albert_Wu.jpg";
 import shivam from "../../assets/images/23_Shivam_Rastogi.jpg";
 
-const teamMembers = [
-  {
-    id: 1,
-    name: "Ethan",
-    role: "Co-president",
-    bio: "<Add Description>",
-    image: ethan,
+// Animation variants
+const fadeInUp = {
+  initial: {
+    y: 60,
+    opacity: 0
   },
-  {
-    id: 2,
-    name: "Soham",
-    role: "Co-president",
-    bio: "<Add Description>",
-    image: soham,
-  },
-  {
-    id: 3,
-    name: "Adithya",
-    role: "Head of Strategy",
-    bio: "<Add Description>",
-    image: adithya,
-  },
-  {
-    id: 4,
-    name: "Vincent",
-    role: "Head of Development",
-    bio: "<Add Description>",
-    image: vincent,
-  },
-  {
-    id: 5,
-    name: "Eli",
-    role: "Head of Research and Investments",
-    bio: "<Add Description>",
-    image: eli,
-  },
-  {
-    id: 6,
-    name: "Pradyumm",
-    role: "Lead Governance Delegate",
-    bio: "<Add Description>",
-    image: pradyumm,
-  },
-  {
-    id: 7,
-    name: "Albert",
-    role: "Lead Governance Delegate",
-    bio: "<Add Description>",
-    image: albert,
-  },
-  {
-    id: 8,
-    name: "Shivam",
-    role: "Course Instructor",
-    bio: "<Add Description>",
-    image: shivam,
-  },
-];
-
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.9);
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
+};
 
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: #0d0d0d;
-  color: #fff;
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+// Style components
+const PageSection = styled.section`
   min-height: 100vh;
-`;
-
-const Title = styled.h1`
-  font-size: 3rem;
-  margin-bottom: 2rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-`;
-
-const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
   width: 100%;
-  padding: 2rem;
+  background-color: #000000;
+  position: relative;
+  overflow: hidden;
+  padding-top: 4rem;
+  font-family: 'Tomorrow', sans-serif;
+  
+  * {
+    font-family: 'Tomorrow', sans-serif;
+  }
 `;
 
-const Card = styled.div`
-  background: #1a1a1a;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  text-align: center;
-  animation: ${fadeIn} 0.8s ease forwards;
+const BackButton = styled(Link)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.95);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: ${(props) => props.theme.fontmd};
   display: flex;
-  flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
+  z-index: 100;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  font-weight: 600;
+
+  &:before {
+    content: "←";
+    color: #7120b0;
+  }
 
   &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    background: rgba(113, 32, 176, 0.1);
+  }
+
+  @media (max-width: 40em) {
+    padding: 0.8rem 1rem;
+    font-size: ${(props) => props.theme.fontsm};
   }
 `;
 
-const ProfileImage = styled.img`
-  width: 120px;
-  height: 120px;
+const Container = styled(motion.div)`
+  width: 85%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 0;
+  position: relative;
+  z-index: 2;
+  
+  @media (max-width: 70em) {
+    width: 90%;
+  }
+`;
+
+const Title = styled(motion.h1)`
+  font-size: 6rem; 
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Tomorrow', sans-serif; 
+
+  @media (max-width: 40em) {
+    font-size: 4rem;
+  }
+`;
+
+const Subtitle = styled(motion.p)`
+  font-size: ${props => props.theme.fontxl};
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem auto;
+  font-family: 'Tomorrow', sans-serif;
+  line-height: 1.6;
+`;
+
+const SectionTitle = styled(motion.h2)`
+  font-size: 2.5rem;
+  color: #ffffff;
+  margin: 3rem 0 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-align: center;
+
+  span {
+    color: #7120b0;
+  }
+`;
+
+const CardGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+`;
+
+const Card = styled(motion.div)`
+  background: rgba(15, 15, 15, 0.7);
+  border: 1px solid #7120b0;
+  border-radius: 8px;
+  padding: 2rem;
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
+    transform: translateY(-5px);
+  }
+`;
+
+const ProfileImage = styled.div`
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  border: 3px solid #e91e63; 
-  margin-bottom: 1rem;
-  object-fit: cover;
+  border: 3px solid #7120b0;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(113, 32, 176, 0.3);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.1);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(113, 32, 176, 0.2), transparent);
+    pointer-events: none;
+  }
 `;
 
-const Name = styled.h2`
+const Name = styled(motion.h3)`
   font-size: 1.5rem;
-  color: #fff;
+  color: #ffffff;
   margin: 0.5rem 0;
+  font-weight: 700;
+  text-align: center;
 `;
 
-const Role = styled.h3`
-  font-size: 1.1rem;
-  color: #bfbfbf;
-  margin: 0.3rem 0;
+const Role = styled(motion.h4)`
+  font-size: 1rem;
+  color: #7120b0;
+  margin: 0.3rem 0 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
-const Bio = styled.p`
+const Bio = styled(motion.p)`
   font-size: 0.95rem;
-  color: #ccc;
-  margin: 0.5rem 0 1rem 0;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
 `;
 
 const SocialIcons = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
+  margin-top: auto;
 
-  & > a {
-    color: #e91e63;
-    font-size: 1.5rem;
-    transition: transform 0.3s ease;
+  a {
+    color: #ffffff;
+    background: rgba(113, 32, 176, 0.2);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(113, 32, 176, 0.3);
 
     &:hover {
-      transform: scale(1.2);
-      color: #8a2be2; 
+      background: #7120b0;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(113, 32, 176, 0.4);
     }
   }
 `;
 
+// Team data
+const boardMembers = [
+  {
+    id: 1,
+    name: "Ethan Haeberle",
+    role: "Co-president",
+    bio: "Leading Boiler Blockchain's strategy and vision, Ethan focuses on ecosystem growth and partnership development.",
+    image: ethan,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 2,
+    name: "Soham Jog",
+    role: "Co-president",
+    bio: "Technical lead focused on blockchain integration and Web3 product development across the organization.",
+    image: soham,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 3,
+    name: "Adithya Ganesh",
+    role: "Head of Strategy",
+    bio: "Overseeing strategic initiatives and future planning for the organization's growth and impact.",
+    image: adithya,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 4,
+    name: "Vincent Palmerio",
+    role: "Head of Development",
+    bio: "Leading the technical development team and overseeing all engineering initiatives and projects.",
+    image: vincent,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 5,
+    name: "Eli Dubizh",
+    role: "Head of Research",
+    bio: "Spearheading research initiatives focused on blockchain innovations and investment opportunities.",
+    image: eli,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 6,
+    name: "Pradyumm Malik",
+    role: "Lead Governance Delegate",
+    bio: "Representing Boiler Blockchain in governance decisions for various blockchain protocols and DAOs.",
+    image: pradyumm,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 7,
+    name: "Albert Wu",
+    role: "Lead Governance Delegate",
+    bio: "Managing protocol governance participation and representing the organization in ecosystem discussions.",
+    image: albert,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 8,
+    name: "Shivam Rastogi",
+    role: "Course Instructor",
+    bio: "Leading blockchain education initiatives and developing technical curriculum for members and students.",
+    image: shivam,
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  }
+];
+
+const memberExamples = [
+  {
+    id: 9,
+    name: "Joey",
+    role: "Developer",
+    bio: "ELI",
+    image: eli, // Using an existing image as placeholder
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 10,
+    name: "ELI",
+    role: "ELI",
+    bio: "ELI",
+    image: eli, // Using an existing image as placeholder
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  },
+  {
+    id: 11,
+    name: "ELI",
+    role: "ELI",
+    bio: "ELI",
+    image: eli, // Using an existing image as placeholder
+    socials: {
+      linkedin: "#",
+      twitter: "#",
+      github: "#",
+      discord: "#"
+    }
+  }
+];
+
 const TeamPage = () => {
+  const particlesInit = useCallback(async (engine) => {
+    await loadFull(engine);
+  }, []);
+
   return (
-    <PageContainer>
-      <Title>Meet Our Team</Title>
-      <CardGrid>
-        {teamMembers.map((member) => (
-          <Card key={member.id}>
-            <ProfileImage src={member.image} alt={member.name} />
-            <Name>{member.name}</Name>
-            <Role>{member.role}</Role>
-            <Bio>{member.bio}</Bio>
-            <SocialIcons>
-              <a href="#"><FaFacebook /></a>
-              <a href="#"><FaInstagram /></a>
-              <a href="#"><FaLinkedin /></a>
-              <a href="#"><FaWhatsapp /></a>
-            </SocialIcons>
-          </Card>
-        ))}
-      </CardGrid>
-    </PageContainer>
+    <PageSection>
+      <Particles
+        init={particlesInit}
+        options={{
+          background: { color: "#000000" },
+          particles: {
+            color: { value: ["#7120b0", "#9d20b0"] },
+            links: {
+              color: "#7120b0",
+              distance: 150,
+              enable: true,
+              opacity: 0.5,
+              width: 1,
+            },
+            move: { enable: true, speed: 0.8 },
+            number: { value: 60 },
+            size: { value: 2 },
+            opacity: { value: 0.3 },
+          },
+          fpsLimit: 120,
+          interactivity: {
+            events: {
+              onHover: {
+                enable: true,
+                mode: "grab"
+              },
+            },
+            modes: {
+              grab: {
+                distance: 140,
+                links: { opacity: 0.4 }
+              }
+            }
+          }
+        }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 1,
+        }}
+      />
+    
+      <BackButton to="/">Back</BackButton>
+    
+      <Container
+        initial="initial"
+        animate="animate"
+        variants={staggerContainer}
+      >
+        <Title
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          The <span style={{ color: "#7120b0" }}>Team</span>
+        </Title>
+        <Subtitle
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Meet the innovative minds behind Boiler Blockchain - passionate technologists and leaders driving Web3 adoption at Purdue
+        </Subtitle>
+      
+        <SectionTitle
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          Executive <span>Board</span>
+        </SectionTitle>
+        
+        <CardGrid
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          {boardMembers.map((member, index) => (
+            <Card
+              key={member.id}
+              variants={fadeInUp}
+              custom={index}
+              initial="initial"
+              animate="animate"
+              whileHover={{ y: -5 }}
+            >
+              <ProfileImage>
+                <img src={member.image} alt={member.name} />
+              </ProfileImage>
+              <Name>{member.name}</Name>
+              <Role>{member.role}</Role>
+              <Bio>{member.bio}</Bio>
+              <SocialIcons>
+                <motion.a href={member.socials.linkedin} whileHover={{ y: -3 }}>
+                  <FaLinkedin />
+                </motion.a>
+                <motion.a href={member.socials.twitter} whileHover={{ y: -3 }}>
+                  <FaTwitter />
+                </motion.a>
+                <motion.a href={member.socials.github} whileHover={{ y: -3 }}>
+                  <FaGithub />
+                </motion.a>
+                <motion.a href={member.socials.discord} whileHover={{ y: -3 }}>
+                  <FaDiscord />
+                </motion.a>
+              </SocialIcons>
+            </Card>
+          ))}
+        </CardGrid>
+        
+        <SectionTitle
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+        >
+          Active <span>Members</span>
+        </SectionTitle>
+        
+        <CardGrid
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          {memberExamples.map((member, index) => (
+            <Card
+              key={member.id}
+              variants={fadeInUp}
+              custom={index}
+              initial="initial"
+              animate="animate"
+              whileHover={{ y: -5 }}
+            >
+              <ProfileImage>
+                <img src={member.image} alt={member.name} />
+              </ProfileImage>
+              <Name>{member.name}</Name>
+              <Role>{member.role}</Role>
+              <Bio>{member.bio}</Bio>
+              <SocialIcons>
+                <motion.a href={member.socials.linkedin} whileHover={{ y: -3 }}>
+                  <FaLinkedin />
+                </motion.a>
+                <motion.a href={member.socials.twitter} whileHover={{ y: -3 }}>
+                  <FaTwitter />
+                </motion.a>
+                <motion.a href={member.socials.github} whileHover={{ y: -3 }}>
+                  <FaGithub />
+                </motion.a>
+                <motion.a href={member.socials.discord} whileHover={{ y: -3 }}>
+                  <FaDiscord />
+                </motion.a>
+              </SocialIcons>
+            </Card>
+          ))}
+        </CardGrid>
+      </Container>
+    </PageSection>
   );
 };
 

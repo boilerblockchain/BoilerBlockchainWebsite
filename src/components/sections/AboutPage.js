@@ -42,7 +42,6 @@ const PageSection = styled.section`
   padding-top: 4rem;
 `;
 
-
 const Container = styled(motion.div)`
   width: 85%;
   max-width: 1400px;
@@ -60,14 +59,15 @@ const Container = styled(motion.div)`
   }
 `;
 
-
 const HeroTitle = styled.h1`
   font-size: 6rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   margin-top: 1.5rem;
-  font-weight: bold;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
   font-family:'Tomorrow', sans-serif; 
   animation: fadeIn 1s ease-in;
 
@@ -87,6 +87,15 @@ const HeroTitle = styled.h1`
   }
 `;
 
+// const SubHeading = styled.h2`
+//   font-size: 1.5rem;
+//   text-transform: uppercase;
+//   color: #7120b0;
+//   letter-spacing: 2px;
+//   margin-bottom: 1rem;
+//   font-weight: 600;
+//   text-align: center;
+// `;
 
 const HeroSubtitle = styled.p`
   font-size: ${props => props.theme.fontxl};
@@ -95,6 +104,7 @@ const HeroSubtitle = styled.p`
   max-width: 800px;
   margin: 0 auto 4rem auto;
   font-family: 'Tomorrow', sans-serif;
+  line-height: 1.6;
 
   @keyframes fadeIn {
     from {
@@ -108,11 +118,10 @@ const HeroSubtitle = styled.p`
   }
 `;
 
-
 const Grid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  gap: 2.5rem;
   width: 100%;
 
   @media (max-width: 64em) {
@@ -120,15 +129,20 @@ const Grid = styled(motion.div)`
   }
 `;
 
-
 const ContentBlock = styled(motion.div)`
-  background: linear-gradient(to right, rgba(255, 0, 204, 0.03), rgba(51, 51, 204, 0.03));
-  padding: 2rem;
-  border: 1px solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
+  background: rgba(15, 15, 15, 0.7);
+  padding: 2.5rem;
+  border: 1px solid #7120b0;
+  border-radius: 8px;
   backdrop-filter: blur(5px);
   font-family: 'Tomorrow', sans-serif;
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
+    transform: translateY(-5px);
+  }
 
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -136,10 +150,12 @@ const ContentBlock = styled(motion.div)`
 
   h2 {
     color: #ffffff;
-    font-size: 2.75rem;
+    font-size: 2.5rem;
     margin-bottom: 1.5rem;
     font-family: 'Tomorrow', sans-serif;
-    font-weight: bold;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   p {
@@ -152,15 +168,13 @@ const ContentBlock = styled(motion.div)`
   .button-container {
     display: flex;
     justify-content: center;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
   }
 `;
-
 
 const List = styled.ul`
   list-style: none;
   padding: 0;
-
 
   li {
     color: #ffffff;
@@ -170,31 +184,38 @@ const List = styled.ul`
     font-size: ${(props) => props.theme.fontmd};
     line-height: 1.6;
 
-
     &:before {
-      content: "→";
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
       margin-right: 1rem;
-      color: #ffffff;
+      background-color: #7120b0;
+      border-radius: 50%;
     }
   }
 `;
 
-
-const ImageContainer  = styled(motion.div)`
+const ImageContainer = styled(motion.div)`
   width: 100%;
   height: 100%;
   min-height: 300px;
-  border-radius: 15px;
+  border-radius: 8px;
   overflow: hidden;
-
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(113, 32, 176, 0.3);
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
   }
 `;
-
 
 const BackButton = styled(Link)`
   position: fixed;
@@ -210,21 +231,20 @@ const BackButton = styled(Link)`
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
   z-index: 100;
   backdrop-filter: blur(10px);
-
+  text-transform: uppercase;
+  font-weight: 600;
 
   &:before {
     content: "←";
-    color: #ffffff;
+    color: #7120b0;
   }
-
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(113, 32, 176, 0.1);
   }
-
 
   @media (max-width: 40em) {
     padding: 0.8rem 1rem;
@@ -232,38 +252,33 @@ const BackButton = styled(Link)`
   }
 `;
 
-
-
-
-const LinkButton  = styled(motion.div)`
+const LinkButton = styled(motion.div)`
   display: inline-block;
   margin: 0 auto;
-  background-color: transparent;
+  background-color: #7120b0;
   color: white;
   padding: 1rem 2rem;
   text-decoration: none;
-  font-size: ${(props) => props.theme.fontlg};
-  transition: box-shadow 0.3s ease;
-  border: 1px solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
+  font-size: ${(props) => props.theme.fontmd};
+  transition: all 0.3s ease;
+  border-radius: 5px;
   cursor: pointer;
   text-align: center;
-
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 
   &:hover {
-    box-shadow: 0 0 10px 2px #ff00cc, 0 0 20px 4px #3333cc;
+    background-color: #9d20b0;
+    box-shadow: 0 0 20px rgba(113, 32, 176, 0.6);
+    transform: translateY(-3px);
   }
 
-
   @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontmd};
+    font-size: ${(props) => props.theme.fontsm};
     padding: 0.8rem 1.5rem;
   }
 `;
-
-
-
 
 const ParticlesBackground = ({ keyId }) => {
   const particlesInit = useCallback(async (engine) => {
@@ -277,19 +292,34 @@ const ParticlesBackground = ({ keyId }) => {
       options={{
         background: { color: "#000000" },
         particles: {
-          color: { value: "#ffffff" },
+          color: { value: ["#7120b0", "#9d20b0"] },
           links: {
-            color: "#ff00cc",
+            color: "#7120b0",
             distance: 150,
             enable: true,
-            opacity: 0.2, // Reduced from 0.4
+            opacity: 0.5,
             width: 1,
           },
-          move: { enable: true, speed: 1 },
-          number: { value: 80 }, // Reduced from 100
+          move: { enable: true, speed: 0.8 },
+          number: { value: 60 },
           size: { value: 2 },
-          opacity: { value: 0.3 }, // Reduced from 0.5
+          opacity: { value: 0.3 },
         },
+        fpsLimit: 120,
+        interactivity: {
+          events: {
+            onHover: {
+              enable: true,
+              mode: "grab"
+            },
+          },
+          modes: {
+            grab: {
+              distance: 140,
+              links: { opacity: 0.4 }
+            }
+          }
+        }
       }}
       style={{
         position: "absolute",
@@ -302,8 +332,6 @@ const ParticlesBackground = ({ keyId }) => {
     />
   );
 };
-
-
 
 const AboutPage = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
@@ -327,11 +355,11 @@ const AboutPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <HeroTitle>Who Are We?</HeroTitle>
+          
+          <HeroTitle>Discover <span style={{ color: "#7120b0" }}>Who we are</span></HeroTitle>
           <HeroSubtitle>
-            Boiler Blockchain is Purdue's premier student-led organization
-            dedicated to advancing blockchain technology through innovation,
-            education, and community.
+            Purdue's premier student-led organization dedicated to advancing blockchain technology 
+            through innovation, education, and community building.
           </HeroSubtitle>
         </motion.div>
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Particles from "react-tsparticles";
@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import img5 from "../../assets/images/5.jpg";
 import img4 from "../../assets/images/4.jpg";
 import img3 from "../../assets/images/3.jpg";
-
 
 const fadeInUp = {
     initial: {
@@ -33,7 +32,6 @@ const staggerContainer = {
 };
   
 
-
 const PageSection = styled.section`
   min-height: 100vh;
   width: 100%;
@@ -53,32 +51,33 @@ const BackButton = styled(Link)`
   top: 0;
   left: 0;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 1rem 2rem;
   background: rgba(0, 0, 0, 0.95);
   color: #ffffff;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: ${(props) => props.theme.fontmd};
   display: flex;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
   z-index: 100;
   backdrop-filter: blur(10px);
-  font-family: 'Tomorrow', sans-serif;
+  text-transform: uppercase;
+  font-weight: 600;
 
   &:before {
     content: "←";
-    color: #ffffff;
+    color: #7120b0;
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(113, 32, 176, 0.1);
   }
 
-  @media (min-width: 768px) {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
+  @media (max-width: 40em) {
+    padding: 0.8rem 1rem;
+    font-size: ${(props) => props.theme.fontsm};
   }
 `;
 
@@ -106,13 +105,20 @@ const Container = styled(motion.div)`
 `;
 
 const Title = styled(motion.h1)`
-  font-family: 'Tomorrow', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 6rem);
+  font-size: 4.5rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+  margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family:'Tomorrow', sans-serif; 
   grid-column: 1 / -1;
+
+  @media (max-width: 40em) {
+    font-size: 4rem;
+  }
 `;
 
 const ImageSection = styled(motion.div)`
@@ -135,47 +141,40 @@ const ImageSection = styled(motion.div)`
 `;
 
 const CourseCard = styled(motion.div)`
-  background: rgba(13, 13, 13, 0.6);
-  border-radius: 15px;
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 15, 0.7);
+  padding: 2.5rem;
+  border: 1px solid #7120b0;
+  border-radius: 8px;
+  backdrop-filter: blur(5px);
+  font-family: 'Tomorrow', sans-serif;
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
   transition: all 0.3s ease;
   position: relative;
 
   @media (min-width: 768px) {
-    border-radius: 20px;
+    border-radius: 8px;
   }
-
- 
 
   &:hover {
+    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
     transform: translateY(-5px);
-    box-shadow: 0 0 30px rgba(255, 0, 204, 0.2);
-  }
-`;
-
-const CardHeader = styled.div`
-  background: linear-gradient(90deg, rgba(255, 0, 204, 0.1), rgba(51, 51, 204, 0.1));
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-  @media (min-width: 768px) {
-    padding: 2rem;
   }
 `;
 
 const CourseTitle = styled.h2`
   font-family: 'Tomorrow', sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
   color: #ffffff;
   margin-bottom: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const CourseInfo = styled.div`
   padding: 1.5rem;
   color: rgba(255, 255, 255, 0.8);
-  font-family: 'Sora', sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -201,10 +200,11 @@ const InfoGrid = styled(motion.div)`
 `;
 
 const InfoCard = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 15, 15, 0.7);
   padding: 1.25rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
 
   @media (min-width: 768px) {
     padding: 1.5rem;
@@ -219,11 +219,11 @@ const InfoCard = styled(motion.div)`
       gap: 0.5rem;
       
       span {
-        background: rgba(255, 0, 204, 0.1);
+        background: rgba(113, 32, 176, 0.1);
         padding: 0.3rem 0.8rem;
         border-radius: 15px;
         font-size: 0.85rem;
-        border: 1px solid rgba(255, 0, 204, 0.2);
+        border: 1px solid rgba(113, 32, 176, 0.3);
 
         @media (min-width: 768px) {
           font-size: 0.9rem;
@@ -233,7 +233,7 @@ const InfoCard = styled(motion.div)`
   }
 
   h4 {
-    color: #ff00cc;
+    color: #7120b0;
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -253,61 +253,71 @@ const InfoCard = styled(motion.div)`
     }
   }
 `;
+
 const List = styled.ul`
-  list-style-type: none;
+  list-style: none;
   padding: 0;
   margin: 1rem 0;
 
   li {
-    color: rgba(255, 255, 255, 0.8);
-    padding: 0.6rem 0;
+    color: #ffffff;
+    padding: 0.8rem 0;
     display: flex;
     align-items: center;
     font-family: 'Tomorrow', sans-serif;
-    font-size: 0.9rem;
-    
-    @media (min-width: 768px) {
-      padding: 0.8rem 0;
-      font-size: 1rem;
-    }
-    
+    font-size: ${(props) => props.theme.fontmd};
+    line-height: 1.6;
+
     &:before {
-      content: "→";
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
       margin-right: 1rem;
-      color: #ff00cc;
+      background-color: #7120b0;
+      border-radius: 50%;
     }
   }
 `;
 
 const DetailsSection = styled(motion.div)`
-  padding: 1.25rem;
-  background: rgba(13, 13, 13, 0.6);
-  border-radius: 15px;
+  padding: 2rem;
+  background: rgba(15, 15, 15, 0.7);
+  border-radius: 8px;
   margin: 1.25rem 0; 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(113, 32, 176, 0.3);
   display: flex;
   flex-direction: column;
-  width: 100%; // Ensure full width
-  backdrop-filter: blur(10px);
+  width: 100%;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
+    transform: translateY(-5px);
+  }
 
   @media (min-width: 768px) {
-    padding: 2rem;
-    margin: 2rem 0; 
-    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 2rem 0;
   }
 
   h3 {
     color: #ffffff;
-    margin-bottom: 1rem;
-    font-size: clamp(1.25rem, 3vw, 1.5rem);
-    width: 100%; 
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    width: 100%;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   p {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.8); 
+    font-size: ${props => props.theme.fontlg};
+    margin-bottom: 1.5rem;
     line-height: 1.6;
-    margin-bottom: 0;
-    width: 100%;
   }
 
   ${List} {
@@ -318,67 +328,64 @@ const DetailsSection = styled(motion.div)`
 
 const ImageContainer = styled.div`
   height: 250px;
-  border-radius: 15px;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
-  flex: 1; 
+  flex: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(113, 32, 176, 0.3);
   
   @media (min-width: 768px) {
     height: calc((100% - 4rem) / 3); 
-    min-height: 250px; 
-    border-radius: 20px;
+    min-height: 250px;
   }
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s ease;
   }
 
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  &:hover img {
+    transform: scale(1.05);
   }
 `;
 
 const DownloadButton = styled.a`
   display: inline-block;
   margin: 2rem auto 0;
-  background-color: transparent;
+  background-color: #7120b0;
   color: white;
   padding: 1rem 2rem;
   text-decoration: none;
-  font-size: ${(props) => props.theme.fontlg};
-  transition: box-shadow 0.3s ease;
-  border: 1px solid;
-  border-image-slice: 1;
-  border-image-source: linear-gradient(to right, #ff00cc, #3333cc);
+  font-size: ${(props) => props.theme.fontmd};
+  transition: all 0.3s ease;
+  border-radius: 5px;
   cursor: pointer;
   text-align: center;
-  font-family: 'Sora', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
   width: fit-content;
   max-width: 100%;
 
   &:hover {
-    box-shadow: 0 0 10px 2px #ff00cc, 0 0 20px 4px #3333cc;
+    background-color: #9d20b0;
+    box-shadow: 0 0 20px rgba(113, 32, 176, 0.6);
+    transform: translateY(-3px);
   }
 
   @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontmd};
+    font-size: ${(props) => props.theme.fontsm};
     padding: 0.8rem 1.5rem;
   }
 `;
 
-
-
 const EducationPage = () => {
-  const particlesInit = async (engine) => {
+  const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
-  };
+  }, []);
 
   return (
     <PageSection>
@@ -387,37 +394,34 @@ const EducationPage = () => {
         options={{
           background: { color: "#000000" },
           particles: {
-            color: { value: "#ffffff" },
+            color: { value: ["#7120b0", "#9d20b0"] },
             links: {
-              color: "#ff00cc",
+              color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.2,
+              opacity: 0.5,
               width: 1,
             },
-            move: { enable: true, speed: 1 },
-            number: { 
-              value: 80,
-              density: {
-                enable: true,
-                area: 800
-              }
-            },
+            move: { enable: true, speed: 0.8 },
+            number: { value: 60 },
             size: { value: 2 },
             opacity: { value: 0.3 },
           },
-          responsive: [
-            {
-              maxWidth: 768,
-              options: {
-                particles: {
-                  number: {
-                    value: 40
-                  }
-                }
+          fpsLimit: 120,
+          interactivity: {
+            events: {
+              onHover: {
+                enable: true,
+                mode: "grab"
+              },
+            },
+            modes: {
+              grab: {
+                distance: 140,
+                links: { opacity: 0.4 }
               }
             }
-          ]
+          }
         }}
         style={{
           position: "absolute",
@@ -437,15 +441,15 @@ const EducationPage = () => {
         animate="animate"
       >
         <Title
-          initial={{ opacity: 0, y: -100 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8 }}
         >
-          Education
+          Boiler Blockchain <span style={{ color: "#7120b0" }}>Courses</span>
         </Title>
 
         <ImageSection
-          initial={{ opacity: 0, x: -100 }}
+          initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
@@ -463,18 +467,16 @@ const EducationPage = () => {
         </ImageSection>
 
         <CourseCard
-          initial={{ opacity: 0, x: 100 }}
+          initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <CardHeader>
-            <CourseTitle
-              as={motion.h2}
-              variants={fadeInUp}
-            >
-              Principles and Practices of Blockchain
-            </CourseTitle>
-          </CardHeader>
+          <CourseTitle
+            as={motion.h2}
+            variants={fadeInUp}
+          >
+            Principles and Practices of Blockchain
+          </CourseTitle>
 
           <CourseInfo>
             <InfoGrid
@@ -525,12 +527,10 @@ const EducationPage = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
               >
-              <p>
                 This comprehensive course provides hands-on experience with blockchain technology 
                 and decentralized applications from a developer perspective. Students will learn 
                 everything from basic cryptography concepts to the latest developments in Web3, 
                 gaining practical skills through weekly coding assignments and a final group project.
-              </p>
               </motion.p>
             </DetailsSection>
 

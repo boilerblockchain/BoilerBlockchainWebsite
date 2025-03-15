@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-// 
+import { Link } from 'react-router-dom';
+
 const CoursesSection = () => {
   const TOTAL_STUDENTS = 150;
   const [countStudents, setCountStudents] = useState(0);
@@ -7,6 +8,9 @@ const CoursesSection = () => {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    const current = containerRef.current;
+    if (!current) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
@@ -19,14 +23,10 @@ const CoursesSection = () => {
       }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    observer.observe(current);
 
     return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
+      observer.unobserve(current);
     };
   }, [hasAnimated]);
 
@@ -109,14 +109,12 @@ const CoursesSection = () => {
                 in technology.
               </p>
               <div className="pt-8">
-                <a
-                  href="/courses"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/courses"
                   className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300"
-                  >
+                >
                   Learn More
-                </a>
+                </Link>
               </div>
             </div>
           </div>
