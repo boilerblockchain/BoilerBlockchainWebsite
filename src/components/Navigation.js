@@ -49,7 +49,7 @@ const Navigation = () => {
 
           {/* Navigation Links for all screens */}
           <div className="flex justify-between gap-8 pr-6">
-            {['About', 'Courses', 'Devs'].map((item) => (
+            {['About', 'Courses', 'Devs', 'Hackathons'].map((item) => (
               <a
                 key={item}
                 href={`/${item.toLowerCase()}`}

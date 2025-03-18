@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
-import { FiExternalLink, FiAward } from 'react-icons/fi';
+import { FiExternalLink, FiAward, FiLink } from 'react-icons/fi';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -139,160 +139,229 @@ const StatTitle = styled.div`
   letter-spacing: 1px;
 `;
 
-// New Honeycomb Components
-const HoneycombContainer = styled(motion.div)`
+// New Blockchain Components
+const BlockchainContainer = styled(motion.div)`
   position: relative;
   margin: 4rem auto;
-  max-width: 1400px;
+  width: 100%;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 3rem;
 `;
 
-const HoneycombRow = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: -50px; /* Increased negative margin for better spacing */
-  
-  &:nth-child(even) {
-    margin-left: calc(0.866 * var(--hex-size)); /* Offset even rows by sqrt(3)/2 * size */
-  }
-  
-  @media (max-width: 768px) {
-    margin-bottom: -30px; /* Less overlap on mobile */
-  }
-`;
-
-const HexCard = styled(motion.div)`
-  --hex-size: 280px; /* Increased base size of hexagon */
-  width: var(--hex-size);
-  height: calc(var(--hex-size) * 1.1547); /* height = width * sqrt(3)/2 * 1.1 for padding */
-  background: rgba(113, 32, 176, 0.2); /* More purple background */
+const BlockchainTrack = styled.div`
   position: relative;
-  margin: 0 10px; /* Increased horizontal spacing between hexagons */
-  transform-origin: center;
-  border: 2px solid rgba(113, 32, 176, 0.7); /* More visible border */
-  backdrop-filter: blur(5px);
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 25px;
-  cursor: pointer;
-  z-index: 1;
+  width: 90%;
+  margin: 0 auto;
   
-  /* Create hexagon shape using clip-path */
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  
-  /* Grid background pattern */
-  background-image: 
-    linear-gradient(rgba(113, 32, 176, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 32, 176, 0.2) 1px, transparent 1px);
-  background-size: 20px 20px;
-  
-  /* Radial gradient overlay for depth */
   &::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
     right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at center, rgba(113, 32, 176, 0.3) 0%, rgba(15, 15, 15, 0.9) 100%);
-    z-index: -1;
-  }
-  
-  &:hover {
-    transform: scale(1.05);
-    border-color: #7120b0;
-    box-shadow: 0 10px 30px rgba(113, 32, 176, 0.4);
-    z-index: 2;
-    background: rgba(113, 32, 176, 0.25); /* Slightly more purple on hover */
-  }
-  
-  /* Responsive sizing */
-  @media (max-width: 1200px) {
-    --hex-size: 240px; /* Still larger than original */
-    margin: 0 8px;
-  }
-  
-  @media (max-width: 900px) {
-    --hex-size: 220px;
-    padding: 20px;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.2), rgba(113, 32, 176, 0.8), rgba(113, 32, 176, 0.2));
+    transform: translateY(-50%);
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(113, 32, 176, 0.4);
+    z-index: 1;
   }
   
   @media (max-width: 768px) {
-    --hex-size: 190px;
-    padding: 15px;
-  }
-  
-  @media (max-width: 500px) {
-    --hex-size: 160px;
-    padding: 10px;
+    width: 100%;
   }
 `;
 
-const HexContent = styled.div`
-  width: 100%;
-  height: 100%;
+const BlockRow = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: auto;
-  padding: 15px;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin: 3rem 0;
   position: relative;
   z-index: 2;
   
-  /* Hide scrollbar but keep functionality */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const HackathonTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  text-shadow: 0 0 10px rgba(113, 32, 176, 0.8);
-`;
-
-const ProjectName = styled.div`
-  font-size: 1.1rem;
-  color: #bb20ff; /* Brighter purple */
-  margin-bottom: 1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  text-shadow: 0 0 8px rgba(113, 32, 176, 0.6);
-  
-  a {
-    color: inherit;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    transition: all 0.3s ease;
+  &:nth-child(even) {
+    flex-direction: row-reverse;
     
-    &:hover {
-      color: #d175ff;
-      text-decoration: underline;
+    @media (max-width: 768px) {
+      flex-direction: column;
     }
   }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
 `;
 
-const TeamMembers = styled.div`
+const BlockCard = styled(motion.div)`
+  width: 300px;
+  background: rgba(15, 15, 15, 0.8);
+  border: 2px solid #7120b0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin: 0 1rem 2rem;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  min-height: 280px;
+  
+  /* Grid background pattern */
+  background-image: 
+    linear-gradient(rgba(113, 32, 176, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 32, 176, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  
+  /* Hash pattern at the top */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, 
+      rgba(113, 32, 176, 0.1) 0%, 
+      rgba(113, 32, 176, 0.8) 20%, 
+      rgba(113, 32, 176, 0.2) 40%,
+      rgba(113, 32, 176, 0.8) 60%,
+      rgba(113, 32, 176, 0.2) 80%,
+      rgba(113, 32, 176, 0.9) 100%
+    );
+    border-radius: 8px 8px 0 0;
+  }
+  
+  /* Block number */
+  &::after {
+    content: 'Block #${props => props.blockNumber || 0}';
+    position: absolute;
+    bottom: -10px;
+    right: 10px;
+    font-size: 0.7rem;
+    color: rgba(113, 32, 176, 0.8);
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(113, 32, 176, 0.4);
+  }
+  
+  /* Connector from block to main chain */
+  .connector {
+    position: absolute;
+    width: 2px;
+    background: linear-gradient(0deg, rgba(113, 32, 176, 0.2), rgba(113, 32, 176, 0.8));
+    z-index: -1;
+    
+    &.top {
+      top: -40px;
+      left: 50%;
+      height: 40px;
+    }
+    
+    &.bottom {
+      bottom: -40px;
+      left: 50%;
+      height: 40px;
+    }
+  }
+  
+  /* Link node circles */
+  .node {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #7120b0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(113, 32, 176, 0.6);
+    z-index: 3;
+    
+    &.top {
+      top: -8px;
+    }
+    
+    &.bottom {
+      bottom: -8px;
+    }
+  }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
+    border-color: rgba(113, 32, 176, 1);
+    
+    &::after {
+      color: rgba(113, 32, 176, 1);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    width: 85%;
+    max-width: 300px;
+    margin-bottom: 3rem;
+  }
+`;
+
+const BlockContent = styled.div`
+  position: relative;
+  z-index: 2;
+  padding-bottom: 50px; /* space for footer */
+`;
+
+const Hash = styled.div`
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: rgba(113, 32, 176, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px dashed rgba(113, 32, 176, 0.4);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: all;
+`;
+
+const BlockHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`;
+
+const BlockDate = styled.h3`
+  font-size: 1.3rem;
+  color: #ffffff;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(113, 32, 176, 0.5);
+`;
+
+const BlockTime = styled.span`
+  font-size: 0.8rem;
+  color: rgba(113, 32, 176, 0.9);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 8px;
+  border-radius: 12px;
+`;
+
+const BlockTitle = styled.h4`
+  font-size: 1.1rem;
+  color: #bb20ff;
+  margin-bottom: 1rem;
+  font-weight: 600;
+`;
+
+const BlockTeam = styled.div`
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 1rem;
@@ -300,34 +369,66 @@ const TeamMembers = styled.div`
   
   strong {
     color: #ffffff;
-    font-weight: 600;
   }
-`;
-
-const PrizesList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0;
   
-  li {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0;
-    color: rgba(255, 255, 255, 0.8);
+  @media (max-width: 768px) {
     font-size: 0.85rem;
-    text-align: center;
-    
-    svg {
-      color: #7120b0;
-      flex-shrink: 0;
-    }
   }
 `;
 
-// Expanded Hexagon Modal
-const ExpandedHexModal = styled(motion.div)`
+const BlockFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+`;
+
+const PrizeTag = styled.div`
+  background: rgba(113, 32, 176, 0.3);
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(113, 32, 176, 0.5);
+  
+  svg {
+    color: #bb20ff;
+  }
+`;
+
+const ViewButton = styled.div`
+  background: rgba(113, 32, 176, 0.2);
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  margin-left: auto;
+  
+  &:hover {
+    background: rgba(113, 32, 176, 0.4);
+    border-color: rgba(113, 32, 176, 0.7);
+  }
+  
+  svg {
+    color: #bb20ff;
+  }
+`;
+
+// Expanded Block Modal
+const ExpandedModal = styled(motion.div)`
   position: fixed;
   top: 0;
   left: 0;
@@ -376,8 +477,79 @@ const CloseButton = styled.button`
 const ModalTitle = styled.h2`
   font-size: 2rem;
   color: #ffffff;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   font-weight: 700;
+`;
+
+const ModalHash = styled.div`
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: rgba(113, 32, 176, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  border: 1px dashed rgba(113, 32, 176, 0.4);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: all;
+`;
+
+const ModalProjectName = styled.div`
+  font-size: 1.3rem;
+  color: #bb20ff;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: #d175ff;
+      text-decoration: underline;
+    }
+  }
+`;
+
+const ModalTeam = styled.div`
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  
+  strong {
+    color: #ffffff;
+    font-weight: 600;
+  }
+`;
+
+const PrizesList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    
+    svg {
+      color: #bb20ff;
+      flex-shrink: 0;
+    }
+  }
 `;
 
 const hackathonData = [
@@ -489,7 +661,48 @@ const hackathonData = [
     prize: "",
     prizes: null,
   },
+  {
+    id: 12,
+    date: "ETH Denver 25'",
+    project: "Cosmos Pool",
+    link: "https://devfolio.co/projects/cosmospool-c15c",
+    devs: "Joey, Mugdha, Garv, Adithya",
+    prize: null,
+    prizes: null,
+  },
+  {
+    id: 13,
+    date: "Eigen Games 25'",
+    project: "Insert here",
+    link: "#",
+    devs: "Vincent, Pranav",
+    prize: "🥇 Third Place",
+    prizes: null
+  },
 ];
+
+// Generate fake hash for each hackathon
+const generateHash = (id, project) => {
+  const characters = '0123456789abcdef';
+  let hash = '0x';
+
+  // Use the project name and id to ensure consistent hash generation
+  const seed = id.toString() + project;
+
+  for (let i = 0; i < 64; i++) {
+    const charIndex = (seed.charCodeAt(i % seed.length) + i) % characters.length;
+    hash += characters.charAt(charIndex);
+  }
+
+  return hash;
+};
+
+// Add hash and timestamps to data
+const enhancedHackathonData = hackathonData.map(item => ({
+  ...item,
+  hash: generateHash(item.id, item.project),
+  timestamp: `${(2022 + Math.floor(item.id / 4))}:${(item.id * 11) % 60}:${(item.id * 7) % 60}`
+}));
 
 const HackathonsPage = () => {
   const [selectedHackathon, setSelectedHackathon] = useState(null);
@@ -514,8 +727,15 @@ const HackathonsPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Calculate statistics
-  const totalHackathons = new Set(hackathonData.map(item => item.date)).size;
+  // Calculate statistics - accurate count of unique hackathons
+  const uniqueHackathonNames = new Set();
+  hackathonData.forEach(item => {
+    // Extract just the hackathon name without year
+    const hackathonBaseName = item.date.split("'")[0].trim();
+    uniqueHackathonNames.add(hackathonBaseName);
+  });
+
+  const totalHackathons = uniqueHackathonNames.size;
   const totalProjects = hackathonData.length;
   const totalPrizes = hackathonData.reduce((count, item) => {
     if (item.prizes) return count + item.prizes.length;
@@ -523,48 +743,24 @@ const HackathonsPage = () => {
     return count;
   }, 0);
 
-  // Reverse the hackathon data to show newest first
-  const sortedHackathonData = [...hackathonData].reverse();
+  // Reverse the hackathon data to show newest first (keeping original block numbers)
+  const sortedHackathonData = [...enhancedHackathonData].reverse().map(item => ({
+    ...item,
+    displayBlockNumber: item.id // Keep original block number
+  }));
 
-  // Function to organize data into honeycomb rows
-  const organizeHoneycombRows = (data) => {
-    // Determine row pattern based on screen width
-    let itemsPerRow;
-
-    if (windowSize.width <= 768) {
-      // For mobile: 2-1-2 pattern
-      itemsPerRow = [2, 1, 2, 1, 2, 1, 2];
-    } else if (windowSize.width <= 1100) {
-      // For tablets: 3-2-3 pattern
-      itemsPerRow = [3, 2, 3, 2, 3, 2, 3];
-    } else {
-      // For desktop: 3-4-3 pattern (reduced number of items per row to fit larger hexagons)
-      itemsPerRow = [3, 4, 3, 4, 3, 4, 3];
+  // Organize hackathons into rows (3 per row)
+  const organizeHackathonsIntoRows = (data) => {
+    const result = [];
+    for (let i = 0; i < data.length; i += 3) {
+      result.push(data.slice(i, i + 3));
     }
-
-    const rows = [];
-    let currentIndex = 0;
-
-    // Create rows with appropriate number of items
-    for (let i = 0; i < itemsPerRow.length; i++) {
-      const itemsNeeded = itemsPerRow[i];
-      const rowItems = data.slice(currentIndex, currentIndex + itemsNeeded);
-      currentIndex += itemsNeeded;
-
-      if (rowItems.length > 0) {
-        rows.push(rowItems);
-      }
-
-      // Stop if we've used all data
-      if (currentIndex >= data.length) break;
-    }
-
-    return rows;
+    return result;
   };
 
-  const honeycombRows = organizeHoneycombRows(sortedHackathonData);
+  const rows = organizeHackathonsIntoRows(sortedHackathonData);
 
-  const handleHexClick = (hackathon) => {
+  const handleBlockClick = (hackathon) => {
     setSelectedHackathon(hackathon);
   };
 
@@ -656,71 +852,79 @@ const HackathonsPage = () => {
           </StatCard>
         </StatsContainer>
 
-        <HoneycombContainer
+        <BlockchainContainer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          {honeycombRows.map((row, rowIndex) => (
-            <HoneycombRow key={rowIndex}>
-              {row.map((hackathon, hexIndex) => (
-                <HexCard
-                  key={hackathon.id}
-                  onClick={() => handleHexClick(hackathon)}
-                  initial={{ opacity: 0, scale: 0.8 }}
+          <BlockchainTrack />
+
+          {rows.map((row, rowIndex) => (
+            <BlockRow key={rowIndex}>
+              {row.map((block, blockIndex) => (
+                <BlockCard
+                  key={block.id}
+                  blockNumber={block.displayBlockNumber}
+                  onClick={() => handleBlockClick(block)}
+                  initial={{ opacity: 0, y: 30 }}
                   whileInView={{
                     opacity: 1,
-                    scale: 1,
+                    y: 0,
                     transition: {
                       type: "spring",
                       stiffness: 100,
                       damping: 12,
-                      delay: (rowIndex * 0.1) + (hexIndex * 0.05)
+                      delay: blockIndex * 0.1
                     }
                   }}
                   viewport={{ once: false, amount: 0.3 }}
                   whileHover={{
-                    scale: 1.05,
+                    y: -5,
                     transition: { type: "spring", stiffness: 400, damping: 10 }
                   }}
                 >
-                  <HexContent>
-                    <HackathonTitle>{hackathon.date}</HackathonTitle>
-                    <ProjectName>
-                      {hackathon.project}
-                    </ProjectName>
+                  <span className="connector top"></span>
+                  <span className="node top"></span>
 
-                    <TeamMembers>
-                      <strong>Team:</strong> {hackathon.devs.length > 25
-                        ? hackathon.devs.substring(0, 25) + '...'
-                        : hackathon.devs
-                      }
-                    </TeamMembers>
+                  <BlockContent>
+                    <Hash title={block.hash}>{block.hash.substring(0, 20)}...</Hash>
 
-                    {(hackathon.prize && hackathon.prize !== "") || (hackathon.prizes && hackathon.prizes.length > 0) ? (
-                      <div style={{
-                        color: '#ffffff',
-                        fontSize: '0.9rem',
-                        background: 'rgba(113, 32, 176, 0.6)',
-                        padding: '5px 10px',
-                        borderRadius: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        boxShadow: '0 0 10px rgba(113, 32, 176, 0.4)'
-                      }}>
-                        <FiAward size={14} /> Prize Winner
-                      </div>
-                    ) : null}
-                  </HexContent>
-                </HexCard>
+                    <BlockHeader>
+                      <BlockDate>{block.date}</BlockDate>
+                      <BlockTime>{block.timestamp}</BlockTime>
+                    </BlockHeader>
+
+                    <BlockTitle>{block.project}</BlockTitle>
+
+                    <BlockTeam>
+                      <strong>Team:</strong> {block.devs}
+                    </BlockTeam>
+
+                    <BlockFooter>
+                      {(block.prize && block.prize !== "") || (block.prizes && block.prizes.length > 0) ? (
+                        <PrizeTag>
+                          <FiAward size={14} /> Winner
+                        </PrizeTag>
+                      ) : (
+                        <div></div>
+                      )}
+
+                      <ViewButton>
+                        <FiLink size={14} /> View
+                      </ViewButton>
+                    </BlockFooter>
+                  </BlockContent>
+
+                  <span className="connector bottom"></span>
+                  <span className="node bottom"></span>
+                </BlockCard>
               ))}
-            </HoneycombRow>
+            </BlockRow>
           ))}
-        </HoneycombContainer>
+        </BlockchainContainer>
 
         {selectedHackathon && (
-          <ExpandedHexModal
+          <ExpandedModal
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -731,23 +935,25 @@ const HackathonsPage = () => {
               transition={{ type: "spring", damping: 15 }}
             >
               <CloseButton onClick={closeModal}>×</CloseButton>
-              <ModalTitle>{selectedHackathon.date}</ModalTitle>
-              <ProjectName style={{ justifyContent: 'flex-start', fontSize: '1.3rem' }}>
+              <ModalTitle>Block #{selectedHackathon.displayBlockNumber} - {selectedHackathon.date}</ModalTitle>
+              <ModalHash title={selectedHackathon.hash}>{selectedHackathon.hash}</ModalHash>
+
+              <ModalProjectName>
                 <a href={selectedHackathon.link} target="_blank" rel="noopener noreferrer">
                   {selectedHackathon.project} <FiExternalLink size={18} />
                 </a>
-              </ProjectName>
+              </ModalProjectName>
 
-              <TeamMembers style={{ fontSize: '1rem', marginBottom: '1.5rem' }}>
+              <ModalTeam>
                 <strong>Team:</strong> {selectedHackathon.devs}
-              </TeamMembers>
+              </ModalTeam>
 
               {selectedHackathon.prizes ? (
                 <>
                   <strong>Prizes:</strong>
-                  <PrizesList style={{ alignItems: 'flex-start' }}>
+                  <PrizesList>
                     {selectedHackathon.prizes.map((prize, i) => (
-                      <li key={i} style={{ justifyContent: 'flex-start', fontSize: '1rem' }}>
+                      <li key={i}>
                         <FiAward size={18} /> {prize}
                       </li>
                     ))}
@@ -756,18 +962,19 @@ const HackathonsPage = () => {
               ) : selectedHackathon.prize && selectedHackathon.prize !== "" ? (
                 <>
                   <strong>Prize:</strong>
-                  <PrizesList style={{ alignItems: 'flex-start' }}>
-                    <li style={{ justifyContent: 'flex-start', fontSize: '1rem' }}>
+                  <PrizesList>
+                    <li>
                       <FiAward size={18} /> {selectedHackathon.prize}
                     </li>
                   </PrizesList>
                 </>
               ) : null}
             </ModalContent>
-          </ExpandedHexModal>
+          </ExpandedModal>
         )}
       </Container>
     </PageSection>
   );
 };
+
 export default HackathonsPage;
