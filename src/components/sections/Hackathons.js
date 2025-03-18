@@ -139,246 +139,168 @@ const StatTitle = styled.div`
   letter-spacing: 1px;
 `;
 
-const TimelineContainer = styled(motion.div)`
+// New Honeycomb Components
+const HoneycombContainer = styled(motion.div)`
   position: relative;
-  margin: 4rem 0;
+  margin: 4rem auto;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const HoneycombRow = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: -50px; /* Increased negative margin for better spacing */
   
-  /* Remove the old straight timeline */
-  &::before, &::after {
+  &:nth-child(even) {
+    margin-left: calc(0.866 * var(--hex-size)); /* Offset even rows by sqrt(3)/2 * size */
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: -30px; /* Less overlap on mobile */
+  }
+`;
+
+const HexCard = styled(motion.div)`
+  --hex-size: 280px; /* Increased base size of hexagon */
+  width: var(--hex-size);
+  height: calc(var(--hex-size) * 1.1547); /* height = width * sqrt(3)/2 * 1.1 for padding */
+  background: rgba(113, 32, 176, 0.2); /* More purple background */
+  position: relative;
+  margin: 0 10px; /* Increased horizontal spacing between hexagons */
+  transform-origin: center;
+  border: 2px solid rgba(113, 32, 176, 0.7); /* More visible border */
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 25px;
+  cursor: pointer;
+  z-index: 1;
+  
+  /* Create hexagon shape using clip-path */
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  
+  /* Grid background pattern */
+  background-image: 
+    linear-gradient(rgba(113, 32, 176, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 32, 176, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+  
+  /* Radial gradient overlay for depth */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(113, 32, 176, 0.3) 0%, rgba(15, 15, 15, 0.9) 100%);
+    z-index: -1;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    border-color: #7120b0;
+    box-shadow: 0 10px 30px rgba(113, 32, 176, 0.4);
+    z-index: 2;
+    background: rgba(113, 32, 176, 0.25); /* Slightly more purple on hover */
+  }
+  
+  /* Responsive sizing */
+  @media (max-width: 1200px) {
+    --hex-size: 240px; /* Still larger than original */
+    margin: 0 8px;
+  }
+  
+  @media (max-width: 900px) {
+    --hex-size: 220px;
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    --hex-size: 190px;
+    padding: 15px;
+  }
+  
+  @media (max-width: 500px) {
+    --hex-size: 160px;
+    padding: 10px;
+  }
+`;
+
+const HexContent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding: 15px;
+  position: relative;
+  z-index: 2;
+  
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
     display: none;
   }
 `;
 
-const TimelineItemsContainer = styled.div`
-  position: relative;
-  z-index: 2;
-  
-  /* Add the curving animation line */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 4px;
-    background: #7120b0;
-    border-radius: 4px;
-    box-shadow: 0 0 20px rgba(113, 32, 176, 0.4);
-    transform-origin: 50% 0;
-    z-index: 1;
-    animation: flowingLine 5s infinite alternate;
-    
-    @media (max-width: 768px) {
-      left: 30px;
-    }
-  }
-  
-  /* Add animated glow effect */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    height: 200px;
-    width: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, rgba(113, 32, 176, 0), #7120b0, rgba(113, 32, 176, 0));
-    border-radius: 6px;
-    opacity: 0.6;
-    filter: blur(4px);
-    z-index: 0;
-    animation: trackScroll 2s linear infinite;
-    
-    @media (max-width: 768px) {
-      left: 30px;
-    }
-  }
-  
-  @keyframes trackScroll {
-    0% {
-      top: 0;
-      height: 200px;
-    }
-    100% {
-      top: 100%;
-      height: 200px;
-    }
-  }
-  
-  @keyframes flowingLine {
-    0%, 100% {
-      transform: translateX(-50%) scaleY(1);
-    }
-    50% {
-      transform: translateX(-50%) scaleY(1.03) translateX(5px);
-    }
-  }
-`;
-
-const TimelineItem = styled(motion.div)`
-  position: relative;
-  display: flex;
-  margin-bottom: 1.5rem; /* Closer spacing */
-  opacity: 0.3;
-  transition: all 0.5s ease;
-  
-  &.active {
-    opacity: 1;
-    
-    /* Create a segment of the curved line for each active timeline item */
-    &::before {
-      content: '';
-      position: absolute;
-      background: #7120b0;
-      width: 100px;
-      height: 4px;
-      top: 30px;
-      border-radius: 4px;
-      z-index: 0;
-      box-shadow: 0 0 10px rgba(113, 32, 176, 0.6);
-      
-      @media (max-width: 768px) {
-        width: 30px;
-        left: 30px;
-      }
-    }
-  }
-  
-  &:nth-child(odd) {
-    justify-content: flex-start;
-    
-    @media (min-width: 769px) {
-      padding-right: calc(50% + 1.5rem);
-      
-      &::before {
-        right: 0;
-      }
-    }
-  }
-  
-  &:nth-child(even) {
-    @media (min-width: 769px) {
-      justify-content: flex-end;
-      padding-left: calc(50% + 1.5rem);
-      
-      &::before {
-        left: 0;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      padding-left: 60px;
-      
-      &::before {
-        left: 0;
-      }
-    }
-  }
-  
-  @media (max-width: 768px) {
-    padding-left: 60px;
-    margin-bottom: 1.5rem; /* Even smaller on mobile */
-  }
-`;
-
-/* Hide the timeline dots completely */
-const TimelineDot = styled.div`
-  display: none;
-`;
-
-const TimelineContent = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border-radius: 8px;
-  padding: 1rem; /* Further reduced padding */
-  max-width: 430px; /* Even smaller */
-  width: 100%;
-  border: 1px solid rgba(113, 32, 176, 0.4);
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 2;
-  
-  /* Add a dot connector effect to the box itself instead of separate dots */
-  &::before {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #7120b0;
-    z-index: 3;
-    top: 30px;
-    box-shadow: 0 0 15px rgba(113, 32, 176, 0.8);
-  }
-  
-  &:hover {
-    box-shadow: 0 10px 30px rgba(113, 32, 176, 0.2);
-    transform: translateY(-5px);
-    border-color: #7120b0;
-  }
-  
-  /* Position the connector dot based on odd/even items */
-  ${TimelineItem}:nth-child(odd) & {
-    &::before {
-      right: -6px;
-      
-      @media (max-width: 768px) {
-        left: -36px;
-        right: auto;
-      }
-    }
-  }
-  
-  ${TimelineItem}:nth-child(even) & {
-    &::before {
-      left: -6px;
-      
-      @media (max-width: 768px) {
-        left: -36px;
-      }
-    }
-  }
-`;
-
 const HackathonTitle = styled.h3`
-  font-size: 1.6rem; /* Slightly smaller */
+  font-size: 1.5rem;
   color: #ffffff;
-  margin-bottom: 0.3rem; /* Reduced */
+  margin-bottom: 0.5rem;
   font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 0 0 10px rgba(113, 32, 176, 0.8);
 `;
 
 const ProjectName = styled.div`
-  font-size: 1.1rem; /* Slightly smaller */
-  color: #7120b0;
-  margin-bottom: 1rem; /* Reduced from 1.5rem */
+  font-size: 1.1rem;
+  color: #bb20ff; /* Brighter purple */
+  margin-bottom: 1rem;
   font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  text-shadow: 0 0 8px rgba(113, 32, 176, 0.6);
   
   a {
     color: inherit;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
     transition: all 0.3s ease;
     
     &:hover {
-      color: #9d20b0;
+      color: #d175ff;
       text-decoration: underline;
     }
   }
 `;
 
 const TeamMembers = styled.div`
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 1rem;
+  line-height: 1.4;
   
   strong {
     color: #ffffff;
+    font-weight: 600;
   }
 `;
 
@@ -390,16 +312,72 @@ const PrizesList = styled.ul`
   li {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    text-align: center;
     
     svg {
       color: #7120b0;
       flex-shrink: 0;
     }
   }
+`;
+
+// Expanded Hexagon Modal
+const ExpandedHexModal = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+`;
+
+const ModalContent = styled(motion.div)`
+  background: rgba(15, 15, 15, 0.9);
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+  padding: 2.5rem;
+  position: relative;
+  border: 2px solid #7120b0;
+  box-shadow: 0 0 30px rgba(113, 32, 176, 0.4);
+  
+  /* Grid background pattern */
+  background-image: 
+    linear-gradient(rgba(113, 32, 176, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(113, 32, 176, 0.2) 1px, transparent 1px);
+  background-size: 20px 20px;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  
+  &:hover {
+    color: #7120b0;
+  }
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 2rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  font-weight: 700;
 `;
 
 const hackathonData = [
@@ -514,44 +492,28 @@ const hackathonData = [
 ];
 
 const HackathonsPage = () => {
-  const [activeItems, setActiveItems] = useState([]);
-  
+  const [selectedHackathon, setSelectedHackathon] = useState(null);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
   }, []);
-  
+
   useEffect(() => {
-    const calculateItemsInView = () => {
-      const items = document.querySelectorAll('.timeline-item');
-      const inViewItems = [];
-      
-      items.forEach((item, index) => {
-        const rect = item.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const isVisible = 
-          rect.top >= -viewportHeight * 0.3 && 
-          rect.bottom <= viewportHeight * 1.3;
-        
-        if (isVisible) {
-          inViewItems.push(index);
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
       });
-      
-      setActiveItems(inViewItems);
     };
-    
-    window.addEventListener('scroll', calculateItemsInView);
-    
-    calculateItemsInView();
-    
-    return () => {
-      window.removeEventListener('scroll', calculateItemsInView);
-    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
   // Calculate statistics
   const totalHackathons = new Set(hackathonData.map(item => item.date)).size;
   const totalProjects = hackathonData.length;
@@ -563,6 +525,52 @@ const HackathonsPage = () => {
 
   // Reverse the hackathon data to show newest first
   const sortedHackathonData = [...hackathonData].reverse();
+
+  // Function to organize data into honeycomb rows
+  const organizeHoneycombRows = (data) => {
+    // Determine row pattern based on screen width
+    let itemsPerRow;
+
+    if (windowSize.width <= 768) {
+      // For mobile: 2-1-2 pattern
+      itemsPerRow = [2, 1, 2, 1, 2, 1, 2];
+    } else if (windowSize.width <= 1100) {
+      // For tablets: 3-2-3 pattern
+      itemsPerRow = [3, 2, 3, 2, 3, 2, 3];
+    } else {
+      // For desktop: 3-4-3 pattern (reduced number of items per row to fit larger hexagons)
+      itemsPerRow = [3, 4, 3, 4, 3, 4, 3];
+    }
+
+    const rows = [];
+    let currentIndex = 0;
+
+    // Create rows with appropriate number of items
+    for (let i = 0; i < itemsPerRow.length; i++) {
+      const itemsNeeded = itemsPerRow[i];
+      const rowItems = data.slice(currentIndex, currentIndex + itemsNeeded);
+      currentIndex += itemsNeeded;
+
+      if (rowItems.length > 0) {
+        rows.push(rowItems);
+      }
+
+      // Stop if we've used all data
+      if (currentIndex >= data.length) break;
+    }
+
+    return rows;
+  };
+
+  const honeycombRows = organizeHoneycombRows(sortedHackathonData);
+
+  const handleHexClick = (hackathon) => {
+    setSelectedHackathon(hackathon);
+  };
+
+  const closeModal = () => {
+    setSelectedHackathon(null);
+  };
 
   return (
     <PageSection>
@@ -611,14 +619,14 @@ const HackathonsPage = () => {
       />
       <BackButton to="/">Back</BackButton>
       <Container>
-        <Title 
+        <Title
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           Hackathon <span>Highlights</span>
         </Title>
-        
+
         <Subtitle
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -626,7 +634,7 @@ const HackathonsPage = () => {
         >
           Boiler Blockchain members participate in leading Web3 hackathons around the world, building innovative projects and winning recognition
         </Subtitle>
-        
+
         <StatsContainer
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -636,82 +644,128 @@ const HackathonsPage = () => {
             <StatNumber>{totalHackathons}</StatNumber>
             <StatTitle>Hackathons</StatTitle>
           </StatCard>
-          
+
           <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
             <StatNumber>{totalProjects}</StatNumber>
             <StatTitle>Projects Built</StatTitle>
           </StatCard>
-          
+
           <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
             <StatNumber>{totalPrizes}</StatNumber>
             <StatTitle>Prizes Won</StatTitle>
           </StatCard>
         </StatsContainer>
-        
-        <TimelineContainer
+
+        <HoneycombContainer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <TimelineItemsContainer>
-            {sortedHackathonData.map((item, index) => (
-              <TimelineItem 
-                key={item.id}
-                className="timeline-item"
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0,
-                  scale: 1,
-                  transition: { 
-                    type: "spring", 
-                    stiffness: 100,
-                    damping: 12,
-                    delay: index * 0.1 % 0.3 // Staggered but cyclical to keep it snappy 
-                  }
-                }}
-                viewport={{ once: false, amount: 0.3 }}
-              >
-                <TimelineDot className="timeline-dot" />
-                <TimelineContent
-                  whileHover={{ 
-                    scale: 1.03,
+          {honeycombRows.map((row, rowIndex) => (
+            <HoneycombRow key={rowIndex}>
+              {row.map((hackathon, hexIndex) => (
+                <HexCard
+                  key={hackathon.id}
+                  onClick={() => handleHexClick(hackathon)}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{
+                    opacity: 1,
+                    scale: 1,
+                    transition: {
+                      type: "spring",
+                      stiffness: 100,
+                      damping: 12,
+                      delay: (rowIndex * 0.1) + (hexIndex * 0.05)
+                    }
+                  }}
+                  viewport={{ once: false, amount: 0.3 }}
+                  whileHover={{
+                    scale: 1.05,
                     transition: { type: "spring", stiffness: 400, damping: 10 }
                   }}
                 >
-                  <HackathonTitle>{item.date}</HackathonTitle>
-                  <ProjectName>
-                    <a href={item.link} target="_blank" rel="noopener noreferrer">
-                      {item.project} <FiExternalLink size={16} />
-                    </a>
-                  </ProjectName>
-                  
-                  <TeamMembers>
-                    <strong>Team:</strong> {item.devs}
-                  </TeamMembers>
-                  
-                  {item.prizes ? (
-                    <>
-                      <strong>Prizes:</strong>
-                      <PrizesList>
-                        {item.prizes.map((prize, i) => (
-                          <li key={i}><FiAward /> {prize}</li>
-                        ))}
-                      </PrizesList>
-                    </>
-                  ) : item.prize && item.prize !== "" ? (
-                    <>
-                      <strong>Prize:</strong>
-                      <PrizesList>
-                        <li><FiAward /> {item.prize}</li>
-                      </PrizesList>
-                    </>
-                  ) : null}
-                </TimelineContent>
-              </TimelineItem>
-            ))}
-          </TimelineItemsContainer>
-        </TimelineContainer>
+                  <HexContent>
+                    <HackathonTitle>{hackathon.date}</HackathonTitle>
+                    <ProjectName>
+                      {hackathon.project}
+                    </ProjectName>
+
+                    <TeamMembers>
+                      <strong>Team:</strong> {hackathon.devs.length > 25
+                        ? hackathon.devs.substring(0, 25) + '...'
+                        : hackathon.devs
+                      }
+                    </TeamMembers>
+
+                    {(hackathon.prize && hackathon.prize !== "") || (hackathon.prizes && hackathon.prizes.length > 0) ? (
+                      <div style={{
+                        color: '#ffffff',
+                        fontSize: '0.9rem',
+                        background: 'rgba(113, 32, 176, 0.6)',
+                        padding: '5px 10px',
+                        borderRadius: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        boxShadow: '0 0 10px rgba(113, 32, 176, 0.4)'
+                      }}>
+                        <FiAward size={14} /> Prize Winner
+                      </div>
+                    ) : null}
+                  </HexContent>
+                </HexCard>
+              ))}
+            </HoneycombRow>
+          ))}
+        </HoneycombContainer>
+
+        {selectedHackathon && (
+          <ExpandedHexModal
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ModalContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", damping: 15 }}
+            >
+              <CloseButton onClick={closeModal}>×</CloseButton>
+              <ModalTitle>{selectedHackathon.date}</ModalTitle>
+              <ProjectName style={{ justifyContent: 'flex-start', fontSize: '1.3rem' }}>
+                <a href={selectedHackathon.link} target="_blank" rel="noopener noreferrer">
+                  {selectedHackathon.project} <FiExternalLink size={18} />
+                </a>
+              </ProjectName>
+
+              <TeamMembers style={{ fontSize: '1rem', marginBottom: '1.5rem' }}>
+                <strong>Team:</strong> {selectedHackathon.devs}
+              </TeamMembers>
+
+              {selectedHackathon.prizes ? (
+                <>
+                  <strong>Prizes:</strong>
+                  <PrizesList style={{ alignItems: 'flex-start' }}>
+                    {selectedHackathon.prizes.map((prize, i) => (
+                      <li key={i} style={{ justifyContent: 'flex-start', fontSize: '1rem' }}>
+                        <FiAward size={18} /> {prize}
+                      </li>
+                    ))}
+                  </PrizesList>
+                </>
+              ) : selectedHackathon.prize && selectedHackathon.prize !== "" ? (
+                <>
+                  <strong>Prize:</strong>
+                  <PrizesList style={{ alignItems: 'flex-start' }}>
+                    <li style={{ justifyContent: 'flex-start', fontSize: '1rem' }}>
+                      <FiAward size={18} /> {selectedHackathon.prize}
+                    </li>
+                  </PrizesList>
+                </>
+              ) : null}
+            </ModalContent>
+          </ExpandedHexModal>
+        )}
       </Container>
     </PageSection>
   );
