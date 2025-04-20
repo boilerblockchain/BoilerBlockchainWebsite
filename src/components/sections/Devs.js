@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaGithub, FaDiscord, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { FaGithub, FaDiscord, FaLinkedin, FaTwitter, FaTelegram, FaInstagram, FaGlobe } from 'react-icons/fa';
 import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
@@ -11,10 +11,11 @@ import ethan from "../../assets/images/18_Ethan_Haeberle.jpg";
 import soham from "../../assets/images/16_Soham_Jog.jpg";
 import adithya from "../../assets/images/17_Adithya_Ganesh.jpg";
 import vincent from "../../assets/images/19_Vincent_Palmerio.jpg";
-import eli from "../../assets/images/20_Eli_Dubizh.jpg";
+import eli from "../../assets/images/20_Eli_Dubizh.jpeg";
 import pradyumm from "../../assets/images/21_Pradyumn_Malik.jpg";
 import albert from "../../assets/images/22_Albert_Wu.jpg";
-import shivam from "../../assets/images/23_Shivam_Rastogi.jpg";
+import aditya from "../../assets/images/23_Aditya_Kattil.jpeg";
+import mahi from "../../assets/images/24_Mahi_Tripathi.jpg";
 
 // Animation variants
 const fadeInUp = {
@@ -264,10 +265,12 @@ const boardMembers = [
     bio: "Leading Boiler Blockchain's strategy and vision, Ethan focuses on ecosystem growth and partnership development.",
     image: ethan,
     socials: {
-      linkedin: "#",
-      twitter: "#",
-      github: "#",
-      discord: "#"
+      linkedin: "https://www.linkedin.com/in/ethan-haeberle-a127b1203/",
+      twitter: "https://x.com/EthanHaeberle",
+      github: "https://github.com/EthanHaeberle",
+      telegram: "https://t.me/HaeberleEthan",
+      instagram: "https://www.instagram.com/ethan_haeberle/",
+      website: "https://github.com/EthanHaeberle"
     }
   },
   {
@@ -277,10 +280,12 @@ const boardMembers = [
     bio: "Technical lead focused on blockchain integration and Web3 product development across the organization.",
     image: soham,
     socials: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/soham-jog-ba4b62237/",
       twitter: "#",
-      github: "#",
-      discord: "#"
+      github: "https://github.com/SohamJog",
+      telegram: "https://t.me/sohamJog",
+      instagram: "#",
+      website: "https://www.sohamjog.com"
     }
   },
   {
@@ -290,10 +295,12 @@ const boardMembers = [
     bio: "Overseeing strategic initiatives and future planning for the organization's growth and impact.",
     image: adithya,
     socials: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/adithya-ganesh-68906023b/",
       twitter: "#",
       github: "#",
-      discord: "#"
+      telegram: "https://t.me/AdithyaGanesh03",
+      instagram: "#",
+      website: "#"
     }
   },
   {
@@ -303,62 +310,87 @@ const boardMembers = [
     bio: "Leading the technical development team and overseeing all engineering initiatives and projects.",
     image: vincent,
     socials: {
-      linkedin: "#",
-      twitter: "#",
-      github: "#",
-      discord: "#"
+      linkedin: "https://www.linkedin.com/in/vpalmerio/",
+      twitter: "https://x.com/vincentpalmerio",
+      github: "https://github.com/vpalmerio",
+      telegram: "https://t.me/vpalmerio",
+      instagram: "#",
+      website: "#"
     }
   },
   {
     id: 5,
+    name: "Mahi Tripathi",
+    role: "Head of Marketing",
+    bio: "Leading the marketing team and overseeing all brand, growth, and campaign initiatives across channels.",
+    image: mahi,
+    socials: {
+      linkedin: "www.linkedin.com/in/mahi-tripathi",
+      twitter: "#",
+      github: "#",
+      telegram: "https://t.me/mahiiluv",
+      instagram: "https://www.instagram.com/art_by_mahi/",
+      website: "#"
+    }
+  },
+  {
+    id: 6,
     name: "Eli Dubizh",
     role: "Head of Research",
     bio: "Spearheading research initiatives focused on blockchain innovations and investment opportunities.",
     image: eli,
     socials: {
-      linkedin: "#",
-      twitter: "#",
+      linkedin: "https://www.linkedin.com/in/eli-dubizh/",
+      twitter: "https://x.com/EliDubizh",
       github: "#",
-      discord: "#"
+      telegram: "https://t.me/eli_dubizh",
+      instagram: "https://www.instagram.com/eli_dubizh/",
+      website: "https://mahitripathi.myportfolio.com/"
     }
   },
   {
-    id: 6,
+    id: 7,
     name: "Pradyumm Malik",
     role: "Lead Governance Delegate",
     bio: "Representing Boiler Blockchain in governance decisions for various blockchain protocols and DAOs.",
     image: pradyumm,
     socials: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/pradyumn-malik/",
       twitter: "#",
       github: "#",
-      discord: "#"
+      telegram: "#",
+      instagram: "#",
+      website: "#"
     }
   },
   {
-    id: 7,
+    id: 8,
     name: "Albert Wu",
     role: "Lead Governance Delegate",
     bio: "Managing protocol governance participation and representing the organization in ecosystem discussions.",
     image: albert,
     socials: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/ajxwu/",
       twitter: "#",
       github: "#",
-      discord: "#"
+      telegram: "https://t.me/ajxwu",
+      instagram: "#",
+      website: "#"
     }
   },
   {
-    id: 8,
-    name: "Shivam Rastogi",
+    id: 9,
+    name: "Aditya Kuniyil Kattil",
     role: "Course Instructor",
     bio: "Leading blockchain education initiatives and developing technical curriculum for members and students.",
-    image: shivam,
+    image: aditya,
     socials: {
-      linkedin: "#",
-      twitter: "#",
-      github: "#",
-      discord: "#"
+      linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/",
+      twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w",
+      github: "https://github.com/Akk525",
+      telegram: "https://t.me/adityakk525",
+      instagram: "#",
+      website: "https://adityakk.com"
     }
   }
 ];
@@ -507,32 +539,80 @@ const TeamPage = () => {
               <Role>{member.role}</Role>
               <Bio>{member.bio}</Bio>
               <SocialIcons>
-                <motion.a href={member.socials.linkedin} whileHover={{ y: -3 }}>
-                  <FaLinkedin />
-                </motion.a>
-                <motion.a href={member.socials.twitter} whileHover={{ y: -3 }}>
-                  <FaTwitter />
-                </motion.a>
-                <motion.a href={member.socials.github} whileHover={{ y: -3 }}>
-                  <FaGithub />
-                </motion.a>
-                <motion.a href={member.socials.discord} whileHover={{ y: -3 }}>
-                  <FaDiscord />
-                </motion.a>
+                {member.socials.linkedin && member.socials.linkedin !== "#" && (
+                  <motion.a 
+                    href={member.socials.linkedin} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaLinkedin />
+                  </motion.a>
+                )}
+                {member.socials.twitter && member.socials.twitter !== "#" && (
+                  <motion.a 
+                    href={member.socials.twitter} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaTwitter />
+                  </motion.a>
+                )}
+                {member.socials.github && member.socials.github !== "#" && (
+                  <motion.a 
+                    href={member.socials.github} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaGithub />
+                  </motion.a>
+                )}
+                {member.socials.telegram && member.socials.telegram !== "#" && (
+                  <motion.a 
+                    href={member.socials.telegram} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaTelegram />
+                  </motion.a>
+                )}
+                {member.socials.instagram && member.socials.instagram !== "#" && (
+                  <motion.a 
+                    href={member.socials.instagram} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaInstagram />
+                  </motion.a>
+                )}
+                {member.socials.website && member.socials.website !== "#" && (
+                  <motion.a 
+                    href={member.socials.website} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    whileHover={{ y: -3 }}
+                  >
+                    <FaGlobe />
+                  </motion.a>
+                )}
               </SocialIcons>
             </Card>
           ))}
         </CardGrid>
         
-        <SectionTitle
+        {/* <SectionTitle
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           Active <span>Members</span>
-        </SectionTitle>
+        </SectionTitle> */}
         
-        <CardGrid
+        {/* <CardGrid
           variants={staggerContainer}
           initial="initial"
           animate="animate"
@@ -568,7 +648,7 @@ const TeamPage = () => {
               </SocialIcons>
             </Card>
           ))}
-        </CardGrid>
+        </CardGrid> */}
       </Container>
     </PageSection>
   );

@@ -77,7 +77,7 @@ const HackathonSummary = () => {
               innovative approach to blockchain challenges.
             </p>
             <div className="pt-10">
-                <a href="/showcase" target='_blank' className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300">
+                <a href="/hackathons" target='_blank' className="font-mont px-8 py-3 bg-purple-700 font-semibold text-black rounded-full hover:bg-gray-100 transition-colors duration-300">
                 View all Projects
                 </a>
             </div>
