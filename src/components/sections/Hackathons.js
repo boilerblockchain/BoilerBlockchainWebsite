@@ -666,15 +666,15 @@ const hackathonData = [
     date: "ETH Denver 25'",
     project: "Cosmos Pool",
     link: "https://devfolio.co/projects/cosmospool-c15c",
-    devs: "Joey, Mugdha, Garv, Adithya",
+    devs: "Joey, Mugdha, Garv, Aditya",
     prize: null,
     prizes: null,
   },
   {
     id: 13,
     date: "Eigen Games 25'",
-    project: "Insert here",
-    link: "#",
+    project: "EasyOrder",
+    link: "https://devfolio.co/projects/easyorder-722b",
     devs: "Vincent, Pranav",
     prize: "🥇 Third Place",
     prizes: null
