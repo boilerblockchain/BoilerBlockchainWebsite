@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import GlobalStyles from "./styles/GlobalStyles";
 import { light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
@@ -6,10 +5,8 @@ import styled from "styled-components";
 
 import Navigation from "./components/Navigation";
 import Home from "./components/sections/Home";
-import Hackathons from "./components/sections/Hackathons";
 import Team from "./components/sections/courses";
 import Footer from "./components/Footer";
-import Showcase from "./components/sections/Showcase";
 import About from "./components/sections/about_section";
 import HackathonSummary from "./components/sections/hackathons_summary";
 import CTASection from "./components/sections/join_discord";

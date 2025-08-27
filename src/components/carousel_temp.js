@@ -29,10 +29,6 @@ const IMAGE_HEIGHT = {
   mobile: 250,
   desktop: 400
 };
-const IMAGE_WIDTH = {
-  mobile: 400,
-  desktop: 650
-};
 
 export const AutoScrollCarousel = () => {
   const duplicatedImages = [...IMAGES, ...IMAGES];

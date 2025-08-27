@@ -1,7 +1,6 @@
 import React from "react";
 import styled, { ThemeProvider } from "styled-components";
-import { TwitterTimelineEmbed } from "react-twitter-embed";
-import Button from "../Button";
+
 import { dark } from "../../styles/Themes";
 
 // Section Wrapper with dark background
@@ -139,19 +138,6 @@ const Divider = styled.hr`
   @media (max-width: 480px) {
     margin: 2rem 0; /* Reduce margin on smaller screens */
   }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-`;
-
-// Small sub-heading for social media
-const Smallheader = styled.h4`
-  font-size: ${(props) => props.theme.fontlg};
-  color: ${(props) => props.theme.textWhite};
-  margin-bottom: 1.5rem;
 `;
 
 const Showcase = () => {

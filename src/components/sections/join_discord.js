@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageCircle, ArrowRight } from 'lucide-react';
-import Discord from "../Icons/Discord";
+
 
 const CTASection = () => {
   return (
@@ -29,6 +29,7 @@ const CTASection = () => {
                 <a
                   href="https://discord.com/invite/YdBH68uXUQ"
                   target="_blank"
+                  rel="noreferrer"
                   className="group flex items-center gap-2 font-mont px-8 py-4 bg-purple-700 text-white rounded-full hover:bg-purple-600 transition-colors duration-300"
                 >
                   <MessageCircle className="w-5 h-5" />

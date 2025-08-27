@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from "styled-components";
 import Logo from "./Logo";
 
 const Navigation = () => {
   const ref = useRef(null);
   const [isIntersecting, setIntersecting] = useState(true);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -21,7 +19,6 @@ const Navigation = () => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
-      setIsMobileMenuOpen(false);
     }
   };
 

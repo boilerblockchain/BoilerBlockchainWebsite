@@ -97,9 +97,9 @@ const CoursesSection = () => {
             
             <div className="space-y-8">
               <h2 className="text-2xl font-display">
-                <a className="text-white transition-colors duration-300">
+                <button className="text-white transition-colors duration-300">
                   Principles and Practices of Blockchain (Technical)
-                </a>
+                </button>
               </h2>
               <p className="text-gray-400 font-mont text-base leading-relaxed">
                 This course provides a comprehensive, hands-on overview of blockchain technology
