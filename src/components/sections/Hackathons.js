@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
@@ -706,12 +706,26 @@ const enhancedHackathonData = hackathonData.map(item => ({
 
 const HackathonsPage = () => {
   const [selectedHackathon, setSelectedHackathon] = useState(null);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
 
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Calculate statistics - accurate count of unique hackathons
   const uniqueHackathonNames = new Set();

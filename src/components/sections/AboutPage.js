@@ -381,7 +381,7 @@ const AboutPage = () => {
               ],
               button: {
                 text: "Join Our Discord",
-                link: "https://discord.com/invite/YdBH68uXUQ"
+                link: "https://discord.gg/hnjtVpb9H5"
               },
               imageFirst: false
             },
@@ -429,7 +429,7 @@ const AboutPage = () => {
               ],
               button: {
                 text: "Join Our Discord",
-                link: "https://discord.com/invite/YdBH68uXUQ"
+                link: "https://discord.gg/hnjtVpb9H5"
               },
               imageFirst: true
             }

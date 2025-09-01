@@ -18,7 +18,7 @@ export default function Footer() {
             <ul className="flex mb-4 md:order-1 md:ml-4 md:mb-0">
               <li>
                 <a
-                  href="https://discord.com/invite/YdBH68uXUQ"
+                  href="https://discord.gg/hnjtVpb9H5"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex justify-center items-center text-purple-600 hover:text-gray-100 hover:bg-purple-600 rounded-full transition duration-150 ease-in-out"

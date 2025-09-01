@@ -51,7 +51,7 @@ const About = () => {
           </ul>
 
           <p className="text-gray-400 w-full text-left font-mont mb-6">
-            Join our community and connect with like-minded peers. <a href="https://discord.com/invite/YdBH68uXUQ" target="_blank" rel="noopener noreferrer" className="underline text-blue-400 hover:text-blue-300">Join our Discord</a>.
+            Join our community and connect with like-minded peers. <a href="https://discord.gg/hnjtVpb9H5" target="_blank" rel="noopener noreferrer" className="underline text-blue-400 hover:text-blue-300">Join our Discord</a>.
           </p>
 
           <div className="w-full">

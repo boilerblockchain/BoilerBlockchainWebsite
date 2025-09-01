@@ -27,7 +27,7 @@ const CTASection = () => {
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
-                  href="https://discord.com/invite/YdBH68uXUQ"
+                  href="https://discord.gg/hnjtVpb9H5"
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-2 font-mont px-8 py-4 bg-purple-700 text-white rounded-full hover:bg-purple-600 transition-colors duration-300"
