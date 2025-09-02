@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiLayers, FiZap, FiShield, FiTool, FiGithub, FiExternalLink, FiCheck } from 'react-icons/fi';
+import Navigation from '../Navigation';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -20,40 +21,7 @@ const PageSection = styled.section`
   }
 `;
 
-const BackButton = styled(Link)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.95);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  text-transform: uppercase;
-  font-weight: 600;
 
-  &:before {
-    content: "←";
-    color: #7120b0;
-  }
-
-  &:hover {
-    background: rgba(113, 32, 176, 0.1);
-  }
-
-  @media (max-width: 40em) {
-    padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontsm};
-  }
-`;
 
 const Container = styled.div`
   width: 85%;
@@ -483,7 +451,7 @@ const TechnicalCourse = () => {
         }}
       />
       
-      <BackButton to="/courses">Back to Courses</BackButton>
+      <Navigation />
       
       <Container>
         <Title

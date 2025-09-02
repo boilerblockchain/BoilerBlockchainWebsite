@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion, useInView } from "framer-motion";
@@ -9,6 +9,7 @@ import img5 from "../../assets/images/5.jpg";
 import img6 from "../../assets/images/6.jpg";
 import img7 from "../../assets/images/7.jpg";
 import img9 from "../../assets/images/9.jpg";
+import Navigation from '../Navigation';
 
 const fadeInUp = {
   initial: {
@@ -217,40 +218,7 @@ const ImageContainer = styled(motion.div)`
   }
 `;
 
-const BackButton = styled(Link)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.95);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  text-transform: uppercase;
-  font-weight: 600;
 
-  &:before {
-    content: "←";
-    color: #7120b0;
-  }
-
-  &:hover {
-    background: rgba(113, 32, 176, 0.1);
-  }
-
-  @media (max-width: 40em) {
-    padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontsm};
-  }
-`;
 
 const LinkButton = styled(motion.div)`
   display: inline-block;
@@ -343,7 +311,7 @@ const AboutPage = () => {
   return (
     <PageSection>
       <ParticlesBackground keyId={particleKey} />
-      <BackButton to="/">Back</BackButton>
+      <Navigation />
       
       <Container
         initial="initial"

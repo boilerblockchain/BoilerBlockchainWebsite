@@ -1,10 +1,36 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiTrendingUp, FiSpeaker, FiCalendar, FiUsers, FiExternalLink, FiInstagram, FiTwitter, FiLinkedin } from 'react-icons/fi';
+import { FiSpeaker, FiTrendingUp, FiUsers, FiBarChart, FiInstagram, FiTwitter } from 'react-icons/fi';
+import Navigation from '../Navigation';
+
+// CountUp Animation Component
+const CountUp = ({ end, duration = 2000, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    if (!hasAnimated) {
+      setHasAnimated(true);
+      let startTime;
+      const animate = (currentTime) => {
+        if (!startTime) startTime = currentTime;
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        
+        setCount(Math.floor(progress * end));
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      requestAnimationFrame(animate);
+    }
+  }, [end, duration, hasAnimated]);
+
+  return <span>{count}{suffix}</span>;
+};
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -20,387 +46,346 @@ const PageSection = styled.section`
   }
 `;
 
-const BackButton = styled(Link)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.95);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  text-transform: uppercase;
-  font-weight: 600;
-
-  &:before {
-    content: "←";
-    color: #7120b0;
-  }
-
-  &:hover {
-    background: rgba(113, 32, 176, 0.1);
-  }
-
-  @media (max-width: 40em) {
-    padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontsm};
-  }
-`;
-
 const Container = styled.div`
-  width: 85%;
-  max-width: 1400px;
-  margin: 3rem auto 0;
+  width: 90%;
+  max-width: 1200px;
+  margin: 6rem auto 0;
   position: relative;
   z-index: 2;
   
   @media (max-width: 70em) {
-    width: 90%;
-  }
-
-  @media (max-width: 48em) {
     width: 95%;
   }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 6rem; 
+  font-size: 3.5rem;
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 800;
+  margin-bottom: 1rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  font-family: 'Tomorrow', sans-serif;
 
   span {
     color: #7120b0;
   }
 
   @media (max-width: 40em) {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontxl};
-  color: rgba(255, 255, 255, 0.8);
+  font-size: ${props => props.theme.fontlg};
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
-  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.5;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const StatsContainer = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  justify-content: center;
   gap: 2rem;
-  margin: 2rem 0 5rem;
-
+  flex-wrap: wrap;
+  margin: 4rem 0;
+  
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 `;
 
 const StatCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(113, 32, 176, 0.3);
   border-radius: 8px;
-  padding: 2rem 1.5rem;
-  text-align: center;
+  padding: 1.8rem;
   backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
   transition: all 0.3s ease;
+  text-align: center;
+  min-width: 180px;
+  position: relative;
+  overflow: hidden;
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(113, 32, 176, 0.6);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
   }
 `;
 
-const StatNumber = styled.div`
+const StatNumber = styled.h3`
   font-size: 2.5rem;
-  font-weight: 700;
   color: #7120b0;
+  font-weight: 700;
   margin-bottom: 0.5rem;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
-const StatTitle = styled.div`
-  font-size: 1rem;
+const StatLabel = styled.p`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: ${props => props.theme.fontmd};
+  font-weight: 500;
+  font-family: 'Tomorrow', sans-serif;
+`;
+
+const CampaignsGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin: 3rem 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CampaignCard = styled(motion.div)`
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  border-radius: 8px;
+  padding: 1.8rem;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(113, 32, 176, 0.6);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+  }
+`;
+
+const CampaignIcon = styled.div`
+  width: 45px;
+  height: 45px;
+  background: rgba(113, 32, 176, 0.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  
+  svg {
+    color: #7120b0;
+    font-size: 1.3rem;
+  }
+`;
+
+const CampaignTitle = styled.h3`
   color: #ffffff;
+  font-size: ${props => props.theme.fontlg};
+  margin-bottom: 0.8rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
-const ContentSection = styled(motion.div)`
-  margin: 5rem 0;
+const CampaignDescription = styled.p`
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 3rem;
+const CampaignStats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+`;
+
+const StatItem = styled.div`
+  text-align: center;
+  
+  span {
+    display: block;
+    color: #7120b0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    font-family: 'Tomorrow', sans-serif;
+  }
+  
+  small {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-family: 'Tomorrow', sans-serif;
+  }
+`;
+
+const SocialGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin: 3rem 0;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SocialCard = styled(motion.div)`
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  border-radius: 8px;
+  padding: 1.8rem;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(113, 32, 176, 0.6);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+  }
+`;
+
+const SocialIcon = styled.div`
+  width: 45px;
+  height: 45px;
+  background: rgba(113, 32, 176, 0.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  
+  svg {
+    color: #7120b0;
+    font-size: 1.3rem;
+  }
+`;
+
+const SocialName = styled.h4`
+  color: #ffffff;
+  font-size: ${props => props.theme.fontlg};
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Tomorrow', sans-serif;
+`;
+
+const SocialMetric = styled.p`
+  color: #7120b0;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  font-family: 'Tomorrow', sans-serif;
+`;
+
+const SocialGrowth = styled.p`
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-family: 'Tomorrow', sans-serif;
+`;
+
+const SectionTitle = styled(motion.h2)`
+  font-size: 2.5rem;
   color: #ffffff;
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
+  font-family: 'Tomorrow', sans-serif;
   
   span {
     color: #7120b0;
   }
 `;
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin: 3rem 0;
-`;
-
-const Card = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 8px;
-  padding: 2rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
-    border-color: rgba(113, 32, 176, 1);
-  }
-`;
-
-const CardIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background: rgba(113, 32, 176, 0.2);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  
-  svg {
-    color: #7120b0;
-    font-size: 1.5rem;
-  }
-`;
-
-const CardTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-`;
-
-const CardDescription = styled.p`
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-`;
-
-const ActivityList = styled.ul`
-  list-style: none;
-  padding: 0;
-
-  li {
-    color: rgba(255, 255, 255, 0.9);
-    padding: 0.5rem 0;
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    line-height: 1.4;
-
-    &:before {
-      content: "";
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      margin-right: 0.8rem;
-      background-color: #7120b0;
-      border-radius: 50%;
-    }
-  }
-`;
-
-const CampaignCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 8px;
-  padding: 2rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
-    border-color: rgba(113, 32, 176, 1);
-  }
-`;
-
-const CampaignTitle = styled.h3`
-  font-size: 1.4rem;
-  color: #ffffff;
-  margin-bottom: 0.8rem;
-  font-weight: 600;
-`;
-
-const CampaignDate = styled.p`
-  color: #7120b0;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-`;
-
-const CampaignDescription = styled.p`
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-`;
-
-const CampaignMetrics = styled.div`
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const Metric = styled.div`
-  .number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #7120b0;
-    display: block;
-  }
-  
-  .label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-  }
-`;
-
-const SocialLinks = styled.div`
-  display: flex;
-  gap: 1rem;
-  
-  a {
-    color: #7120b0;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.3s ease;
-    
-    &:hover {
-      color: #bb20ff;
-    }
-  }
-`;
-
-const marketingAreas = [
+const campaigns = [
   {
-    icon: FiSpeaker,
-    title: 'Brand & Communications',
-    description: 'Building and maintaining the Boiler Blockchain brand across all platforms and touchpoints.',
-    activities: [
-      'Brand Strategy Development',
-      'Content Creation & Curation',
-      'Visual Identity Management',
-      'Messaging & Positioning',
-      'Crisis Communications'
-    ]
-  },
-  {
+    title: 'Blockchain Education Series',
+    description: 'Monthly educational content series covering blockchain fundamentals, targeting students and professionals new to the space.',
     icon: FiUsers,
-    title: 'Community Building',
-    description: 'Growing and engaging our community of blockchain enthusiasts, developers, and industry professionals.',
-    activities: [
-      'Discord Management',
-      'Community Events',
-      'Member Onboarding',
-      'Engagement Campaigns',
-      'User-Generated Content'
-    ]
+    reach: '50K',
+    engagement: '12%',
   },
   {
-    icon: FiCalendar,
-    title: 'Event Marketing',
-    description: 'Planning and promoting hackathons, workshops, speaker sessions, and networking events.',
-    activities: [
-      'Event Planning & Execution',
-      'Speaker Recruitment',
-      'Venue Coordination',
-      'Registration Management',
-      'Post-Event Analysis'
-    ]
-  },
-  {
+    title: 'DeFi Awareness Campaign',
+    description: 'Multi-platform campaign educating users about DeFi protocols, yield farming, and risk management strategies.',
     icon: FiTrendingUp,
-    title: 'Digital Marketing',
-    description: 'Leveraging digital channels to increase awareness and drive engagement with our initiatives.',
-    activities: [
-      'Social Media Management',
-      'SEO & Content Marketing',
-      'Email Campaigns',
-      'Influencer Partnerships',
-      'Analytics & Reporting'
-    ]
+    reach: '75K',
+    engagement: '8%',
+  },
+  {
+    title: 'Community Growth Initiative',
+    description: 'Comprehensive strategy to grow our Discord community through events, AMAs, and exclusive content.',
+    icon: FiSpeaker,
+    reach: '100K',
+    engagement: '15%',
+  },
+  {
+    title: 'Partner Collaboration Program',
+    description: 'Strategic partnerships with other blockchain organizations to cross-promote events and educational content.',
+    icon: FiBarChart,
+    reach: '200K',
+    engagement: '6%',
   }
 ];
 
-const campaigns = [
+const socialChannels = [
   {
-    title: 'Blockchain Week 2024',
-    date: 'March 2024',
-    description: 'A week-long series of events including workshops, hackathons, and speaker sessions to promote blockchain education on campus.',
-    metrics: { attendance: '300+', posts: '25+', reach: '5K+' },
-    social: [
-      { platform: 'Instagram', link: 'https://instagram.com/boilerblockchain', icon: FiInstagram },
-      { platform: 'Twitter', link: 'https://twitter.com/boilerblockchain', icon: FiTwitter }
-    ]
+    name: 'Instagram',
+    icon: FiInstagram,
+    followers: '15K',
+    growth: '+25% this month'
   },
   {
-    title: 'Developer Recruitment Drive',
-    date: 'February 2024',
-    description: 'Targeted campaign to attract talented developers to join our growing team and contribute to innovative projects.',
-    metrics: { applications: '50+', hires: '12+', engagement: '8%' },
-    social: [
-      { platform: 'LinkedIn', link: 'https://linkedin.com/company/boilerblockchain', icon: FiLinkedin },
-      { platform: 'Twitter', link: 'https://twitter.com/boilerblockchain', icon: FiTwitter }
-    ]
+    name: 'Twitter',
+    icon: FiTwitter,
+    followers: '8.5K',
+    growth: '+18% this month'
   },
   {
-    title: 'Industry Partnership Outreach',
-    date: 'January 2024',
-    description: 'Strategic outreach campaign to establish partnerships with leading blockchain companies and organizations.',
-    metrics: { contacts: '25+', partnerships: '5+', meetings: '15+' },
-    social: [
-      { platform: 'LinkedIn', link: 'https://linkedin.com/company/boilerblockchain', icon: FiLinkedin }
-    ]
+    name: 'Discord',
+    icon: FiUsers,
+    members: '2.3K',
+    growth: '+30% this month'
   }
 ];
 
@@ -417,6 +402,7 @@ const MarketingTeam = () => {
 
   return (
     <PageSection>
+      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -428,13 +414,13 @@ const MarketingTeam = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
+              opacity: 0.3,
               width: 1,
             },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            move: { enable: true, speed: 0.5 },
+            number: { value: 40 },
+            opacity: { value: 0.2 },
+            size: { value: 1.5 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -446,8 +432,8 @@ const MarketingTeam = () => {
             },
             modes: {
               grab: {
-                distance: 140,
-                links: { opacity: 0.4 }
+                distance: 100,
+                links: { opacity: 0.3 }
               }
             }
           }
@@ -461,8 +447,6 @@ const MarketingTeam = () => {
           zIndex: 1,
         }}
       />
-      
-      <BackButton to="/teams">Back to Teams</BackButton>
       
       <Container>
         <Title
@@ -478,105 +462,111 @@ const MarketingTeam = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Driving blockchain adoption and community growth through strategic marketing, 
-          compelling storytelling, and innovative outreach initiatives
+          Building brand awareness and community engagement through strategic marketing initiatives
         </Subtitle>
 
         <StatsContainer
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>18+</StatNumber>
-            <StatTitle>Team Members</StatTitle>
+          <StatCard whileHover={{ y: -2 }}>
+            <StatNumber><CountUp end={500} suffix="K+" /></StatNumber>
+            <StatLabel>Total Reach</StatLabel>
           </StatCard>
-
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>20+</StatNumber>
-            <StatTitle>Events Hosted</StatTitle>
+          <StatCard whileHover={{ y: -2 }}>
+            <StatNumber><CountUp end={25} suffix="K+" /></StatNumber>
+            <StatLabel>Community Members</StatLabel>
           </StatCard>
-
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>2K+</StatNumber>
-            <StatTitle>Social Followers</StatTitle>
+          <StatCard whileHover={{ y: -2 }}>
+            <StatNumber><CountUp end={12} suffix="+" /></StatNumber>
+            <StatLabel>Active Campaigns</StatLabel>
           </StatCard>
-
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>50+</StatNumber>
-            <StatTitle>Campaigns</StatTitle>
+          <StatCard whileHover={{ y: -2 }}>
+            <StatNumber><CountUp end={85} suffix="%" /></StatNumber>
+            <StatLabel>Engagement Rate</StatLabel>
           </StatCard>
         </StatsContainer>
 
-        <ContentSection
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+        <SectionTitle
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          <SectionTitle>Marketing <span>Focus Areas</span></SectionTitle>
-          <Grid>
-            {marketingAreas.map((area, index) => (
-              <Card
-                key={area.title}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <CardIcon>
-                  <area.icon />
-                </CardIcon>
-                <CardTitle>{area.title}</CardTitle>
-                <CardDescription>{area.description}</CardDescription>
-                <ActivityList>
-                  {area.activities.map((activity, i) => (
-                    <li key={i}>{activity}</li>
-                  ))}
-                </ActivityList>
-              </Card>
-            ))}
-          </Grid>
-        </ContentSection>
+          Active <span>Campaigns</span>
+        </SectionTitle>
+        
+        <CampaignsGrid
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {campaigns.map((campaign, index) => (
+            <CampaignCard
+              key={campaign.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 * index }}
+              whileHover={{ y: -2 }}
+            >
+              <CampaignIcon>
+                <campaign.icon />
+              </CampaignIcon>
+              <CampaignTitle>{campaign.title}</CampaignTitle>
+              <CampaignDescription>{campaign.description}</CampaignDescription>
+              <CampaignStats>
+                <StatItem>
+                  <span><CountUp end={parseInt(campaign.reach.replace('K', ''))} suffix="K" /></span>
+                  <small>Reach</small>
+                </StatItem>
+                <StatItem>
+                  <span><CountUp end={parseInt(campaign.engagement.replace('%', ''))} suffix="%" /></span>
+                  <small>Engagement</small>
+                </StatItem>
+              </CampaignStats>
+            </CampaignCard>
+          ))}
+        </CampaignsGrid>
 
-        <ContentSection
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
+        <SectionTitle
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          <SectionTitle>Recent <span>Campaigns</span></SectionTitle>
-          <Grid>
-            {campaigns.map((campaign, index) => (
-              <CampaignCard
-                key={campaign.title}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <CampaignTitle>{campaign.title}</CampaignTitle>
-                <CampaignDate>{campaign.date}</CampaignDate>
-                <CampaignDescription>{campaign.description}</CampaignDescription>
-                
-                <CampaignMetrics>
-                  {Object.entries(campaign.metrics).map(([key, value]) => (
-                    <Metric key={key}>
-                      <span className="number">{value}</span>
-                      <span className="label">{key}</span>
-                    </Metric>
-                  ))}
-                </CampaignMetrics>
-                
-                <SocialLinks>
-                  {campaign.social.map((link, i) => (
-                    <a key={i} href={link.link} target="_blank" rel="noopener noreferrer">
-                      <link.icon /> {link.platform}
-                    </a>
-                  ))}
-                </SocialLinks>
-              </CampaignCard>
-            ))}
-          </Grid>
-        </ContentSection>
+          Social <span>Channels</span>
+        </SectionTitle>
+        
+        <SocialGrid
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {socialChannels.map((channel, index) => (
+            <SocialCard
+              key={channel.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 * index }}
+              whileHover={{ y: -2 }}
+            >
+              <SocialIcon>
+                <channel.icon />
+              </SocialIcon>
+              <SocialName>{channel.name}</SocialName>
+              <SocialMetric>
+                <CountUp end={parseFloat(channel.followers?.replace('K', '') || channel.members?.replace('K', ''))} 
+                         suffix={channel.followers?.includes('K') || channel.members?.includes('K') ? 'K' : ''} />
+              </SocialMetric>
+              <SocialGrowth>{channel.growth}</SocialGrowth>
+            </SocialCard>
+          ))}
+        </SocialGrid>
       </Container>
     </PageSection>
   );
