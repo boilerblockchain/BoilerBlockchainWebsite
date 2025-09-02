@@ -1,10 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiMail, FiMessageSquare, FiMapPin, FiPhone, FiInstagram, FiTwitter, FiLinkedin, FiGithub } from 'react-icons/fi';
+import { FiMail, FiMessageSquare, FiMapPin, FiInstagram, FiTwitter, FiLinkedin, FiGithub } from 'react-icons/fi';
 import Navigation from '../Navigation';
 
 const PageSection = styled.section`
@@ -66,16 +65,10 @@ const Subtitle = styled(motion.p)`
   line-height: 1.6;
 `;
 
-const ContentGrid = styled(motion.div)`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+const ContentWrapper = styled(motion.div)`
+  display: flex;
+  justify-content: center;
   margin: 4rem 0;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
 `;
 
 const ContactInfo = styled.div`
@@ -202,127 +195,10 @@ const SocialLinks = styled.div`
   }
 `;
 
-const FormSection = styled.div`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 12px;
-  padding: 3rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-`;
 
-const FormTitle = styled.h2`
-  font-size: 2.5rem;
-  color: #ffffff;
-  margin-bottom: 2rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  
-  span {
-    color: #7120b0;
-  }
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const Input = styled.input`
-  background: rgba(113, 32, 176, 0.1);
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  color: #ffffff;
-  font-size: 1rem;
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: rgba(113, 32, 176, 1);
-    background: rgba(113, 32, 176, 0.15);
-  }
-
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-`;
-
-const TextArea = styled.textarea`
-  background: rgba(113, 32, 176, 0.1);
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  color: #ffffff;
-  font-size: 1rem;
-  font-family: 'Tomorrow', sans-serif;
-  min-height: 120px;
-  resize: vertical;
-  transition: all 0.3s ease;
-
-  &:focus {
-    outline: none;
-    border-color: rgba(113, 32, 176, 1);
-    background: rgba(113, 32, 176, 0.15);
-  }
-
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-`;
-
-const SubmitButton = styled.button`
-  background: linear-gradient(45deg, #7120b0, #bb20ff);
-  color: white;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 6px;
-  font-size: ${props => props.theme.fontmd};
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Tomorrow', sans-serif;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(113, 32, 176, 0.4);
-    background: linear-gradient(45deg, #9d20b0, #d175ff);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-`;
 
 const ContactPage = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
 
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
@@ -331,21 +207,6 @@ const ContactPage = () => {
   useEffect(() => {
     setParticleKey(Date.now());
   }, []);
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const mailtoLink = `mailto:contact@boilerblockchain.org?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    )}`;
-    window.location.href = mailtoLink;
-  };
 
   return (
     <PageSection>
@@ -360,13 +221,13 @@ const ContactPage = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
+              opacity: 0.3,
               width: 1,
             },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            move: { enable: true, speed: 0.5 },
+            number: { value: 40 },
+            opacity: { value: 0.2 },
+            size: { value: 1.5 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -378,8 +239,8 @@ const ContactPage = () => {
             },
             modes: {
               grab: {
-                distance: 140,
-                links: { opacity: 0.4 }
+                distance: 100,
+                links: { opacity: 0.3 }
               }
             }
           }
@@ -410,10 +271,10 @@ const ContactPage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Get in touch with Boiler Blockchain for partnerships, questions, or to learn more about our community
+          Connect with Boiler Blockchain through our social channels and Discord community
         </Subtitle>
 
-        <ContentGrid
+        <ContentWrapper
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -494,64 +355,7 @@ const ContactPage = () => {
               </SocialLinks>
             </SocialSection>
           </ContactInfo>
-
-          <FormSection>
-            <FormTitle>Send us a <span>Message</span></FormTitle>
-            
-            <Form onSubmit={handleSubmit}>
-              <FormGroup>
-                <Label>Name</Label>
-                <Input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  placeholder="Your full name"
-                  required
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Email</Label>
-                <Input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="your.email@example.com"
-                  required
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Subject</Label>
-                <Input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                  placeholder="What's this about?"
-                  required
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label>Message</Label>
-                <TextArea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Tell us more about your inquiry..."
-                  required
-                />
-              </FormGroup>
-
-              <SubmitButton type="submit">
-                Send Message
-              </SubmitButton>
-            </Form>
-          </FormSection>
-        </ContentGrid>
+        </ContentWrapper>
       </Container>
     </PageSection>
   );
