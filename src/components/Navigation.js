@@ -62,15 +62,16 @@ const Navigation = () => {
         { label: 'Technical Course', path: '/courses/technical' },
         { label: 'Non-Technical Course', path: '/courses/non-technical' }
       ]
-    },
-    people: {
-      label: 'People',
-      path: '/people',
-      items: [
-        { label: 'Our Team', path: '/people/team' },
-        { label: 'Alumni', path: '/people/alumni' }
-      ]
     }
+  };
+
+  const peopleDropdown = {
+    label: 'People',
+    path: '/people',
+    items: [
+      { label: 'Our Team', path: '/people/team' },
+      { label: 'Alumni', path: '/people/alumni' }
+    ]
   };
 
   const handleMouseMove = (e) => {
@@ -225,9 +226,43 @@ const Navigation = () => {
             >
               Partners
             </Link>
+
+            {/* People Dropdown next to Partners */}
+            <div className="relative group">
+              <Link 
+                to={peopleDropdown.path}
+                className={`duration-300 text-sans animate-fade-in flex items-center gap-1 text-decoration-none transition-all ${
+                  isScrolled 
+                    ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
+                    : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                {peopleDropdown.label}
+                <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 12 12" fill="none">
+                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+              
+              <div className={`absolute top-full left-0 mt-2 w-48 border rounded-lg py-2 z-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
+                isScrolled 
+                  ? 'bg-black/70 backdrop-blur-xl border-zinc-600/50 shadow-2xl shadow-purple-500/20' 
+                  : 'bg-zinc-900/90 backdrop-blur-md border-zinc-700 shadow-lg'
+              }`}>
+                {peopleDropdown.items.map((item, index) => (
+                  <Link
+                    key={index}
+                    to={item.path}
+                    className="block px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center">
+
             <Link
               to="/contact"
               ref={btnRef}
