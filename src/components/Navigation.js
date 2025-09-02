@@ -126,7 +126,7 @@ const Navigation = () => {
       >
         <div className="container flex items-center justify-between pl-8 pt-6 pb-4 mx-auto">
           <div className="flex items-center">
-            <Logo />
+              <Logo />
           </div>
 
           <div className="flex items-center justify-center gap-8 flex-1 max-w-2xl mx-auto">

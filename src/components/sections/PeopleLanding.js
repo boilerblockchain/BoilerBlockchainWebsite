@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiBook, FiCode, FiUsers, FiArrowRight, FiClock, FiAward } from 'react-icons/fi';
+import { FiUsers, FiAward, FiArrowRight, FiStar, FiTrendingUp, FiHeart } from 'react-icons/fi';
 import Navigation from '../Navigation';
 
 const PageSection = styled.section`
@@ -68,11 +68,15 @@ const Subtitle = styled(motion.p)`
 
 const StatsContainer = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   margin: 2rem 0 5rem;
 
   @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -81,7 +85,7 @@ const StatCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 1px solid #7120b0;
   border-radius: 8px;
-  padding: 2.5rem 1.5rem;
+  padding: 2rem 1.5rem;
   text-align: center;
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
@@ -94,20 +98,20 @@ const StatCard = styled(motion.div)`
 `;
 
 const StatNumber = styled.div`
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #7120b0;
   margin-bottom: 0.5rem;
 `;
 
 const StatTitle = styled.div`
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 1px;
 `;
 
-const CoursesGrid = styled(motion.div)`
+const SectionsGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 3rem;
@@ -118,9 +122,9 @@ const CoursesGrid = styled(motion.div)`
   }
 `;
 
-const CourseCard = styled(motion.div)`
+const SectionCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
-  border: 2px solid ${props => props.available ? '#7120b0' : 'rgba(113, 32, 176, 0.3)'};
+  border: 2px solid #7120b0;
   border-radius: 12px;
   padding: 3rem;
   backdrop-filter: blur(5px);
@@ -128,12 +132,11 @@ const CourseCard = styled(motion.div)`
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  opacity: ${props => props.available ? 1 : 0.7};
 
   &:hover {
     box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
     transform: translateY(-5px);
-    border-color: ${props => props.available ? 'rgba(113, 32, 176, 1)' : 'rgba(113, 32, 176, 0.5)'};
+    border-color: rgba(113, 32, 176, 1);
   }
 
   &::before {
@@ -143,14 +146,11 @@ const CourseCard = styled(motion.div)`
     left: 0;
     right: 0;
     height: 4px;
-    background: ${props => props.available 
-      ? 'linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8))'
-      : 'linear-gradient(90deg, rgba(113, 32, 176, 0.3), rgba(187, 32, 255, 0.3))'
-    };
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
   }
 `;
 
-const CourseIcon = styled.div`
+const SectionIcon = styled.div`
   width: 70px;
   height: 70px;
   background: rgba(113, 32, 176, 0.2);
@@ -166,7 +166,7 @@ const CourseIcon = styled.div`
   }
 `;
 
-const CourseName = styled.h3`
+const SectionName = styled.h3`
   font-size: 2.5rem;
   color: #ffffff;
   margin-bottom: 1rem;
@@ -175,14 +175,14 @@ const CourseName = styled.h3`
   letter-spacing: 1px;
 `;
 
-const CourseDescription = styled.p`
+const SectionDescription = styled.p`
   font-size: ${props => props.theme.fontmd};
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
   margin-bottom: 2rem;
 `;
 
-const CourseFeatures = styled.ul`
+const SectionHighlights = styled.ul`
   list-style: none;
   padding: 0;
   margin-bottom: 2.5rem;
@@ -207,45 +207,13 @@ const CourseFeatures = styled.ul`
   }
 `;
 
-const CourseStats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const CourseStat = styled.div`
-  text-align: center;
-  
-  .number {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #7120b0;
-    display: block;
-  }
-  
-  .label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-`;
-
-const ViewCourseButton = styled(Link)`
+const ViewSectionButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: ${props => props.available 
-    ? 'linear-gradient(45deg, #7120b0, #bb20ff)'
-    : 'rgba(113, 32, 176, 0.3)'
-  };
+  background: linear-gradient(45deg, #7120b0, #bb20ff);
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.5rem;
   text-decoration: none;
   border-radius: 6px;
   font-size: ${props => props.theme.fontmd};
@@ -254,18 +222,14 @@ const ViewCourseButton = styled(Link)`
   letter-spacing: 1px;
   transition: all 0.3s ease;
   border: none;
-  cursor: ${props => props.available ? 'pointer' : 'not-allowed'};
+  cursor: pointer;
   width: 100%;
   justify-content: center;
-  opacity: ${props => props.available ? 1 : 0.6};
 
   &:hover {
-    transform: ${props => props.available ? 'translateY(-2px)' : 'none'};
-    box-shadow: ${props => props.available ? '0 8px 20px rgba(113, 32, 176, 0.4)' : 'none'};
-    background: ${props => props.available 
-      ? 'linear-gradient(45deg, #9d20b0, #d175ff)'
-      : 'rgba(113, 32, 176, 0.3)'
-    };
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(113, 32, 176, 0.4);
+    background: linear-gradient(45deg, #9d20b0, #d175ff);
   }
 
   svg {
@@ -273,80 +237,148 @@ const ViewCourseButton = styled(Link)`
   }
 
   &:hover svg {
-    transform: ${props => props.available ? 'translateX(3px)' : 'none'};
+    transform: translateX(3px);
   }
 `;
 
-const ComingSoonBadge = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 165, 0, 0.9);
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
+const ValueSection = styled(motion.div)`
+  background: rgba(15, 15, 15, 0.7);
+  border: 1px solid #7120b0;
+  border-radius: 12px;
+  padding: 3rem;
+  margin: 5rem 0;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  text-align: center;
+`;
+
+const ValueTitle = styled.h2`
+  font-size: 3rem;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  z-index: 10;
+  
+  span {
+    color: #7120b0;
+  }
 `;
 
-const LaunchDate = styled.p`
-  color: #ff9500;
-  font-size: 1rem;
+const ValueDescription = styled.p`
+  font-size: ${props => props.theme.fontlg};
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+`;
+
+const ValuesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+`;
+
+const ValueCard = styled(motion.div)`
+  background: rgba(113, 32, 176, 0.1);
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  border-radius: 8px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(113, 32, 176, 0.15);
+    border-color: rgba(113, 32, 176, 0.6);
+    transform: translateY(-3px);
+  }
+`;
+
+const ValueIcon = styled.div`
+  width: 50px;
+  height: 50px;
+  background: rgba(113, 32, 176, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  
+  svg {
+    color: #7120b0;
+    font-size: 1.5rem;
+  }
+`;
+
+const ValueName = styled.h4`
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
   font-weight: 600;
-  text-align: center;
-  margin: 1rem 0;
   text-transform: uppercase;
-  letter-spacing: 1px;
 `;
 
-const courses = [
+const ValueText = styled.p`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  line-height: 1.5;
+`;
+
+const sections = [
   {
-    id: 'technical',
-    name: 'Technical Course',
-    icon: FiCode,
-    description: 'Comprehensive hands-on blockchain development course covering smart contracts, DApps, and Web3 technologies. Build real projects and gain industry-ready skills.',
-    features: [
-      'Solidity smart contract development',
-      'DApp frontend development with React',
-      'Web3.js and Ethers.js integration',
-      'Testing and deployment strategies',
-      'Security best practices and auditing',
-      'Real-world project portfolio'
-    ],
-    stats: { duration: '12 weeks', projects: '5+', students: '150+' },
-    path: '/courses/technical',
-    available: true,
+    id: 'team',
+    name: 'Our Team',
+    icon: FiUsers,
+    description: 'Meet the passionate individuals driving innovation at Boiler Blockchain - our current members, leadership, and active contributors.',
     highlights: [
-      'Industry mentors and guest speakers',
-      'Capstone project with real clients',
-      'Job placement assistance',
-      'Access to exclusive hackathons'
-    ]
+      'Executive board and team leadership',
+      'Active members across all departments',
+      'Student developers and researchers',
+      'Marketing and community managers',
+      'Current project contributors'
+    ],
+    path: '/people/team'
   },
   {
-    id: 'non-technical',
-    name: 'Non-Technical Course',
-    icon: FiBook,
-    description: 'Perfect for business professionals and newcomers - understand blockchain technology, cryptocurrency markets, and DeFi without programming.',
-    features: [
-      'Blockchain fundamentals explained simply',
-      'Cryptocurrency and tokenomics',
-      'DeFi and NFT ecosystems',
-      'Investment and trading strategies',
-      'Business applications and use cases',
-      'Market analysis and trends'
+    id: 'alumni',
+    name: 'Alumni Network',
+    icon: FiAward,
+    description: 'Celebrating our graduates who have gone on to make significant impacts in the blockchain and technology industries.',
+    highlights: [
+      'Industry leaders and entrepreneurs',
+      'Successful startup founders',
+      'Blockchain developers at major companies',
+      'Research contributors and academics',
+      'Mentors for current members'
     ],
-    stats: { duration: '8 weeks', modules: '10+', students: 'Coming Soon' },
-    path: '/courses/non-technical',
-    available: false,
-    launchDate: 'Fall 2024'
+    path: '/people/alumni'
   }
 ];
 
-const CoursesLanding = () => {
+const values = [
+  {
+    icon: FiStar,
+    name: 'Excellence',
+    description: 'We strive for the highest standards in everything we do, from education to innovation.'
+  },
+  {
+    icon: FiTrendingUp,
+    name: 'Growth',
+    description: 'We believe in continuous learning and development, both personally and professionally.'
+  },
+  {
+    icon: FiUsers,
+    name: 'Collaboration',
+    description: 'We work together to achieve more than we could individually, fostering teamwork and respect.'
+  },
+  {
+    icon: FiHeart,
+    name: 'Passion',
+    description: 'We are driven by genuine enthusiasm for blockchain technology and its potential to change the world.'
+  }
+];
+
+const PeopleLanding = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
 
   const particlesInit = useCallback(async (engine) => {
@@ -412,7 +444,7 @@ const CoursesLanding = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Our <span>Courses</span>
+          Our <span>People</span>
         </Title>
 
         <Subtitle
@@ -420,7 +452,8 @@ const CoursesLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Comprehensive blockchain education designed for all skill levels, from complete beginners to advanced developers
+          Meet the talented individuals who make Boiler Blockchain a thriving community 
+          of innovators, builders, and blockchain enthusiasts
         </Subtitle>
 
         <StatsContainer
@@ -429,86 +462,91 @@ const CoursesLanding = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>350+</StatNumber>
-            <StatTitle>Students Taught</StatTitle>
+            <StatNumber>200+</StatNumber>
+            <StatTitle>Total Members</StatTitle>
           </StatCard>
 
           <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>2</StatNumber>
-            <StatTitle>Course Tracks</StatTitle>
+            <StatNumber>50+</StatNumber>
+            <StatTitle>Alumni</StatTitle>
           </StatCard>
 
           <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>95%</StatNumber>
-            <StatTitle>Completion Rate</StatTitle>
+            <StatNumber>15+</StatNumber>
+            <StatTitle>Leadership Team</StatTitle>
+          </StatCard>
+
+          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
+            <StatNumber>3</StatNumber>
+            <StatTitle>Years Active</StatTitle>
           </StatCard>
         </StatsContainer>
 
-        <CoursesGrid
+        <SectionsGrid
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          {courses.map((course, index) => (
-            <CourseCard
-              key={course.id}
-              available={course.available}
+          {sections.map((section, index) => (
+            <SectionCard
+              key={section.id}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-              whileHover={{ y: course.available ? -5 : -2 }}
+              whileHover={{ y: -5 }}
             >
-              {!course.available && <ComingSoonBadge>Coming Soon</ComingSoonBadge>}
+              <SectionIcon>
+                <section.icon />
+              </SectionIcon>
               
-              <CourseIcon>
-                <course.icon />
-              </CourseIcon>
+              <SectionName>{section.name}</SectionName>
               
-              <CourseName>{course.name}</CourseName>
+              <SectionDescription>{section.description}</SectionDescription>
               
-              <CourseDescription>{course.description}</CourseDescription>
-              
-              {course.highlights && course.available && (
-                <CourseFeatures>
-                  {course.highlights.map((highlight, i) => (
-                    <li key={i}>{highlight}</li>
-                  ))}
-                </CourseFeatures>
-              )}
-              
-              <CourseFeatures>
-                {course.features.map((feature, i) => (
-                  <li key={i}>{feature}</li>
+              <SectionHighlights>
+                {section.highlights.map((highlight, i) => (
+                  <li key={i}>{highlight}</li>
                 ))}
-              </CourseFeatures>
+              </SectionHighlights>
               
-              <CourseStats>
-                {Object.entries(course.stats).map(([key, value]) => (
-                  <CourseStat key={key}>
-                    <span className="number">{value}</span>
-                    <span className="label">{key}</span>
-                  </CourseStat>
-                ))}
-              </CourseStats>
-
-              {!course.available && course.launchDate && (
-                <LaunchDate>Expected Launch: {course.launchDate}</LaunchDate>
-              )}
-              
-              <ViewCourseButton 
-                to={course.available ? course.path : '#'}
-                available={course.available}
-                onClick={(e) => !course.available && e.preventDefault()}
-              >
-                {course.available ? 'View Course Details' : 'Coming Soon'} 
-                {course.available && <FiArrowRight />}
-              </ViewCourseButton>
-            </CourseCard>
+              <ViewSectionButton to={section.path}>
+                Explore {section.name} <FiArrowRight />
+              </ViewSectionButton>
+            </SectionCard>
           ))}
-        </CoursesGrid>
+        </SectionsGrid>
+
+        <ValueSection
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+        >
+          <ValueTitle>Our <span>Values</span></ValueTitle>
+          <ValueDescription>
+            The principles that guide our community and drive our mission to advance blockchain education and innovation.
+          </ValueDescription>
+          
+          <ValuesGrid>
+            {values.map((value, index) => (
+              <ValueCard
+                key={value.name}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
+                whileHover={{ y: -3 }}
+              >
+                <ValueIcon>
+                  <value.icon />
+                </ValueIcon>
+                <ValueName>{value.name}</ValueName>
+                <ValueText>{value.description}</ValueText>
+              </ValueCard>
+            ))}
+          </ValuesGrid>
+        </ValueSection>
       </Container>
     </PageSection>
   );
 };
 
-export default CoursesLanding;
+export default PeopleLanding;

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiUsers, FiCode, FiSearch, FiTrendingUp, FiArrowRight } from 'react-icons/fi';
+import Navigation from '../Navigation';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -20,89 +21,52 @@ const PageSection = styled.section`
   }
 `;
 
-const BackButton = styled(Link)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.95);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  text-transform: uppercase;
-  font-weight: 600;
 
-  &:before {
-    content: "←";
-    color: #7120b0;
-  }
-
-  &:hover {
-    background: rgba(113, 32, 176, 0.1);
-  }
-
-  @media (max-width: 40em) {
-    padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontsm};
-  }
-`;
 
 const Container = styled.div`
-  width: 85%;
-  max-width: 1400px;
-  margin: 3rem auto 0;
+  width: 90%;
+  max-width: 1200px;
+  margin: 6rem auto 0;
   position: relative;
   z-index: 2;
   
   @media (max-width: 70em) {
-    width: 90%;
-  }
-
-  @media (max-width: 48em) {
     width: 95%;
   }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 6rem; 
+  font-size: 3.5rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 800;
+  margin-bottom: 1rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 
   span {
     color: #7120b0;
   }
 
   @media (max-width: 40em) {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontxl};
-  color: rgba(255, 255, 255, 0.8);
+  font-size: ${props => props.theme.fontlg};
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
-  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.5;
 `;
 
 const TeamsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin: 4rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin: 3rem 0;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -110,20 +74,20 @@ const TeamsGrid = styled(motion.div)`
 `;
 
 const TeamCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 2px solid #7120b0;
-  border-radius: 12px;
-  padding: 2.5rem;
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(113, 32, 176, 0.3);
+  border-radius: 8px;
+  padding: 1.8rem;
   backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
-    border-color: rgba(113, 32, 176, 1);
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+    transform: translateY(-2px);
+    border-color: rgba(113, 32, 176, 0.6);
   }
 
   &::before {
@@ -132,34 +96,34 @@ const TeamCard = styled(motion.div)`
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    height: 2px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
   }
 `;
 
 const TeamIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  background: rgba(113, 32, 176, 0.2);
-  border-radius: 12px;
+  width: 45px;
+  height: 45px;
+  background: rgba(113, 32, 176, 0.15);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   
   svg {
     color: #7120b0;
-    font-size: 2rem;
+    font-size: 1.3rem;
   }
 `;
 
 const TeamName = styled.h3`
-  font-size: 2rem;
+  font-size: 1.4rem;
   color: #ffffff;
-  margin-bottom: 1rem;
-  font-weight: 700;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 `;
 
 const TeamDescription = styled.p`
@@ -270,6 +234,7 @@ const TeamsLanding = () => {
 
   return (
     <PageSection>
+      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -281,13 +246,13 @@ const TeamsLanding = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
+              opacity: 0.3,
               width: 1,
             },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            move: { enable: true, speed: 0.5 },
+            number: { value: 40 },
+            opacity: { value: 0.2 },
+            size: { value: 1.5 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -299,8 +264,8 @@ const TeamsLanding = () => {
             },
             modes: {
               grab: {
-                distance: 140,
-                links: { opacity: 0.4 }
+                distance: 100,
+                links: { opacity: 0.3 }
               }
             }
           }
@@ -314,8 +279,6 @@ const TeamsLanding = () => {
           zIndex: 1,
         }}
       />
-      
-      <BackButton to="/">Back</BackButton>
       
       <Container>
         <Title

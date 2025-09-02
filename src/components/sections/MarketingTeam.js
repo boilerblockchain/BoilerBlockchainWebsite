@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiTrendingUp, FiMegaphone, FiCalendar, FiUsers, FiExternalLink, FiInstagram, FiTwitter, FiLinkedin } from 'react-icons/fi';
+import { FiTrendingUp, FiSpeaker, FiCalendar, FiUsers, FiExternalLink, FiInstagram, FiTwitter, FiLinkedin } from 'react-icons/fi';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -323,7 +323,7 @@ const SocialLinks = styled.div`
 
 const marketingAreas = [
   {
-    icon: FiMegaphone,
+    icon: FiSpeaker,
     title: 'Brand & Communications',
     description: 'Building and maintaining the Boiler Blockchain brand across all platforms and touchpoints.',
     activities: [

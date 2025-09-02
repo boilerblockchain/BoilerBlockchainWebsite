@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiGithub, FiCode, FiLayers, FiZap, FiUsers, FiExternalLink } from 'react-icons/fi';
+import Navigation from '../Navigation';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -386,7 +387,7 @@ const DeveloperTeam = () => {
         }}
       />
       
-      <BackButton to="/teams">Back to Teams</BackButton>
+      <Navigation />
       
       <Container>
         <Title
