@@ -4,10 +4,46 @@ import Logo from "./Logo";
 
 const Navigation = () => {
   const ref = useRef(null);
-  const [isIntersecting, setIntersecting] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const btnRef = useRef(null);
   const animationIdRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      setScrollY(currentScrollY);
+      setIsScrolled(currentScrollY > 20);
+      
+      // Hide/show navbar based on scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false); // Hide when scrolling down
+      } else {
+        setIsVisible(true); // Show when scrolling up or at top
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    const handleMouseMove = (e) => {
+      // Show navbar when mouse is near the top of the screen
+      if (e.clientY <= 80) {
+        setIsVisible(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, [lastScrollY]);
 
   const dropdownData = {
     teams: {
@@ -119,12 +155,27 @@ const Navigation = () => {
   return (
     <header ref={ref}>
       <div
-        className={`fixed inset-x-0 top-0 z-50 duration-200 border-b ${isIntersecting
-          ? 'bg-zinc-900/0 border-transparent'
-          : 'bg-zinc-900/50 border-zinc-800 backdrop-blur'
-          }`}
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-in-out border-b ${
+          isScrolled 
+            ? 'bg-black/60 backdrop-blur-xl border-zinc-700/50 shadow-2xl shadow-purple-500/10' 
+            : 'bg-transparent border-transparent'
+        } ${
+          isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
+        style={{
+          background: isScrolled 
+            ? 'linear-gradient(135deg, rgba(0,0,0,0.8), rgba(17,17,17,0.9))'
+            : 'transparent',
+          backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
+          WebkitBackdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
+          borderImage: isScrolled 
+            ? 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent) 1'
+            : 'none'
+        }}
       >
-        <div className="container flex items-center justify-between pl-8 pt-6 pb-4 mx-auto">
+        <div className={`container flex items-center justify-between pl-8 pr-4 mx-auto transition-all duration-300 ${
+          isScrolled ? 'py-3' : 'pt-6 pb-4'
+        }`}>
           <div className="flex items-center">
               <Logo />
           </div>
@@ -134,7 +185,11 @@ const Navigation = () => {
               <div key={key} className="relative group">
                 <Link 
                   to={dropdown.path}
-                  className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in flex items-center gap-1 text-decoration-none"
+                  className={`duration-300 text-sans animate-fade-in flex items-center gap-1 text-decoration-none transition-all ${
+                    isScrolled 
+                      ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
                 >
                   {dropdown.label}
                   <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 12 12" fill="none">
@@ -142,7 +197,11 @@ const Navigation = () => {
                   </svg>
                 </Link>
                 
-                <div className="absolute top-full left-0 mt-2 w-48 bg-zinc-900 border border-zinc-700 rounded-md shadow-lg py-2 z-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div className={`absolute top-full left-0 mt-2 w-48 border rounded-lg py-2 z-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
+                  isScrolled 
+                    ? 'bg-black/70 backdrop-blur-xl border-zinc-600/50 shadow-2xl shadow-purple-500/20' 
+                    : 'bg-zinc-900/90 backdrop-blur-md border-zinc-700 shadow-lg'
+                }`}>
                   {dropdown.items.map((item, index) => (
                     <Link
                       key={index}
@@ -158,22 +217,28 @@ const Navigation = () => {
 
             <Link
               to="/partners"
-              className="duration-200 text-sans text-zinc-400 hover:text-white animate-fade-in"
+              className={`duration-300 text-sans animate-fade-in transition-all ${
+                isScrolled 
+                  ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
+                  : 'text-zinc-400 hover:text-white'
+              }`}
             >
               Partners
             </Link>
           </div>
 
-          <div className="flex items-center pr-6">
+          <div className="flex items-center">
             <Link
               to="/contact"
               ref={btnRef}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               style={{
-                background: 'linear-gradient(135deg, #8B5CF6, #7c3aed)',
+                background: isScrolled 
+                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(124, 58, 237, 0.9))'
+                  : 'linear-gradient(135deg, #8B5CF6, #7c3aed)',
                 color: 'white',
-                border: 'none',
+                border: isScrolled ? '1px solid rgba(139, 92, 246, 0.4)' : 'none',
                 borderRadius: '8px',
                 padding: '12px 20px',
                 minWidth: '120px',
@@ -183,8 +248,12 @@ const Navigation = () => {
                 cursor: 'pointer',
                 position: 'relative',
                 overflow: 'hidden',
-                transition: 'transform 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
-                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)',
+                transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
+                boxShadow: isScrolled 
+                  ? '0 4px 20px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  : '0 4px 12px rgba(139, 92, 246, 0.3)',
+                backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+                WebkitBackdropFilter: isScrolled ? 'blur(10px)' : 'none',
                 willChange: 'transform',
                 textDecoration: 'none',
                 display: 'inline-block',
