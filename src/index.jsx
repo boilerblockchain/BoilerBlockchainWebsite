@@ -7,7 +7,7 @@ import AboutPage from "./components/sections/AboutPage";
 import Devs from './components/sections/Devs';
 import '@fontsource/inter';
 import '@fontsource/tomorrow/600.css';
-import EducationPage from './components/sections/EducationPage.js'
+import EducationPage from './components/sections/EducationPage.jsx'
 import Hackathons from "./components/sections/Hackathons";
 
 // Teams

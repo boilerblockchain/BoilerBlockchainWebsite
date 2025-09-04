@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { HackathonCarousel } from '../hackathons_carousel.js';
+import { HackathonCarousel } from '../hackathons_carousel.jsx';
 
 const HackathonSummary = () => {
   const TOTAL_HACKATHONS = 11;
