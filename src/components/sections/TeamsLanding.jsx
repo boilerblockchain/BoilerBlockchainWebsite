@@ -200,7 +200,7 @@ const teams = [
     name: 'Developer Team',
     icon: FiCode,
     description: 'Building the future of blockchain technology through innovative smart contracts, DApps, and Web3 infrastructure.',
-    stats: { members: '25+', projects: '15+', languages: '8+' },
+    stats: { members: '30+', projects: '7', languages: '8+' },
     path: '/teams/developer'
   },
   {
@@ -208,9 +208,9 @@ const teams = [
     name: 'Research Team',
     icon: FiSearch,
     description: 'Exploring cutting-edge blockchain research, consensus mechanisms, and emerging technologies in the decentralized space.',
-    stats: { members: '12+', papers: '8+', partnerships: '5+' },
+    stats: { members: '60+', papers: '12+', partnerships: '5+' },
     path: '/teams/research'
-  },
+  }/*,
   {
     id: 'marketing',
     name: 'Marketing Team',
@@ -218,7 +218,7 @@ const teams = [
     description: 'Promoting blockchain adoption, organizing events, and building our community presence across digital platforms.',
     stats: { members: '18+', events: '20+', followers: '2K+' },
     path: '/teams/marketing'
-  }
+  }*/
 ];
 
 const TeamsLanding = () => {

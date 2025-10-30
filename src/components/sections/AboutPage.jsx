@@ -365,7 +365,7 @@ const AboutPage = () => {
               ],
               button: {
                 text: "Hackathons",
-                link: "#"
+                link: "/hackathons"
               },
               imageFirst: true
             },

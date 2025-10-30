@@ -51,8 +51,8 @@ const Navigation = () => {
       path: '/teams',
       items: [
         { label: 'Developer Team', path: '/teams/developer' },
-        { label: 'Research Team', path: '/teams/research' },
-        { label: 'Marketing Team', path: '/teams/marketing' }
+        { label: 'Research Team', path: '/teams/research' }/*,
+        { label: 'Marketing Team', path: '/teams/marketing' }*/
       ]
     },
     courses: {
@@ -227,9 +227,21 @@ const Navigation = () => {
               Partners
             </Link>
 
+            <Link
+                to="/people/team"
+                className={`duration-300 text-sans animate-fade-in transition-all ${
+                    isScrolled
+                        ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]'
+                        : 'text-zinc-400 hover:text-white'
+                }`}
+            >
+              Leadership
+            </Link>
+
+
             {/* People Dropdown next to Partners */}
-            <div className="relative group">
-              <Link 
+            {/*<div className="relative group">
+              <Link
                 to={peopleDropdown.path}
                 className={`duration-300 text-sans animate-fade-in flex items-center gap-1 text-decoration-none transition-all ${
                   isScrolled 
@@ -258,7 +270,7 @@ const Navigation = () => {
                   </Link>
                 ))}
               </div>
-            </div>
+            </div>*/}div
           </div>
 
           <div className="flex items-center">
