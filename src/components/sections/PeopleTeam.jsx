@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FaLinkedin } from 'react-icons/fa';
+import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import Navigation from '../Navigation';
 
 const PageSection = styled.section`
@@ -33,86 +33,132 @@ const Container = styled.div`
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 3.5rem; 
+  font-size: 4rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1rem;
-  font-weight: 600;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  line-height: 1.2;
 
   span {
     color: #7120b0;
+    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   @media (max-width: 40em) {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+    letter-spacing: 2px;
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontlg};
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.85);
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 3rem;
-  line-height: 1.6;
+  max-width: 850px;
+  margin: 0 auto 4rem;
+  line-height: 1.7;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 3rem;
+  }
 `;
 
 const FilterNav = styled(motion.div)`
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 3rem;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 4rem;
   flex-wrap: wrap;
+  padding: 0.5rem;
+  background: rgba(15, 15, 15, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 768px) {
-    gap: 0.5rem;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    border-radius: 10px;
   }
 `;
 
 const FilterButton = styled(motion.button)`
-  padding: 0.8rem 1.8rem;
-  background: ${props => props.active ? '#7120b0' : 'transparent'};
-  border: 1px solid ${props => props.active ? '#7120b0' : 'rgba(255, 255, 255, 0.25)'};
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  background: ${props => props.active ? 'linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%)' : 'transparent'};
+  border: none;
+  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  font-size: 0.8rem;
+  font-weight: ${props => props.active ? '600' : '500'};
   text-transform: uppercase;
-  letter-spacing: 1.2px;
+  letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
   font-family: 'Tomorrow', sans-serif;
-  box-shadow: ${props => props.active ? '0 2px 10px rgba(113, 32, 176, 0.4)' : 'none'};
+  position: relative;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    padding: 1px;
+    background: ${props => props.active ? 'linear-gradient(135deg, #7120b0, #8d2dd4)' : 'transparent'};
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    background: ${props => props.active ? '#8d2dd4' : 'rgba(113, 32, 176, 0.15)'};
-    border-color: ${props => props.active ? '#8d2dd4' : '#7120b0'};
-    box-shadow: ${props => props.active ? '0 4px 15px rgba(113, 32, 176, 0.5)' : '0 2px 8px rgba(113, 32, 176, 0.2)'};
+    color: #ffffff;
+    background: ${props => props.active ? 'linear-gradient(135deg, #8d2dd4 0%, #a040e8 100%)' : 'rgba(113, 32, 176, 0.15)'};
     transform: translateY(-1px);
   }
 
+  &:active {
+    transform: translateY(0);
+  }
+
   @media (max-width: 768px) {
-    padding: 0.65rem 1.2rem;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
+    padding: 0.6rem 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.8px;
   }
 `;
 
 const TeamRow = styled(motion.div)`
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  align-items: flex-start;
+  gap: 2.5rem;
   flex-wrap: wrap;
-  margin: 3rem 0;
+  margin: 4rem 0;
+  min-height: 400px;
 
   @media (max-width: 1200px) {
-    gap: 1.5rem;
+    gap: 2rem;
   }
 
   @media (max-width: 768px) {
-    gap: 1rem;
+    gap: 1.5rem;
+    margin: 3rem 0;
   }
 `;
 
@@ -120,32 +166,32 @@ const MemberCard = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 220px;
+  width: 240px;
   position: relative;
 
   @media (max-width: 768px) {
-    width: 180px;
+    width: 200px;
   }
 
   @media (max-width: 480px) {
-    width: 160px;
+    width: 180px;
   }
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
   aspect-ratio: 1;
-  background: linear-gradient(135deg, #3d1557 0%, #5a1f7a 50%, #7120b0 100%);
-  border-radius: 8px;
+  background: linear-gradient(135deg, #2a0f3d 0%, #3d1557 50%, #5a1f7a 100%);
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 1rem;
-  box-shadow: 0 6px 25px rgba(113, 32, 176, 0.4);
-  transition: all 0.3s ease;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3), 0 0 0 1px rgba(113, 32, 176, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   ${MemberCard}:hover & {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 35px rgba(113, 32, 176, 0.6);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.5), 0 0 0 1px rgba(113, 32, 176, 0.2);
   }
 
   img {
@@ -165,7 +211,7 @@ const ImageContainer = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(61, 21, 87, 0.9) 0%, rgba(90, 31, 122, 0.9) 50%, rgba(113, 32, 176, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(42, 15, 61, 0.95) 0%, rgba(61, 21, 87, 0.95) 50%, rgba(90, 31, 122, 0.95) 100%);
     z-index: 0;
   }
 `;
@@ -175,48 +221,59 @@ const PlaceholderIcon = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.15);
+  width: 90px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
 
   &::before {
     content: '👤';
-    font-size: 2.5rem;
-    opacity: 0.6;
+    font-size: 2.8rem;
+    opacity: 0.5;
   }
 `;
 
-const LinkedInIcon = styled(motion.a)`
+const SocialIconsContainer = styled.div`
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+`;
+
+const SocialIcon = styled(motion.a)`
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0077b5;
+  color: ${props => props.type === 'linkedin' ? '#0077b5' : '#000000'};
   text-decoration: none;
-  z-index: 3;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
 
   &:hover {
     background: #ffffff;
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0) scale(1);
   }
 
   svg {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 `;
 
@@ -226,28 +283,30 @@ const RoleLabel = styled.div`
   left: 0;
   right: 0;
   background: linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%);
-  padding: 0.7rem 0.8rem;
+  padding: 0.75rem 0.9rem;
   color: #ffffff;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   text-align: center;
   z-index: 2;
-  box-shadow: 0 -3px 15px rgba(0, 0, 0, 0.3);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
 `;
 
 const MemberName = styled.h3`
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
-  margin-top: 0.5rem;
-  letter-spacing: 0.5px;
+  margin-top: 0.75rem;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
 
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 `;
 
@@ -261,7 +320,8 @@ const teamMembers = {
       image: null,
       category: "executive",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     },
     {
@@ -271,7 +331,8 @@ const teamMembers = {
       image: null,
       category: "executive",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     },
     {
@@ -281,7 +342,8 @@ const teamMembers = {
       image: null,
       category: "developer",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     },
     {
@@ -291,7 +353,8 @@ const teamMembers = {
       image: null,
       category: "developer",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     }
   ],
@@ -303,7 +366,8 @@ const teamMembers = {
       image: null,
       category: "executive",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     },
     {
@@ -313,7 +377,8 @@ const teamMembers = {
       image: null,
       category: "executive",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     }
   ],
@@ -325,7 +390,8 @@ const teamMembers = {
       image: null,
       category: "developer",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     },
     {
@@ -335,7 +401,8 @@ const teamMembers = {
       image: null,
       category: "developer",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     }
   ],
@@ -347,7 +414,8 @@ const teamMembers = {
       image: null,
       category: "research",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     }
   ],
@@ -359,7 +427,8 @@ const teamMembers = {
       image: null,
       category: "operations",
       socials: {
-        linkedin: "#"
+        linkedin: "#",
+        twitter: "#"
       }
     }
   ]
@@ -470,42 +539,64 @@ const PeopleTeam = () => {
           ))}
         </FilterNav>
 
-        <TeamRow
-          key={activeFilter}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          {displayedMembers.map((member, index) => (
-            <MemberCard
-              key={member.id}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-            >
-              <ImageContainer>
-                {member.image ? (
-                  <img src={member.image} alt={member.name} />
-                ) : null}
-                {!member.image && <PlaceholderIcon />}
-                {member.socials.linkedin && member.socials.linkedin !== "#" && (
-                  <LinkedInIcon
-                    href={member.socials.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <FaLinkedin />
-                  </LinkedInIcon>
-                )}
-                <RoleLabel>{member.role}</RoleLabel>
-              </ImageContainer>
-              <MemberName>{member.name}</MemberName>
-            </MemberCard>
-          ))}
-        </TeamRow>
+        <AnimatePresence mode="wait">
+          <TeamRow
+            key={activeFilter}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          >
+            {displayedMembers.map((member, index) => (
+              <MemberCard
+                key={member.id}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ 
+                  duration: 0.4, 
+                  delay: index * 0.08,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                whileHover={{ y: -6, scale: 1.02 }}
+              >
+                <ImageContainer>
+                  {member.image ? (
+                    <img src={member.image} alt={member.name} />
+                  ) : null}
+                  {!member.image && <PlaceholderIcon />}
+                  <SocialIconsContainer>
+                    {member.socials.linkedin && member.socials.linkedin !== "#" && (
+                      <SocialIcon
+                        type="linkedin"
+                        href={member.socials.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <FaLinkedin />
+                      </SocialIcon>
+                    )}
+                    {member.socials.twitter && member.socials.twitter !== "#" && (
+                      <SocialIcon
+                        type="twitter"
+                        href={member.socials.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <FaTwitter />
+                      </SocialIcon>
+                    )}
+                  </SocialIconsContainer>
+                  <RoleLabel>{member.role}</RoleLabel>
+                </ImageContainer>
+                <MemberName>{member.name}</MemberName>
+              </MemberCard>
+            ))}
+          </TeamRow>
+        </AnimatePresence>
       </Container>
     </PageSection>
   );
