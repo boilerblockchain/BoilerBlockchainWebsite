@@ -146,13 +146,13 @@ const PartnerCard = styled(motion.div)`
 const PartnerLogo = styled.div`
   width: 100px;
   height: 100px;
-  background: rgba(113, 32, 176, 0.2);
+  //background: rgba(113, 32, 176, 0.2);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 2rem;
-  border: 2px solid rgba(113, 32, 176, 0.5);
+  //border: 2px solid rgba(113, 32, 176, 0.5);
   
   svg {
     color: #7120b0;
@@ -292,22 +292,26 @@ const partners = [
   {
     name: 'ConsenSys',
     type: 'Technology Partner',
-    description: 'Collaborating on Ethereum development tools and providing mentorship for our technical workshops.'
+    description: 'Collaborating on Ethereum development tools and providing mentorship for our technical workshops.',
+    icon: 'https://pbs.twimg.com/profile_images/1673661934036500480/Ee6NYB_K_400x400.jpg'
   },
   {
     name: 'Purdue Research Foundation',
     type: 'Academic Partner',
-    description: 'Supporting our research initiatives and providing funding for blockchain-related academic projects.'
+    description: 'Supporting our research initiatives and providing funding for blockchain-related academic projects.',
+    icon: 'https://media.licdn.com/dms/image/v2/C4E0BAQGHc535Q_uq1w/company-logo_200_200/company-logo_200_200/0/1630641026586/purdue_research_foundation_logo?e=2147483647&v=beta&t=Day56z4pXlx4dkgbQecRDiXEid3mP4gq8ntBa84m6qg'
   },
   {
     name: 'EthGlobal',
     type: 'Event Partner',
-    description: 'Sponsoring our hackathons and providing platforms for students to showcase their blockchain innovations.'
+    description: 'Sponsoring our hackathons and providing platforms for students to showcase their blockchain innovations.',
+    icon: 'https://ethglobal.b-cdn.net/events/cafe-tokyo/square-logo/default.png'
   },
   {
     name: 'Chainlink Labs',
     type: 'Industry Partner',
-    description: 'Offering internship opportunities and guest lectures on oracle technology and decentralized data.'
+    description: 'Offering internship opportunities and guest lectures on oracle technology and decentralized data.',
+    icon: 'https://media.licdn.com/dms/image/v2/D560BAQEYHgoKT4l1jQ/company-logo_200_200/company-logo_200_200/0/1729725476545/chainlink_labs_logo?e=2147483647&v=beta&t=Py4smCzTp5YwNVYc5RT48fpm0rbIS-5REPNuP6Ax4tU'
   }
 ];
 
@@ -447,7 +451,7 @@ const PartnersPage = () => {
               whileHover={{ y: -5 }}
             >
               <PartnerLogo>
-                <FiGlobe />
+                  <img src={partner.icon} alt={`${partner.name} logo`} />
               </PartnerLogo>
               
               <PartnerName>{partner.name}</PartnerName>

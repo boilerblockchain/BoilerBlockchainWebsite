@@ -238,7 +238,7 @@ const ResearchLink = styled.a`
 
 const PublicationsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(1000px, 1fr));
   gap: 1.5rem;
   margin: 3rem 0;
 
@@ -322,50 +322,92 @@ const SectionTitle = styled(motion.h2)`
 
 const researchAreas = [
   {
-    title: 'Consensus Mechanisms',
-    description: 'Researching next-generation consensus protocols for improved scalability and energy efficiency in blockchain networks.',
+    title: 'TradFi & DeFi',
+    description: 'Researching the breakthroughs decentralized finance offers over traditional institutions. ',
     icon: FiTrendingUp,
     link: '#'
   },
   {
-    title: 'DeFi Security',
-    description: 'Analyzing smart contract vulnerabilities and developing automated security assessment tools for DeFi protocols.',
+    title: 'Decentralization & Regulation',
+    description: 'Analyzing the mechanisms, benefits, and tradeoffs of using a decentralized system.',
     icon: FiSearch,
     link: '#'
   },
   {
-    title: 'Blockchain Scalability',
-    description: 'Exploring Layer 2 solutions, sharding, and off-chain protocols to enhance blockchain transaction throughput.',
+    title: 'Blockchain Architecture',
+    description: 'Exploring the backbone behind what makes Blockchain Possible.',
     icon: FiUsers,
     link: '#'
   },
   {
-    title: 'Privacy-Preserving Protocols',
-    description: 'Developing zero-knowledge proof systems and privacy-focused blockchain applications.',
+    title: 'Privacy & Cryptography',
+    description: 'Investigating zero-knowledge proof systems and privacy-focused blockchain applications.',
     icon: FiBook,
     link: '#'
-  }
+  },
 ];
 
 const publications = [
-  {
-    title: 'Optimizing Proof-of-Stake Consensus Through Machine Learning',
-    authors: 'Smith, J., Johnson, A., Williams, R.',
-    venue: 'IEEE Blockchain Conference 2024',
-    abstract: 'This paper presents a novel approach to optimizing validator selection in Proof-of-Stake networks using reinforcement learning algorithms.'
-  },
-  {
-    title: 'Security Analysis of Cross-Chain Bridge Protocols',
-    authors: 'Davis, M., Brown, K., Taylor, S.',
-    venue: 'ACM Conference on Computer and Communications Security 2024',
-    abstract: 'An empirical study of vulnerabilities in popular cross-chain bridges and proposed mitigation strategies.'
-  },
-  {
-    title: 'Zero-Knowledge Proofs for Private Smart Contract Execution',
-    authors: 'Wilson, L., Garcia, C., Martinez, D.',
-    venue: 'USENIX Security Symposium 2024',
-    abstract: 'Introducing a framework for executing smart contracts while preserving transaction privacy using zk-SNARKs.'
-  }
+    {
+        title: 'Why Crypto Tokens Aren\'t Just Stocks',
+        authors: 'Alex Belanger, Viswa Choudhary, Vincent Zeng, Gavin Kulak, Adrian Mathew',
+        abstract: 'TradFi & Defi'
+    },
+    {
+        title: 'Tokenization Made Simple: Turning Real Things into Crypto',
+        authors: 'Alex Belanger, Tobey Uhm, Preston Bunch, Sreevar Rao Patiyara, Nuraly Sermagambet, Abraham Kabon, Pratyush Ananth',
+        abstract: 'TradFi & Defi'
+    },
+    {
+        title: 'Stablecoins Explained: Why Crypto Needs a Dollar Twin',
+        authors: 'Jacob Gutwein, Christopher Herzog, Jazib Qureshi, Sahil Jain, Aamiya Hashim',
+        abstract: 'TradFi & Defi'
+    },
+    {
+        title: 'Banks vs Blockchain: Who Holds Your Money?',
+        authors: 'Jacob Gutwein, Eric Sadowski, Saahas Kandru, Keval S, Jackson Fuelling',
+        abstract: 'TradFi & Defi'
+    },
+    {
+        title: 'Proof of Work vs Proof of Stake: Which Is Better?',
+        authors: 'Mahi Tripathi, Elizabeth Guo, Rohit Kelkar, Arnav Nayak, Ivy Wei',
+        abstract: 'Blockchain Architecture'
+    },
+    {
+        title: 'What Makes a Blockchain Different from a Database?',
+        authors: 'Neena Naikar, Nikhil Aerabati, Daniel Jin, Adwika Mourya, Aryan Kondapalli',
+        abstract: 'Blockchain Architecture'
+    },
+    {
+        title: 'Smart Contracts: Digital Agreements Without Lawyers',
+        authors: 'Albert Wu, Gleb Yanchenko, Venkat Mamidi, Nikhil Madakasira, Aayush Rao',
+        abstract: 'Blockchain Architecture'
+    },
+    {
+        title: 'Layer 0, 1, 2, 3: The Easy Guide to Blockchain Layers',
+        authors: 'Albert Wu, Advait Bhowmik, Saket Banda, Aditya Tyagi, Vedh Janardhanan',
+        abstract: 'Blockchain Architecture'
+    },
+    {
+        title: 'Zero Knowledge Proofs: How to Prove Without Showing',
+        authors: 'Eli Dubizh, Divyansh Pramanick, Samuel Stearns, Davis Renner, Peijia Guo',
+        abstract: 'Privacy & Cryptography'
+    },
+    {
+        title: 'What Is Bitcoin Mining? A Beginner’s Guide',
+        authors: 'Siya Jariwala, Shrey Jain, Aniketh Upadhya, Srinidhi Tammana, Jason Kohut, Saketh Subramanian',
+        abstract: 'Privacy & Cryptography'
+    },
+    {
+        title: 'How Do DAOs Actually Make Decisions?',
+        authors: 'Shariq Kapadia, Oscar Velasco, Arnav Mody, Sarathi Velmurugan, Ayaan Ameen, Lakulish Saini',
+        abstract: 'Decentralization & Regulation'
+    },
+    {
+        title: 'Centralization vs Decentralization: Pros and Cons of DAOs',
+        authors: 'Pradyumn Malik, Vaibhav Sunkada, Aryan Patel, Sohum Kashyap, Nick Diaz',
+        abstract: 'Decentralization & Regulation'
+    }
 ];
 
 const ResearchTeam = () => {
@@ -429,41 +471,37 @@ const ResearchTeam = () => {
       
       <Container>
         <Title
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: .5, y: 0, scale: .85 }}
+          animate={{ opacity: 1, y: 0, scale: .95 }}
+          transition={{ duration: 0.9, delay: .2, ease: "easeInOut" }}
         >
           Research <span>Team</span>
         </Title>
 
         <Subtitle
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial={{ opacity: 0, y: 20, scale: .85}}
+          animate={{ opacity: 1, y: 0, scale: .85 }}
+          transition={{ duration: 0.7, delay: 0.4, ease: "easeInOut" }}
         >
           Advancing blockchain technology through rigorous academic research and innovative solutions
         </Subtitle>
 
         <StatsContainer
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          initial={{ opacity: 0, y: 0 }}
+          animate={{ opacity: 1, y: -40 }}
+          transition={{ duration: 0.8, delay: 0.3 , ease: "easeInOut"}}
         >
           <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={12} suffix="+" /></StatNumber>
+            <StatNumber><CountUp end={60} suffix="+" /></StatNumber>
             <StatLabel>Researchers</StatLabel>
           </StatCard>
           <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={15} /></StatNumber>
-            <StatLabel>Published Papers</StatLabel>
+            <StatNumber><CountUp end={12} /></StatNumber>
+            <StatLabel>Teams</StatLabel>
           </StatCard>
           <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={6} /></StatNumber>
+            <StatNumber><CountUp end={4} /></StatNumber>
             <StatLabel>Research Areas</StatLabel>
-          </StatCard>
-          <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={25} suffix="K+" /></StatNumber>
-            <StatLabel>Citations</StatLabel>
           </StatCard>
         </StatsContainer>
 
@@ -488,7 +526,7 @@ const ResearchTeam = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
+              transition={{ duration: 0.6, delay: 0.1 }}
               whileHover={{ y: -2 }}
             >
               <ResearchIcon>
@@ -516,7 +554,7 @@ const ResearchTeam = () => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1}}
         >
           {publications.map((pub, index) => (
             <PublicationCard
@@ -524,12 +562,11 @@ const ResearchTeam = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 * index }}
+              transition={{ duration: 0.6, delay: 0.1}}
               whileHover={{ y: -2 }}
             >
               <PublicationTitle>{pub.title}</PublicationTitle>
               <PublicationAuthors>{pub.authors}</PublicationAuthors>
-              <PublicationVenue>{pub.venue}</PublicationVenue>
               <PublicationAbstract>{pub.abstract}</PublicationAbstract>
             </PublicationCard>
           ))}
