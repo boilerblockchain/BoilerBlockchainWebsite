@@ -15,6 +15,7 @@ import TeamsLanding from "./components/sections/TeamsLanding";
 import DeveloperTeam from "./components/sections/DeveloperTeam";
 import ResearchTeam from "./components/sections/ResearchTeam";
 import MarketingTeam from "./components/sections/MarketingTeam";
+import OperationsTeam from "./components/sections/OperationsTeam";
 
 // Courses
 import CoursesLanding from "./components/sections/CoursesLanding";
@@ -45,6 +46,7 @@ root.render(
       <Route path="/teams/developer" element={<DeveloperTeam />} />
       <Route path="/teams/research" element={<ResearchTeam />} />
       <Route path="/teams/marketing" element={<MarketingTeam />} />
+      <Route path="/teams/operations" element={<OperationsTeam />} />
       
       {/* Courses Routes */}
       <Route path="/courses" element={<CoursesLanding />} />
