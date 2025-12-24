@@ -51,7 +51,8 @@ const Navigation = () => {
       path: '/teams',
       items: [
         { label: 'Developer Team', path: '/teams/developer' },
-        { label: 'Research Team', path: '/teams/research' }/*,
+        { label: 'Research Team', path: '/teams/research' },
+        { label: 'Operations Team', path: '/teams/operations' }/*,
         { label: 'Marketing Team', path: '/teams/marketing' }*/
       ]
     },
