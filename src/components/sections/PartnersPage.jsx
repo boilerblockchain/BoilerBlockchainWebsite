@@ -1,10 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiGlobe, FiMail, FiHeart, FiTrendingUp, FiUsers, FiAward } from 'react-icons/fi';
 import Navigation from '../Navigation';
 
 const PageSection = styled.section`
@@ -13,7 +11,6 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 4rem 0;
   font-family: 'Tomorrow', sans-serif;
   
   * {
@@ -21,320 +18,262 @@ const PageSection = styled.section`
   }
 `;
 
-
-
-const Container = styled.div`
-  width: 85%;
-  max-width: 1400px;
-  margin: 6rem auto 0;
+const HeroSection = styled(motion.section)`
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 8rem 2rem 6rem;
   position: relative;
   z-index: 2;
-  
-  @media (max-width: 70em) {
-    width: 90%;
-  }
-
-  @media (max-width: 48em) {
-    width: 95%;
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 3.5rem; 
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-
-  span {
-    color: #7120b0;
-  }
-
-  @media (max-width: 40em) {
-    font-size: 2.5rem;
-  }
-`;
-
-const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontxl};
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
-  line-height: 1.6;
-`;
-
-const StatsContainer = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin: 2rem 0 5rem;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    padding: 6rem 1.5rem 4rem;
+    min-height: 40vh;
   }
 `;
 
-const StatCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 8px;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
-  }
-`;
-
-const StatNumber = styled.div`
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: #7120b0;
-  margin-bottom: 0.5rem;
-`;
-
-const StatTitle = styled.div`
-  font-size: 1.2rem;
+const HeroTitle = styled(motion.h1)`
+  font-size: 4.5rem;
   color: #ffffff;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 3px;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+
+  span {
+    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.8rem;
+    letter-spacing: 2px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.2rem;
+  }
+`;
+
+const HeroSubtitle = styled(motion.p)`
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 900px;
+  line-height: 1.8;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+`;
+
+const Container = styled.div`
+  width: 90%;
+  max-width: 1600px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding: 0 2rem 6rem;
+
+  @media (max-width: 70em) {
+    width: 95%;
+    padding: 0 1.5rem 4rem;
+  }
 `;
 
 const PartnersGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
   margin: 4rem 0;
+  padding: 2rem 0;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
 `;
 
-const PartnerCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 12px;
-  padding: 2.5rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
-  text-align: center;
-
-  &:hover {
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
-    border-color: rgba(113, 32, 176, 1);
-  }
+const LogoPlaceholder = styled.div`
+  width: 120px;
+  height: 120px;
+  background: rgba(113, 32, 176, 0.15);
+  border: 2px solid rgba(113, 32, 176, 0.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-    position: relative;
-    border-radius: 12px 12px 0 0;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(113, 32, 176, 0.1), rgba(187, 32, 255, 0.1));
+    opacity: 0;
+    transition: opacity 0.4s ease;
   }
-`;
 
-const PartnerLogo = styled.div`
-  width: 100px;
-  height: 100px;
-  //background: rgba(113, 32, 176, 0.2);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 2rem;
-  //border: 2px solid rgba(113, 32, 176, 0.5);
-  
-  svg {
-    color: #7120b0;
+  &::after {
+    content: '🏢';
     font-size: 3rem;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+    
+    &::after {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 80px;
+    
+    &::after {
+      font-size: 2rem;
+    }
   }
 `;
 
-const PartnerName = styled.h3`
-  font-size: 1.8rem;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  font-weight: 700;
-`;
-
-const PartnerType = styled.p`
-  color: #7120b0;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+const CompanyName = styled.h3`
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const PartnerDescription = styled.p`
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-`;
-
-const CollaborationSection = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
-  border-radius: 12px;
-  padding: 3rem;
-  margin: 5rem 0;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
   text-align: center;
-`;
+  margin: 0;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 
-const CollaborationTitle = styled.h2`
-  font-size: 3rem;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  
-  span {
-    color: #7120b0;
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
   }
 `;
 
-const CollaborationDescription = styled.p`
-  font-size: ${props => props.theme.fontlg};
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
-  max-width: 800px;
-  margin: 0 auto 2rem;
-`;
-
-const BenefitsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin: 3rem 0;
-`;
-
-const BenefitCard = styled(motion.div)`
-  background: rgba(113, 32, 176, 0.1);
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  padding: 2rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(113, 32, 176, 0.15);
-    border-color: rgba(113, 32, 176, 0.6);
-    transform: translateY(-3px);
-  }
-`;
-
-const BenefitIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background: rgba(113, 32, 176, 0.2);
-  border-radius: 8px;
+const PartnerCard = styled(motion.a)`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem;
-  
-  svg {
-    color: #7120b0;
-    font-size: 1.5rem;
-  }
-`;
-
-const BenefitTitle = styled.h4`
-  color: #ffffff;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-`;
-
-const BenefitDescription = styled.p`
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  line-height: 1.5;
-`;
-
-const ContactButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(45deg, #7120b0, #bb20ff);
-  color: white;
-  padding: 1rem 2rem;
+  background: rgba(15, 15, 15, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  min-height: 220px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
   text-decoration: none;
-  border-radius: 6px;
-  font-size: ${props => props.theme.fontmd};
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  margin-top: 2rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(113, 32, 176, 0.4), rgba(187, 32, 255, 0.4));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(113, 32, 176, 0.4);
-    background: linear-gradient(45deg, #9d20b0, #d175ff);
+    transform: translateY(-10px) scale(1.03);
+    background: rgba(15, 15, 15, 0.7);
+    border-color: rgba(113, 32, 176, 0.5);
+    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.4);
+
+    &::before {
+      opacity: 1;
+    }
+
+    ${LogoPlaceholder} {
+      background: linear-gradient(135deg, rgba(113, 32, 176, 0.3), rgba(187, 32, 255, 0.3));
+      border-color: rgba(113, 32, 176, 0.6);
+      transform: scale(1.1);
+    }
+
+    ${CompanyName} {
+      color: #ffffff;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
+    min-height: 200px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem 1rem;
+    min-height: 180px;
   }
 `;
 
+// Placeholder partner data
 const partners = [
   {
-    name: 'ConsenSys',
-    type: 'Technology Partner',
-    description: 'Collaborating on Ethereum development tools and providing mentorship for our technical workshops.',
-    icon: 'https://pbs.twimg.com/profile_images/1673661934036500480/Ee6NYB_K_400x400.jpg'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    name: 'Purdue Research Foundation',
-    type: 'Academic Partner',
-    description: 'Supporting our research initiatives and providing funding for blockchain-related academic projects.',
-    icon: 'https://media.licdn.com/dms/image/v2/C4E0BAQGHc535Q_uq1w/company-logo_200_200/company-logo_200_200/0/1630641026586/purdue_research_foundation_logo?e=2147483647&v=beta&t=Day56z4pXlx4dkgbQecRDiXEid3mP4gq8ntBa84m6qg'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    name: 'EthGlobal',
-    type: 'Event Partner',
-    description: 'Sponsoring our hackathons and providing platforms for students to showcase their blockchain innovations.',
-    icon: 'https://ethglobal.b-cdn.net/events/cafe-tokyo/square-logo/default.png'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    name: 'Chainlink Labs',
-    type: 'Industry Partner',
-    description: 'Offering internship opportunities and guest lectures on oracle technology and decentralized data.',
-    icon: 'https://media.licdn.com/dms/image/v2/D560BAQEYHgoKT4l1jQ/company-logo_200_200/company-logo_200_200/0/1729725476545/chainlink_labs_logo?e=2147483647&v=beta&t=Py4smCzTp5YwNVYc5RT48fpm0rbIS-5REPNuP6Ax4tU'
-  }
-];
-
-const benefits = [
-  {
-    icon: FiUsers,
-    title: 'Talent Access',
-    description: 'Connect with top blockchain talent from Purdue University and recruit exceptional graduates.'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    icon: FiTrendingUp,
-    title: 'Innovation',
-    description: 'Collaborate on cutting-edge research and development projects with our technical teams.'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    icon: FiAward,
-    title: 'Brand Visibility',
-    description: 'Increase your brand presence among blockchain enthusiasts and the academic community.'
+    name: 'Company Name',
+    url: '#'
   },
   {
-    icon: FiHeart,
-    title: 'Mentorship',
-    description: 'Share expertise through guest lectures, workshops, and direct mentorship opportunities.'
+    name: 'Company Name',
+    url: '#'
+  },
+  {
+    name: 'Company Name',
+    url: '#'
   }
 ];
 
@@ -351,6 +290,8 @@ const PartnersPage = () => {
 
   return (
     <PageSection>
+      <Navigation />
+      
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -362,13 +303,13 @@ const PartnersPage = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
+              opacity: 0.15,
               width: 1,
             },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            move: { enable: true, speed: 0.5 },
+            number: { value: 50 },
+            opacity: { value: 0.1 },
+            size: { value: 1.5 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -380,8 +321,8 @@ const PartnersPage = () => {
             },
             modes: {
               grab: {
-                distance: 140,
-                links: { opacity: 0.4 }
+                distance: 100,
+                links: { opacity: 0.15 }
               }
             }
           }
@@ -395,105 +336,57 @@ const PartnersPage = () => {
           zIndex: 1,
         }}
       />
-      
-      <Navigation />
-      
-      <Container>
-        <Title
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          Our <span>Partners</span>
-        </Title>
 
-        <Subtitle
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+      <HeroSection
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <HeroTitle
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Building the future of blockchain together with leading organizations, 
-          academic institutions, and industry pioneers
-        </Subtitle>
-
-        <StatsContainer
+          Our <span>Partners</span>
+        </HeroTitle>
+        <HeroSubtitle
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>15+</StatNumber>
-            <StatTitle>Active Partners</StatTitle>
-          </StatCard>
+          Building the future of blockchain together with leading organizations, 
+          hackathon platforms, and industry pioneers who share our vision for innovation
+        </HeroSubtitle>
+      </HeroSection>
 
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>25+</StatNumber>
-            <StatTitle>Collaboration Projects</StatTitle>
-          </StatCard>
-
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
-            <StatNumber>50+</StatNumber>
-            <StatTitle>Student Placements</StatTitle>
-          </StatCard>
-        </StatsContainer>
-
+      <Container>
         <PartnersGrid
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
           {partners.map((partner, index) => (
             <PartnerCard
-              key={partner.name}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 + index * 0.1 }}
-              whileHover={{ y: -5 }}
+              key={`${partner.name}-${index}`}
+              href={partner.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ 
+                duration: 0.5, 
+                delay: index * 0.05,
+                ease: [0.4, 0, 0.2, 1]
+              }}
+              whileHover={{ y: -10, scale: 1.03 }}
             >
-              <PartnerLogo>
-                  <img src={partner.icon} alt={`${partner.name} logo`} />
-              </PartnerLogo>
-              
-              <PartnerName>{partner.name}</PartnerName>
-              <PartnerType>{partner.type}</PartnerType>
-              <PartnerDescription>{partner.description}</PartnerDescription>
+              <LogoPlaceholder />
+              <CompanyName>{partner.name}</CompanyName>
             </PartnerCard>
           ))}
         </PartnersGrid>
-
-        <CollaborationSection
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-        >
-          <CollaborationTitle>Partner <span>With Us</span></CollaborationTitle>
-          <CollaborationDescription>
-            Join our network of industry leaders and academic institutions to drive blockchain innovation, 
-            access top talent, and shape the future of decentralized technology.
-          </CollaborationDescription>
-          
-          <BenefitsGrid>
-            {benefits.map((benefit, index) => (
-              <BenefitCard
-                key={benefit.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 + index * 0.1 }}
-                whileHover={{ y: -3 }}
-              >
-                <BenefitIcon>
-                  <benefit.icon />
-                </BenefitIcon>
-                <BenefitTitle>{benefit.title}</BenefitTitle>
-                <BenefitDescription>{benefit.description}</BenefitDescription>
-              </BenefitCard>
-            ))}
-          </BenefitsGrid>
-          
-          <ContactButton href="mailto:partnerships@boilerblockchain.org">
-            <FiMail /> Start a Partnership
-          </ContactButton>
-        </CollaborationSection>
       </Container>
     </PageSection>
   );

@@ -236,7 +236,7 @@ const Navigation = () => {
                         : 'text-zinc-400 hover:text-white'
                 }`}
             >
-              Leadership
+              The Team
             </Link>
 
 
