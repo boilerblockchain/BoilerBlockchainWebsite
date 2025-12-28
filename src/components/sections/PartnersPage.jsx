@@ -19,19 +19,19 @@ const PageSection = styled.section`
 `;
 
 const HeroSection = styled(motion.section)`
-  min-height: 50vh;
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 8rem 2rem 6rem;
+  padding: 12rem 2rem 8rem;
   position: relative;
   z-index: 2;
 
   @media (max-width: 768px) {
-    padding: 6rem 1.5rem 4rem;
-    min-height: 40vh;
+    padding: 10rem 1.5rem 6rem;
+    min-height: 50vh;
   }
 `;
 
@@ -81,20 +81,20 @@ const Container = styled.div`
   margin: 0 auto;
   position: relative;
   z-index: 2;
-  padding: 0 2rem 6rem;
+  padding: 0 2rem 8rem;
 
   @media (max-width: 70em) {
     width: 95%;
-    padding: 0 1.5rem 4rem;
+    padding: 0 1.5rem 6rem;
   }
 `;
 
 const PartnersGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2.5rem;
-  margin: 4rem 0;
-  padding: 2rem 0;
+  gap: 3rem;
+  margin: 6rem 0;
+  padding: 3rem 0;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

@@ -12,7 +12,7 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 4rem 0;
+  padding: 8rem 0 6rem;
   font-family: 'Tomorrow', sans-serif;
   
   * {
@@ -23,12 +23,13 @@ const PageSection = styled.section`
 const Container = styled.div`
   width: 90%;
   max-width: 1400px;
-  margin: 6rem auto 0;
+  margin: 8rem auto 0;
   position: relative;
   z-index: 2;
   
   @media (max-width: 70em) {
     width: 95%;
+    margin: 6rem auto 0;
   }
 `;
 
@@ -61,14 +62,14 @@ const Subtitle = styled(motion.p)`
   color: rgba(255, 255, 255, 0.85);
   text-align: center;
   max-width: 850px;
-  margin: 0 auto 4rem;
+  margin: 0 auto 5rem;
   line-height: 1.7;
   font-weight: 400;
   letter-spacing: 0.3px;
 
   @media (max-width: 768px) {
     font-size: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
 `;
 
@@ -77,7 +78,7 @@ const FilterNav = styled(motion.div)`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
   flex-wrap: wrap;
   padding: 0.5rem;
   background: rgba(15, 15, 15, 0.4);
@@ -149,7 +150,7 @@ const TeamRow = styled(motion.div)`
   align-items: flex-start;
   gap: 2.5rem;
   flex-wrap: wrap;
-  margin: 4rem 0;
+  margin: 6rem 0;
   min-height: 400px;
 
   @media (max-width: 1200px) {

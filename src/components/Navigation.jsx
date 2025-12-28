@@ -1,49 +1,115 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Logo from "./Logo";
+import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
+
+const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
+  const [expandedDropdowns, setExpandedDropdowns] = useState({});
+
+  const toggleDropdown = (key) => {
+    setExpandedDropdowns(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  return (
+    <div className="lg:hidden absolute top-full left-0 right-0 mt-3 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-2xl py-4 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+      {Object.entries(dropdownData).map(([key, dropdown]) => (
+        <div key={key} className="px-4">
+          <button
+            onClick={() => toggleDropdown(key)}
+            className="w-full flex items-center justify-between text-white text-sm font-medium py-3 hover:bg-white/5 rounded-lg px-2 transition-colors"
+          >
+            {dropdown.label}
+            <svg
+              className={`w-4 h-4 transition-transform duration-200 ${expandedDropdowns[key] ? 'rotate-180' : ''}`}
+              viewBox="0 0 12 12"
+              fill="none"
+            >
+              <path
+                d="M3 4.5L6 7.5L9 4.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          {expandedDropdowns[key] && (
+            <div className="pl-4 space-y-1">
+              {dropdown.items.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.path}
+                  className={`block text-gray-300 text-sm py-2.5 px-2 rounded-lg transition-colors ${
+                    isActiveRoute(item.path)
+                      ? 'text-white bg-purple-500/20 font-medium'
+                      : 'hover:text-white hover:bg-white/5'
+                  }`}
+                  onClick={onClose}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {navLinks.map((link) => {
+        const isActive = isActiveRoute(link.path);
+        return (
+          <Link
+            key={link.path}
+            to={link.path}
+            className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+              isActive
+                ? 'text-white bg-purple-500/20'
+                : 'text-gray-300 hover:text-white hover:bg-white/5'
+            }`}
+            onClick={onClose}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+
+      <Link
+        to="/contact"
+        className="block mx-4 mt-4 px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm font-semibold text-center hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
+        onClick={onClose}
+      >
+        Contact Us
+      </Link>
+    </div>
+  );
+};
 
 const Navigation = () => {
-  const ref = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const location = useLocation();
-  const btnRef = useRef(null);
-  const animationIdRef = useRef(null);
+  const navRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      setScrollY(currentScrollY);
-      setIsScrolled(currentScrollY > 20);
-      
-      // Hide/show navbar based on scroll direction
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false); // Hide when scrolling down
-      } else {
-        setIsVisible(true); // Show when scrolling up or at top
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    const handleMouseMove = (e) => {
-      // Show navbar when mouse is near the top of the screen
-      if (e.clientY <= 80) {
-        setIsVisible(true);
-      }
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    
+    handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [lastScrollY]);
+  }, []);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setActiveDropdown(null);
+  }, [location]);
 
   const dropdownData = {
     teams: {
@@ -52,8 +118,7 @@ const Navigation = () => {
       items: [
         { label: 'Developer Team', path: '/teams/developer' },
         { label: 'Research Team', path: '/teams/research' },
-        { label: 'Operations Team', path: '/teams/operations' }/*,
-        { label: 'Marketing Team', path: '/teams/marketing' }*/
+        { label: 'Operations Team', path: '/teams/operations' }
       ]
     },
     courses: {
@@ -66,284 +131,203 @@ const Navigation = () => {
     }
   };
 
-  const peopleDropdown = {
-    label: 'People',
-    path: '/people',
-    items: [
-      { label: 'Our Team', path: '/people/team' },
-      { label: 'Alumni', path: '/people/alumni' }
-    ]
-  };
+  const navLinks = [
+    { label: 'Partners', path: '/partners' },
+    { label: 'The Team', path: '/people/team' }
+  ];
 
-  const handleMouseMove = (e) => {
-    if (animationIdRef.current) {
-      cancelAnimationFrame(animationIdRef.current);
-    }
-    
-    const btn = btnRef.current;
-    const rect = btn.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const deltaX = e.clientX - centerX;
-    const deltaY = e.clientY - centerY;
-    
-    const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    const strength = Math.min(distance / maxDistance, 1) * 0.3;
-    
-    const targetX = deltaX * strength;
-    const targetY = deltaY * strength;
-    
-    animateToPosition(targetX, targetY);
-  };
-
-  const animateToPosition = (targetX, targetY) => {
-    const btn = btnRef.current;
-    const currentTransform = btn.style.transform || 'translate(0px, 0px)';
-    const matches = currentTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
-    
-    const currentX = matches ? parseFloat(matches[1]) : 0;
-    const currentY = matches ? parseFloat(matches[2]) : 0;
-    
-    const diffX = targetX - currentX;
-    const diffY = targetY - currentY;
-    
-    if (Math.abs(diffX) < 0.1 && Math.abs(diffY) < 0.1) return;
-    
-    const newX = currentX + diffX * 0.15;
-    const newY = currentY + diffY * 0.15;
-    
-    btn.style.transform = `translate(${newX}px, ${newY}px)`;
-    
-    animationIdRef.current = requestAnimationFrame(() => animateToPosition(targetX, targetY));
-  };
-
-  const animateBack = () => {
-    const btn = btnRef.current;
-    const currentTransform = btn.style.transform || 'translate(0px, 0px)';
-    const matches = currentTransform.match(/translate\(([^,]+),\s*([^)]+)\)/);
-    
-    const currentX = matches ? parseFloat(matches[1]) : 0;
-    const currentY = matches ? parseFloat(matches[2]) : 0;
-    
-    if (Math.abs(currentX) < 0.1 && Math.abs(currentY) < 0.1) {
-      btn.style.transform = 'translate(0px, 0px)';
-      return;
-    }
-    
-    const newX = currentX * 0.85;
-    const newY = currentY * 0.85;
-    
-    btn.style.transform = `translate(${newX}px, ${newY}px)`;
-    
-    animationIdRef.current = requestAnimationFrame(animateBack);
-  };
-
-  const handleMouseEnter = () => {
-    btnRef.current.addEventListener('mousemove', handleMouseMove);
-  };
-
-  const handleMouseLeave = () => {
-    btnRef.current.removeEventListener('mousemove', handleMouseMove);
-    
-    if (animationIdRef.current) {
-      cancelAnimationFrame(animationIdRef.current);
-    }
-    
-    animateBack();
+  const isActiveRoute = (path) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   return (
-    <header ref={ref}>
-      <div
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-in-out border-b ${
-          isScrolled 
-            ? 'bg-black/60 backdrop-blur-xl border-zinc-700/50 shadow-2xl shadow-purple-500/10' 
-            : 'bg-transparent border-transparent'
-        } ${
-          isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-        }`}
-        style={{
-          background: isScrolled 
-            ? 'linear-gradient(135deg, rgba(0,0,0,0.8), rgba(17,17,17,0.9))'
-            : 'transparent',
-          backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
-          WebkitBackdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
-          borderImage: isScrolled 
-            ? 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent) 1'
-            : 'none'
-        }}
-      >
-        <div className={`container flex items-center justify-between pl-8 pr-4 mx-auto transition-all duration-300 ${
-          isScrolled ? 'py-3' : 'pt-6 pb-4'
-        }`}>
-          <div className="flex items-center">
-              <Logo />
-          </div>
+    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 sm:pt-8 pointer-events-none">
+      <nav className="relative w-full max-w-7xl pointer-events-auto">
+        {/* Main Navigation Bar */}
+        <div
+          className={`
+            relative flex items-center justify-between
+            bg-white/5 backdrop-blur-2xl
+            rounded-2xl
+            px-6 py-4
+            shadow-2xl shadow-black/10
+            border border-white/10
+            transition-all duration-500 ease-out
+            ${isScrolled ? 'bg-white/8 border-white/15 shadow-black/20' : 'bg-white/5 border-white/10'}
+          `}
+          style={{
+            backdropFilter: 'blur(32px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          }}
+        >
+          {/* Left: Logo */}
+          <Link
+            to="/"
+            className="flex items-center gap-3 group transition-opacity duration-200 hover:opacity-80"
+          >
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-800 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30 overflow-hidden">
+              <img
+                src={BBLogo}
+                alt="Boiler Blockchain Logo"
+                className="w-6 h-6 object-contain"
+              />
+            </div>
+            <span className="hidden sm:block text-white font-semibold text-lg tracking-tight">
+              Boiler Blockchain
+            </span>
+          </Link>
 
-          <div className="flex items-center justify-center gap-8 flex-1 max-w-2xl mx-auto">
-            {Object.entries(dropdownData).map(([key, dropdown]) => (
-              <div key={key} className="relative group">
-                <Link 
-                  to={dropdown.path}
-                  className={`duration-300 text-sans animate-fade-in flex items-center gap-1 text-decoration-none transition-all ${
-                    isScrolled 
-                      ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  {dropdown.label}
-                  <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 12 12" fill="none">
-                    <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-                
-                <div className={`absolute top-full left-0 mt-2 w-48 border rounded-lg py-2 z-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
-                  isScrolled 
-                    ? 'bg-black/70 backdrop-blur-xl border-zinc-600/50 shadow-2xl shadow-purple-500/20' 
-                    : 'bg-zinc-900/90 backdrop-blur-md border-zinc-700 shadow-lg'
-                }`}>
-                  {dropdown.items.map((item, index) => (
-                    <Link
-                      key={index}
-                      to={item.path}
-                      className="block px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            <Link
-              to="/partners"
-              className={`duration-300 text-sans animate-fade-in transition-all ${
-                isScrolled 
-                  ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
-                  : 'text-zinc-400 hover:text-white'
-              }`}
-            >
-              Partners
-            </Link>
-
-            <Link
-                to="/people/team"
-                className={`duration-300 text-sans animate-fade-in transition-all ${
-                    isScrolled
-                        ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]'
-                        : 'text-zinc-400 hover:text-white'
-                }`}
-            >
-              The Team
-            </Link>
-
-
-            {/* People Dropdown next to Partners */}
-            {/*<div className="relative group">
-              <Link
-                to={peopleDropdown.path}
-                className={`duration-300 text-sans animate-fade-in flex items-center gap-1 text-decoration-none transition-all ${
-                  isScrolled 
-                    ? 'text-zinc-300 hover:text-white hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]' 
-                    : 'text-zinc-400 hover:text-white'
-                }`}
-              >
-                {peopleDropdown.label}
-                <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" viewBox="0 0 12 12" fill="none">
-                  <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </Link>
+          {/* Center: Navigation Links - Desktop */}
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center mx-12">
+            {Object.entries(dropdownData).map(([key, dropdown]) => {
+              const isActive = isActiveRoute(dropdown.path);
+              const isOpen = activeDropdown === key;
               
-              <div className={`absolute top-full left-0 mt-2 w-48 border rounded-lg py-2 z-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ${
-                isScrolled 
-                  ? 'bg-black/70 backdrop-blur-xl border-zinc-600/50 shadow-2xl shadow-purple-500/20' 
-                  : 'bg-zinc-900/90 backdrop-blur-md border-zinc-700 shadow-lg'
-              }`}>
-                {peopleDropdown.items.map((item, index) => (
+              return (
+                <div 
+                  key={key} 
+                  className="relative group"
+                  onMouseEnter={() => setActiveDropdown(key)}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
                   <Link
-                    key={index}
-                    to={item.path}
-                    className="block px-4 py-2 text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+                    to={dropdown.path}
+                    className={`
+                      relative px-4 py-2 rounded-lg text-sm font-medium
+                      transition-all duration-200 flex items-center gap-1.5
+                      ${isActive || isOpen
+                        ? 'text-white bg-purple-500/20'
+                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      }
+                    `}
                   >
-                    {item.label}
+                    {dropdown.label}
+                    <svg
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                      viewBox="0 0 12 12"
+                      fill="none"
+                    >
+                      <path
+                        d="M3 4.5L6 7.5L9 4.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </Link>
-                ))}
-              </div>
-            </div>*/}div
+
+                  {/* Dropdown Menu */}
+                  {(isOpen || activeDropdown === key) && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-xl py-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+                      {dropdown.items.map((item, index) => (
+                        <Link
+                          key={index}
+                          to={item.path}
+                          className={`
+                            block px-4 py-2.5 text-sm transition-colors
+                            ${isActiveRoute(item.path)
+                              ? 'text-white bg-purple-500/20 font-medium'
+                              : 'text-gray-300 hover:text-white hover:bg-white/5'
+                            }
+                          `}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {navLinks.map((link) => {
+              const isActive = isActiveRoute(link.path);
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`
+                    px-4 py-2 rounded-lg text-sm font-medium
+                    transition-all duration-200
+                    ${isActive
+                      ? 'text-white bg-purple-500/20'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    }
+                  `}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="flex items-center">
-
+          {/* Right: CTA Button */}
+          <div className="flex items-center gap-3">
             <Link
               to="/contact"
-              ref={btnRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              style={{
-                background: isScrolled 
-                  ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(124, 58, 237, 0.9))'
-                  : 'linear-gradient(135deg, #8B5CF6, #7c3aed)',
-                color: 'white',
-                border: isScrolled ? '1px solid rgba(139, 92, 246, 0.4)' : 'none',
-                borderRadius: '8px',
-                padding: '12px 20px',
-                minWidth: '120px',
-                fontSize: '14px',
-                fontWeight: '600',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
-                boxShadow: isScrolled 
-                  ? '0 4px 20px rgba(139, 92, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
-                  : '0 4px 12px rgba(139, 92, 246, 0.3)',
-                backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-                WebkitBackdropFilter: isScrolled ? 'blur(10px)' : 'none',
-                willChange: 'transform',
-                textDecoration: 'none',
-                display: 'inline-block',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-              }}
-              className="join-waitlist-btn"
-              onMouseOver={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, #9333ea, #8B5CF6)';
-                e.target.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.4)';
-                const shine = e.target.querySelector('.shine-effect');
-                if (shine) shine.style.left = '100%';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, #8B5CF6, #7c3aed)';
-                e.target.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.3)';
-                const shine = e.target.querySelector('.shine-effect');
-                if (shine) shine.style.left = '-100%';
-              }}
-              onMouseDown={(e) => {
-                e.target.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
-                e.target.style.boxShadow = '0 2px 8px rgba(139, 92, 246, 0.3)';
-              }}
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 group"
             >
-              <span
-                style={{
-                  content: '',
-                  position: 'absolute',
-                  top: 0,
-                  left: '-100%',
-                  width: '100%',
-                  height: '100%',
-                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                  transition: 'left 0.5s',
-                  pointerEvents: 'none'
-                }}
-                className="shine-effect"
-              />
               Contact Us
+              <svg
+                className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </Link>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg
+                className={`w-5 h-5 transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-90' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMobileMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
-      </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <MobileMenu 
+            dropdownData={dropdownData}
+            navLinks={navLinks}
+            isActiveRoute={isActiveRoute}
+            onClose={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </nav>
     </header>
   );
 };
