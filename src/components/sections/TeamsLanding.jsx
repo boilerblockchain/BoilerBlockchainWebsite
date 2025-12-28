@@ -36,6 +36,17 @@ const Container = styled.div`
   @media (max-width: 70em) {
     width: 95%;
   }
+
+  @media (max-width: 768px) {
+    width: 95%;
+    margin: 4rem auto 0;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0 0.75rem;
+  }
 `;
 
 const Title = styled(motion.h1)`
@@ -71,8 +82,19 @@ const TeamsGrid = styled(motion.div)`
   gap: 1.5rem;
   margin: 3rem 0;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
   }
 `;
 

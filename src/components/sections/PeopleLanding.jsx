@@ -34,8 +34,15 @@ const Container = styled.div`
     width: 90%;
   }
 
-  @media (max-width: 48em) {
+  @media (max-width: 768px) {
     width: 95%;
+    margin: 4rem auto 0;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0 0.75rem;
   }
 `;
 
@@ -72,12 +79,20 @@ const StatsContainer = styled(motion.div)`
   gap: 2rem;
   margin: 2rem 0 5rem;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 2rem 0 3rem;
   }
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 `;
 
@@ -137,8 +152,20 @@ const SectionsGrid = styled(motion.div)`
   gap: 3rem;
   margin: 4rem 0;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+    margin: 2rem 0;
   }
 `;
 
@@ -306,6 +333,17 @@ const ValuesGrid = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 `;
 
 const ValueCard = styled(motion.div)`

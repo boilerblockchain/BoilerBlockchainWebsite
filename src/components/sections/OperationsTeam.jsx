@@ -152,8 +152,19 @@ const OperationsGrid = styled(motion.div)`
   gap: 1.5rem;
   margin: 3rem 0;
 
+  @media (max-width: 968px) {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
   }
 `;
 

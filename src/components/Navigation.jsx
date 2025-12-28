@@ -1,11 +1,342 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
 import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
+
+const NavHeader = styled.header`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  padding-top: 1.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    padding-top: 1rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+`;
+
+const Nav = styled.nav`
+  width: 100%;
+  max-width: 1280px;
+  pointer-events: auto;
+  position: relative;
+`;
+
+const NavContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: ${props => props.isScrolled ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.7)'};
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  gap: 1rem;
+
+  @media (max-width: 1024px) {
+    padding: 0.875rem 1.25rem;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+`;
+
+const LogoLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    gap: 0.5rem;
+  }
+`;
+
+const LogoBox = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  @media (max-width: 640px) {
+    width: 36px;
+    height: 36px;
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+
+    @media (max-width: 640px) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+`;
+
+const LogoText = styled.span`
+  color: #ffffff;
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, sans-serif;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+`;
+
+const DesktopNav = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: center;
+  margin-left: 3rem;
+  margin-right: 3rem;
+
+  @media (max-width: 1024px) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    gap: 0.375rem;
+  }
+
+  @media (max-width: 968px) {
+    display: none;
+  }
+`;
+
+const NavLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  background-color: ${props => props.isActive || props.isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+`;
+
+const DropdownContainer = styled.div`
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-top: 0.5rem;
+  z-index: 1001;
+`;
+
+const DropdownContent = styled.div`
+  background-color: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.5rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  min-width: 224px;
+`;
+
+const DropdownItem = styled(Link)`
+  display: block;
+  padding: 0.625rem 1rem;
+  text-decoration: none;
+  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  font-size: 0.875rem;
+  font-weight: ${props => props.isActive ? 500 : 400};
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+  }
+`;
+
+const ContactButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+`;
+
+const ContactButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  border-radius: 12px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, sans-serif;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(113, 32, 176, 0.4);
+  }
+
+  @media (max-width: 640px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    gap: 0.375rem;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+
+    @media (max-width: 480px) {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
+const MobileMenuButton = styled.button`
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  @media (max-width: 968px) {
+    display: flex;
+  }
+
+  @media (max-width: 640px) {
+    width: 36px;
+    height: 36px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const MobileNav = styled.div`
+  display: ${props => props.isOpen ? 'flex' : 'none'};
+  flex-direction: column;
+  gap: 0.5rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0.5rem;
+  background-color: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1001;
+
+  @media (min-width: 969px) {
+    display: none;
+  }
+`;
+
+const MobileNavLink = styled(Link)`
+  display: block;
+  padding: 0.75rem;
+  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: ${props => props.isActive ? 500 : 400};
+  font-family: system-ui, -apple-system, sans-serif;
+  border-radius: 8px;
+  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+`;
+
+const MobileDropdownSection = styled.div`
+  margin-bottom: 0.5rem;
+`;
+
+const MobileDropdownTitle = styled.div`
+  padding: 0.75rem;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: system-ui, -apple-system, sans-serif;
+`;
+
+const MobileDropdownItems = styled.div`
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -17,8 +348,8 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
     setActiveDropdown(null);
+    setIsMobileMenuOpen(false);
   }, [location]);
 
   const dropdownData = {
@@ -51,115 +382,31 @@ const Navigation = () => {
   };
 
   return (
-    <header 
-      style={{ 
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        display: 'flex',
-        justifyContent: 'center',
-        paddingTop: '1.5rem',
-        paddingLeft: '1rem',
-        paddingRight: '1rem',
-        pointerEvents: 'none',
-      }}
-    >
-      <nav 
-        style={{ 
-          width: '100%',
-          maxWidth: '1280px',
-          pointerEvents: 'auto',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.7)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '1rem 1.5rem',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          {/* Logo */}
-          <Link
-            to="/"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              textDecoration: 'none',
-            }}
-          >
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}>
-              <img
-                src={BBLogo}
-                alt="Boiler Blockchain Logo"
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
-              />
-            </div>
-            <span style={{
-              color: '#ffffff',
-              fontSize: '1.125rem',
-              fontWeight: 600,
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-            }}>
-              Boiler Blockchain
-            </span>
-          </Link>
+    <NavHeader>
+      <Nav>
+        <NavContainer isScrolled={isScrolled}>
+          <LogoLink to="/">
+            <LogoBox>
+              <img src={BBLogo} alt="Boiler Blockchain Logo" />
+            </LogoBox>
+            <LogoText>Boiler Blockchain</LogoText>
+          </LogoLink>
 
-          {/* Desktop Navigation */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'center', marginLeft: '3rem', marginRight: '3rem' }} className="hidden lg:flex">
+          <DesktopNav>
             {Object.entries(dropdownData).map(([key, dropdown]) => {
               const isActive = isActiveRoute(dropdown.path);
               const isOpen = activeDropdown === key;
               
               return (
-                <div 
+                <DropdownContainer
                   key={key}
-                  style={{ position: 'relative' }}
                   onMouseEnter={() => setActiveDropdown(key)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
-                  <Link
+                  <NavLink
                     to={dropdown.path}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.375rem',
-                      padding: '0.5rem 1rem',
-                      borderRadius: '8px',
-                      textDecoration: 'none',
-                      color: isActive || isOpen ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
-                      backgroundColor: isActive || isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) e.target.style.color = '#ffffff';
-                      if (!isActive) e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.target.style.color = 'rgba(255, 255, 255, 0.7)';
-                      if (!isActive) e.target.style.backgroundColor = 'transparent';
-                    }}
+                    isActive={isActive}
+                    isOpen={isOpen}
                   >
                     {dropdown.label}
                     <svg
@@ -180,236 +427,99 @@ const Navigation = () => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </Link>
+                  </NavLink>
 
-                  {/* Dropdown */}
                   {isOpen && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        paddingTop: '0.5rem',
-                        zIndex: 1001,
-                      }}
-                      onMouseEnter={() => setActiveDropdown(key)}
-                      onMouseLeave={() => setActiveDropdown(null)}
-                    >
-                      <div style={{
-                        backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                        backdropFilter: 'blur(10px)',
-                        WebkitBackdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
-                        padding: '0.5rem 0',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-                        minWidth: '224px',
-                      }}>
+                    <DropdownMenu>
+                      <DropdownContent>
                         {dropdown.items.map((item, index) => (
-                          <Link
+                          <DropdownItem
                             key={index}
                             to={item.path}
-                            style={{
-                              display: 'block',
-                              padding: '0.625rem 1rem',
-                              textDecoration: 'none',
-                              color: isActiveRoute(item.path) ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
-                              backgroundColor: isActiveRoute(item.path) ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
-                              fontSize: '0.875rem',
-                              fontWeight: isActiveRoute(item.path) ? 500 : 400,
-                              fontFamily: 'system-ui, -apple-system, sans-serif',
-                              transition: 'all 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              if (!isActiveRoute(item.path)) {
-                                e.target.style.color = '#ffffff';
-                                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                              }
-                            }}
-                            onMouseLeave={(e) => {
-                              if (!isActiveRoute(item.path)) {
-                                e.target.style.color = 'rgba(255, 255, 255, 0.7)';
-                                e.target.style.backgroundColor = 'transparent';
-                              }
-                            }}
+                            isActive={isActiveRoute(item.path)}
                           >
                             {item.label}
-                          </Link>
+                          </DropdownItem>
                         ))}
-                      </div>
-                    </div>
+                      </DropdownContent>
+                    </DropdownMenu>
                   )}
-                </div>
+                </DropdownContainer>
               );
             })}
 
-            {navLinks.map((link) => {
-              const isActive = isActiveRoute(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    color: isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
-                    backgroundColor: isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) e.target.style.color = '#ffffff';
-                    if (!isActive) e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) e.target.style.color = 'rgba(255, 255, 255, 0.7)';
-                    if (!isActive) e.target.style.backgroundColor = 'transparent';
-                  }}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                isActive={isActiveRoute(link.path)}
+              >
+                {link.label}
+              </NavLink>
+            ))}
+          </DesktopNav>
 
-          {/* Contact Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Link
-              to="/contact"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.625rem 1.25rem',
-                background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
-                borderRadius: '12px',
-                textDecoration: 'none',
-                color: '#ffffff',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                transition: 'all 0.2s ease',
-              }}
-              className="hidden sm:flex"
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.05)';
-                e.target.style.boxShadow = '0 4px 12px rgba(113, 32, 176, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1)';
-                e.target.style.boxShadow = 'none';
-              }}
-            >
-              Contact Us
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <ContactButtonWrapper>
+            <ContactButton to="/contact">
+              <span>Contact Us</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 5l7 7-7 7" />
               </svg>
-            </Link>
+            </ContactButton>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              style={{
-                width: '40px',
-                height: '40px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '12px',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: 'none',
-                color: '#ffffff',
-                cursor: 'pointer',
-              }}
-              className="lg:hidden"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {isMobileMenuOpen ? (
                   <path d="M6 18L18 6M6 6l12 12" />
                 ) : (
                   <path d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
-            </button>
-          </div>
-        </div>
+            </MobileMenuButton>
+          </ContactButtonWrapper>
+        </NavContainer>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div style={{
-            marginTop: '0.75rem',
-            backgroundColor: 'rgba(17, 24, 39, 0.95)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '16px',
-            padding: '1rem',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-          }}>
-            {Object.entries(dropdownData).map(([key, dropdown]) => (
-              <div key={key} style={{ marginBottom: '0.5rem' }}>
-                <Link
-                  to={dropdown.path}
-                  style={{
-                    display: 'block',
-                    padding: '0.75rem',
-                    color: '#ffffff',
-                    textDecoration: 'none',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                  }}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {dropdown.label}
-                </Link>
-              </div>
-            ))}
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                style={{
-                  display: 'block',
-                  padding: '0.75rem',
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                }}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              to="/contact"
-              style={{
-                display: 'block',
-                marginTop: '1rem',
-                padding: '0.75rem',
-                background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
-                borderRadius: '12px',
-                textDecoration: 'none',
-                color: '#ffffff',
-                textAlign: 'center',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-              }}
+        <MobileNav isOpen={isMobileMenuOpen}>
+          {Object.entries(dropdownData).map(([key, dropdown]) => (
+            <MobileDropdownSection key={key}>
+              <MobileDropdownTitle>{dropdown.label}</MobileDropdownTitle>
+              <MobileDropdownItems>
+                {dropdown.items.map((item, index) => (
+                  <MobileNavLink
+                    key={index}
+                    to={item.path}
+                    isActive={isActiveRoute(item.path)}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </MobileNavLink>
+                ))}
+              </MobileDropdownItems>
+            </MobileDropdownSection>
+          ))}
+          {navLinks.map((link) => (
+            <MobileNavLink
+              key={link.path}
+              to={link.path}
+              isActive={isActiveRoute(link.path)}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Contact Us
-            </Link>
-          </div>
-        )}
-      </nav>
-    </header>
+              {link.label}
+            </MobileNavLink>
+          ))}
+          <ContactButton
+            to="/contact"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={{ marginTop: '0.5rem', justifyContent: 'center' }}
+          >
+            <span>Contact Us</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+          </ContactButton>
+        </MobileNav>
+      </Nav>
+    </NavHeader>
   );
 };
 

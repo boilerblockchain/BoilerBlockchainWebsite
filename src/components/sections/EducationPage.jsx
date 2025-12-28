@@ -72,6 +72,18 @@ const Container = styled(motion.div)`
     grid-template-columns: 0.8fr 1.2fr;
     align-items: stretch;
   }
+
+  @media (max-width: 768px) {
+    width: 95%;
+    padding: 2rem 1rem;
+    margin: 4rem auto 0;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 1.5rem 0.75rem;
+    margin: 3rem auto 0;
+  }
 `;
 
 const Title = styled(motion.h1)`

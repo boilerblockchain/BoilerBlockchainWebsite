@@ -90,6 +90,16 @@ const Container = styled.div`
     width: 95%;
     padding: 0 1.5rem 6rem;
   }
+
+  @media (max-width: 768px) {
+    width: 95%;
+    padding: 0 1rem 4rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0 0.75rem 3rem;
+  }
 `;
 
 const PartnersGrid = styled(motion.div)`

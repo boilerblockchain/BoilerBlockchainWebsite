@@ -15,6 +15,8 @@ const FooterContainer = styled.footer`
   padding: 4rem 2rem 2rem;
   margin-top: auto;
   position: relative;
+  z-index: 10;
+  flex-shrink: 0;
 
   @media (max-width: 768px) {
     padding: 3rem 1.5rem 1.5rem;

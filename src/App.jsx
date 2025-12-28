@@ -8,14 +8,16 @@ import Footer from "./components/Footer";
 
 function App() {
   return (
-    <main style={{ background: '#000000', minHeight: '100vh' }}>
-      <ThemeProvider theme={light}>
-        <GlobalStyles />
+    <ThemeProvider theme={light}>
+      <GlobalStyles />
+      <main style={{ background: '#000000', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Navigation />
-        <Home />
+        <div style={{ flex: 1 }}>
+          <Home />
+        </div>
         <Footer />
-      </ThemeProvider>
-    </main>
+      </main>
+    </ThemeProvider>
   );
 }
 

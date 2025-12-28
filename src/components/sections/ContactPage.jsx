@@ -33,8 +33,15 @@ const Container = styled.div`
     width: 90%;
   }
 
-  @media (max-width: 48em) {
+  @media (max-width: 768px) {
     width: 95%;
+    margin: 4rem auto 0;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 0 0.75rem;
   }
 `;
 
@@ -69,6 +76,14 @@ const ContentWrapper = styled(motion.div)`
   display: flex;
   justify-content: center;
   margin: 4rem 0;
+
+  @media (max-width: 768px) {
+    margin: 3rem 0;
+  }
+
+  @media (max-width: 480px) {
+    margin: 2rem 0;
+  }
 `;
 
 const ContactInfo = styled.div`
@@ -78,6 +93,16 @@ const ContactInfo = styled.div`
   padding: 3rem;
   backdrop-filter: blur(5px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  width: 100%;
+  max-width: 600px;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+  }
 `;
 
 const ContactTitle = styled.h2`
@@ -90,6 +115,16 @@ const ContactTitle = styled.h2`
   
   span {
     color: #7120b0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 `;
 
