@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget } from 'react-icons/fi';
+import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings } from 'react-icons/fi';
+// Fallback placeholder if group image doesn't exist
+import placeholderImage from '../../assets/images/1.jpg';
 
 const PageContainer = styled.div`
   width: 100%;
@@ -251,18 +253,13 @@ const Container = styled.div`
   position: relative;
   z-index: 2;
   padding: 0 1rem;
-  box-sizing: border-box;
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
   }
 
   @media (max-width: 480px) {
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 0 0.25rem;
+    padding: 0;
   }
 `;
 
@@ -606,6 +603,460 @@ const TextContent = styled.div`
   }
 `;
 
+const IdentitySection = styled(motion.section)`
+  width: 100%;
+  max-width: 100vw;
+  padding: 120px 2rem;
+  background: #000000;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    padding: 100px 1.75rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 80px 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 60px 1rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 50px 0.75rem;
+  }
+`;
+
+const IdentityContainer = styled(motion.div)`
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 30;
+  text-align: center;
+`;
+
+const BackgroundImageContainer = styled(motion.div)`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 25%;
+    filter: brightness(0.75) contrast(1.05) saturate(0.9);
+  }
+`;
+
+const DarkOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.80) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+`;
+
+const PurpleGlowOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(168, 85, 247, 0.18) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 20;
+`;
+
+const GlassPanel = styled(motion.div)`
+  position: relative;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.20);
+  border-radius: 24px;
+  padding: 56px;
+  z-index: 30;
+
+  @media (max-width: 1024px) {
+    padding: 48px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 32px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px;
+    border-radius: 16px;
+  }
+`;
+
+const IdentityDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(113, 32, 176, 0.2), transparent);
+  margin-bottom: 4rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 2.5rem;
+  }
+`;
+
+const IdentityTitle = styled(motion.h2)`
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 2.5rem;
+  letter-spacing: -1px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: -0.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 1.75rem;
+  }
+`;
+
+const IdentityBody = styled(motion.p)`
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.8;
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+`;
+
+const IdentityMicroLine = styled(motion.p)`
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
+`;
+
+const WhatWeDoSection = styled.section`
+  width: 100%;
+  max-width: 100vw;
+  padding: 80px 2rem;
+  background: #000000;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 60px 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 50px 1rem;
+  }
+`;
+
+const WhatWeDoDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.18), transparent);
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 2rem;
+  }
+`;
+
+const WhatWeDoContainer = styled.div`
+  max-width: 1150px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+`;
+
+const WhatWeDoTitle = styled(motion.h2)`
+  font-size: 3.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  letter-spacing: -1px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.875rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0;
+  }
+`;
+
+const WhatWeDoSubtitle = styled(motion.p)`
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  text-align: center;
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+`;
+
+const WhatWeDoGrid = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
+`;
+
+const WhatWeDoCard = styled(motion.div)`
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.18);
+  border-radius: 24px;
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    border-color: rgba(168, 85, 247, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px;
+    border-radius: 16px;
+  }
+`;
+
+const WhatWeDoCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+`;
+
+const WhatWeDoCardIcon = styled.div`
+  width: 40px;
+  height: 40px;
+  background: rgba(168, 85, 247, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    color: rgba(168, 85, 247, 0.85);
+    font-size: 20px;
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+
+    svg {
+      font-size: 16px;
+    }
+  }
+`;
+
+const WhatWeDoCardTitle = styled.h3`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.0625rem;
+  }
+`;
+
+const WhatWeDoCardBody = styled.p`
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  letter-spacing: 0.05px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+`;
+
+const WhatWeDoCardLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(168, 85, 247, 0.9);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin-top: 4px;
+
+  &:hover {
+    color: rgba(168, 85, 247, 1);
+    gap: 8px;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover svg {
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    gap: 5px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "", prefix = "" }) => {
   const [count, setCount] = useState(0);
@@ -651,6 +1102,7 @@ const CountUp = ({ end, duration = 2000, suffix = "", prefix = "" }) => {
 
 const Home = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
+  const identitySectionRef = useRef(null);
 
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
@@ -755,7 +1207,7 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            Purdue's premier student-led organization dedicated to advancing blockchain technology through innovation, education, and community building.
+            The next generation of blockchain engineers, researchers, and founders
           </HeroDescription>
           <ButtonGroup
             initial={{ opacity: 0, y: 20 }}
@@ -771,6 +1223,173 @@ const Home = () => {
           </ButtonGroup>
         </HeroContent>
       </HeroSection>
+
+      {/* Identity Section */}
+      <IdentitySection ref={identitySectionRef}>
+        {/* Background Image - Sharp, No Blur */}
+        <BackgroundImageContainer
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        >
+          <img 
+            src="/images/club/BB_group_photo_solana_across_camp.jpg" 
+            alt="Boiler Blockchain club members"
+            onError={(e) => {
+              // Fallback to placeholder if image doesn't exist
+              e.target.src = placeholderImage;
+            }}
+          />
+        </BackgroundImageContainer>
+
+        {/* Dark Overlay Gradient */}
+        <DarkOverlay />
+
+        {/* Purple Glow Overlay */}
+        <PurpleGlowOverlay />
+
+        {/* Glass Panel with Text */}
+        <IdentityContainer
+          initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          <GlassPanel>
+            <IdentityDivider />
+            <IdentityTitle
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              A New Standard for Web3 Talent
+            </IdentityTitle>
+            <IdentityBody
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              Boiler Blockchain exists to do one thing exceptionally well: identify, cultivate, and launch the strongest Web3 talent at Purdue.
+              <br /><br />
+              We are not an internship pipeline. We are not a hackathon team. We are not a media organization.
+              <br /><br />
+              We are a training ground for builders, engineers, researchers, and founders.
+            </IdentityBody>
+            <IdentityMicroLine
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              Talent first. Outcomes follow.
+            </IdentityMicroLine>
+          </GlassPanel>
+        </IdentityContainer>
+      </IdentitySection>
+
+      {/* What We Do Section */}
+      <WhatWeDoSection>
+        <WhatWeDoContainer>
+          <WhatWeDoDivider />
+          <WhatWeDoTitle
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            What We Do
+          </WhatWeDoTitle>
+          <WhatWeDoSubtitle
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Four pillars. One outcome: elite Web3 talent.
+          </WhatWeDoSubtitle>
+          <WhatWeDoGrid
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+          >
+            <WhatWeDoCard variants={itemVariants}>
+              <WhatWeDoCardHeader>
+                <WhatWeDoCardIcon>
+                  <FiBook />
+                </WhatWeDoCardIcon>
+                <WhatWeDoCardTitle>Education</WhatWeDoCardTitle>
+              </WhatWeDoCardHeader>
+              <WhatWeDoCardBody>
+                Structured courses, workshops, and technical training designed to build real depth—from fundamentals to advanced systems.
+              </WhatWeDoCardBody>
+              <WhatWeDoCardLink to="/courses">
+                Explore Education
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </WhatWeDoCardLink>
+            </WhatWeDoCard>
+
+            <WhatWeDoCard variants={itemVariants}>
+              <WhatWeDoCardHeader>
+                <WhatWeDoCardIcon>
+                  <FiCode />
+                </WhatWeDoCardIcon>
+                <WhatWeDoCardTitle>Development</WhatWeDoCardTitle>
+              </WhatWeDoCardHeader>
+              <WhatWeDoCardBody>
+                Cross-functional teams that ship real products, tooling, and infrastructure with high standards, reviews, and deadlines.
+              </WhatWeDoCardBody>
+              <WhatWeDoCardLink to="/teams">
+                View Development
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </WhatWeDoCardLink>
+            </WhatWeDoCard>
+
+            <WhatWeDoCard variants={itemVariants}>
+              <WhatWeDoCardHeader>
+                <WhatWeDoCardIcon>
+                  <FiSearch />
+                </WhatWeDoCardIcon>
+                <WhatWeDoCardTitle>Research</WhatWeDoCardTitle>
+              </WhatWeDoCardHeader>
+              <WhatWeDoCardBody>
+                Protocol analysis, market structure work, and frontier exploration—turning curiosity into rigorous, publishable insight.
+              </WhatWeDoCardBody>
+              <WhatWeDoCardLink to="/teams/research">
+                See Research
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </WhatWeDoCardLink>
+            </WhatWeDoCard>
+
+            <WhatWeDoCard variants={itemVariants}>
+              <WhatWeDoCardHeader>
+                <WhatWeDoCardIcon>
+                  <FiSettings />
+                </WhatWeDoCardIcon>
+                <WhatWeDoCardTitle>Operations</WhatWeDoCardTitle>
+              </WhatWeDoCardHeader>
+              <WhatWeDoCardBody>
+                The engine behind everything: partnerships, events, logistics, and systems that let builders focus and scale impact.
+              </WhatWeDoCardBody>
+              <WhatWeDoCardLink to="/teams/operations">
+                How Operations Works
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </WhatWeDoCardLink>
+            </WhatWeDoCard>
+          </WhatWeDoGrid>
+        </WhatWeDoContainer>
+      </WhatWeDoSection>
 
       {/* Who We Are Section */}
       <Section>
@@ -819,86 +1438,6 @@ const Home = () => {
               </Card>
             </motion.div>
           </TwoColumn>
-        </Container>
-      </Section>
-
-      {/* What We Do Section */}
-      <Section style={{ background: '#0a0a0a' }}>
-        <Container>
-          <SectionTitle
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            What <span className="gradient-text">We Do</span>
-          </SectionTitle>
-          <SectionDescription
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            We provide comprehensive programs and opportunities for students passionate about blockchain technology.
-          </SectionDescription>
-          <Grid
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiBook />
-              </CardIcon>
-              <CardTitle>Educational Courses</CardTitle>
-              <CardText>
-                Comprehensive technical and non-technical courses designed to empower students with blockchain knowledge and practical skills.
-              </CardText>
-            </Card>
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiCode />
-              </CardIcon>
-              <CardTitle>Development Projects</CardTitle>
-              <CardText>
-                Hands-on experience building real-world blockchain applications, smart contracts, and decentralized systems.
-              </CardText>
-            </Card>
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiUsers />
-              </CardIcon>
-              <CardTitle>Community Building</CardTitle>
-              <CardText>
-                Connect with like-minded peers, industry professionals, and blockchain enthusiasts in a supportive environment.
-              </CardText>
-            </Card>
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiZap />
-              </CardIcon>
-              <CardTitle>Hackathon Participation</CardTitle>
-              <CardText>
-                Compete in premier blockchain hackathons, win prizes, and showcase innovative solutions to industry leaders.
-              </CardText>
-            </Card>
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiTrendingUp />
-              </CardIcon>
-              <CardTitle>Research Initiatives</CardTitle>
-              <CardText>
-                Contribute to cutting-edge blockchain research, exploring new protocols, consensus mechanisms, and applications.
-              </CardText>
-            </Card>
-            <Card variants={itemVariants}>
-              <CardIcon>
-                <FiTarget />
-              </CardIcon>
-              <CardTitle>Industry Partnerships</CardTitle>
-              <CardText>
-                Collaborate with leading blockchain companies and organizations to drive innovation and create opportunities.
-              </CardText>
-            </Card>
-          </Grid>
         </Container>
       </Section>
 
