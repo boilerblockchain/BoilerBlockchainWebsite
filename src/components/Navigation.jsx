@@ -2,131 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
 
-const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
-  const [expandedDropdowns, setExpandedDropdowns] = useState({});
-
-  const toggleDropdown = (key) => {
-    setExpandedDropdowns(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
-
-  return (
-    <div className="lg:hidden absolute top-full left-0 right-0 mt-3 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-2xl py-4 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-      {Object.entries(dropdownData).map(([key, dropdown]) => (
-        <div key={key} className="px-4">
-          <button
-            onClick={() => toggleDropdown(key)}
-            className="w-full flex items-center justify-between text-white text-sm py-3 hover:bg-white/5 rounded-lg px-2 transition-colors"
-            style={{
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-            }}
-          >
-            {dropdown.label}
-            <svg
-              className={`w-4 h-4 transition-transform duration-200 ${expandedDropdowns[key] ? 'rotate-180' : ''}`}
-              viewBox="0 0 12 12"
-              fill="none"
-            >
-              <path
-                d="M3 4.5L6 7.5L9 4.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          {expandedDropdowns[key] && (
-            <div className="pl-4 space-y-1">
-              {dropdown.items.map((item, index) => (
-                <Link
-                  key={index}
-                  to={item.path}
-                  className={`block text-gray-300 text-sm py-2.5 px-2 rounded-lg transition-colors ${
-                    isActiveRoute(item.path)
-                      ? 'text-white bg-purple-500/20'
-                      : 'hover:text-white hover:bg-white/5'
-                  }`}
-                  style={{
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    fontWeight: isActiveRoute(item.path) ? 500 : 400,
-                    fontSize: '0.875rem',
-                  }}
-                  onClick={onClose}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
-
-      {navLinks.map((link) => {
-        const isActive = isActiveRoute(link.path);
-        return (
-          <Link
-            key={link.path}
-            to={link.path}
-            className={`block px-4 py-3 text-sm rounded-lg transition-colors ${
-              isActive
-                ? 'text-white bg-purple-500/20'
-                : 'text-gray-300 hover:text-white hover:bg-white/5'
-            }`}
-            style={{
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-            }}
-            onClick={onClose}
-          >
-            {link.label}
-          </Link>
-        );
-      })}
-
-      <Link
-        to="/contact"
-        className="block mx-4 mt-4 px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm text-center hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
-        style={{
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          color: '#ffffff'
-        }}
-        onClick={onClose}
-      >
-        Contact Us
-      </Link>
-    </div>
-  );
-};
-
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const location = useLocation();
-  const navRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
@@ -163,101 +52,123 @@ const Navigation = () => {
 
   return (
     <header 
-      ref={navRef} 
-      className="fixed top-0 left-0 right-0 flex justify-center pt-6 px-4 sm:pt-8 pointer-events-none"
       style={{ 
-        zIndex: 100,
         position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
+        zIndex: 1000,
+        display: 'flex',
+        justifyContent: 'center',
+        paddingTop: '1.5rem',
+        paddingLeft: '1rem',
+        paddingRight: '1rem',
+        pointerEvents: 'none',
       }}
     >
       <nav 
-        className="relative w-full max-w-7xl pointer-events-auto"
-        style={{ position: 'relative' }}
+        style={{ 
+          width: '100%',
+          maxWidth: '1280px',
+          pointerEvents: 'auto',
+        }}
       >
-        {/* Main Navigation Bar */}
         <div
-          className={`
-            relative flex items-center justify-between
-            rounded-2xl
-            px-6 py-4
-            shadow-2xl
-            border
-            transition-all duration-500 ease-out
-          `}
           style={{
-            backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
-            backdropFilter: 'blur(32px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-            borderColor: isScrolled ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.1)',
-            boxShadow: isScrolled 
-              ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15)' 
-              : '0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1)',
-            position: 'relative',
-            zIndex: 100,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            backgroundColor: isScrolled ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.7)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '1rem 1.5rem',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           }}
         >
-          {/* Left: Logo */}
+          {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-3 group transition-opacity duration-200 hover:opacity-80"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              textDecoration: 'none',
+            }}
           >
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-800 transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-purple-500/30 overflow-hidden">
+            <div style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+            }}>
               <img
                 src={BBLogo}
                 alt="Boiler Blockchain Logo"
-                className="w-6 h-6 object-contain"
+                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
               />
             </div>
-            <span 
-              className="hidden sm:block text-white text-lg tracking-tight"
-              style={{ 
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                fontWeight: 600,
-                fontSize: '1.125rem',
-                color: '#ffffff'
-              }}
-            >
+            <span style={{
+              color: '#ffffff',
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+            }}>
               Boiler Blockchain
             </span>
           </Link>
 
-          {/* Center: Navigation Links - Desktop */}
-          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center mx-12">
+          {/* Desktop Navigation */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, justifyContent: 'center', marginLeft: '3rem', marginRight: '3rem' }} className="hidden lg:flex">
             {Object.entries(dropdownData).map(([key, dropdown]) => {
               const isActive = isActiveRoute(dropdown.path);
               const isOpen = activeDropdown === key;
               
               return (
                 <div 
-                  key={key} 
-                  className="relative group"
+                  key={key}
+                  style={{ position: 'relative' }}
                   onMouseEnter={() => setActiveDropdown(key)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   <Link
                     to={dropdown.path}
-                    className={`
-                      relative px-4 py-2 rounded-lg text-sm
-                      transition-all duration-200 flex items-center gap-1.5
-                      ${isActive || isOpen
-                        ? 'text-white bg-purple-500/20'
-                        : 'text-gray-300 hover:text-white hover:bg-white/5'
-                      }
-                    `}
                     style={{
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      fontWeight: 500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.375rem',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      textDecoration: 'none',
+                      color: isActive || isOpen ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
+                      backgroundColor: isActive || isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
                       fontSize: '0.875rem',
+                      fontWeight: 500,
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) e.target.style.color = '#ffffff';
+                      if (!isActive) e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) e.target.style.color = 'rgba(255, 255, 255, 0.7)';
+                      if (!isActive) e.target.style.backgroundColor = 'transparent';
                     }}
                   >
                     {dropdown.label}
                     <svg
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        isOpen ? 'rotate-180' : ''
-                      }`}
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s ease',
+                      }}
                       viewBox="0 0 12 12"
                       fill="none"
                     >
@@ -271,43 +182,56 @@ const Navigation = () => {
                     </svg>
                   </Link>
 
-                  {/* Dropdown Menu - positioned with padding to bridge gap */}
-                  {(isOpen || activeDropdown === key) && (
-                    <div 
-                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56"
+                  {/* Dropdown */}
+                  {isOpen && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        paddingTop: '0.5rem',
+                        zIndex: 1001,
+                      }}
                       onMouseEnter={() => setActiveDropdown(key)}
                       onMouseLeave={() => setActiveDropdown(null)}
-                      style={{ 
-                        zIndex: 101,
-                        position: 'absolute',
-                      }}
                     >
-                      <div 
-                        className="bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-xl py-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
-                        style={{
-                          backgroundColor: 'rgba(17, 24, 39, 0.95)',
-                          backdropFilter: 'blur(16px) saturate(180%)',
-                          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-                          borderColor: 'rgba(255, 255, 255, 0.1)',
-                          position: 'relative',
-                          zIndex: 101,
-                        }}
-                      >
+                      <div style={{
+                        backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        WebkitBackdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '0.5rem 0',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                        minWidth: '224px',
+                      }}>
                         {dropdown.items.map((item, index) => (
                           <Link
                             key={index}
                             to={item.path}
-                            className={`
-                              block px-4 py-2.5 text-sm transition-colors
-                              ${isActiveRoute(item.path)
-                                ? 'text-white bg-purple-500/20'
-                                : 'text-gray-300 hover:text-white hover:bg-white/5'
-                              }
-                            `}
                             style={{
-                              fontFamily: 'system-ui, -apple-system, sans-serif',
-                              fontWeight: isActiveRoute(item.path) ? 500 : 400,
+                              display: 'block',
+                              padding: '0.625rem 1rem',
+                              textDecoration: 'none',
+                              color: isActiveRoute(item.path) ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
+                              backgroundColor: isActiveRoute(item.path) ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
                               fontSize: '0.875rem',
+                              fontWeight: isActiveRoute(item.path) ? 500 : 400,
+                              fontFamily: 'system-ui, -apple-system, sans-serif',
+                              transition: 'all 0.2s ease',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isActiveRoute(item.path)) {
+                                e.target.style.color = '#ffffff';
+                                e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isActiveRoute(item.path)) {
+                                e.target.style.color = 'rgba(255, 255, 255, 0.7)';
+                                e.target.style.backgroundColor = 'transparent';
+                              }
                             }}
                           >
                             {item.label}
@@ -326,18 +250,24 @@ const Navigation = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm
-                    transition-all duration-200
-                    ${isActive
-                      ? 'text-white bg-purple-500/20'
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
-                    }
-                  `}
                   style={{
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    fontWeight: 500,
+                    padding: '0.5rem 1rem',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent',
                     fontSize: '0.875rem',
+                    fontWeight: 500,
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) e.target.style.color = '#ffffff';
+                    if (!isActive) e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) e.target.style.color = 'rgba(255, 255, 255, 0.7)';
+                    if (!isActive) e.target.style.backgroundColor = 'transparent';
                   }}
                 >
                   {link.label}
@@ -346,60 +276,62 @@ const Navigation = () => {
             })}
           </div>
 
-          {/* Right: CTA Button */}
-          <div className="flex items-center gap-3">
+          {/* Contact Button */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link
               to="/contact"
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 group"
               style={{
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.625rem 1.25rem',
+                background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                color: '#ffffff',
                 fontSize: '0.875rem',
-                color: '#ffffff'
+                fontWeight: 600,
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                transition: 'all 0.2s ease',
+              }}
+              className="hidden sm:flex"
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.05)';
+                e.target.style.boxShadow = '0 4px 12px rgba(113, 32, 176, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = 'none';
               }}
             >
               Contact Us
-              <svg
-                className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 5l7 7-7 7" />
               </svg>
             </Link>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors"
-              aria-label="Toggle menu"
+              style={{
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                color: '#ffffff',
+                cursor: 'pointer',
+              }}
+              className="lg:hidden"
             >
-              <svg
-                className={`w-5 h-5 transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-90' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {isMobileMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -408,12 +340,73 @@ const Navigation = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <MobileMenu 
-            dropdownData={dropdownData}
-            navLinks={navLinks}
-            isActiveRoute={isActiveRoute}
-            onClose={() => setIsMobileMenuOpen(false)}
-          />
+          <div style={{
+            marginTop: '0.75rem',
+            backgroundColor: 'rgba(17, 24, 39, 0.95)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            padding: '1rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          }}>
+            {Object.entries(dropdownData).map(([key, dropdown]) => (
+              <div key={key} style={{ marginBottom: '0.5rem' }}>
+                <Link
+                  to={dropdown.path}
+                  style={{
+                    display: 'block',
+                    padding: '0.75rem',
+                    color: '#ffffff',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                  }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {dropdown.label}
+                </Link>
+              </div>
+            ))}
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                style={{
+                  display: 'block',
+                  padding: '0.75rem',
+                  color: '#ffffff',
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
+                }}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link
+              to="/contact"
+              style={{
+                display: 'block',
+                marginTop: '1rem',
+                padding: '0.75rem',
+                background: 'linear-gradient(135deg, #7120b0 0%, #bb20ff 100%)',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                color: '#ffffff',
+                textAlign: 'center',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+              }}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Contact Us
+            </Link>
+          </div>
         )}
       </nav>
     </header>

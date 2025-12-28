@@ -1,51 +1,19 @@
 import GlobalStyles from "./styles/GlobalStyles";
 import { light } from "./styles/Themes";
 import { ThemeProvider } from "styled-components";
-import styled from "styled-components";
 
 import Navigation from "./components/Navigation";
 import Home from "./components/sections/Home";
-import Team from "./components/sections/courses";
 import Footer from "./components/Footer";
-import About from "./components/sections/about_section";
-import HackathonSummary from "./components/sections/hackathons_summary";
-import CTASection from "./components/sections/join_discord";
-
-const SectionWrapper = styled.section`
-  position: relative;
-  z-index: ${(props) =>
-    props.zIndex || 1}; /* Dynamic z-index for different sections */
-`;
-
-const FooterWrapper = styled.footer`
-  position: relative;
-  z-index: 5; /* Footer z-index (can be lower if needed) */
-`;
 
 function App() {
   return (
     <main style={{ background: '#000000', minHeight: '100vh' }}>
       <ThemeProvider theme={light}>
         <GlobalStyles />
-
         <Navigation />
         <Home />
-        <About/>
-        
-        <SectionWrapper zIndex={15}>
-          <HackathonSummary />
-        </SectionWrapper>
-
-        <SectionWrapper zIndex={15}>
-          <Team />
-        </SectionWrapper>
-
-        <CTASection />
-
-        <FooterWrapper>
-          <Footer />
-        </FooterWrapper>
-
+        <Footer />
       </ThemeProvider>
     </main>
   );
