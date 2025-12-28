@@ -18,7 +18,12 @@ const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
         <div key={key} className="px-4">
           <button
             onClick={() => toggleDropdown(key)}
-            className="w-full flex items-center justify-between text-white text-sm font-medium py-3 hover:bg-white/5 rounded-lg px-2 transition-colors"
+            className="w-full flex items-center justify-between text-white text-sm py-3 hover:bg-white/5 rounded-lg px-2 transition-colors"
+            style={{
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+            }}
           >
             {dropdown.label}
             <svg
@@ -43,9 +48,14 @@ const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
                   to={item.path}
                   className={`block text-gray-300 text-sm py-2.5 px-2 rounded-lg transition-colors ${
                     isActiveRoute(item.path)
-                      ? 'text-white bg-purple-500/20 font-medium'
+                      ? 'text-white bg-purple-500/20'
                       : 'hover:text-white hover:bg-white/5'
                   }`}
+                  style={{
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    fontWeight: isActiveRoute(item.path) ? 500 : 400,
+                    fontSize: '0.875rem',
+                  }}
                   onClick={onClose}
                 >
                   {item.label}
@@ -62,11 +72,16 @@ const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
           <Link
             key={link.path}
             to={link.path}
-            className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+            className={`block px-4 py-3 text-sm rounded-lg transition-colors ${
               isActive
                 ? 'text-white bg-purple-500/20'
                 : 'text-gray-300 hover:text-white hover:bg-white/5'
             }`}
+            style={{
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontWeight: 500,
+              fontSize: '0.875rem',
+            }}
             onClick={onClose}
           >
             {link.label}
@@ -76,7 +91,13 @@ const MobileMenu = ({ dropdownData, navLinks, isActiveRoute, onClose }) => {
 
       <Link
         to="/contact"
-        className="block mx-4 mt-4 px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm font-semibold text-center hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
+        className="block mx-4 mt-4 px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm text-center hover:from-purple-700 hover:to-purple-800 transition-all duration-200"
+        style={{
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontWeight: 600,
+          fontSize: '0.875rem',
+          color: '#ffffff'
+        }}
         onClick={onClose}
       >
         Contact Us
@@ -141,23 +162,41 @@ const Navigation = () => {
   };
 
   return (
-    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4 sm:pt-8 pointer-events-none">
-      <nav className="relative w-full max-w-7xl pointer-events-auto">
+    <header 
+      ref={navRef} 
+      className="fixed top-0 left-0 right-0 flex justify-center pt-6 px-4 sm:pt-8 pointer-events-none"
+      style={{ 
+        zIndex: 100,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+      }}
+    >
+      <nav 
+        className="relative w-full max-w-7xl pointer-events-auto"
+        style={{ position: 'relative' }}
+      >
         {/* Main Navigation Bar */}
         <div
           className={`
             relative flex items-center justify-between
-            bg-white/5 backdrop-blur-2xl
             rounded-2xl
             px-6 py-4
-            shadow-2xl shadow-black/10
-            border border-white/10
+            shadow-2xl
+            border
             transition-all duration-500 ease-out
-            ${isScrolled ? 'bg-white/8 border-white/15 shadow-black/20' : 'bg-white/5 border-white/10'}
           `}
           style={{
+            backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
             backdropFilter: 'blur(32px) saturate(180%)',
             WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+            borderColor: isScrolled ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.1)',
+            boxShadow: isScrolled 
+              ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15)' 
+              : '0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            position: 'relative',
+            zIndex: 100,
           }}
         >
           {/* Left: Logo */}
@@ -172,7 +211,15 @@ const Navigation = () => {
                 className="w-6 h-6 object-contain"
               />
             </div>
-            <span className="hidden sm:block text-white font-semibold text-lg tracking-tight">
+            <span 
+              className="hidden sm:block text-white text-lg tracking-tight"
+              style={{ 
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontWeight: 600,
+                fontSize: '1.125rem',
+                color: '#ffffff'
+              }}
+            >
               Boiler Blockchain
             </span>
           </Link>
@@ -193,13 +240,18 @@ const Navigation = () => {
                   <Link
                     to={dropdown.path}
                     className={`
-                      relative px-4 py-2 rounded-lg text-sm font-medium
+                      relative px-4 py-2 rounded-lg text-sm
                       transition-all duration-200 flex items-center gap-1.5
                       ${isActive || isOpen
                         ? 'text-white bg-purple-500/20'
                         : 'text-gray-300 hover:text-white hover:bg-white/5'
                       }
                     `}
+                    style={{
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      fontWeight: 500,
+                      fontSize: '0.875rem',
+                    }}
                   >
                     {dropdown.label}
                     <svg
@@ -219,24 +271,49 @@ const Navigation = () => {
                     </svg>
                   </Link>
 
-                  {/* Dropdown Menu */}
+                  {/* Dropdown Menu - positioned with padding to bridge gap */}
                   {(isOpen || activeDropdown === key) && (
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-xl py-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-                      {dropdown.items.map((item, index) => (
-                        <Link
-                          key={index}
-                          to={item.path}
-                          className={`
-                            block px-4 py-2.5 text-sm transition-colors
-                            ${isActiveRoute(item.path)
-                              ? 'text-white bg-purple-500/20 font-medium'
-                              : 'text-gray-300 hover:text-white hover:bg-white/5'
-                            }
-                          `}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                    <div 
+                      className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56"
+                      onMouseEnter={() => setActiveDropdown(key)}
+                      onMouseLeave={() => setActiveDropdown(null)}
+                      style={{ 
+                        zIndex: 101,
+                        position: 'absolute',
+                      }}
+                    >
+                      <div 
+                        className="bg-gray-900/95 backdrop-blur-xl border border-white/10 rounded-xl py-2 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200"
+                        style={{
+                          backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                          backdropFilter: 'blur(16px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+                          borderColor: 'rgba(255, 255, 255, 0.1)',
+                          position: 'relative',
+                          zIndex: 101,
+                        }}
+                      >
+                        {dropdown.items.map((item, index) => (
+                          <Link
+                            key={index}
+                            to={item.path}
+                            className={`
+                              block px-4 py-2.5 text-sm transition-colors
+                              ${isActiveRoute(item.path)
+                                ? 'text-white bg-purple-500/20'
+                                : 'text-gray-300 hover:text-white hover:bg-white/5'
+                              }
+                            `}
+                            style={{
+                              fontFamily: 'system-ui, -apple-system, sans-serif',
+                              fontWeight: isActiveRoute(item.path) ? 500 : 400,
+                              fontSize: '0.875rem',
+                            }}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -250,13 +327,18 @@ const Navigation = () => {
                   key={link.path}
                   to={link.path}
                   className={`
-                    px-4 py-2 rounded-lg text-sm font-medium
+                    px-4 py-2 rounded-lg text-sm
                     transition-all duration-200
                     ${isActive
                       ? 'text-white bg-purple-500/20'
                       : 'text-gray-300 hover:text-white hover:bg-white/5'
                     }
                   `}
+                  style={{
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '0.875rem',
+                  }}
                 >
                   {link.label}
                 </Link>
@@ -268,7 +350,13 @@ const Navigation = () => {
           <div className="flex items-center gap-3">
             <Link
               to="/contact"
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm font-semibold hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 group"
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl text-white text-sm hover:from-purple-700 hover:to-purple-800 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30 group"
+              style={{
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                color: '#ffffff'
+              }}
             >
               Contact Us
               <svg

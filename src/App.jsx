@@ -24,7 +24,7 @@ const FooterWrapper = styled.footer`
 
 function App() {
   return (
-    <main className='bg-gradient-to-tl from-black via-zinc-900/50 to-black/14'>
+    <main style={{ background: '#000000', minHeight: '100vh' }}>
       <ThemeProvider theme={light}>
         <GlobalStyles />
 
