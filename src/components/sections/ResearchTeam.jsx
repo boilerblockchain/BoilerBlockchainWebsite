@@ -5,6 +5,7 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiSearch, FiBook, FiTrendingUp, FiUsers, FiExternalLink } from 'react-icons/fi';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -38,8 +39,10 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 4rem 0;
+  padding: 4rem 0 0;
   font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -156,20 +159,22 @@ const ResearchGrid = styled(motion.div)`
 `;
 
 const ResearchCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.6);
+  background: rgba(15, 15, 15, 0.7);
   border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  padding: 1.8rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
+    transform: translateY(-6px);
     border-color: rgba(113, 32, 176, 0.6);
+    background: rgba(15, 15, 15, 0.85);
   }
 
   &::before {
@@ -178,8 +183,14 @@ const ResearchCard = styled(motion.div)`
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -238,7 +249,7 @@ const ResearchLink = styled.a`
 
 const PublicationsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(1000px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1.5rem;
   margin: 3rem 0;
 
@@ -248,20 +259,22 @@ const PublicationsGrid = styled(motion.div)`
 `;
 
 const PublicationCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.6);
+  background: rgba(15, 15, 15, 0.7);
   border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  padding: 1.8rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
+    transform: translateY(-6px);
     border-color: rgba(113, 32, 176, 0.6);
+    background: rgba(15, 15, 15, 0.85);
   }
 
   &::before {
@@ -270,8 +283,14 @@ const PublicationCard = styled(motion.div)`
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -572,6 +591,7 @@ const ResearchTeam = () => {
           ))}
         </PublicationsGrid>
       </Container>
+      <Footer />
     </PageSection>
   );
 };

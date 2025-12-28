@@ -7,6 +7,7 @@ import img5 from "../../assets/images/5.jpg";
 import img4 from "../../assets/images/4.jpg";
 import img3 from "../../assets/images/3.jpg";
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 const fadeInUp = {
     initial: {
@@ -39,7 +40,9 @@ const PageSection = styled.section`
   position: relative;
   overflow: hidden;
   padding-top: 4rem;
-  font-family: 'Tomorrow', sans-serif; 
+  font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif; 
@@ -169,9 +172,17 @@ const InfoGrid = styled(motion.div)`
 const InfoCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   padding: 1.25rem;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid rgba(113, 32, 176, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(113, 32, 176, 0.5);
+    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.25);
+  }
 
   @media (min-width: 768px) {
     padding: 1.5rem;
@@ -250,19 +261,39 @@ const List = styled.ul`
 const DetailsSection = styled(motion.div)`
   padding: 2rem;
   background: rgba(15, 15, 15, 0.7);
-  border-radius: 8px;
+  border-radius: 12px;
   margin: 1.25rem 0; 
   border: 1px solid rgba(113, 32, 176, 0.3);
   display: flex;
   flex-direction: column;
   width: 100%;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.35);
+    transform: translateY(-6px);
+    background: rgba(15, 15, 15, 0.85);
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 
   @media (min-width: 768px) {
@@ -547,6 +578,7 @@ const EducationPage = () => {
           </CourseInfo>
         </CourseCard>
       </Container>
+      <Footer />
     </PageSection>
   );
 };

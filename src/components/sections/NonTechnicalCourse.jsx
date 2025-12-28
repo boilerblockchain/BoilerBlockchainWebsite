@@ -6,6 +6,7 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiClock, FiMail, FiBell } from 'react-icons/fi';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -13,11 +14,10 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 4rem 0;
+  padding: 4rem 0 0;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -33,6 +33,10 @@ const Container = styled.div`
   position: relative;
   z-index: 2;
   text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const ComingSoonIcon = styled(motion.div)`
@@ -318,6 +322,7 @@ const NonTechnicalCourse = () => {
           </NotifySection>
         </LaunchInfo>
       </Container>
+      <Footer />
     </PageSection>
   );
 };

@@ -5,6 +5,7 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -12,8 +13,10 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 8rem 0 6rem;
+  padding: 8rem 0 0;
   font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -81,10 +84,11 @@ const FilterNav = styled(motion.div)`
   margin-bottom: 5rem;
   flex-wrap: wrap;
   padding: 0.5rem;
-  background: rgba(15, 15, 15, 0.4);
+  background: rgba(15, 15, 15, 0.6);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   max-width: fit-content;
   margin-left: auto;
   margin-right: auto;
@@ -183,16 +187,18 @@ const ImageContainer = styled.div`
   width: 100%;
   aspect-ratio: 1;
   background: linear-gradient(135deg, #2a0f3d 0%, #3d1557 50%, #5a1f7a 100%);
-  border-radius: 12px;
+  border-radius: 16px;
   position: relative;
   overflow: hidden;
   margin-bottom: 1.25rem;
   box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3), 0 0 0 1px rgba(113, 32, 176, 0.1);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(113, 32, 176, 0.2);
 
   ${MemberCard}:hover & {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.5), 0 0 0 1px rgba(113, 32, 176, 0.2);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.6), 0 0 0 1px rgba(113, 32, 176, 0.3);
+    border-color: rgba(113, 32, 176, 0.5);
   }
 
   img {
@@ -253,24 +259,25 @@ const SocialIcon = styled(motion.a)`
   width: 38px;
   height: 38px;
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: ${props => props.type === 'linkedin' ? '#0077b5' : '#000000'};
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   &:hover {
     background: #ffffff;
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px) scale(1.08);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.1);
   }
 
   &:active {
-    transform: translateY(0) scale(1);
+    transform: translateY(-1px) scale(1.05);
   }
 
   svg {
@@ -295,6 +302,7 @@ const RoleLabel = styled.div`
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 `;
 
 const MemberName = styled.h3`
@@ -599,6 +607,7 @@ const PeopleTeam = () => {
           </TeamRow>
         </AnimatePresence>
       </Container>
+      <Footer />
     </PageSection>
   );
 };

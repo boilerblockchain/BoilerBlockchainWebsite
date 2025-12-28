@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -12,6 +13,8 @@ const PageSection = styled.section`
   position: relative;
   overflow: hidden;
   font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -184,36 +187,36 @@ const PartnerCard = styled(motion.a)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 15, 15, 0.5);
+  background: rgba(15, 15, 15, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 3rem 2rem;
   min-height: 220px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
   text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(113, 32, 176, 0.4), rgba(187, 32, 255, 0.4));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
     opacity: 0;
     transition: opacity 0.4s ease;
   }
 
   &:hover {
-    transform: translateY(-10px) scale(1.03);
-    background: rgba(15, 15, 15, 0.7);
-    border-color: rgba(113, 32, 176, 0.5);
-    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.4);
+    transform: translateY(-12px) scale(1.03);
+    background: rgba(15, 15, 15, 0.85);
+    border-color: rgba(113, 32, 176, 0.6);
+    box-shadow: 0 20px 60px rgba(113, 32, 176, 0.5);
 
     &::before {
       opacity: 1;
@@ -388,6 +391,7 @@ const PartnersPage = () => {
           ))}
         </PartnersGrid>
       </Container>
+      <Footer />
     </PageSection>
   );
 };

@@ -152,16 +152,37 @@ const Grid = styled.div`
 `;
 
 const Card = styled.div`
-  background: rgba(15, 15, 15, 0.6);
+  background: rgba(15, 15, 15, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 2rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    border-color: rgba(113, 32, 176, 0.5);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(113, 32, 176, 0.2);
+    border-color: rgba(113, 32, 176, 0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(113, 32, 176, 0.3);
+    background: rgba(15, 15, 15, 0.85);
+
+    &::before {
+      opacity: 1;
+    }
   }
 `;
 
@@ -170,12 +191,15 @@ const CardTitle = styled.h3`
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 1rem;
+  letter-spacing: 0.3px;
+  line-height: 1.3;
 `;
 
 const CardText = styled.p`
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
+  letter-spacing: 0.2px;
 `;
 
 const TwoColumn = styled.div`

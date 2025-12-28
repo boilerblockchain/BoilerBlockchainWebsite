@@ -84,16 +84,36 @@ const StatsContainer = styled(motion.div)`
 const StatCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 1px solid #7120b0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 2rem 1.5rem;
   text-align: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.4);
+    transform: translateY(-8px);
+    background: rgba(15, 15, 15, 0.85);
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -125,18 +145,20 @@ const SectionsGrid = styled(motion.div)`
 const SectionCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 2px solid #7120b0;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 3rem;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.4);
+    transform: translateY(-8px);
     border-color: rgba(113, 32, 176, 1);
+    background: rgba(15, 15, 15, 0.85);
   }
 
   &::before {
@@ -147,6 +169,12 @@ const SectionCard = styled(motion.div)`
     right: 0;
     height: 4px;
     background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -283,14 +311,17 @@ const ValuesGrid = styled.div`
 const ValueCard = styled(motion.div)`
   background: rgba(113, 32, 176, 0.1);
   border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 2rem;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: rgba(113, 32, 176, 0.15);
+    background: rgba(113, 32, 176, 0.2);
     border-color: rgba(113, 32, 176, 0.6);
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(113, 32, 176, 0.3);
   }
 `;
 

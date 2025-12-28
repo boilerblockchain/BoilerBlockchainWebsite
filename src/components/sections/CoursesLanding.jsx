@@ -6,6 +6,7 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiBook, FiCode, FiUsers, FiArrowRight, FiClock, FiAward } from 'react-icons/fi';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -13,8 +14,10 @@ const PageSection = styled.section`
   background-color: #000000;
   position: relative;
   overflow: hidden;
-  padding: 4rem 0;
+  padding: 4rem 0 0;
   font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
   
   * {
     font-family: 'Tomorrow', sans-serif;
@@ -80,16 +83,36 @@ const StatsContainer = styled(motion.div)`
 const StatCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 1px solid #7120b0;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 2.5rem 1.5rem;
   text-align: center;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.4);
+    transform: translateY(-8px);
+    background: rgba(15, 15, 15, 0.85);
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -121,19 +144,21 @@ const CoursesGrid = styled(motion.div)`
 const CourseCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 2px solid ${props => props.available ? '#7120b0' : 'rgba(113, 32, 176, 0.3)'};
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 3rem;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   opacity: ${props => props.available ? 1 : 0.7};
 
   &:hover {
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.4);
+    transform: translateY(-8px);
     border-color: ${props => props.available ? 'rgba(113, 32, 176, 1)' : 'rgba(113, 32, 176, 0.5)'};
+    background: rgba(15, 15, 15, 0.85);
   }
 
   &::before {
@@ -147,6 +172,12 @@ const CourseCard = styled(motion.div)`
       ? 'linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8))'
       : 'linear-gradient(90deg, rgba(113, 32, 176, 0.3), rgba(187, 32, 255, 0.3))'
     };
+    opacity: ${props => props.available ? 1 : 0.5};
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
   }
 `;
 
@@ -507,6 +538,7 @@ const CoursesLanding = () => {
           ))}
         </CoursesGrid>
       </Container>
+      <Footer />
     </PageSection>
   );
 };
