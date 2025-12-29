@@ -401,13 +401,13 @@ const CoursesLanding = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
-              width: 1,
+              opacity: 0.7,
+              width: 1.5,
             },
             move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            number: { value: 70 },
+            opacity: { value: 0.5 },
+            size: { value: 3 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -420,7 +420,7 @@ const CoursesLanding = () => {
             modes: {
               grab: {
                 distance: 140,
-                links: { opacity: 0.4 }
+                links: { opacity: 0.6 }
               }
             }
           }

@@ -45,12 +45,13 @@ const HeroSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #000000;
+  background: transparent;
   padding: 120px 2rem 4rem;
   text-align: center;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  z-index: 1;
 
   @media (max-width: 1024px) {
     padding: 110px 1.75rem 3.5rem;
@@ -72,12 +73,13 @@ const HeroSection = styled.section`
 `;
 
 const ParticlesContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 0;
+  pointer-events: none;
 `;
 
 const HeroContent = styled(motion.div)`
@@ -245,8 +247,9 @@ const Section = styled.section`
   width: 100%;
   max-width: 100vw;
   padding: 6rem 2rem;
-  background: #000000;
+  background: transparent;
   position: relative;
+  z-index: 1;
   z-index: 1;
   box-sizing: border-box;
 
@@ -628,7 +631,7 @@ const IdentitySection = styled(motion.section)`
   width: 100%;
   max-width: 100vw;
   padding: 120px 2rem;
-  background: #000000;
+  background: transparent;
   position: relative;
   z-index: 1;
   box-sizing: border-box;
@@ -827,8 +830,9 @@ const WhatWeDoSection = styled.section`
   width: 100%;
   max-width: 100vw;
   padding: 100px 2rem 120px;
-  background: #000000;
+  background: transparent;
   position: relative;
+  z-index: 1;
   z-index: 1;
   box-sizing: border-box;
   overflow: hidden;
@@ -1942,12 +1946,11 @@ const Home = () => {
 
   return (
     <PageContainer>
-      {/* Hero Section */}
-      <HeroSection>
-        <ParticlesContainer>
-          <Particles
-            key={particleKey}
-            init={particlesInit}
+      {/* Particles Background - Full Page */}
+      <ParticlesContainer>
+        <Particles
+          key={particleKey}
+          init={particlesInit}
             options={{
               background: { color: "#000000" },
               particles: {
@@ -1956,13 +1959,13 @@ const Home = () => {
                   color: "#7120b0",
                   distance: 150,
                   enable: true,
-                  opacity: 0.2,
-                  width: 1,
+                  opacity: 0.7,
+                  width: 1.5,
                 },
-                move: { enable: true, speed: 0.5 },
-                number: { value: 50 },
-                opacity: { value: 0.15 },
-                size: { value: 1.5 },
+                move: { enable: true, speed: 0.8 },
+                number: { value: 70 },
+                size: { value: 3 },
+                opacity: { value: 0.5 },
               },
               fpsLimit: 120,
               interactivity: {
@@ -1974,21 +1977,24 @@ const Home = () => {
                 },
                 modes: {
                   grab: {
-                    distance: 100,
-                    links: { opacity: 0.2 }
+                    distance: 140,
+                    links: { opacity: 0.6 }
                   }
                 }
               }
             }}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </ParticlesContainer>
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      </ParticlesContainer>
+
+      {/* Hero Section */}
+      <HeroSection>
         <HeroContent
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

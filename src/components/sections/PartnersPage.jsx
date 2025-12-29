@@ -316,13 +316,13 @@ const PartnersPage = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.15,
-              width: 1,
+              opacity: 0.7,
+              width: 1.5,
             },
-            move: { enable: true, speed: 0.5 },
-            number: { value: 50 },
-            opacity: { value: 0.1 },
-            size: { value: 1.5 },
+            move: { enable: true, speed: 0.8 },
+            number: { value: 70 },
+            opacity: { value: 0.5 },
+            size: { value: 3 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -334,8 +334,8 @@ const PartnersPage = () => {
             },
             modes: {
               grab: {
-                distance: 100,
-                links: { opacity: 0.15 }
+                distance: 140,
+                links: { opacity: 0.6 }
               }
             }
           }
