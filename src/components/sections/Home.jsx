@@ -1285,13 +1285,86 @@ const WhatWeDoSubtitle = styled(motion.p)`
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto 2rem;
   text-align: center;
   font-weight: 500;
   letter-spacing: 0.2px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   position: relative;
   z-index: 2;
+`;
+
+const WhatWeDoNav = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  position: relative;
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+`;
+
+const WhatWeDoNavLink = styled.button`
+  padding: 0.625rem 1.25rem;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.3px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  &:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.4375rem 0.875rem;
+    font-size: 0.8125rem;
+  }
 
   /* Accent color for key phrases */
   strong {
@@ -2597,9 +2670,81 @@ const Home = () => {
             >
               <strong>Four pillars.</strong> One outcome: <strong>elite Web3 talent.</strong>
             </WhatWeDoSubtitle>
+            <WhatWeDoNav
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <WhatWeDoNavLink
+                onClick={() => {
+                  const element = document.getElementById('block-education');
+                  if (element) {
+                    const offset = 80; // Offset to account for header/navigation
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+              >
+                Education
+              </WhatWeDoNavLink>
+              <WhatWeDoNavLink
+                onClick={() => {
+                  const element = document.getElementById('block-development');
+                  if (element) {
+                    const offset = 80; // Offset to account for header/navigation
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+              >
+                Development
+              </WhatWeDoNavLink>
+              <WhatWeDoNavLink
+                onClick={() => {
+                  const element = document.getElementById('block-research');
+                  if (element) {
+                    const offset = 80; // Offset to account for header/navigation
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+              >
+                Research
+              </WhatWeDoNavLink>
+              <WhatWeDoNavLink
+                onClick={() => {
+                  const element = document.getElementById('block-operations');
+                  if (element) {
+                    const offset = 80; // Offset to account for header/navigation
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+              >
+                Operations
+              </WhatWeDoNavLink>
+            </WhatWeDoNav>
           </WhatWeDoHeader>
           <WhatWeDoBlockchainChain>
             <WhatWeDoBlockRow
+              id="block-education"
               reverse={false}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -2668,6 +2813,7 @@ const Home = () => {
             </WhatWeDoBlockConnector>
 
             <WhatWeDoBlockRow
+              id="block-development"
               reverse={true}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -2736,6 +2882,7 @@ const Home = () => {
             </WhatWeDoBlockConnector>
 
             <WhatWeDoBlockRow
+              id="block-research"
               reverse={false}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -2804,6 +2951,7 @@ const Home = () => {
             </WhatWeDoBlockConnector>
 
             <WhatWeDoBlockRow
+              id="block-operations"
               reverse={true}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
