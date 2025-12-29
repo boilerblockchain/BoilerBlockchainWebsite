@@ -1190,7 +1190,7 @@ const particleFloat = keyframes`
 const StatsHeroSection = styled(motion.section)`
   width: 100%;
   max-width: 100vw;
-  padding: 100px 2rem;
+  padding: 100px 2rem 80px;
   background: #000000;
   position: relative;
   z-index: 1;
@@ -1302,14 +1302,14 @@ const StatsHeroDivider = styled.div`
   }
 
   &.bottom {
-    margin-top: 4rem;
+    margin-top: 2rem;
 
     @media (max-width: 768px) {
-      margin-top: 3rem;
+      margin-top: 1.5rem;
     }
 
     @media (max-width: 480px) {
-      margin-top: 2.5rem;
+      margin-top: 1.25rem;
     }
   }
 `;
@@ -3455,7 +3455,7 @@ const Home = () => {
               { icon: FiZap, value: 100, suffix: "+", label: "Weekly Active", micro: "Members every week" },
               { icon: FiDollarSign, value: 50000, prefix: "$", suffix: "+", label: "in Prize Money Won", micro: "Across global hackathons" },
               { icon: FiBriefcase, value: 25, suffix: "+", label: "Partners & Sponsors", micro: "Backed by leading protocols" },
-              { icon: FiAward, value: 400, suffix: "+", label: "Engineers Graduated", micro: "From technical course" }
+              { icon: FiAward, value: 400, suffix: "+", label: "Students Graduated", micro: "From technical course" }
             ].map((stat, index) => {
               const baseDelay = 0.4 + index * 0.15;
               return (
@@ -3691,9 +3691,9 @@ const Home = () => {
                   <WhatWeDoMetaPill>Workshops</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>Student instructors & dedicated TAs</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Featured company and guest lectures</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Advanced technical workshops and dapp deployment</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Student instructors and dedicated TAs</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Featured company visits + guest lectures and workshops</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Web and dapp deployment</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/courses">
                   Explore
