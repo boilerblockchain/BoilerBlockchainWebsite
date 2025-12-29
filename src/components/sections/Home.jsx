@@ -627,6 +627,87 @@ const TextContent = styled.div`
   }
 `;
 
+// Glitch animation keyframes
+const glitchTop = `
+  @keyframes glitchTop {
+    0% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translateX(0);
+    }
+    20% {
+      clip-path: polygon(0 0, 100% 0, 100% 95%, 0 98%);
+      transform: translateX(-2px);
+    }
+    40% {
+      clip-path: polygon(0 0, 100% 0, 100% 98%, 0 95%);
+      transform: translateX(2px);
+    }
+    60% {
+      clip-path: polygon(0 0, 100% 0, 100% 96%, 0 97%);
+      transform: translateX(-1px);
+    }
+    80% {
+      clip-path: polygon(0 0, 100% 0, 100% 97%, 0 96%);
+      transform: translateX(1px);
+    }
+    100% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translateX(0);
+    }
+  }
+`;
+
+const glitchBottom = `
+  @keyframes glitchBottom {
+    0% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translateX(0);
+    }
+    20% {
+      clip-path: polygon(0 5%, 100% 2%, 100% 100%, 0 100%);
+      transform: translateX(2px);
+    }
+    40% {
+      clip-path: polygon(0 2%, 100% 5%, 100% 100%, 0 100%);
+      transform: translateX(-2px);
+    }
+    60% {
+      clip-path: polygon(0 4%, 100% 3%, 100% 100%, 0 100%);
+      transform: translateX(1px);
+    }
+    80% {
+      clip-path: polygon(0 3%, 100% 4%, 100% 100%, 0 100%);
+      transform: translateX(-1px);
+    }
+    100% {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      transform: translateX(0);
+    }
+  }
+`;
+
+const scanlineAnimation = `
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(100vh);
+      opacity: 0;
+    }
+  }
+`;
+
 const IdentitySection = styled(motion.section)`
   width: 100%;
   max-width: 100vw;
@@ -636,6 +717,10 @@ const IdentitySection = styled(motion.section)`
   z-index: 1;
   box-sizing: border-box;
   overflow: hidden;
+
+  ${glitchTop}
+  ${glitchBottom}
+  ${scanlineAnimation}
 
   @media (max-width: 1024px) {
     padding: 100px 1.75rem;
@@ -652,6 +737,200 @@ const IdentitySection = styled(motion.section)`
   @media (max-width: 360px) {
     padding: 50px 0.75rem;
   }
+`;
+
+const TopGlitchEdge = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.90) 20%,
+    rgba(0, 0, 0, 0.75) 50%,
+    rgba(0, 0, 0, 0.5) 80%,
+    transparent 100%
+  );
+  animation: glitchTop 6s ease-in-out infinite;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(168, 85, 247, 0.8),
+      rgba(113, 32, 176, 1),
+      rgba(168, 85, 247, 0.8),
+      transparent
+    );
+    animation: scanline 2.5s linear infinite;
+    box-shadow: 
+      0 0 15px rgba(168, 85, 247, 0.6),
+      0 0 30px rgba(168, 85, 247, 0.3);
+    filter: blur(0.5px);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(168, 85, 247, 0.08) 1px,
+      rgba(168, 85, 247, 0.08) 2px,
+      transparent 2px,
+      transparent 3px,
+      rgba(113, 32, 176, 0.05) 3px,
+      rgba(113, 32, 176, 0.05) 4px
+    );
+    animation: glitchTop 6s ease-in-out infinite;
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+`;
+
+const BottomGlitchEdge = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.98) 0%,
+    rgba(0, 0, 0, 0.90) 20%,
+    rgba(0, 0, 0, 0.75) 50%,
+    rgba(0, 0, 0, 0.5) 80%,
+    transparent 100%
+  );
+  animation: glitchBottom 6s ease-in-out infinite;
+  animation-delay: 0.5s;
+  overflow: hidden;
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(168, 85, 247, 0.8),
+      rgba(113, 32, 176, 1),
+      rgba(168, 85, 247, 0.8),
+      transparent
+    );
+    animation: scanline 2.5s linear infinite reverse;
+    animation-delay: 1s;
+    box-shadow: 
+      0 0 15px rgba(168, 85, 247, 0.6),
+      0 0 30px rgba(168, 85, 247, 0.3);
+    filter: blur(0.5px);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 1px,
+      rgba(168, 85, 247, 0.08) 1px,
+      rgba(168, 85, 247, 0.08) 2px,
+      transparent 2px,
+      transparent 3px,
+      rgba(113, 32, 176, 0.05) 3px,
+      rgba(113, 32, 176, 0.05) 4px
+    );
+    animation: glitchBottom 6s ease-in-out infinite;
+    animation-delay: 0.5s;
+    mix-blend-mode: screen;
+    opacity: 0.7;
+  }
+`;
+
+const GlitchScanlines = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 1px,
+    rgba(168, 85, 247, 0.04) 1px,
+    rgba(168, 85, 247, 0.04) 2px,
+    transparent 2px,
+    transparent 3px,
+    rgba(113, 32, 176, 0.02) 3px,
+    rgba(113, 32, 176, 0.02) 4px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  animation: glitchTop 10s ease-in-out infinite;
+`;
+
+const GlitchDistortion = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 50px,
+      rgba(168, 85, 247, 0.03) 50px,
+      rgba(168, 85, 247, 0.03) 51px,
+      transparent 51px,
+      transparent 100px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 30px,
+      rgba(113, 32, 176, 0.02) 30px,
+      rgba(113, 32, 176, 0.02) 31px,
+      transparent 31px,
+      transparent 60px
+    );
+  animation: glitchTop 8s ease-in-out infinite;
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  filter: blur(0.5px);
 `;
 
 const IdentityContainer = styled(motion.div)`
@@ -2038,6 +2317,18 @@ const Home = () => {
 
       {/* Identity Section */}
       <IdentitySection ref={identitySectionRef}>
+        {/* Top Glitch Edge */}
+        <TopGlitchEdge />
+        
+        {/* Bottom Glitch Edge */}
+        <BottomGlitchEdge />
+        
+        {/* Glitch Scanlines */}
+        <GlitchScanlines />
+        
+        {/* Glitch Distortion */}
+        <GlitchDistortion />
+
         {/* Background Image - Sharp, No Blur */}
         <BackgroundImageContainer
           initial={{ opacity: 0 }}
@@ -2413,118 +2704,6 @@ const Home = () => {
           </WhatWeDoBlockchainChain>
         </WhatWeDoContainer>
       </WhatWeDoSection>
-
-      {/* Who We Are Section */}
-      <Section>
-        <Container>
-          <SectionTitle
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Who <span className="gradient-text">We Are</span>
-          </SectionTitle>
-          <SectionDescription
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Boiler Blockchain is Purdue's leading student organization for blockchain technology, empowering students through education, innovation, and community.
-          </SectionDescription>
-          <TwoColumn>
-            <TextContent
-              as={motion.div}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <p>
-                At Boiler Blockchain, we provide comprehensive educational programs, hands-on development opportunities, and a vibrant community for students passionate about blockchain technology.
-              </p>
-              <p>
-                Our mission is to bridge the gap between academic learning and real-world blockchain applications, preparing students for careers in the rapidly evolving Web3 ecosystem.
-              </p>
-            </TextContent>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <Card>
-                <CardIcon>
-                  <FiCode />
-                </CardIcon>
-                <CardTitle>Technical Courses</CardTitle>
-                <CardText>
-                  Comprehensive 16-week courses covering blockchain fundamentals, smart contract development, and decentralized applications.
-                </CardText>
-              </Card>
-            </motion.div>
-          </TwoColumn>
-        </Container>
-      </Section>
-
-      {/* Achievements Section */}
-      <Section>
-        <Container>
-          <SectionTitle
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Our <span className="gradient-text">Achievements</span>
-          </SectionTitle>
-          <SectionDescription
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            From ETH SF to ETH Denver, our journey through the blockchain ecosystem has been marked by innovation and success.
-          </SectionDescription>
-          <Grid
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <StatCard variants={itemVariants}>
-              <StatNumber>
-                <CountUp end={11} suffix="+" />
-              </StatNumber>
-              <StatLabel>Hackathons</StatLabel>
-              <StatCardText>
-                Participated in premier blockchain hackathons including ETH SF, ETH Denver, ETH NYC, and more.
-              </StatCardText>
-            </StatCard>
-            <StatCard variants={itemVariants}>
-              <StatNumber>
-                <CountUp end={15} suffix="+" />
-              </StatNumber>
-              <StatLabel>Prizes Won</StatLabel>
-              <StatCardText>
-                Recognized for innovative solutions and outstanding projects across multiple competitions.
-              </StatCardText>
-            </StatCard>
-            <StatCard variants={itemVariants}>
-              <StatNumber>
-                <CountUp end={25} prefix="$" suffix="K+" />
-              </StatNumber>
-              <StatLabel>Prize Value</StatLabel>
-              <StatCardText>
-                Total value of prizes and awards won through hackathon participation and competitions.
-              </StatCardText>
-            </StatCard>
-            <StatCard variants={itemVariants}>
-              <StatNumber>
-                <CountUp end={150} suffix="+" />
-              </StatNumber>
-              <StatLabel>Students Taught</StatLabel>
-              <StatCardText>
-                Empowered students through comprehensive courses and hands-on learning experiences.
-              </StatCardText>
-            </StatCard>
-          </Grid>
-        </Container>
-      </Section>
 
       {/* CTA Section */}
       <Section style={{ background: '#0a0a0a' }}>
