@@ -5,29 +5,29 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings } from 'react-icons/fi';
+
+// Education block images
+import educationImage1 from '../../assets/images/education/edu1.jpg';
+import educationImage2 from '../../assets/images/education/edu2.jpg';
+import educationImage3 from '../../assets/images/education/edu3.jpg';
+
+// Development block images
+import developmentImage1 from '../../assets/images/development/dev1.jpg';
+import developmentImage2 from '../../assets/images/development/dev2.JPEG';
+import developmentImage3 from '../../assets/images/development/dev3.JPEG';
+
+// Research block images
+import researchImage1 from '../../assets/images/research/res1.jpg';
+import researchImage2 from '../../assets/images/research/res2.jpg';
+import researchImage3 from '../../assets/images/research/res3.jpg';
+
+// Operations block images
+import operationsImage1 from '../../assets/images/operations/op1.png';
+import operationsImage2 from '../../assets/images/operations/op2.jpg';
+import operationsImage3 from '../../assets/images/operations/op3.jpeg';
+
 // Fallback placeholder if group image doesn't exist
-// Placeholder image - Replace with actual image when ready
 const placeholderImage = 'https://via.placeholder.com/1200x800/7120b0/ffffff?text=Group+Photo';
-// Placeholder images - Replace these with your actual images when ready
-// Education block placeholders
-const educationImage1 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Education+1';
-const educationImage2 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Education+2';
-const educationImage3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Education+3';
-
-// Development block placeholders
-const developmentImage1 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Development+1';
-const developmentImage2 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Development+2';
-const developmentImage3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Development+3';
-
-// Research block placeholders
-const researchImage1 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Research+1';
-const researchImage2 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Research+2';
-const researchImage3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Research+3';
-
-// Operations block placeholders
-const operationsImage1 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Operations+1';
-const operationsImage2 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Operations+2';
-const operationsImage3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Operations+3';
 
 const PageContainer = styled.div`
   width: 100%;
@@ -1202,52 +1202,122 @@ const WhatWeDoNodeGraph = styled.div`
   }
 `;
 
-const WhatWeDoTitle = styled(motion.h2)`
-  font-size: 3.25rem;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
+const WhatWeDoHeader = styled(motion.div)`
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
   text-align: center;
-  letter-spacing: -1px;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 
   @media (max-width: 768px) {
-    font-size: 2.25rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
+    margin-bottom: 3rem;
+    padding: 0 1.5rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 1.875rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+  }
+`;
+
+const WhatWeDoTitle = styled(motion.h2)`
+  font-size: 4.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 50%, rgba(168, 85, 247, 0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: -2px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.2));
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.6), transparent);
+    border-radius: 2px;
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 3.75rem;
+    letter-spacing: -1.5px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+
+    &::after {
+      width: 100px;
+      height: 3px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+    margin-bottom: 0.875rem;
+    letter-spacing: -0.5px;
+
+    &::after {
+      width: 80px;
+      height: 2px;
+    }
   }
 `;
 
 const WhatWeDoSubtitle = styled(motion.p)`
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
-  max-width: 700px;
-  margin: 0 auto 3rem;
+  max-width: 800px;
+  margin: 0 auto;
   text-align: center;
-  font-weight: 400;
-  letter-spacing: 0.1px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  z-index: 2;
+
+  /* Accent color for key phrases */
+  strong {
+    color: rgba(168, 85, 247, 0.95);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 1.375rem;
+    max-width: 750px;
+    margin-bottom: 3.5rem;
+  }
 
   @media (max-width: 768px) {
-    font-size: 1rem;
-    line-height: 1.5;
-    margin-bottom: 2.5rem;
-    padding: 0 1rem;
+    font-size: 1.25rem;
+    line-height: 1.55;
+    margin-bottom: 3rem;
+    padding: 0 1.5rem;
+    max-width: 100%;
   }
 
   @media (max-width: 480px) {
-    font-size: 0.9375rem;
-    line-height: 1.4;
-    margin-bottom: 2rem;
-    padding: 0 0.5rem;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
   }
 `;
 
@@ -1302,8 +1372,8 @@ const WhatWeDoBlockRow = styled(motion.div)`
 /* Image Carousel Container */
 const WhatWeDoBlockImage = styled(motion.div)`
   flex: 1;
-  max-width: 500px;
-  height: 400px;
+  max-width: 480px;
+  height: 380px;
   position: relative;
   border-radius: 16px;
   overflow: hidden;
@@ -1313,8 +1383,8 @@ const WhatWeDoBlockImage = styled(motion.div)`
   border: 1px solid rgba(168, 85, 247, 0.15);
 
   @media (max-width: 968px) {
-    max-width: 450px;
-    height: 360px;
+    max-width: 420px;
+    height: 340px;
   }
 
   @media (max-width: 768px) {
@@ -1378,33 +1448,32 @@ const CarouselControls = styled.div`
 `;
 
 const CarouselButton = styled.button`
-  background: ${props => props.active ? 'rgba(168, 85, 247, 0.8)' : 'rgba(255, 255, 255, 0.1)'};
-  border: 1px solid ${props => props.active ? 'rgba(168, 85, 247, 0.5)' : 'rgba(255, 255, 255, 0.2)'};
-  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.6)'};
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  background: ${props => props.active ? 'rgba(168, 85, 247, 0.9)' : 'rgba(255, 255, 255, 0.3)'};
+  border: none;
+  width: ${props => props.active ? '10px' : '8px'};
+  height: ${props => props.active ? '10px' : '8px'};
+  border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0;
+  box-shadow: ${props => props.active ? '0 0 8px rgba(168, 85, 247, 0.6)' : 'none'};
 
   &:hover {
-    background: ${props => props.active ? 'rgba(168, 85, 247, 1)' : 'rgba(255, 255, 255, 0.2)'};
-    transform: scale(1.1);
+    background: ${props => props.active ? 'rgba(168, 85, 247, 1)' : 'rgba(255, 255, 255, 0.5)'};
+    transform: scale(1.2);
+    box-shadow: ${props => props.active ? '0 0 12px rgba(168, 85, 247, 0.8)' : '0 0 6px rgba(255, 255, 255, 0.3)'};
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.9);
   }
 
   @media (max-width: 480px) {
-    width: 28px;
-    height: 28px;
-    font-size: 0.6875rem;
+    width: ${props => props.active ? '9px' : '7px'};
+    height: ${props => props.active ? '9px' : '7px'};
   }
 `;
 
@@ -1461,10 +1530,12 @@ const WhatWeDoBlock = styled(motion.div)`
   background-size: 60px 60px;
   flex: 1;
   max-width: 560px;
-  min-height: 500px;
-  padding: 3.5rem 3rem;
+  min-height: 380px;
+  height: 100%;
+  padding: 2.5rem 2.25rem;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   border: 1px solid rgba(168, 85, 247, 0.25);
   border-radius: 16px;
   box-shadow: 
@@ -1588,6 +1659,23 @@ const WhatWeDoBlock = styled(motion.div)`
     }
   }
 
+  @media (max-width: 968px) {
+    min-height: 360px;
+    padding: 2.25rem 2rem;
+    max-width: 520px;
+  }
+
+  @media (max-width: 768px) {
+    min-height: 340px;
+    padding: 2rem 1.75rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 320px;
+    padding: 1.75rem 1.5rem;
+  }
+
   /* Interactive hover effects */
   &:hover {
     border-color: rgba(168, 85, 247, 0.5);
@@ -1621,17 +1709,6 @@ const WhatWeDoBlock = styled(motion.div)`
   /* Active state for more interaction */
   &:active {
     transform: translateY(-4px) scale(1.01) rotateX(1deg);
-  }
-
-  @media (max-width: 768px) {
-    max-width: 100%;
-    min-height: 450px;
-    padding: 2.5rem 2rem;
-  }
-
-  @media (max-width: 480px) {
-    min-height: 420px;
-    padding: 2rem 1.75rem;
   }
 `;
 
@@ -1677,23 +1754,24 @@ const Particle = styled.div`
 
 /* Block Icon Container */
 const WhatWeDoBlockIcon = styled(motion.div)`
-  width: 80px;
-  height: 80px;
+  width: 68px;
+  height: 68px;
   background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.12));
   border: 2px solid rgba(168, 85, 247, 0.3);
-  border-radius: 16px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
   position: relative;
   z-index: 3;
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   overflow: hidden;
+  flex-shrink: 0;
 
   svg {
     color: rgba(168, 85, 247, 0.95);
-    font-size: 42px;
+    font-size: 36px;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.4));
   }
@@ -1776,23 +1854,33 @@ const WhatWeDoBlockIcon = styled(motion.div)`
     }
   }
 
-  @media (max-width: 768px) {
-    width: 72px;
-    height: 72px;
-    margin-bottom: 1.5rem;
+  @media (max-width: 968px) {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 1.125rem;
 
     svg {
-      font-size: 36px;
+      font-size: 32px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+
+    svg {
+      font-size: 30px;
     }
   }
 
   @media (max-width: 480px) {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 1.25rem;
+    width: 56px;
+    height: 56px;
+    margin-bottom: 0.875rem;
 
     svg {
-      font-size: 32px;
+      font-size: 28px;
     }
   }
 `;
@@ -1846,37 +1934,43 @@ const WhatWeDoBlockHash = styled.div`
 `;
 
 const WhatWeDoBlockTitle = styled.h3`
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #ffffff;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 1.25rem 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   position: relative;
   z-index: 2;
   transition: color 0.3s ease;
+  flex-shrink: 0;
 
   ${WhatWeDoBlock}:hover & {
     color: rgba(255, 255, 255, 1);
   }
 
+  @media (max-width: 968px) {
+    font-size: 1.75rem;
+    margin-bottom: 1.125rem;
+  }
+
   @media (max-width: 768px) {
-    font-size: 1.875rem;
-    margin-bottom: 1.25rem;
+    font-size: 1.625rem;
+    margin-bottom: 1rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 1.625rem;
-    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.875rem;
   }
 `;
 
 const WhatWeDoBlockBody = styled.ul`
-  font-size: 1.125rem;
+  font-size: 1.0625rem;
   color: rgba(255, 255, 255, 0.85);
-  line-height: 1.75;
-  margin: 0 0 2rem 0;
+  line-height: 1.7;
+  margin: 0 0 1.5rem 0;
   padding: 0;
   list-style: none;
   letter-spacing: 0.01px;
@@ -1886,20 +1980,28 @@ const WhatWeDoBlockBody = styled.ul`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.875rem;
+  justify-content: flex-start;
 
-  @media (max-width: 768px) {
+  @media (max-width: 968px) {
     font-size: 1rem;
-    line-height: 1.7;
-    gap: 0.875rem;
-    margin-bottom: 1.75rem;
+    line-height: 1.65;
+    gap: 0.8125rem;
+    margin-bottom: 1.375rem;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     font-size: 0.9375rem;
     line-height: 1.6;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    gap: 0.6875rem;
+    margin-bottom: 1.125rem;
   }
 `;
 
@@ -1941,9 +2043,9 @@ const WhatWeDoBlockBullet = styled.li`
 const WhatWeDoBlockCTA = styled(Link)`
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
   color: rgba(168, 85, 247, 0.95);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
@@ -1951,11 +2053,12 @@ const WhatWeDoBlockCTA = styled(Link)`
   position: relative;
   z-index: 3;
   align-self: flex-start;
-  padding: 0.875rem 1.5rem;
+  padding: 0.75rem 1.375rem;
   margin-top: auto;
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(168, 85, 247, 0.1);
   border: 2px solid rgba(168, 85, 247, 0.25);
+  flex-shrink: 0;
 
   &::before {
     content: '';
@@ -1981,8 +2084,8 @@ const WhatWeDoBlockCTA = styled(Link)`
   }
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     stroke-width: 2.5;
     transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   }
@@ -2142,6 +2245,8 @@ const CountUp = ({ end, duration = 2000, suffix = "", prefix = "" }) => {
 // Image Carousel Component
 const ImageCarousel = ({ images, alt }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef(null);
 
   const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -2153,11 +2258,57 @@ const ImageCarousel = ({ images, alt }) => {
 
   const goToImage = (index) => {
     setCurrentIndex(index);
+    // Reset the auto-slide timer when manually changing images
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    // Restart auto-slide after manual change
+    intervalRef.current = setInterval(() => {
+      if (!isPaused) {
+        setCurrentIndex((prev) => (prev + 1) % images.length);
+      }
+    }, 4000);
   };
+
+  useEffect(() => {
+    // Start with the first image (index 0) - already set in useState
+    // Start auto-sliding
+    intervalRef.current = setInterval(() => {
+      if (!isPaused) {
+        setCurrentIndex((prev) => (prev + 1) % images.length);
+      }
+    }, 4000); // Auto-slide every 4 seconds
+
+    // Cleanup on unmount
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [images.length, isPaused]);
+
+  // Pause/resume auto-slide on hover
+  useEffect(() => {
+    if (isPaused) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % images.length);
+      }, 4000);
+    }
+  }, [isPaused, images.length]);
 
   return (
     <>
-      <CarouselImages>
+      <CarouselImages
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         {images.map((image, index) => (
           <CarouselImage
             key={index}
@@ -2180,9 +2331,8 @@ const ImageCarousel = ({ images, alt }) => {
             key={index}
             active={index === currentIndex}
             onClick={() => goToImage(index)}
-          >
-            {index + 1}
-          </CarouselButton>
+            aria-label={`Go to image ${index + 1}`}
+          />
         ))}
       </CarouselControls>
     </>
@@ -2425,22 +2575,29 @@ const Home = () => {
         </WhatWeDoNodeGraph>
         <WhatWeDoContainer>
           <WhatWeDoDivider />
-          <WhatWeDoTitle
-            initial={{ opacity: 0, y: 30 }}
+          <WhatWeDoHeader
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
           >
-            What We Do
-          </WhatWeDoTitle>
-          <WhatWeDoSubtitle
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Four pillars. One outcome: elite Web3 talent.
-          </WhatWeDoSubtitle>
+            <WhatWeDoTitle
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              What We Do
+            </WhatWeDoTitle>
+            <WhatWeDoSubtitle
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+            >
+              <strong>Four pillars.</strong> One outcome: <strong>elite Web3 talent.</strong>
+            </WhatWeDoSubtitle>
+          </WhatWeDoHeader>
           <WhatWeDoBlockchainChain>
             <WhatWeDoBlockRow
               reverse={false}
