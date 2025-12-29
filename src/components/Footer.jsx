@@ -325,9 +325,6 @@ export default function Footer() {
               <li>
                 <FooterLink to="/courses/technical">Technical Course</FooterLink>
               </li>
-              <li>
-                <FooterLink to="/courses/non-technical">Non-Technical Course</FooterLink>
-              </li>
             </FooterLinks>
           </FooterSection>
 

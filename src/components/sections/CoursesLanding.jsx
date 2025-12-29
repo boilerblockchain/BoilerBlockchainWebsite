@@ -356,24 +356,6 @@ const courses = [
       'Job placement assistance',
       'Access to exclusive hackathons'
     ]
-  },
-  {
-    id: 'non-technical',
-    name: 'Non-Technical Course',
-    icon: FiBook,
-    description: 'Perfect for business professionals and newcomers - understand blockchain technology, cryptocurrency markets, and DeFi without programming.',
-    features: [
-      'Blockchain fundamentals explained simply',
-      'Cryptocurrency and tokenomics',
-      'DeFi and NFT ecosystems',
-      'Investment and trading strategies',
-      'Business applications and use cases',
-      'Market analysis and trends'
-    ],
-    stats: { duration: '8 weeks', modules: '10+', students: 'Coming Soon' },
-    path: '/courses/non-technical',
-    available: false,
-    launchDate: 'Fall 2024'
   }
 ];
 

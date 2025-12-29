@@ -361,18 +361,11 @@ const Navigation = () => {
         { label: 'Research Team', path: '/teams/research' },
         { label: 'Operations Team', path: '/teams/operations' }
       ]
-    },
-    courses: {
-      label: 'Courses',
-      path: '/courses',
-      items: [
-        { label: 'Technical Course', path: '/courses/technical' },
-        { label: 'Non-Technical Course', path: '/courses/non-technical' }
-      ]
     }
   };
 
   const navLinks = [
+    { label: 'Technical Course', path: '/courses/technical' },
     { label: 'Partners', path: '/partners' },
     { label: 'The Team', path: '/people/team' }
   ];

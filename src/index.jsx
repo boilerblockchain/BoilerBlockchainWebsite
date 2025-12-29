@@ -19,7 +19,6 @@ import OperationsTeam from "./components/sections/OperationsTeam";
 
 // Courses
 import CoursesLanding from "./components/sections/CoursesLanding";
-import NonTechnicalCourse from "./components/sections/NonTechnicalCourse";
 
 // People
 import PeopleLanding from "./components/sections/PeopleLanding";
@@ -51,7 +50,6 @@ root.render(
       {/* Courses Routes */}
       <Route path="/courses" element={<CoursesLanding />} />
       <Route path="/courses/technical" element={<EducationPage />} />
-      <Route path="/courses/non-technical" element={<NonTechnicalCourse />} />
       
       {/* People Routes */}
       <Route path="/people" element={<PeopleLanding />} />

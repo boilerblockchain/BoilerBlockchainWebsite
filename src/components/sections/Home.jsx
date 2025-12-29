@@ -2010,7 +2010,7 @@ const WhatWeDoBlockTitle = styled.h3`
   font-size: 2rem;
   font-weight: 800;
   color: #ffffff;
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 0.875rem 0;
   letter-spacing: -0.5px;
   line-height: 1.2;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -2018,24 +2018,132 @@ const WhatWeDoBlockTitle = styled.h3`
   z-index: 2;
   transition: color 0.3s ease;
   flex-shrink: 0;
+`;
 
-  ${WhatWeDoBlock}:hover & {
-    color: rgba(255, 255, 255, 1);
-  }
+const WhatWeDoMetaRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 
-  @media (max-width: 968px) {
-    font-size: 1.75rem;
+  @media (max-width: 768px) {
+    gap: 0.4375rem;
     margin-bottom: 1.125rem;
   }
 
-  @media (max-width: 768px) {
-    font-size: 1.625rem;
+  @media (max-width: 480px) {
+    gap: 0.375rem;
     margin-bottom: 1rem;
+  }
+`;
+
+const WhatWeDoMetaPill = styled.span`
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: rgba(168, 85, 247, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  ${WhatWeDoBlock}:hover & {
+    background: rgba(168, 85, 247, 0.18);
+    border-color: rgba(168, 85, 247, 0.35);
+    color: rgba(168, 85, 247, 1);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.3125rem 0.625rem;
+    font-size: 0.625rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 1.5rem;
-    margin-bottom: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.5625rem;
+  }
+`;
+
+const WhatWeDoOutcome = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  margin: 1.5rem 0 1rem 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 10px;
+  position: relative;
+  z-index: 2;
+  box-shadow: 
+    0 0 0 1px rgba(168, 85, 247, 0.1) inset,
+    0 2px 8px rgba(0, 0, 0, 0.3);
+
+  ${WhatWeDoBlock}:hover & {
+    border-color: rgba(168, 85, 247, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 
+      0 0 0 1px rgba(168, 85, 247, 0.15) inset,
+      0 4px 12px rgba(168, 85, 247, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.75rem 0.875rem;
+    margin: 1.25rem 0 0.875rem 0;
+    gap: 0.875rem;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    margin: 1rem 0 0.75rem 0;
+  }
+`;
+
+const OutcomeLabel = styled.span`
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgba(168, 85, 247, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  @media (max-width: 480px) {
+    font-size: 0.5625rem;
+  }
+`;
+
+const OutcomeText = styled.span`
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  flex: 1;
+  text-align: right;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    text-align: left;
+    font-size: 0.6875rem;
   }
 `;
 
@@ -2043,7 +2151,7 @@ const WhatWeDoBlockBody = styled.ul`
   font-size: 1.0625rem;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.7;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0 0;
   padding: 0;
   list-style: none;
   letter-spacing: 0.01px;
@@ -2060,14 +2168,14 @@ const WhatWeDoBlockBody = styled.ul`
     font-size: 1rem;
     line-height: 1.65;
     gap: 0.8125rem;
-    margin-bottom: 1.375rem;
+    margin-bottom: 0;
   }
 
   @media (max-width: 768px) {
     font-size: 0.9375rem;
     line-height: 1.6;
     gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0;
   }
 
   @media (max-width: 480px) {
@@ -2127,7 +2235,7 @@ const WhatWeDoBlockCTA = styled(Link)`
   z-index: 3;
   align-self: flex-start;
   padding: 0.75rem 1.375rem;
-  margin-top: auto;
+  margin-top: 0;
   border-radius: 10px;
   background: rgba(168, 85, 247, 0.1);
   border: 2px solid rgba(168, 85, 247, 0.25);
@@ -2774,10 +2882,15 @@ const Home = () => {
                   <FiBook />
                 </WhatWeDoBlockIcon>
                 <WhatWeDoBlockTitle>Education</WhatWeDoBlockTitle>
+                <WhatWeDoMetaRow>
+                  <WhatWeDoMetaPill>12 weeks</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Full-Stack</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Workshops</WhatWeDoMetaPill>
+                </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>12-week structured core course</WhatWeDoBlockBullet>
                   <WhatWeDoBlockBullet>Student instructors & dedicated TAs</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Advanced technical workshops</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Featured company and guest lectures</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Advanced technical workshops and app creation</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/courses">
                   Explore
@@ -2843,6 +2956,11 @@ const Home = () => {
                   <FiCode />
                 </WhatWeDoBlockIcon>
                 <WhatWeDoBlockTitle>Development</WhatWeDoBlockTitle>
+                <WhatWeDoMetaRow>
+                  <WhatWeDoMetaPill>Hackathons</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Grants</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Bounties</WhatWeDoMetaPill>
+                </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
                   <WhatWeDoBlockBullet>Hackathons & competitive builds</WhatWeDoBlockBullet>
                   <WhatWeDoBlockBullet>Grants & protocol funding programs</WhatWeDoBlockBullet>
@@ -2912,6 +3030,11 @@ const Home = () => {
                   <FiSearch />
                 </WhatWeDoBlockIcon>
                 <WhatWeDoBlockTitle>Research</WhatWeDoBlockTitle>
+                <WhatWeDoMetaRow>
+                  <WhatWeDoMetaPill>Investments</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Consulting</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Due Diligence</WhatWeDoMetaPill>
+                </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
                   <WhatWeDoBlockBullet>Investment & protocol analysis</WhatWeDoBlockBullet>
                   <WhatWeDoBlockBullet>Consulting & market research</WhatWeDoBlockBullet>
@@ -2981,6 +3104,11 @@ const Home = () => {
                   <FiSettings />
                 </WhatWeDoBlockIcon>
                 <WhatWeDoBlockTitle>Operations</WhatWeDoBlockTitle>
+                <WhatWeDoMetaRow>
+                  <WhatWeDoMetaPill>Events</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Funding</WhatWeDoMetaPill>
+                  <WhatWeDoMetaPill>Growth</WhatWeDoMetaPill>
+                </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
                   <WhatWeDoBlockBullet>Partnerships & major events</WhatWeDoBlockBullet>
                   <WhatWeDoBlockBullet>Logistics & funding systems</WhatWeDoBlockBullet>
