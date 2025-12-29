@@ -83,7 +83,7 @@ const LogoText = styled.h3`
   font-weight: 700;
   color: #ffffff;
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const LogoDescription = styled.p`
@@ -91,7 +91,7 @@ const LogoDescription = styled.p`
   font-size: 0.9rem;
   line-height: 1.6;
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const SocialLinks = styled.ul`
@@ -162,7 +162,7 @@ const SectionTitle = styled.h4`
   margin: 0 0 0.5rem 0;
   text-transform: none;
   letter-spacing: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const FooterLinks = styled.ul`
@@ -179,7 +179,7 @@ const FooterLink = styled(Link)`
   text-decoration: none;
   font-size: 0.875rem;
   transition: color 0.2s ease;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 
   &:hover {
     color: #7120b0;
@@ -207,7 +207,7 @@ const Copyright = styled.div`
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.875rem;
   font-weight: 400;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const LegalLinks = styled.div`
@@ -227,7 +227,7 @@ const LegalLink = styled.a`
   text-decoration: underline;
   font-size: 0.875rem;
   font-weight: 400;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   transition: color 0.2s ease;
 
   &:hover {
