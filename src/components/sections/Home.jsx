@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings } from 'react-icons/fi';
+import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 
 // Education block images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
@@ -1102,6 +1102,672 @@ const IdentityMicroLine = styled(motion.p)`
 
   @media (max-width: 480px) {
     font-size: 0.75rem;
+  }
+`;
+
+// Stats Hero Section
+// Keyframes for animations
+const pulseGlow = keyframes`
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+`;
+
+const pulseOnce = keyframes`
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+`;
+
+const gradientSweep = keyframes`
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+`;
+
+const nodeDrift = keyframes`
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(10px, -8px);
+  }
+  50% {
+    transform: translate(-5px, 5px);
+  }
+  75% {
+    transform: translate(8px, 3px);
+  }
+`;
+
+const lineDraw = keyframes`
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+`;
+
+const particleFloat = keyframes`
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.5;
+  }
+`;
+
+const StatsHeroSection = styled(motion.section)`
+  width: 100%;
+  max-width: 100vw;
+  padding: 100px 2rem;
+  background: #000000;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  overflow-x: visible;
+  overflow-y: visible;
+
+  /* Subtle animated network field background */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        rgba(168, 85, 247, 0.02) 0,
+        rgba(168, 85, 247, 0.02) 1px,
+        transparent 1px,
+        transparent 120px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(168, 85, 247, 0.02) 0,
+        rgba(168, 85, 247, 0.02) 1px,
+        transparent 1px,
+        transparent 120px
+      );
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+    animation: ${particleFloat} 25s ease-in-out infinite;
+    mask-image: radial-gradient(ellipse 80% 60% at center, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at center, black 30%, transparent 100%);
+  }
+
+  @media (max-width: 768px) {
+    padding: 80px 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 60px 1rem;
+  }
+`;
+
+const NetworkField = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+`;
+
+const NetworkNode = styled.div`
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(168, 85, 247, 0.4);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+  animation: ${nodeDrift} ${props => props.duration || 20}s ease-in-out infinite;
+  animation-delay: ${props => props.delay || 0}s;
+  left: ${props => props.left || '50%'};
+  top: ${props => props.top || '50%'};
+`;
+
+const NetworkLine = styled.div`
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.15) 50%,
+    transparent 100%
+  );
+  left: ${props => props.left || '0%'};
+  top: ${props => props.top || '50%'};
+  width: ${props => props.width || '100px'};
+  transform: rotate(${props => props.rotate || 0}deg);
+  opacity: 0.3;
+  animation: ${particleFloat} ${props => props.duration || 15}s ease-in-out infinite;
+  animation-delay: ${props => props.delay || 0}s;
+`;
+
+const StatsHeroDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.2) 20%,
+    rgba(168, 85, 247, 0.3) 50%,
+    rgba(168, 85, 247, 0.2) 80%,
+    transparent 100%
+  );
+  margin: 0;
+  position: relative;
+  z-index: 1;
+
+  &.top {
+    margin-bottom: 4rem;
+
+    @media (max-width: 768px) {
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 480px) {
+      margin-bottom: 2.5rem;
+    }
+  }
+
+  &.bottom {
+    margin-top: 4rem;
+
+    @media (max-width: 768px) {
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 480px) {
+      margin-top: 2.5rem;
+    }
+  }
+`;
+
+const StatsHeroContainer = styled.div`
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  overflow-x: visible;
+  overflow-y: visible;
+`;
+
+const StatsHeroHeader = styled(motion.div)`
+  text-align: center;
+  margin-bottom: 3.5rem;
+  position: relative;
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    margin-bottom: 2.5rem;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 2rem;
+  }
+`;
+
+const StatsHeroEyebrow = styled.div`
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(
+    135deg,
+    rgba(168, 85, 247, 0.9) 0%,
+    rgba(168, 85, 247, 0.7) 50%,
+    rgba(168, 85, 247, 0.9) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.6) 50%,
+      transparent 100%
+    );
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+`;
+
+const StatsHeroLedgerRow = styled(motion.div)`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  padding: 3rem 0;
+  gap: 0;
+  overflow: visible;
+  width: 100%;
+
+  @media (max-width: 968px) {
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2.5rem 0;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 2rem 0;
+  }
+`;
+
+const ChainLine = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 8px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.15) 10%,
+    rgba(168, 85, 247, 0.25) 25%,
+    rgba(168, 85, 247, 0.3) 50%,
+    rgba(168, 85, 247, 0.25) 75%,
+    rgba(168, 85, 247, 0.15) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+
+  @media (max-width: 480px) {
+    width: 2px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.15) 10%,
+      rgba(168, 85, 247, 0.25) 25%,
+      rgba(168, 85, 247, 0.3) 50%,
+      rgba(168, 85, 247, 0.25) 75%,
+      rgba(168, 85, 247, 0.15) 90%,
+      transparent 100%
+    );
+  }
+`;
+
+const StatConnectionLine = styled(motion.div)`
+  flex: 1;
+  min-width: 40px;
+  max-width: 150px;
+  height: 2px;
+  position: relative;
+  margin: 0 0.5rem;
+  z-index: 1;
+  overflow: hidden;
+  align-self: flex-start;
+  margin-top: 8px; /* Align with center of node dot (16px / 2 = 8px) */
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20%;
+    width: 140%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.4) 20%,
+      rgba(168, 85, 247, 0.6) 50%,
+      rgba(168, 85, 247, 0.4) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: ${gradientSweep} 4s linear infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -20%;
+    width: 140%;
+    height: 1px;
+    background: rgba(168, 85, 247, 0.3);
+    transform: translateY(-50%);
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+  }
+
+  @media (max-width: 968px) {
+    display: none;
+  }
+`;
+
+const ChainLineSegment = styled.div`
+  position: absolute;
+  left: ${props => props.left || '0%'};
+  width: ${props => props.width || '25%'};
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.4) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+
+  ${StatsHeroLedgerRow}:hover & {
+    opacity: 0;
+  }
+
+  ${StatsHeroLedgerRow} [data-node-index="${props => props['data-segment-index']}"]:hover ~ &,
+  ${StatsHeroLedgerRow} [data-node-index="${props => props['data-segment-index']}"]:hover + ${StatConnectionLine} ~ & {
+    opacity: 1;
+  }
+
+  @media (max-width: 480px) {
+    top: ${props => props.top || '0%'};
+    height: ${props => props.height || '25%'};
+    width: 100%;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(168, 85, 247, 0.4) 50%,
+      transparent 100%
+    );
+  }
+`;
+
+const StatNodeWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-width: 250px;
+  margin-top: 0;
+  padding-top: 0;
+  overflow: visible;
+  flex-shrink: 0;
+
+  &:hover [data-chain-segment] {
+    opacity: 1 !important;
+  }
+
+  @media (max-width: 968px) {
+    flex: 0 0 calc(50% - 1rem);
+    min-width: 220px;
+  }
+
+  @media (max-width: 480px) {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+  }
+`;
+
+const StatNodeDot = styled.div`
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, rgba(168, 85, 247, 0.4) 100%);
+  box-shadow: 
+    0 0 20px rgba(168, 85, 247, 0.6),
+    0 0 40px rgba(168, 85, 247, 0.3),
+    inset 0 0 10px rgba(168, 85, 247, 0.5);
+  position: relative;
+  margin: 0 auto 1.5rem auto;
+  flex-shrink: 0;
+  animation: ${pulseGlow} 3s ease-in-out infinite;
+  z-index: 4;
+  top: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
+    animation: ${pulseGlow} 3s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+
+  @media (max-width: 768px) {
+    width: 14px;
+    height: 14px;
+    margin-bottom: 1.25rem;
+
+    &::before {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 12px;
+    height: 12px;
+    margin-bottom: 1rem;
+
+    &::before {
+      width: 18px;
+      height: 18px;
+    }
+  }
+`;
+
+const StatNode = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 3;
+  flex: 1 1 auto;
+  min-width: 200px;
+  padding: 0 2rem;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+  cursor: default;
+  text-align: center;
+  width: 100%;
+  margin-top: 0;
+  overflow: visible;
+  box-sizing: border-box;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 1;
+    filter: brightness(1.1);
+    
+    ${StatNodeDot} {
+      animation: ${pulseOnce} 0.6s ease-out;
+    }
+  }
+
+  ${StatsHeroLedgerRow}:hover &:not(:hover) {
+    opacity: 0.6;
+    filter: brightness(0.85);
+  }
+
+  @media (max-width: 968px) {
+    flex: 0 0 calc(50% - 1rem);
+    padding: 0 1.5rem;
+    min-width: 180px;
+  }
+
+  @media (max-width: 480px) {
+    flex: 1 1 100%;
+    padding: 0 1rem;
+    width: 100%;
+    min-width: 100%;
+  }
+`;
+
+const StatsHeroStatValue = styled.div`
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    #7120b0 0%,
+    #9d20b0 25%,
+    #bb20ff 50%,
+    #9d20b0 75%,
+    #7120b0 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+  animation: ${shimmer} 8s ease-in-out infinite;
+  text-align: center;
+  width: 100%;
+  margin-top: 0.5rem;
+  overflow: visible;
+  white-space: nowrap;
+  word-break: keep-all;
+  flex-shrink: 0;
+  min-width: fit-content;
+
+  @media (max-width: 968px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.75rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+    white-space: normal;
+  }
+`;
+
+const StatsHeroStatLabel = styled.div`
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin-top: 1.25rem;
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  max-width: 100%;
+  word-wrap: break-word;
+  word-break: break-word;
+  width: 100%;
+  display: block;
+  overflow: visible;
+  box-sizing: border-box;
+
+  @media (max-width: 968px) {
+    font-size: 1.625rem;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-top: 0.875rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.375rem;
+    margin-top: 0.75rem;
+  }
+`;
+
+const StatsHeroStatMicro = styled.div`
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  margin-top: 0.75rem;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  word-wrap: break-word;
+  word-break: break-word;
+  display: block;
+  overflow: visible;
+  box-sizing: border-box;
+
+  @media (max-width: 968px) {
+    font-size: 1.0625rem;
+    margin-top: 0.625rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9375rem;
+    margin-top: 0.4375rem;
   }
 `;
 
@@ -2724,6 +3390,143 @@ const Home = () => {
         </IdentityContainer>
       </IdentitySection>
 
+      {/* Stats Hero Section */}
+      <StatsHeroSection
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* Animated Network Field */}
+        <NetworkField>
+          {[...Array(12)].map((_, i) => (
+            <NetworkNode
+              key={`node-${i}`}
+              left={`${15 + (i * 7)}%`}
+              top={`${30 + (i % 3) * 20}%`}
+              duration={20 + (i % 5) * 3}
+              delay={i * 0.5}
+            />
+          ))}
+          {[...Array(8)].map((_, i) => (
+            <NetworkLine
+              key={`line-${i}`}
+              left={`${10 + (i * 12)}%`}
+              top={`${35 + (i % 2) * 30}%`}
+              width={`${80 + (i % 3) * 20}px`}
+              rotate={-15 + (i % 3) * 15}
+              duration={15 + (i % 4) * 2}
+              delay={i * 0.3}
+            />
+          ))}
+        </NetworkField>
+
+        <StatsHeroContainer>
+          <StatsHeroHeader
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <StatsHeroEyebrow>BY THE NUMBERS</StatsHeroEyebrow>
+          </StatsHeroHeader>
+          <StatsHeroLedgerRow
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {/* Chain Line */}
+            <ChainLine>
+              {[0, 1, 2, 3].map((i) => (
+                <ChainLineSegment
+                  key={`segment-${i}`}
+                  data-segment-index={i}
+                  left={`${i * 25}%`}
+                  width="25%"
+                  top={`${i * 25}%`}
+                  height="25%"
+                />
+              ))}
+            </ChainLine>
+
+            {[
+              // Update these values as needed - all stats use the same structure
+              { icon: FiZap, value: 100, suffix: "+", label: "Weekly Active", micro: "Members every week" },
+              { icon: FiDollarSign, value: 50000, prefix: "$", suffix: "+", label: "in Prize Money Won", micro: "Across global hackathons" },
+              { icon: FiBriefcase, value: 25, suffix: "+", label: "Partners & Sponsors", micro: "Backed by leading protocols" },
+              { icon: FiAward, value: 400, suffix: "+", label: "Engineers Graduated", micro: "From technical course" }
+            ].map((stat, index) => {
+              const baseDelay = 0.4 + index * 0.15;
+              return (
+                <React.Fragment key={index}>
+                  <StatNodeWrapper>
+                    <StatNode
+                      data-node-index={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: baseDelay }}
+                    >
+                      <StatNodeDot
+                        as={motion.div}
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: baseDelay }}
+                      />
+                      <StatsHeroStatValue
+                        as={motion.div}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: baseDelay + 0.4 }}
+                      >
+                        <CountUp 
+                          end={stat.value} 
+                          duration={2000} 
+                          prefix={stat.prefix || ""} 
+                          suffix={stat.suffix || ""} 
+                        />
+                      </StatsHeroStatValue>
+                      <StatsHeroStatLabel
+                        as={motion.div}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: baseDelay + 0.6 }}
+                      >
+                        {stat.label}
+                      </StatsHeroStatLabel>
+                      <StatsHeroStatMicro
+                        as={motion.div}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: baseDelay + 0.7 }}
+                      >
+                        {stat.micro}
+                      </StatsHeroStatMicro>
+                    </StatNode>
+                  </StatNodeWrapper>
+                  {index < 3 && (
+                    <StatConnectionLine
+                      as={motion.div}
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      whileInView={{ scaleX: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6, delay: baseDelay + 0.3 }}
+                      style={{ originX: 0 }}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </StatsHeroLedgerRow>
+        </StatsHeroContainer>
+        <StatsHeroDivider className="bottom" />
+      </StatsHeroSection>
+
       {/* What We Do Section */}
       <WhatWeDoSection>
         <WhatWeDoFloorLine />
@@ -2890,7 +3693,7 @@ const Home = () => {
                 <WhatWeDoBlockBody>
                   <WhatWeDoBlockBullet>Student instructors & dedicated TAs</WhatWeDoBlockBullet>
                   <WhatWeDoBlockBullet>Featured company and guest lectures</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Advanced technical workshops and app creation</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Advanced technical workshops and dapp deployment</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/courses">
                   Explore
@@ -2962,9 +3765,9 @@ const Home = () => {
                   <WhatWeDoMetaPill>Bounties</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>Hackathons & competitive builds</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Grants & protocol funding programs</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Bounties driving real product work</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/teams">
                   Explore
@@ -3036,9 +3839,9 @@ const Home = () => {
                   <WhatWeDoMetaPill>Due Diligence</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>Investment & protocol analysis</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Consulting & market research</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Formal due diligence reports</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/teams/research">
                   Explore
@@ -3110,9 +3913,9 @@ const Home = () => {
                   <WhatWeDoMetaPill>Growth</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>Partnerships & major events</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Logistics & funding systems</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Marketing & growth execution</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
                 <WhatWeDoBlockCTA to="/teams/operations">
                   Explore
