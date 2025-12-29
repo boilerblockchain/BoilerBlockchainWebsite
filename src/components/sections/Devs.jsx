@@ -6,16 +6,16 @@ import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 
-// Import images
-import ethan from "../../assets/images/18_Ethan_Haeberle.jpg";
-import soham from "../../assets/images/16_Soham_Jog.jpg";
-import adithya from "../../assets/images/17_Adithya_Ganesh.jpg";
-import vincent from "../../assets/images/19_Vincent_Palmerio.jpg";
-import eli from "../../assets/images/20_Eli_Dubizh.jpeg";
-import pradyumm from "../../assets/images/21_Pradyumn_Malik.jpg";
-import albert from "../../assets/images/22_Albert_Wu.jpg";
-import aditya from "../../assets/images/23_Aditya_Kattil.jpeg";
-import mahi from "../../assets/images/24_Mahi_Tripathi.jpg";
+// Placeholder images - Replace with actual team member photos when ready
+const ethan = 'https://via.placeholder.com/400x400/7120b0/ffffff?text=Ethan';
+const soham = 'https://via.placeholder.com/400x400/9d20b0/ffffff?text=Soham';
+const adithya = 'https://via.placeholder.com/400x400/a855f7/ffffff?text=Adithya';
+const vincent = 'https://via.placeholder.com/400x400/7120b0/ffffff?text=Vincent';
+const eli = 'https://via.placeholder.com/400x400/9d20b0/ffffff?text=Eli';
+const pradyumm = 'https://via.placeholder.com/400x400/a855f7/ffffff?text=Pradyumn';
+const albert = 'https://via.placeholder.com/400x400/7120b0/ffffff?text=Albert';
+const aditya = 'https://via.placeholder.com/400x400/9d20b0/ffffff?text=Aditya';
+const mahi = 'https://via.placeholder.com/400x400/a855f7/ffffff?text=Mahi';
 
 // Animation variants
 const fadeInUp = {

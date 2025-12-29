@@ -1,15 +1,15 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion, useInView } from "framer-motion";
-
-import img5 from "../../assets/images/5.jpg";
-import img6 from "../../assets/images/6.jpg";
-import img7 from "../../assets/images/7.jpg";
-import img9 from "../../assets/images/9.jpg";
 import Navigation from '../Navigation';
+
+// Placeholder images - Replace with actual images when ready
+const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+1';
+const img6 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=About+Image+2';
+const img7 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=About+Image+3';
+const img9 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+4';
 
 const fadeInUp = {
   initial: {

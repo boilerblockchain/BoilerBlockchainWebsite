@@ -3,11 +3,13 @@ import styled from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
-import img5 from "../../assets/images/5.jpg";
-import img4 from "../../assets/images/4.jpg";
-import img3 from "../../assets/images/3.jpg";
 import Navigation from '../Navigation';
 import Footer from '../Footer';
+
+// Placeholder images - Replace with actual images when ready
+const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Education+Image+1';
+const img4 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Education+Image+2';
+const img3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Education+Image+3';
 
 const fadeInUp = {
     initial: {
