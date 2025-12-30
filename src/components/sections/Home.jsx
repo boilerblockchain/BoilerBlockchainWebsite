@@ -1776,6 +1776,318 @@ const StatsHeroStatMicro = styled.div`
   }
 `;
 
+const CTADivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 85, 247, 0.2) 20%,
+    rgba(168, 85, 247, 0.4) 50%,
+    rgba(168, 85, 247, 0.2) 80%,
+    transparent 100%
+  );
+  margin: 0;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+`;
+
+const CTASection = styled.section`
+  width: 100%;
+  max-width: 100vw;
+  padding: 140px 2rem 120px;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  /* Dark background layer to separate from particles */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.6) 50%,
+      rgba(0, 0, 0, 0.4) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Enhanced purple glow background */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse 100% 60% at 50% 50%,
+      rgba(168, 85, 247, 0.15) 0%,
+      rgba(168, 85, 247, 0.08) 30%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 1;
+    animation: ${particleFloat} 20s ease-in-out infinite;
+  }
+
+  @media (max-width: 768px) {
+    padding: 100px 1.5rem 80px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 80px 1rem 60px;
+  }
+`;
+
+const CTAContainer = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
+`;
+
+const CTAContent = styled(motion.div)`
+  text-align: center;
+  position: relative;
+  z-index: 3;
+  background: linear-gradient(
+    135deg,
+    rgba(25, 25, 35, 0.9) 0%,
+    rgba(30, 30, 40, 0.95) 50%,
+    rgba(25, 25, 35, 0.9) 100%
+  );
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: 32px;
+  padding: 4rem 3rem;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 8px 32px rgba(168, 85, 247, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(168, 85, 247, 0.1);
+
+  /* Additional inner glow */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 32px;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(168, 85, 247, 0.3) 0%,
+      rgba(168, 85, 247, 0.1) 50%,
+      rgba(168, 85, 247, 0.3) 100%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 768px) {
+    padding: 3rem 2rem;
+    border-radius: 24px;
+
+    &::before {
+      border-radius: 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 2.5rem 1.5rem;
+    border-radius: 20px;
+
+    &::before {
+      border-radius: 20px;
+    }
+  }
+`;
+
+const CTATitle = styled.h2`
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-family: 'Tomorrow', sans-serif;
+
+  @media (max-width: 968px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+const shimmerCTA = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
+const CTAGradient = styled.span`
+  background: linear-gradient(
+    135deg,
+    #7120b0 0%,
+    #9d20b0 25%,
+    #bb20ff 50%,
+    #9d20b0 75%,
+    #7120b0 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: ${shimmerCTA} 8s ease-in-out infinite;
+`;
+
+const CTADescription = styled.p`
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  font-family: 'Tomorrow', sans-serif;
+  font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+  }
+`;
+
+const CTAButtonGroup = styled(motion.div)`
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.875rem;
+  }
+`;
+
+const CTAButton = styled(motion(Link))`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.125rem 2.5rem;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1.125rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: 'Tomorrow', sans-serif;
+  position: relative;
+  overflow: hidden;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9375rem;
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.3);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(113, 32, 176, 0.5);
+
+      &::before {
+        left: 100%;
+      }
+    }
+  }
+
+  &.secondary {
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid rgba(168, 85, 247, 0.5);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.8);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2);
+    }
+  }
+`;
+
 const WhatWeDoSection = styled.section`
   width: 100%;
   max-width: 100vw;
@@ -3946,43 +4258,61 @@ const Home = () => {
         </WhatWeDoContainer>
       </WhatWeDoSection>
 
-      {/* CTA Section */}
-      <Section style={{ background: '#0a0a0a' }}>
-        <Container style={{ textAlign: 'center' }}>
-          <SectionTitle
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+      {/* CTA Divider */}
+      <CTADivider />
+
+      {/* Improved CTA Section */}
+      <CTASection>
+        <CTAContainer>
+          <CTAContent
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Join Our <span className="gradient-text">Community</span>
-          </SectionTitle>
-          <SectionDescription
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Connect with 400+ fellow blockchain enthusiasts, get exclusive updates, and access specialized resources in our growing Discord community.
-          </SectionDescription>
-          <ButtonGroup
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Button
-              as="a"
-              href="https://discord.gg/hnjtVpb9H5"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="primary"
+            <CTATitle>
+              Ready to Build the <CTAGradient>Future</CTAGradient>?
+            </CTATitle>
+            <CTADescription>
+              Join Purdue's premier Web3 organization. Whether you're a builder, researcher, or entrepreneur, 
+              we provide the resources, community, and opportunities to launch your career in blockchain.
+            </CTADescription>
+            <CTAButtonGroup
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
-              Join Discord
-            </Button>
-            <Button to="/contact" className="secondary">
-              Contact Us
-            </Button>
-          </ButtonGroup>
-        </Container>
-      </Section>
+              <CTAButton
+                as="a"
+                href="https://discord.gg/hnjtVpb9H5"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="primary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Join Discord
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </CTAButton>
+              <CTAButton
+                to="/contact"
+                className="secondary"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Get in Touch
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </CTAButton>
+            </CTAButtonGroup>
+          </CTAContent>
+        </CTAContainer>
+      </CTASection>
     </PageContainer>
   );
 };

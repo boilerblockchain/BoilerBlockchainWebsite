@@ -247,7 +247,7 @@ export default function Footer() {
             <LogoText>Boiler Blockchain</LogoText>
           </LogoContainer>
           <LogoDescription>
-            Purdue's premier student-led organization dedicated to advancing blockchain technology through innovation, education, and community building.
+            Bringing Purdue Onchain.
           </LogoDescription>
           <SocialLinks>
             <li>
