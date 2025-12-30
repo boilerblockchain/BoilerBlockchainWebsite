@@ -12,28 +12,27 @@ const img4 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Education+I
 const img3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Education+Image+3';
 
 const fadeInUp = {
-    initial: {
-      y: 60,
-      opacity: 0
-    },
-    animate: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
+  initial: {
+    y: 60,
+    opacity: 0
+  },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
     }
+  }
 };
-  
+
 const staggerContainer = {
-    animate: {
-      transition: {
-        staggerChildren: 0.1
-      }
+  animate: {
+    transition: {
+      staggerChildren: 0.1
     }
+  }
 };
-  
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -50,8 +49,6 @@ const PageSection = styled.section`
     font-family: 'Tomorrow', sans-serif; 
   }
 `;
-
-
 
 const Container = styled(motion.div)`
   width: 92%;
@@ -125,13 +122,20 @@ const ImageSection = styled(motion.div)`
 `;
 
 const CourseCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(40, 35, 50, 0.95) 0%,
+    rgba(35, 30, 45, 0.95) 100%
+  );
   padding: 2.5rem;
-  border: 1px solid #7120b0;
+  border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 8px;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   font-family: 'Tomorrow', sans-serif;
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
+  box-shadow: 
+    0 4px 20px rgba(168, 85, 247, 0.15),
+    0 0 0 1px rgba(168, 85, 247, 0.1) inset;
   transition: all 0.3s ease;
   position: relative;
 
@@ -140,8 +144,16 @@ const CourseCard = styled(motion.div)`
   }
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
+    box-shadow: 
+      0 12px 40px rgba(168, 85, 247, 0.3),
+      0 0 0 1px rgba(168, 85, 247, 0.4) inset;
     transform: translateY(-5px);
+    border-color: rgba(168, 85, 247, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(45, 40, 55, 1) 0%,
+      rgba(40, 35, 50, 1) 100%
+    );
   }
 `;
 
@@ -394,7 +406,7 @@ const DownloadButton = styled.a`
   }
 `;
 
-const EducationPage = () => {
+const CoursesPage = () => {
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
   }, []);
@@ -457,7 +469,7 @@ const EducationPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Technical <span style={{ color: "#7120b0" }}>Course</span>
+          Intro to <span style={{ color: "#7120b0" }}>Blockchain</span>
         </Title>
 
         <ImageSection
@@ -487,7 +499,7 @@ const EducationPage = () => {
             as={motion.h2}
             variants={fadeInUp}
           >
-            Principles and Practices of Blockchain
+            Intro to Blockchain
           </CourseTitle>
 
           <CourseInfo>
@@ -508,8 +520,7 @@ const EducationPage = () => {
               <InfoCard className="large" as={motion.div} variants={fadeInUp}>
                 <h4>Course Staff</h4>
                 <p>
-                  {["Prof. Mithuna thottethodi", "Vincent Palmerio", "Shivam Rastogi", "Adithya Ganesh",
-                    "Mugdha Patil (TA)", "Aditya Kuniyil Kattil (TA)"].map((staff, index) => (
+                  {["Aditya Kuniyil Kattil", "Shivam Rastogi"].map((staff, index) => (
                     <motion.span
                       key={staff}
                       initial={{ opacity: 0, y: 20 }}
@@ -597,4 +608,5 @@ const EducationPage = () => {
   );
 };
 
-export default EducationPage;
+export default CoursesPage;
+

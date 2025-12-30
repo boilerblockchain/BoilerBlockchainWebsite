@@ -7,7 +7,6 @@ import AboutPage from "./components/sections/AboutPage";
 import Devs from './components/sections/Devs';
 import '@fontsource/inter';
 import '@fontsource/tomorrow/600.css';
-import EducationPage from './components/sections/EducationPage.jsx'
 import Hackathons from "./components/sections/Hackathons";
 
 // Teams
@@ -18,7 +17,7 @@ import MarketingTeam from "./components/sections/MarketingTeam";
 import OperationsTeam from "./components/sections/OperationsTeam";
 
 // Courses
-import CoursesLanding from "./components/sections/CoursesLanding";
+import CoursesPage from "./components/sections/CoursesPage";
 
 // People
 import PeopleLanding from "./components/sections/PeopleLanding";
@@ -48,8 +47,8 @@ root.render(
       <Route path="/teams/operations" element={<OperationsTeam />} />
       
       {/* Courses Routes */}
-      <Route path="/courses" element={<CoursesLanding />} />
-      <Route path="/courses/technical" element={<EducationPage />} />
+      <Route path="/courses" element={<CoursesPage />} />
+      <Route path="/courses/technical" element={<CoursesPage />} />
       
       {/* People Routes */}
       <Route path="/people" element={<PeopleLanding />} />

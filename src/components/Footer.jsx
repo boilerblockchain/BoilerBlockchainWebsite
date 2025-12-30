@@ -11,7 +11,7 @@ import Github from "../Icons/Github";
 
 const FooterContainer = styled.footer`
   width: 100%;
-  background: rgba(0, 0, 0, 0.95);
+  background: #000000;
   padding: 4rem 2rem 2rem;
   margin-top: auto;
   position: relative;
