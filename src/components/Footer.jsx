@@ -192,15 +192,10 @@ const BottomBar = styled.div`
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-  }
 `;
 
 const Copyright = styled.div`
@@ -208,31 +203,7 @@ const Copyright = styled.div`
   font-size: 0.875rem;
   font-weight: 400;
   font-family: 'Tomorrow', sans-serif;
-`;
-
-const LegalLinks = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-
-  @media (max-width: 768px) {
-    justify-content: center;
-    gap: 1rem;
-  }
-`;
-
-const LegalLink = styled.a`
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: underline;
-  font-size: 0.875rem;
-  font-weight: 400;
-  font-family: 'Tomorrow', sans-serif;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
+  text-align: center;
 `;
 
 export default function Footer() {
@@ -320,10 +291,13 @@ export default function Footer() {
           </FooterSection>
 
           <FooterSection>
-            <SectionTitle>Courses</SectionTitle>
+            <SectionTitle>Resources</SectionTitle>
             <FooterLinks>
               <li>
                 <FooterLink to="/courses/technical">Technical Course</FooterLink>
+              </li>
+              <li>
+                <FooterLink to="/partners">Partners</FooterLink>
               </li>
             </FooterLinks>
           </FooterSection>
@@ -333,9 +307,6 @@ export default function Footer() {
             <FooterLinks>
               <li>
                 <FooterLink to="/people/team">Our Team</FooterLink>
-              </li>
-              <li>
-                <FooterLink to="/partners">Partners</FooterLink>
               </li>
               <li>
                 <FooterLink to="/contact">Contact Us</FooterLink>
@@ -349,17 +320,6 @@ export default function Footer() {
         <Copyright>
           &copy; {new Date().getFullYear()} Boiler Blockchain. All rights reserved.
         </Copyright>
-        <LegalLinks>
-          <LegalLink href="/privacy" target="_blank" rel="noopener noreferrer">
-            Privacy Policy
-          </LegalLink>
-          <LegalLink href="/terms" target="_blank" rel="noopener noreferrer">
-            Terms of Service
-          </LegalLink>
-          <LegalLink href="/cookies" target="_blank" rel="noopener noreferrer">
-            Cookies Settings
-          </LegalLink>
-        </LegalLinks>
       </BottomBar>
     </FooterContainer>
   );
