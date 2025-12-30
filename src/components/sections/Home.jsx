@@ -2578,9 +2578,8 @@ const WhatWeDoBlock = styled(motion.div)`
   background: 
     linear-gradient(
       135deg,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0.85) 50%,
-      rgba(0, 0, 0, 0.95) 100%
+      rgba(40, 35, 50, 0.95) 0%,
+      rgba(35, 30, 45, 0.95) 100%
     ),
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-size: 60px 60px;
@@ -2592,7 +2591,7 @@ const WhatWeDoBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 16px;
   box-shadow: 
     /* Top bevel lighting */
@@ -2605,7 +2604,7 @@ const WhatWeDoBlock = styled(motion.div)`
     /* Increased shadow depth */
     0 12px 48px rgba(0, 0, 0, 0.8),
     0 6px 24px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(168, 85, 247, 0.15);
+    0 4px 20px rgba(168, 85, 247, 0.15);
   transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
   overflow: hidden;
@@ -2734,7 +2733,14 @@ const WhatWeDoBlock = styled(motion.div)`
 
   /* Interactive hover effects */
   &:hover {
-    border-color: rgba(168, 85, 247, 0.5);
+    background: 
+      linear-gradient(
+        135deg,
+        rgba(45, 40, 55, 1) 0%,
+        rgba(40, 35, 50, 1) 100%
+      ),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    border-color: rgba(168, 85, 247, 0.6);
     box-shadow: 
       inset 0 1px 2px rgba(255, 255, 255, 0.12),
       inset 1px 0 12px rgba(168, 85, 247, 0.3),
@@ -2743,6 +2749,7 @@ const WhatWeDoBlock = styled(motion.div)`
       0 24px 100px rgba(168, 85, 247, 0.25),
       0 12px 48px rgba(168, 85, 247, 0.15),
       0 8px 32px rgba(0, 0, 0, 0.8),
+      0 12px 40px rgba(168, 85, 247, 0.3),
       0 0 0 1px rgba(168, 85, 247, 0.4);
     transform: translateY(-8px) scale(1.03) rotateX(2deg);
     border-radius: 20px;

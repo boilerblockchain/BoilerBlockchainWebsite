@@ -98,7 +98,7 @@ const LogoText = styled.span`
   color: #ffffff;
   font-size: 1.125rem;
   font-weight: 600;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   white-space: nowrap;
 
   @media (max-width: 640px) {
@@ -141,7 +141,7 @@ const NavLink = styled(Link)`
   background-color: ${props => props.isActive || props.isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
   font-size: 0.875rem;
   font-weight: 500;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   transition: all 0.2s ease;
 
   &:hover {
@@ -187,7 +187,7 @@ const DropdownItem = styled(Link)`
   background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
   font-size: 0.875rem;
   font-weight: ${props => props.isActive ? 500 : 400};
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   transition: all 0.2s ease;
 
   &:hover {
@@ -214,7 +214,7 @@ const ContactButton = styled(Link)`
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   transition: all 0.2s ease;
   white-space: nowrap;
 
@@ -303,7 +303,7 @@ const MobileNavLink = styled(Link)`
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: ${props => props.isActive ? 500 : 400};
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
   border-radius: 8px;
   background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
   transition: all 0.2s ease;
@@ -323,7 +323,7 @@ const MobileDropdownTitle = styled.div`
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Tomorrow', sans-serif;
 `;
 
 const MobileDropdownItems = styled.div`

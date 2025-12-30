@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiUsers, FiCode, FiSearch, FiTrendingUp, FiArrowRight } from 'react-icons/fi';
+import { FiCode, FiSearch, FiSettings, FiArrowRight } from 'react-icons/fi';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
@@ -13,8 +13,9 @@ const PageSection = styled.section`
   width: 100%;
   background-color: #000000;
   position: relative;
-  overflow: hidden;
-  padding: 4rem 0 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4rem 0 4rem;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
@@ -29,9 +30,10 @@ const PageSection = styled.section`
 const Container = styled.div`
   width: 90%;
   max-width: 1200px;
-  margin: 6rem auto 0;
+  margin: 6rem auto 4rem;
   position: relative;
   z-index: 2;
+  flex: 1;
   
   @media (max-width: 70em) {
     width: 95%;
@@ -39,13 +41,14 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     width: 95%;
-    margin: 4rem auto 0;
+    margin: 4rem auto 3rem;
     padding: 0 1rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
     padding: 0 0.75rem;
+    margin: 4rem auto 2rem;
   }
 `;
 
@@ -78,43 +81,55 @@ const Subtitle = styled(motion.p)`
 
 const TeamsGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   margin: 3rem 0;
 
-  @media (max-width: 968px) {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
     margin: 2rem 0;
   }
 
   @media (max-width: 480px) {
-    gap: 0.75rem;
+    gap: 1.25rem;
   }
 `;
 
 const TeamCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(40, 35, 50, 0.95) 0%,
+    rgba(35, 30, 45, 0.95) 100%
+  );
+  border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 12px;
   padding: 2rem;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
+  box-shadow: 
+    0 4px 20px rgba(168, 85, 247, 0.15),
+    0 0 0 1px rgba(168, 85, 247, 0.1) inset;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
+    box-shadow: 
+      0 12px 40px rgba(168, 85, 247, 0.3),
+      0 0 0 1px rgba(168, 85, 247, 0.4) inset;
     transform: translateY(-6px);
-    border-color: rgba(113, 32, 176, 0.6);
-    background: rgba(15, 15, 15, 0.85);
+    border-color: rgba(168, 85, 247, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(45, 40, 55, 1) 0%,
+      rgba(40, 35, 50, 1) 100%
+    );
   }
 
   &::before {
@@ -243,15 +258,15 @@ const teams = [
     description: 'Exploring cutting-edge blockchain research, consensus mechanisms, and emerging technologies in the decentralized space.',
     stats: { members: '60+', papers: '12+', partnerships: '5+' },
     path: '/teams/research'
-  }/*,
+  },
   {
-    id: 'marketing',
-    name: 'Marketing Team',
-    icon: FiTrendingUp,
-    description: 'Promoting blockchain adoption, organizing events, and building our community presence across digital platforms.',
-    stats: { members: '18+', events: '20+', followers: '2K+' },
-    path: '/teams/marketing'
-  }*/
+    id: 'operations',
+    name: 'Operations Team',
+    icon: FiSettings,
+    description: 'The engine behind everything: partnerships, events, logistics, and systems that let builders focus and scale impact.',
+    stats: { members: '25+', events: '15+', partners: '20+' },
+    path: '/teams/operations'
+  }
 ];
 
 const TeamsLanding = () => {
@@ -327,7 +342,7 @@ const TeamsLanding = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Discover the talented individuals driving innovation across development, research, and marketing at Boiler Blockchain
+          Three specialized teams. One mission: cultivating elite Web3 talent at Purdue through development, research, and operations.
         </Subtitle>
 
         <TeamsGrid
