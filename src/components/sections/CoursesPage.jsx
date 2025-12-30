@@ -53,8 +53,8 @@ const PageSection = styled.section`
 const Container = styled(motion.div)`
   width: 92%;
   max-width: 1400px;
-  margin: 6rem auto 0;
-  padding: 2rem 0;
+  margin: 0 auto 0;
+  padding: 120px 2rem 2rem;
   position: relative;
   z-index: 2;
   display: grid;
@@ -63,7 +63,7 @@ const Container = styled(motion.div)`
   
   @media (min-width: 768px) {
     width: 85%;
-    padding: 4rem 0;
+    padding: 120px 2rem 4rem;
     gap: 2rem;
   }
   
@@ -72,16 +72,22 @@ const Container = styled(motion.div)`
     align-items: stretch;
   }
 
+  @media (max-width: 1024px) {
+    padding: 110px 1.75rem 2rem;
+  }
+
   @media (max-width: 768px) {
     width: 95%;
-    padding: 2rem 1rem;
-    margin: 4rem auto 0;
+    padding: 100px 1.5rem 2rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    padding: 1.5rem 0.75rem;
-    margin: 3rem auto 0;
+    padding: 80px 1rem 1.5rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 1.5rem;
   }
 `;
 

@@ -47,7 +47,7 @@ const Container = styled(motion.div)`
   width: 85%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 0;
+  padding: 120px 2rem 4rem;
   position: relative;
   z-index: 2;
   display: flex;
@@ -55,8 +55,21 @@ const Container = styled(motion.div)`
   align-items: center;
   font-family: 'Tomorrow', sans-serif;
 
-  @media (max-width: 70em) {
+  @media (max-width: 1024px) {
     width: 90%;
+    padding: 110px 1.75rem 3.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 100px 1.5rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 80px 1rem 2rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 1.5rem;
   }
 `;
 

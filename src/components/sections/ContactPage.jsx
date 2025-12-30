@@ -25,23 +25,28 @@ const PageSection = styled.section`
 const Container = styled.div`
   width: 85%;
   max-width: 1200px;
-  margin: 6rem auto 0;
+  margin: 0 auto 0;
+  padding: 120px 2rem 0;
   position: relative;
   z-index: 2;
   
-  @media (max-width: 70em) {
+  @media (max-width: 1024px) {
     width: 90%;
+    padding: 110px 1.75rem 0;
   }
 
   @media (max-width: 768px) {
     width: 95%;
-    margin: 4rem auto 0;
-    padding: 0 1rem;
+    padding: 100px 1.5rem 0;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    padding: 0 0.75rem;
+    padding: 80px 1rem 0;
+  }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 0;
   }
 `;
 

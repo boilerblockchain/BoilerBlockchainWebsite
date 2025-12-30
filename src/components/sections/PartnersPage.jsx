@@ -21,93 +21,67 @@ const PageSection = styled.section`
   }
 `;
 
-const HeroSection = styled(motion.section)`
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 12rem 2rem 8rem;
-  position: relative;
-  z-index: 2;
-
-  @media (max-width: 768px) {
-    padding: 10rem 1.5rem 6rem;
-    min-height: 50vh;
-  }
-`;
-
-const HeroTitle = styled(motion.h1)`
-  font-size: 4.5rem;
-  color: #ffffff;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-
-  span {
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2.8rem;
-    letter-spacing: 2px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.2rem;
-  }
-`;
-
-const HeroSubtitle = styled(motion.p)`
-  font-size: 1.3rem;
-  color: rgba(255, 255, 255, 0.85);
-  max-width: 900px;
-  line-height: 1.8;
-  font-weight: 400;
-  letter-spacing: 0.3px;
-
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-`;
-
 const Container = styled.div`
   width: 90%;
-  max-width: 1600px;
-  margin: 0 auto;
+  max-width: 1200px;
+  margin: 0 auto 4rem;
+  padding: 120px 2rem 0;
   position: relative;
   z-index: 2;
-  padding: 0 2rem 8rem;
-
-  @media (max-width: 70em) {
-    width: 95%;
-    padding: 0 1.5rem 6rem;
+  
+  @media (max-width: 1024px) {
+    padding: 110px 1.75rem 0;
   }
 
   @media (max-width: 768px) {
     width: 95%;
-    padding: 0 1rem 4rem;
+    padding: 100px 1.5rem 0;
+    margin: 0 auto 3rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    padding: 0 0.75rem 3rem;
+    padding: 80px 1rem 0;
+    margin: 0 auto 2rem;
   }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 0;
+  }
+`;
+
+const Title = styled(motion.h1)`
+  font-size: 3.5rem; 
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  span {
+    color: #7120b0;
+  }
+
+  @media (max-width: 40em) {
+    font-size: 2.5rem;
+  }
+`;
+
+const Subtitle = styled(motion.p)`
+  font-size: ${props => props.theme.fontlg};
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  line-height: 1.5;
 `;
 
 const PartnersGrid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 3rem;
-  margin: 6rem 0;
-  padding: 3rem 0;
+  margin: 3rem 0;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -117,7 +91,7 @@ const PartnersGrid = styled(motion.div)`
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
-    margin: 3rem 0;
+    margin: 2rem 0;
   }
 
   @media (max-width: 480px) {
@@ -350,29 +324,23 @@ const PartnersPage = () => {
         }}
       />
 
-      <HeroSection
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <HeroTitle
-          initial={{ opacity: 0, y: 20 }}
+      <Container>
+        <Title
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.8 }}
         >
           Our <span>Partners</span>
-        </HeroTitle>
-        <HeroSubtitle
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+        </Title>
+
+        <Subtitle
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
           Building the future of blockchain together with leading organizations, 
           hackathon platforms, and industry pioneers who share our vision for innovation
-        </HeroSubtitle>
-      </HeroSection>
-
-      <Container>
+        </Subtitle>
         <PartnersGrid
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
