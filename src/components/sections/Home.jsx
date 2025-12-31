@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
+import Discord from '../../Icons/Discord';
 import BBLogo from '../../assets/Boiler_BLockchain_Logo_SVG.png';
 
 // Education block images
@@ -190,61 +191,110 @@ const HeroDescription = styled(motion.p)`
   }
 `;
 
-const ButtonGroup = styled(motion.div)`
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-
-  @media (max-width: 480px) {
-    gap: 0.75rem;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-`;
-
-const Button = styled(Link)`
+const DiscordButton = styled(motion.a)`
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 2.5rem;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 1.125rem;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  color: #ffffff;
+  font-family: 'Tomorrow', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(187, 32, 255, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(113, 32, 176, 0.5),
+    0 4px 16px rgba(187, 32, 255, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 40px rgba(113, 32, 176, 0.4);
 
-  @media (max-width: 768px) {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9375rem;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
   }
 
-  @media (max-width: 480px) {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.875rem;
-    gap: 0.375rem;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+    z-index: -1;
+    opacity: 0;
+    filter: blur(12px);
+    transition: opacity 0.4s ease;
   }
 
-  &.primary {
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-    color: #ffffff;
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+    border-color: rgba(187, 32, 255, 0.8);
+    box-shadow: 
+      0 12px 48px rgba(113, 32, 176, 0.6),
+      0 8px 24px rgba(187, 32, 255, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+      0 0 60px rgba(113, 32, 176, 0.6);
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(113, 32, 176, 0.4);
+    &::before {
+      left: 100%;
+    }
+
+    &::after {
+      opacity: 1;
     }
   }
 
-  &.secondary {
-    background: transparent;
-    color: #7120b0;
-    border: 2px solid #7120b0;
+  &:active {
+    transform: translateY(-2px) scale(1);
+  }
 
-    &:hover {
-      background: rgba(113, 32, 176, 0.1);
+  svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+    gap: 0.625rem;
+    letter-spacing: 0.6px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.9375rem;
+    gap: 0.5rem;
+    letter-spacing: 0.5px;
+
+    svg {
+      width: 18px;
+      height: 18px;
     }
   }
 `;
@@ -2155,7 +2205,7 @@ const CTAButton = styled(motion(Link))`
 const WhatWeDoSection = styled.section`
   width: 100%;
   max-width: 100vw;
-  padding: 100px 2rem 120px;
+  padding: 80px 2rem 120px;
   background: transparent;
   position: relative;
   z-index: 1;
@@ -2191,11 +2241,11 @@ const WhatWeDoSection = styled.section`
   }
 
   @media (max-width: 768px) {
-    padding: 80px 1.5rem 100px;
+    padding: 60px 1.5rem 100px;
   }
 
   @media (max-width: 480px) {
-    padding: 60px 1rem 80px;
+    padding: 50px 1rem 80px;
   }
 `;
 
@@ -2683,7 +2733,7 @@ const WhatWeDoBlock = styled(motion.div)`
     0 12px 48px rgba(0, 0, 0, 0.8),
     0 6px 24px rgba(0, 0, 0, 0.6),
     0 4px 20px rgba(168, 85, 247, 0.15);
-  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s ease;
   cursor: pointer;
   overflow: hidden;
   flex: 1;
@@ -2697,15 +2747,16 @@ const WhatWeDoBlock = styled(motion.div)`
     inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(168, 85, 247, 0.1) 0%,
+      rgba(168, 85, 247, 0.08) 0%,
       transparent 50%,
-      rgba(168, 85, 247, 0.05) 100%
+      rgba(168, 85, 247, 0.04) 100%
     );
     opacity: 0;
-    transition: opacity 0.6s ease;
+    transition: opacity 0.3s ease;
     border-radius: 16px;
     z-index: 1;
     pointer-events: none;
+    mix-blend-mode: overlay;
   }
 
   /* Animated background pattern - more visible */
@@ -2811,47 +2862,22 @@ const WhatWeDoBlock = styled(motion.div)`
     padding: 1.75rem 1.5rem;
   }
 
-  /* Interactive hover effects */
+  /* Interactive hover effects - subtle */
   &:hover {
-    background: 
-      linear-gradient(
-        135deg,
-        rgba(45, 40, 55, 1) 0%,
-        rgba(40, 35, 50, 1) 100%
-      ),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    border-color: rgba(168, 85, 247, 0.6);
+    border-color: rgba(168, 85, 247, 0.5);
     box-shadow: 
-      inset 0 1px 2px rgba(255, 255, 255, 0.12),
-      inset 1px 0 12px rgba(168, 85, 247, 0.3),
-      0 0 0 1px rgba(168, 85, 247, 0.25) inset,
-      0 0 50px rgba(168, 85, 247, 0.2) inset,
-      0 24px 100px rgba(168, 85, 247, 0.25),
-      0 12px 48px rgba(168, 85, 247, 0.15),
-      0 8px 32px rgba(0, 0, 0, 0.8),
-      0 12px 40px rgba(168, 85, 247, 0.3),
-      0 0 0 1px rgba(168, 85, 247, 0.4);
-    transform: translateY(-8px) scale(1.03) rotateX(2deg);
-    border-radius: 20px;
+      0 4px 20px rgba(168, 85, 247, 0.15),
+      0 2px 8px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
 
     &::before {
-      opacity: 1;
-    }
-
-    &::after {
-      opacity: 1;
-      animation-duration: 12s, 4s;
-    }
-
-    & > div:first-of-type {
-      opacity: 0.6;
-      animation-duration: 1.5s;
+      opacity: 0.2;
     }
   }
 
-  /* Active state for more interaction */
+  /* Active state */
   &:active {
-    transform: translateY(-4px) scale(1.01) rotateX(1deg);
+    transform: translateY(0);
   }
 `;
 
@@ -3221,7 +3247,7 @@ const WhatWeDoBlockBody = styled.ul`
   font-size: 1.0625rem;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.7;
-  margin: 0 0 0 0;
+  margin: 0 0 1.5rem 0;
   padding: 0;
   list-style: none;
   letter-spacing: 0.01px;
@@ -3291,66 +3317,72 @@ const WhatWeDoBlockBullet = styled.li`
   }
 `;
 
-const WhatWeDoBlockCTA = styled(Link)`
-  display: inline-flex;
+const WhatWeDoBlockCTAWrapper = styled.div`
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.625rem;
-  color: rgba(168, 85, 247, 0.95);
-  font-size: 0.9375rem;
+  width: 100%;
+  margin-top: 1.5rem;
+  position: relative;
+  z-index: 10;
+`;
+
+const WhatWeDoBlockCTA = styled(Link)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: #ffffff;
+  font-size: 1rem;
   font-weight: 700;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Tomorrow', sans-serif;
   position: relative;
-  z-index: 3;
-  align-self: flex-start;
-  padding: 0.75rem 1.375rem;
-  margin-top: 0;
-  border-radius: 10px;
-  background: rgba(168, 85, 247, 0.1);
-  border: 2px solid rgba(168, 85, 247, 0.25);
-  flex-shrink: 0;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
-    border-radius: 12px;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: -1;
-  }
+  z-index: 10;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  border: none;
+  width: 100%;
+  max-width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  box-shadow: 
+    0 4px 16px rgba(113, 32, 176, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
   &:hover {
-    color: rgba(168, 85, 247, 1);
-    background: rgba(168, 85, 247, 0.1);
-    border-color: rgba(168, 85, 247, 0.3);
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
+    color: #ffffff;
+    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 6px 24px rgba(113, 32, 176, 0.5),
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 
-    &::before {
-      opacity: 1;
-    }
+  &:active {
+    transform: translateY(0);
   }
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     stroke-width: 2.5;
-    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.3s ease;
   }
 
-  ${WhatWeDoBlock}:hover & {
-    svg {
-      transform: translateX(6px) scale(1.15);
-    }
+  &:hover svg {
+    transform: translateX(3px);
   }
 
   @media (max-width: 768px) {
     font-size: 0.9375rem;
-    padding: 0.75rem 1.25rem;
+    padding: 0.875rem 2rem;
     gap: 0.625rem;
+    letter-spacing: 0.6px;
 
     svg {
       width: 16px;
@@ -3361,11 +3393,12 @@ const WhatWeDoBlockCTA = styled(Link)`
   @media (max-width: 480px) {
     font-size: 0.875rem;
     gap: 0.5rem;
-    padding: 0.625rem 1rem;
+    padding: 0.75rem 1.75rem;
+    letter-spacing: 0.5px;
 
     svg {
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
     }
   }
 `;
@@ -3701,18 +3734,17 @@ const Home = () => {
           >
             The next generation of blockchain engineers, researchers, and founders
           </HeroDescription>
-          <ButtonGroup
+          <DiscordButton
+            href="https://discord.gg/hnjtVpb9H5"
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <Button to="/about" className="primary">
-              Learn More
-            </Button>
-            <Button to="/contact" className="secondary">
-              Contact Us
-            </Button>
-          </ButtonGroup>
+            <Discord width={24} height={24} />
+            Join Discord Community
+          </DiscordButton>
         </HeroContent>
       </HeroSection>
 
@@ -4109,16 +4141,18 @@ const Home = () => {
                   <WhatWeDoMetaPill>Workshops</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>Student instructors and dedicated TAs</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Featured company visits + guest lectures and workshops</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>Web and dapp deployment</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>12-week technical course covering Web3 fundamentals</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Student instructors + dedicated TAs for weekly support</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Guest lectures, protocol workshops, and company visits</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
-                <WhatWeDoBlockCTA to="/courses">
-                  Explore
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </WhatWeDoBlockCTA>
+                <WhatWeDoBlockCTAWrapper>
+                  <WhatWeDoBlockCTA to="/courses">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </WhatWeDoBlockCTA>
+                </WhatWeDoBlockCTAWrapper>
                 <WhatWeDoBlockHash>HASH: 0x4e64a1b2c3d4e5f6...</WhatWeDoBlockHash>
               </WhatWeDoBlock>
               <WhatWeDoBlockImage
@@ -4183,16 +4217,18 @@ const Home = () => {
                   <WhatWeDoMetaPill>Bounties</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Ship products through hackathons, grants, and bounties</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Small builder teams with weekly sprints + code review</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Demo days with protocol feedback + iteration</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
-                <WhatWeDoBlockCTA to="/teams">
-                  Explore
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </WhatWeDoBlockCTA>
+                <WhatWeDoBlockCTAWrapper>
+                  <WhatWeDoBlockCTA to="/teams">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </WhatWeDoBlockCTA>
+                </WhatWeDoBlockCTAWrapper>
                 <WhatWeDoBlockHash>HASH: 0x7f8a9b0c1d2e3f4a...</WhatWeDoBlockHash>
               </WhatWeDoBlock>
               <WhatWeDoBlockImage
@@ -4257,16 +4293,18 @@ const Home = () => {
                   <WhatWeDoMetaPill>Due Diligence</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Investment and protocol research with real deliverables</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Formal due diligence for partners and sponsors</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Publish theses on emerging crypto markets and sectors</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
-                <WhatWeDoBlockCTA to="/teams/research">
-                  Explore
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </WhatWeDoBlockCTA>
+                <WhatWeDoBlockCTAWrapper>
+                  <WhatWeDoBlockCTA to="/teams/research">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </WhatWeDoBlockCTA>
+                </WhatWeDoBlockCTAWrapper>
                 <WhatWeDoBlockHash>HASH: 0x1a2b3c4d5e6f7a8b9...</WhatWeDoBlockHash>
               </WhatWeDoBlock>
               <WhatWeDoBlockImage
@@ -4331,16 +4369,18 @@ const Home = () => {
                   <WhatWeDoMetaPill>Growth</WhatWeDoMetaPill>
                 </WhatWeDoMetaRow>
                 <WhatWeDoBlockBody>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
-                  <WhatWeDoBlockBullet>XXX</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Organize and run all events, speakers, and workshops</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Secure funding + manage sponsorship relationships</WhatWeDoBlockBullet>
+                  <WhatWeDoBlockBullet>Scale teams through media, recruiting and onboarding</WhatWeDoBlockBullet>
                 </WhatWeDoBlockBody>
-                <WhatWeDoBlockCTA to="/teams/operations">
-                  Explore
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </WhatWeDoBlockCTA>
+                <WhatWeDoBlockCTAWrapper>
+                  <WhatWeDoBlockCTA to="/teams/operations">
+                    Explore
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </WhatWeDoBlockCTA>
+                </WhatWeDoBlockCTAWrapper>
                 <WhatWeDoBlockHash>HASH: 0x9c8d7e6f5a4b3c2d1...</WhatWeDoBlockHash>
               </WhatWeDoBlock>
               <WhatWeDoBlockImage
