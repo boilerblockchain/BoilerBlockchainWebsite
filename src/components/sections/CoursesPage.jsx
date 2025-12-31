@@ -1,14 +1,14 @@
 import React, { useCallback } from 'react';
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
 import Navigation from '../Navigation';
 import Footer from '../Footer';
+import BBLogo from '../../assets/Boiler_BLockchain_Logo_SVG.png';
 
 // Education images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
-import educationImage2 from '../../assets/images/education/edu2.jpg';
 import educationImage3 from '../../assets/images/education/edu3.jpg';
 
 const fadeInUp = {
@@ -171,6 +171,7 @@ const CourseTitle = styled.h2`
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: center;
 `;
 
 const CourseInfo = styled.div`
@@ -382,6 +383,51 @@ const ImageContainer = styled.div`
   }
 `;
 
+// Logo animation - pulsing glow
+const pulseGlow = keyframes`
+  0%, 100% {
+    filter: drop-shadow(0 0 40px rgba(113, 32, 176, 0.6)) drop-shadow(0 0 80px rgba(187, 32, 255, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 60px rgba(113, 32, 176, 1)) drop-shadow(0 0 120px rgba(187, 32, 255, 0.8));
+    transform: scale(1.05);
+  }
+`;
+
+const FloatingLogoContainer = styled(motion.div)`
+  height: 250px;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  overflow: visible;
+  
+  @media (min-width: 768px) {
+    height: calc((100% - 4rem) / 3); 
+    min-height: 250px;
+  }
+`;
+
+const LogoImage = styled.img`
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+  animation: ${pulseGlow} 3s ease-in-out infinite;
+  
+  @media (min-width: 768px) {
+    width: 320px;
+    height: 320px;
+  }
+  
+  @media (min-width: 1200px) {
+    width: 380px;
+    height: 380px;
+  }
+`;
+
 const DownloadButton = styled.a`
   display: inline-block;
   margin: 2rem auto 0;
@@ -483,17 +529,31 @@ const CoursesPage = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {[educationImage1, educationImage2, educationImage3].map((img, index) => (
-            <ImageContainer
-              as={motion.div}
-              key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 + index * 0.2 }}
-            >
-              <img src={img} alt={`Education pic ${index + 1}`} />
-            </ImageContainer>
-          ))}
+          <ImageContainer
+            as={motion.div}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <img src={educationImage1} alt="Education pic 1" />
+          </ImageContainer>
+          
+          <FloatingLogoContainer
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+          >
+            <LogoImage src={BBLogo} alt="Boiler Blockchain Logo" />
+          </FloatingLogoContainer>
+          
+          <ImageContainer
+            as={motion.div}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <img src={educationImage3} alt="Education pic 3" />
+          </ImageContainer>
         </ImageSection>
 
         <CourseCard
@@ -505,7 +565,7 @@ const CoursesPage = () => {
             as={motion.h2}
             variants={fadeInUp}
           >
-            Intro to Blockchain
+            Spring 2025 Techincal Course
           </CourseTitle>
 
           <CourseInfo>
@@ -517,11 +577,11 @@ const CoursesPage = () => {
             >
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Location</h4>
-                <p>WANG 2579</p>
+                <p>TBD</p>
               </InfoCard>
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Schedule</h4>
-                <p>Monday @ 5 pm</p>
+                <p>TBD</p>
               </InfoCard>
               <InfoCard className="large" as={motion.div} variants={fadeInUp}>
                 <h4>Course Staff</h4>

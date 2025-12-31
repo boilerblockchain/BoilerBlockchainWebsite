@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
+import BBLogo from '../../assets/Boiler_BLockchain_Logo_SVG.png';
 
 // Education block images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
@@ -276,12 +277,15 @@ const Section = styled.section`
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
   position: relative;
   z-index: 2;
   padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
@@ -357,6 +361,10 @@ const Grid = styled(motion.div)`
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 
   @media (max-width: 968px) {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1018,6 +1026,62 @@ const GlassPanel = styled(motion.div)`
   @media (max-width: 480px) {
     padding: 24px;
     border-radius: 16px;
+  }
+`;
+
+const PinnedLogo = styled(motion.div)`
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  box-shadow: 
+    0 4px 20px rgba(113, 32, 176, 0.4),
+    0 0 0 2px rgba(0, 0, 0, 0.3),
+    0 0 0 4px rgba(113, 32, 176, 0.2);
+  z-index: 40;
+  transform: rotate(5deg);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(1.1);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 50%;
+    transform: translateX(50%);
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    z-index: -1;
+  }
+
+  @media (max-width: 768px) {
+    width: 50px;
+    height: 50px;
+    top: -15px;
+    right: 15px;
+    padding: 6px;
+  }
+
+  @media (max-width: 480px) {
+    width: 45px;
+    height: 45px;
+    top: -12px;
+    right: 12px;
+    padding: 5px;
   }
 `;
 
@@ -2163,11 +2227,14 @@ const WhatWeDoDivider = styled.div`
 `;
 
 const WhatWeDoContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
   position: relative;
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 /* Node graph SVG overlay */
@@ -2187,7 +2254,7 @@ const WhatWeDoNodeGraph = styled.div`
 
 const WhatWeDoHeader = styled(motion.div)`
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto 4rem;
   padding: 0 2rem;
   position: relative;
@@ -2401,21 +2468,23 @@ const WhatWeDoBlockRow = styled(motion.div)`
   flex-direction: ${props => props.reverse ? 'row-reverse' : 'row'};
   align-items: center;
   justify-content: center;
-  gap: 4rem;
+  gap: 3rem;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 4rem;
+  padding: 2rem 2rem;
   position: relative;
+  box-sizing: border-box;
 
   @media (max-width: 1200px) {
-    gap: 3rem;
-    padding: 2rem 3rem;
+    gap: 2.5rem;
+    padding: 2rem 2rem;
+    max-width: 100%;
   }
 
   @media (max-width: 968px) {
     gap: 2rem;
-    padding: 2rem 2rem;
+    padding: 2rem 1.5rem;
   }
 
   @media (max-width: 768px) {
@@ -2427,8 +2496,9 @@ const WhatWeDoBlockRow = styled(motion.div)`
 
 /* Image Carousel Container */
 const WhatWeDoBlockImage = styled(motion.div)`
-  flex: 1;
-  max-width: 480px;
+  flex: 0 0 auto;
+  max-width: 650px;
+  width: 650px;
   height: 380px;
   position: relative;
   border-radius: 16px;
@@ -2438,8 +2508,15 @@ const WhatWeDoBlockImage = styled(motion.div)`
     0 0 0 1px rgba(168, 85, 247, 0.2);
   border: 1px solid rgba(168, 85, 247, 0.15);
 
+  @media (max-width: 1200px) {
+    max-width: 580px;
+    width: 580px;
+    height: 360px;
+  }
+
   @media (max-width: 968px) {
-    max-width: 420px;
+    max-width: 520px;
+    width: 520px;
     height: 340px;
   }
 
@@ -2583,11 +2660,12 @@ const WhatWeDoBlock = styled(motion.div)`
     ),
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   background-size: 60px 60px;
-  flex: 1;
-  max-width: 560px;
-  min-height: 380px;
+  flex: 0 0 auto;
+  max-width: 550px;
+  min-height: 280px;
   height: 100%;
-  padding: 2.5rem 2.25rem;
+  width: 550px;
+  padding: 2.5rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -2715,19 +2793,21 @@ const WhatWeDoBlock = styled(motion.div)`
   }
 
   @media (max-width: 968px) {
-    min-height: 360px;
+    min-height: 260px;
     padding: 2.25rem 2rem;
-    max-width: 520px;
+    max-width: 480px;
+    width: 480px;
   }
 
   @media (max-width: 768px) {
-    min-height: 340px;
+    min-height: 240px;
     padding: 2rem 1.75rem;
     max-width: 100%;
+    width: 100%;
   }
 
   @media (max-width: 480px) {
-    min-height: 320px;
+    min-height: 220px;
     padding: 1.75rem 1.5rem;
   }
 
@@ -3681,6 +3761,20 @@ const Home = () => {
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
           <GlassPanel>
+            <PinnedLogo
+              initial={{ opacity: 0, scale: 0, rotate: -180 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 5 }}
+              viewport={{ once: true }}
+              transition={{ 
+                duration: 0.6, 
+                delay: 0.4,
+                type: "spring",
+                stiffness: 200,
+                damping: 15
+              }}
+            >
+              <img src={BBLogo} alt="Boiler Blockchain Logo" />
+            </PinnedLogo>
             <IdentityDivider />
             <IdentityTitle
               initial={{ opacity: 0, y: 20 }}
