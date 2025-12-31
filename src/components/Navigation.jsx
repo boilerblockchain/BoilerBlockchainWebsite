@@ -34,14 +34,17 @@ const NavContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${props => props.isScrolled ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.7)'};
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background-color: ${props => props.isScrolled 
+    ? 'rgba(30, 30, 40, 0.75)' 
+    : 'rgba(25, 25, 35, 0.65)'};
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: 16px;
   padding: 1rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   gap: 1rem;
+  transition: all 0.3s ease;
 
   @media (max-width: 1024px) {
     padding: 0.875rem 1.25rem;
@@ -206,42 +209,38 @@ const ContactButtonWrapper = styled.div`
 const ContactButton = styled(Link)`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
+  justify-content: center;
+  padding: 0.625rem 1.5rem;
   background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  border: none;
   border-radius: 12px;
   text-decoration: none;
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(113, 32, 176, 0.4);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+    box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   @media (max-width: 640px) {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.25rem;
     font-size: 0.8125rem;
   }
 
   @media (max-width: 480px) {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 1rem;
     font-size: 0.75rem;
-    gap: 0.375rem;
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-
-    @media (max-width: 480px) {
-      width: 14px;
-      height: 14px;
-    }
   }
 `;
 
@@ -454,10 +453,7 @@ const Navigation = () => {
 
           <ContactButtonWrapper>
             <ContactButton to="/contact">
-              <span>Contact Us</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
+              Contact Us
             </ContactButton>
 
             <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -505,10 +501,7 @@ const Navigation = () => {
             onClick={() => setIsMobileMenuOpen(false)}
             style={{ marginTop: '0.5rem', justifyContent: 'center' }}
           >
-            <span>Contact Us</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+            Contact Us
           </ContactButton>
         </MobileNav>
       </Nav>
