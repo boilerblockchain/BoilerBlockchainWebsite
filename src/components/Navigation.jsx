@@ -442,11 +442,11 @@ const Navigation = () => {
 
             {navLinks.map((link) => (
               <NavLink
-                key={link.path}
-                to={link.path}
+                  key={link.path}
+                  to={link.path}
                 isActive={isActiveRoute(link.path)}
-              >
-                {link.label}
+                >
+                  {link.label}
               </NavLink>
             ))}
           </DesktopNav>
@@ -469,7 +469,7 @@ const Navigation = () => {
         </NavContainer>
 
         <MobileNav isOpen={isMobileMenuOpen}>
-          {Object.entries(dropdownData).map(([key, dropdown]) => (
+            {Object.entries(dropdownData).map(([key, dropdown]) => (
             <MobileDropdownSection key={key}>
               <MobileDropdownTitle>{dropdown.label}</MobileDropdownTitle>
               <MobileDropdownItems>
@@ -478,30 +478,30 @@ const Navigation = () => {
                     key={index}
                     to={item.path}
                     isActive={isActiveRoute(item.path)}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                     {item.label}
                   </MobileNavLink>
                 ))}
               </MobileDropdownItems>
             </MobileDropdownSection>
-          ))}
-          {navLinks.map((link) => (
+            ))}
+            {navLinks.map((link) => (
             <MobileNavLink
-              key={link.path}
-              to={link.path}
+                key={link.path}
+                to={link.path}
               isActive={isActiveRoute(link.path)}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {link.label}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.label}
             </MobileNavLink>
-          ))}
+            ))}
           <ContactButton
-            to="/contact"
-            onClick={() => setIsMobileMenuOpen(false)}
+              to="/contact"
+              onClick={() => setIsMobileMenuOpen(false)}
             style={{ marginTop: '0.5rem', justifyContent: 'center' }}
-          >
-            Contact Us
+            >
+              Contact Us
           </ContactButton>
         </MobileNav>
       </Nav>

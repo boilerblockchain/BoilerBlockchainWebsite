@@ -387,7 +387,7 @@ const Card = styled(motion.div)`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   @media (max-width: 768px) {
-    padding: 2rem;
+  padding: 2rem;
   }
 
   @media (max-width: 480px) {
@@ -4291,15 +4291,15 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <CTAButton
-                as="a"
-                href="https://discord.gg/hnjtVpb9H5"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="primary"
+              as="a"
+              href="https://discord.gg/hnjtVpb9H5"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="primary"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-              >
-                Join Discord
+            >
+              Join Discord
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

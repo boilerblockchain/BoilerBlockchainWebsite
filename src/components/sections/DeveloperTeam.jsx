@@ -3,7 +3,8 @@ import styled, {keyframes} from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiGithub, FiCode, FiLayers, FiZap, FiExternalLink } from 'react-icons/fi';
+import { FiGithub, FiCode, FiLayers, FiZap, FiExternalLink, FiArrowRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
@@ -346,6 +347,59 @@ const ProjectLinks = styled.div`
     }
 `;
 
+const HackathonSection = styled(motion.div)`
+    margin: 6rem 0 4rem;
+    text-align: center;
+`;
+
+const HackathonDescription = styled(motion.p)`
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 2rem auto 3rem;
+    font-family: 'Tomorrow', sans-serif;
+
+    @media (max-width: 768px) {
+        font-size: 1rem;
+        margin: 1.5rem auto 2.5rem;
+    }
+`;
+
+const ViewAllButton = styled(Link)`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Tomorrow', sans-serif;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
+        background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+    }
+
+    svg {
+        font-size: 1.125rem;
+        transition: transform 0.3s ease;
+    }
+
+    &:hover svg {
+        transform: translateX(4px);
+    }
+`;
+
 const SectionTitle = styled(motion.h2)`
     font-size: 2.5rem;
     color: #ffffff;
@@ -644,6 +698,43 @@ const DeveloperTeam = () => {
                         </ProjectCard>
                     ))}
                 </ProjectsGrid>
+
+                <HackathonSection
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <SectionTitle
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        Hackathon <span>Projects</span>
+                    </SectionTitle>
+
+                    <HackathonDescription
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Explore our past hackathon projects and see what we've built.
+                    </HackathonDescription>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                        <ViewAllButton to="/hackathons">
+                            View All Hackathons
+                            <FiArrowRight />
+                        </ViewAllButton>
+                    </motion.div>
+                </HackathonSection>
             </Container>
             <Footer />
         </PageSection>

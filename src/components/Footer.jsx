@@ -44,7 +44,7 @@ const FooterContent = styled.div`
 
 const LeftSection = styled.div`
   display: flex;
-  flex-direction: column;
+    flex-direction: column;
   gap: 1.5rem;
   flex: 1;
   max-width: 400px;
@@ -220,68 +220,68 @@ export default function Footer() {
           <LogoDescription>
             Bringing Purdue Onchain.
           </LogoDescription>
-          <SocialLinks>
-            <li>
-              <SocialLink
+        <SocialLinks>
+          <li>
+            <SocialLink
                 href="https://twitter.com/boilerchain"
-                target="_blank"
-                rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
                 aria-label="X (Twitter)"
-              >
+            >
                 <Twitter width={20} height={20} />
-              </SocialLink>
-            </li>
-            <li>
-              <SocialLink
-                href="https://www.instagram.com/boilerblockchain/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
+              href="https://www.instagram.com/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+            >
                 <Instagram width={20} height={20} />
-              </SocialLink>
-            </li>
-            <li>
-              <SocialLink
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
                 href="https://discord.gg/hnjtVpb9H5"
-                target="_blank"
-                rel="noopener noreferrer"
+              target="_blank"
+              rel="noopener noreferrer"
                 aria-label="Discord"
-              >
+            >
                 <Discord width={20} height={20} />
-              </SocialLink>
-            </li>
-            <li>
-              <SocialLink
-                href="https://www.linkedin.com/company/boilerblockchain/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-              >
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
+              href="https://www.linkedin.com/company/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
                 <FiLinkedin size={20} />
-              </SocialLink>
-            </li>
-            <li>
-              <SocialLink
-                href="https://boilerblockchain.medium.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Medium"
-              >
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
+              href="https://boilerblockchain.medium.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Medium"
+            >
                 <Medium width={20} height={20} />
-              </SocialLink>
-            </li>
-            <li>
-              <SocialLink
-                href="https://github.com/boilerblockchain/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Github"
-              >
+            </SocialLink>
+          </li>
+          <li>
+            <SocialLink
+              href="https://github.com/boilerblockchain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Github"
+            >
                 <Github width={20} height={20} />
-              </SocialLink>
-            </li>
-          </SocialLinks>
+            </SocialLink>
+          </li>
+        </SocialLinks>
         </LeftSection>
 
         <RightSection>

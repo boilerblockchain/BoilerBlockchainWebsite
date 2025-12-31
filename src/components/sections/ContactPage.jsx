@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiMail, FiMessageSquare, FiMapPin, FiInstagram, FiLinkedin, FiCalendar, FiRadio } from 'react-icons/fi';
+import { FiInstagram, FiLinkedin } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
 import Twitter from '../../Icons/Twitter';
 import Medium from '../../Icons/Medium';
@@ -11,56 +11,6 @@ import Github from '../../Icons/Github';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
-// Animations
-const pulseGlow = keyframes`
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(113, 32, 176, 0.3), 0 0 40px rgba(113, 32, 176, 0.1), inset 0 0 20px rgba(113, 32, 176, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(113, 32, 176, 0.5), 0 0 60px rgba(113, 32, 176, 0.2), inset 0 0 30px rgba(113, 32, 176, 0.15);
-  }
-`;
-
-const scanlineSweep = keyframes`
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.5;
-  }
-  90% {
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(800px);
-    opacity: 0;
-  }
-`;
-
-const gradientSweep = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 200% 50%;
-  }
-`;
-
-const nodeDrift = keyframes`
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(10px, -10px);
-  }
-  50% {
-    transform: translate(-5px, 5px);
-  }
-  75% {
-    transform: translate(5px, 10px);
-  }
-`;
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -80,27 +30,25 @@ const PageSection = styled.section`
 const Container = styled.div`
   width: 90%;
   max-width: 1200px;
-  margin: 0 auto 4rem;
-  padding: 120px 2rem 0;
+  margin: 0 auto;
+  padding: 120px 2rem 4rem;
   position: relative;
   z-index: 2;
   flex: 1;
   
   @media (max-width: 1024px) {
     width: 95%;
-    padding: 110px 1.75rem 0;
+    padding: 110px 1.75rem 3.5rem;
   }
 
   @media (max-width: 768px) {
     width: 95%;
-    padding: 100px 1.5rem 0;
-    margin: 0 auto 3rem;
+    padding: 100px 1.5rem 3rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    padding: 80px 1rem 0;
-    margin: 0 auto 2rem;
+    padding: 80px 1rem 2rem;
   }
 `;
 
@@ -110,6 +58,7 @@ const ContentGrid = styled.div`
   gap: 2rem;
   max-width: 1100px;
   margin: 0 auto;
+  align-items: start;
 
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
@@ -118,85 +67,20 @@ const ContentGrid = styled.div`
 `;
 
 const InfoCard = styled(motion.div)`
-  background: linear-gradient(135deg, rgba(113, 32, 176, 0.15) 0%, rgba(187, 32, 255, 0.1) 100%);
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  background: rgba(15, 15, 15, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 3rem;
   color: #ffffff;
   display: flex;
   flex-direction: column;
   height: fit-content;
-  position: relative;
-  overflow: hidden;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: ${pulseGlow} 4s ease-in-out infinite;
-
-  /* Grid overlay */
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      repeating-linear-gradient(
-        to right,
-        rgba(168, 85, 247, 0.03) 0,
-        rgba(168, 85, 247, 0.03) 1px,
-        transparent 1px,
-        transparent 40px
-      ),
-      repeating-linear-gradient(
-        to bottom,
-        rgba(168, 85, 247, 0.03) 0,
-        rgba(168, 85, 247, 0.03) 1px,
-        transparent 1px,
-        transparent 40px
-      );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Diagonal mesh overlay */
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 2px,
-      rgba(168, 85, 247, 0.02) 2px,
-      rgba(168, 85, 247, 0.02) 4px
-    );
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.5;
-  }
-
-  /* Scanline effect */
-  .scanline {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(168, 85, 247, 0.6) 50%,
-      transparent 100%
-    );
-    z-index: 1;
-    pointer-events: none;
-    animation: ${scanlineSweep} 10s linear infinite;
-    will-change: transform;
-  }
+  transition: all 0.3s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(113, 32, 176, 0.5);
-    box-shadow: 0 20px 60px rgba(113, 32, 176, 0.3);
+    border-color: rgba(113, 32, 176, 0.3);
   }
 
   @media (max-width: 768px) {
@@ -209,44 +93,15 @@ const InfoCard = styled(motion.div)`
 `;
 
 const CardHeader = styled.div`
-  position: relative;
-  z-index: 1;
-  margin-bottom: 2.5rem;
-`;
-
-const NodeStatus = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  text-align: right;
-  z-index: 2;
-`;
-
-const StatusLine = styled.div`
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: rgba(168, 85, 247, 0.8);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-family: 'Tomorrow', sans-serif;
-  
-  .status-online {
-    color: rgba(34, 197, 94, 0.9);
-    text-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
-  }
+  margin-bottom: 2rem;
 `;
 
 const InfoTitle = styled.h2`
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   color: #ffffff;
   letter-spacing: 0.3px;
-  position: relative;
-  z-index: 1;
 
   @media (max-width: 768px) {
     font-size: 1.75rem;
@@ -257,81 +112,41 @@ const InfoSubtitle = styled.p`
   font-size: 0.9375rem;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
-  position: relative;
-  z-index: 1;
+  line-height: 1.6;
 `;
 
 const InfoSection = styled.div`
-  margin-bottom: 2.5rem;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 2rem;
 
   &:last-of-type {
     margin-bottom: 0;
   }
 `;
 
-const SectionIcon = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(113, 32, 176, 0.2);
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 8px;
-  margin-right: 0.75rem;
-  margin-bottom: 0.75rem;
-  
-  svg {
-    color: #7120b0;
-    font-size: 1.125rem;
-  }
-`;
-
-const InfoLabel = styled.h3`
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: rgba(255, 255, 255, 0.9);
+const InfoLabel = styled.label`
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  display: flex;
-  align-items: center;
 `;
 
 const InfoText = styled.p`
   font-size: 0.9375rem;
-  line-height: 1.7;
+  line-height: 1.8;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
-  margin-left: 2.75rem;
-  
-  a {
-    color: #ffffff;
-    text-decoration: none;
-    font-family: 'Courier New', monospace;
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 20px rgba(113, 32, 176, 0.5);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      filter: brightness(1.2);
-      text-shadow: 0 0 30px rgba(113, 32, 176, 0.8);
-    }
-  }
+  padding-top: 0.25rem;
 `;
 
 const SocialIcons = styled.div`
   display: flex;
   gap: 0.75rem;
-  margin-top: 0.75rem;
-  margin-left: 2.75rem;
-  justify-content: flex-start;
+  margin-top: 1rem;
   flex-wrap: wrap;
+  padding-top: 0.25rem;
   
   a {
     display: flex;
@@ -339,17 +154,13 @@ const SocialIcons = styled.div`
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: rgba(20, 20, 20, 0.6);
-    border: 1px solid rgba(113, 32, 176, 0.3);
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     color: rgba(255, 255, 255, 0.7);
     font-size: 1.125rem;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    position: relative;
-    overflow: hidden;
+    transition: all 0.3s ease;
     
     svg {
       width: 20px;
@@ -361,53 +172,13 @@ const SocialIcons = styled.div`
       }
     }
     
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 8px;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
     &:hover {
-      border-color: rgba(113, 32, 176, 0.6);
+      border-color: #7120b0;
       color: #ffffff;
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(113, 32, 176, 0.4);
-      
-      &::before {
-        opacity: 1;
-      }
+      box-shadow: 0 0 0 3px rgba(113, 32, 176, 0.1), 0 0 20px rgba(113, 32, 176, 0.2);
+      background: rgba(20, 20, 20, 0.95);
     }
-  }
-`;
-
-const SessionHash = styled.div`
-  position: absolute;
-  bottom: 1.5rem;
-  left: 3rem;
-  font-size: 0.6875rem;
-  font-family: 'Courier New', monospace;
-  color: rgba(168, 85, 247, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  z-index: 1;
-  
-  @media (max-width: 768px) {
-    left: 2.5rem;
-    bottom: 1.25rem;
-  }
-
-  @media (max-width: 480px) {
-    left: 2rem;
-    bottom: 1rem;
-    font-size: 0.625rem;
   }
 `;
 
@@ -417,6 +188,9 @@ const FormCard = styled(motion.div)`
   border-radius: 16px;
   padding: 3rem;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s ease;
@@ -603,7 +377,7 @@ const ContactPage = () => {
   const getButtonText = () => {
     if (submitStatus === 'establishing') return 'Establishing connection...';
     if (submitStatus === 'confirmed') return 'Connection confirmed.';
-    return 'Open Channel';
+    return 'Send Message';
   };
 
   return (
@@ -662,23 +436,13 @@ const ContactPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
           >
-            <div className="scanline" />
             <CardHeader>
-              <NodeStatus>
-                <StatusLine>NODE: BB-CORE</StatusLine>
-                <StatusLine className="status-online">STATUS: ONLINE</StatusLine>
-              </NodeStatus>
-              <InfoTitle>Connect to Boiler Blockchain</InfoTitle>
-              <InfoSubtitle>Establish a link with our team.</InfoSubtitle>
+              <InfoTitle>Connect with Boiler Blockchain</InfoTitle>
+              <InfoSubtitle>Establish a link with our team</InfoSubtitle>
             </CardHeader>
             
             <InfoSection>
-              <InfoLabel>
-                <SectionIcon>
-                  <FiCalendar />
-                </SectionIcon>
-                Weekly Node Sync
-              </InfoLabel>
+              <InfoLabel>Weekly Meeting</InfoLabel>
               <InfoText>
                 Boiler Blockchain Weekly Meeting<br />
                 Thursdays · 7–8 PM EST<br />
@@ -687,25 +451,7 @@ const ContactPage = () => {
             </InfoSection>
 
             <InfoSection>
-              <InfoLabel>
-                <SectionIcon>
-                  <FiRadio />
-                </SectionIcon>
-                Direct Channel
-              </InfoLabel>
-              <InfoText>
-                Reach the core team.<br />
-                <a href="mailto:boilerblockchain@gmail.com">boilerblockchain@gmail.com</a>
-              </InfoText>
-            </InfoSection>
-
-            <InfoSection>
-              <InfoLabel>
-                <SectionIcon>
-                  <FiMessageSquare />
-                </SectionIcon>
-                Network Endpoints
-              </InfoLabel>
+              <InfoLabel>Follow Us</InfoLabel>
               <SocialIcons>
                 <a href="https://twitter.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
                   <Twitter width={20} height={20} />
@@ -727,8 +473,6 @@ const ContactPage = () => {
                 </a>
               </SocialIcons>
             </InfoSection>
-
-            <SessionHash>SESSION HASH: 0xA7F9...C12E</SessionHash>
           </InfoCard>
 
           <FormCard
@@ -781,7 +525,7 @@ const ContactPage = () => {
                 <FormTextarea
                   id="message"
                   name="message"
-                  placeholder="Tell us what you're building / what you need"
+                  placeholder="Tell us what you're building :)"
                   value={formData.message}
                   onChange={handleInputChange}
                   required
