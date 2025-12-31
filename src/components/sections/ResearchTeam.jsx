@@ -538,7 +538,7 @@ const ResearchTeam = () => {
           transition={{ duration: 0.8, delay: 0.3 , ease: "easeInOut"}}
         >
           <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={60} suffix="+" /></StatNumber>
+            <StatNumber><CountUp end={50} suffix="+" /></StatNumber>
             <StatLabel>Researchers</StatLabel>
           </StatCard>
           <StatCard whileHover={{ y: -2 }}>

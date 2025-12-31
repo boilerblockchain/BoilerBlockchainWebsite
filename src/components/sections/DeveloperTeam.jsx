@@ -561,7 +561,7 @@ const DeveloperTeam = () => {
                 >
                     <StatCard whileHover={{ y: -2 }}>
                         <StatLabel>Deploying</StatLabel>
-                        <StatNumber><CountUp end={30} suffix="+" /></StatNumber>
+                        <StatNumber><CountUp end={40} suffix="+" /></StatNumber>
                         <StatLabel>Developers</StatLabel>
                     </StatCard>
                     <StatCard whileHover={{ y: -2 }}>

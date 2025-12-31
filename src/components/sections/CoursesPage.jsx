@@ -6,10 +6,10 @@ import { motion } from "framer-motion";
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
-// Placeholder images - Replace with actual images when ready
-const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=Education+Image+1';
-const img4 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=Education+Image+2';
-const img3 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=Education+Image+3';
+// Education images
+import educationImage1 from '../../assets/images/education/edu1.jpg';
+import educationImage2 from '../../assets/images/education/edu2.jpg';
+import educationImage3 from '../../assets/images/education/edu3.jpg';
 
 const fadeInUp = {
   initial: {
@@ -483,7 +483,7 @@ const CoursesPage = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          {[img5, img4, img3].map((img, index) => (
+          {[educationImage1, educationImage2, educationImage3].map((img, index) => (
             <ImageContainer
               as={motion.div}
               key={index}
