@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { FiLinkedin } from 'react-icons/fi';
 import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";
-import LinkedIn from "../Icons/LinkedIn";
 import Medium from "../Icons/Medium";
 import Github from "../Icons/Github";
 
@@ -243,12 +243,22 @@ export default function Footer() {
             </li>
             <li>
               <SocialLink
+                href="https://discord.gg/hnjtVpb9H5"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Discord"
+              >
+                <Discord width={20} height={20} />
+              </SocialLink>
+            </li>
+            <li>
+              <SocialLink
                 href="https://www.linkedin.com/company/boilerblockchain/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
               >
-                <LinkedIn width={20} height={20} />
+                <FiLinkedin size={20} />
               </SocialLink>
             </li>
             <li>

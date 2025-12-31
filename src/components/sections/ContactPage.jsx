@@ -3,7 +3,11 @@ import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiMail, FiMessageSquare, FiMapPin, FiFacebook, FiInstagram, FiTwitter, FiLinkedin, FiCalendar, FiRadio } from 'react-icons/fi';
+import { FiMail, FiMessageSquare, FiMapPin, FiInstagram, FiLinkedin, FiCalendar, FiRadio } from 'react-icons/fi';
+import Discord from '../../Icons/Discord';
+import Twitter from '../../Icons/Twitter';
+import Medium from '../../Icons/Medium';
+import Github from '../../Icons/Github';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
@@ -326,6 +330,8 @@ const SocialIcons = styled.div`
   gap: 0.75rem;
   margin-top: 0.75rem;
   margin-left: 2.75rem;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   
   a {
     display: flex;
@@ -344,6 +350,16 @@ const SocialIcons = styled.div`
     -webkit-backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      
+      path {
+        fill: currentColor;
+      }
+    }
     
     &::before {
       content: '';
@@ -691,17 +707,23 @@ const ContactPage = () => {
                 Network Endpoints
               </InfoLabel>
               <SocialIcons>
-                <a href="https://facebook.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                  <FiFacebook />
-                </a>
-                <a href="https://linkedin.com/company/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                  <FiLinkedin />
+                <a href="https://twitter.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+                  <Twitter width={20} height={20} />
                 </a>
                 <a href="https://instagram.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                   <FiInstagram />
                 </a>
-                <a href="https://twitter.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                  <FiTwitter />
+                <a href="https://discord.gg/hnjtVpb9H5" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+                  <Discord width={20} height={20} />
+                </a>
+                <a href="https://linkedin.com/company/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                  <FiLinkedin />
+                </a>
+                <a href="https://boilerblockchain.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium">
+                  <Medium width={20} height={20} />
+                </a>
+                <a href="https://github.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                  <Github width={20} height={20} />
                 </a>
               </SocialIcons>
             </InfoSection>
