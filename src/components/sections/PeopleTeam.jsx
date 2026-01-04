@@ -357,38 +357,37 @@ const SocialIconsContainer = styled.div`
   gap: 0.5rem;
   align-items: center;
   z-index: 2;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 0.4rem;
-  border-radius: 8px;
-  border: 1px solid rgba(113, 32, 176, 0.2);
 `;
 
 const SocialIcon = styled(motion.a)`
-  width: 28px;
-  height: 28px;
-  border: 1.5px solid rgba(113, 32, 176, 0.5);
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(113, 32, 176, 0.1);
-  opacity: 0.8;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0.85;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
     opacity: 1;
-    border-color: rgba(113, 32, 176, 0.9);
     color: #ffffff;
-    background: rgba(113, 32, 176, 0.2);
-    transform: translateY(-2px);
+    background: rgba(113, 32, 176, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(113, 32, 176, 0.5);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(113, 32, 176, 0.3);
   }
 
   svg {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 `;
 
@@ -460,10 +459,10 @@ const formatName = (name, imagePath) => {
 // Helper function to get title based on category
 const getTitleByCategory = (category) => {
   const titles = {
-    executive: "Executive Board",
     developer: "Developer Team",
     research: "Research Team",
-    operations: "Operations Team"
+    operations: "Operations Team",
+    executive: "Executive Board",
   };
   return titles[category] || "Team Member";
 };
@@ -535,10 +534,10 @@ const PeopleTeam = () => {
 
   const filters = [
     { id: 'all', label: 'ALL' },
-    { id: 'executive', label: 'EXECUTIVE BOARD' },
     { id: 'developer', label: 'DEVELOPER TEAM' },
     { id: 'research', label: 'RESEARCH TEAM' },
-    { id: 'operations', label: 'OPERATIONS TEAM' }
+    { id: 'operations', label: 'OPERATIONS TEAM' },
+    { id: 'executive', label: 'EXECUTIVE BOARD' }
   ];
 
   const displayedMembers = teamMembers[activeFilter] || teamMembers.all;
