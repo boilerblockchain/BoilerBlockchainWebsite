@@ -7,6 +7,31 @@ import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
+// Executive Board
+import eliImage from '../../assets/images/pfps/exec/eli_dubizh.jpg';
+import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
+import mahiImage from '../../assets/images/pfps/exec/mahi_tripathi.jpg';
+import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
+
+
+// Developer Team
+import ansonImage from '../../assets/images/pfps/dev/anson_lam.JPG';
+import anubhutiImage from '../../assets/images/pfps/dev/anubhuti_mittal.jpg';
+import aryanSinghalImage from '../../assets/images/pfps/dev/aryan_singhal.png';
+import christopherImage from '../../assets/images/pfps/dev/christopher_herzog.jpg';
+import danielImage from '../../assets/images/pfps/dev/daniel_gong.png';
+import jazibImage from '../../assets/images/pfps/dev/jazib_qureshi.jpg';
+import matthewImage from '../../assets/images/pfps/dev/matthew_iskandar.png';
+
+// Research Team
+import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
+import divyanshImage from '../../assets/images/pfps/res/divyansh_pramanick.jpg';
+import ishaanImage from '../../assets/images/pfps/res/ishaan_saxena.png';
+import jacobImage from '../../assets/images/pfps/res/jacob_gutwein.jpeg';
+import muhammadImage from '../../assets/images/pfps/res/muhammad_ayaan_ameen.jpeg';
+import vaibhavImage from '../../assets/images/pfps/res/vaibhav_sunkada.jpg';
+import nickImage from '../../assets/images/pfps/res/nick_diaz.jpg';
+
 const PageSection = styled.section`
   min-height: 100vh;
   width: 100%;
@@ -48,9 +73,6 @@ const Container = styled.div`
 
   @media (max-width: 360px) {
     padding: 70px 0.75rem 0;
-  }
-    padding: 0 0.75rem;
-    margin: 3rem auto 0;
   }
 `;
 
@@ -186,58 +208,85 @@ const TeamRow = styled(motion.div)`
 `;
 
 const MemberCard = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 240px;
+  width: 290px;
+  background: rgba(15, 15, 20, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(113, 32, 176, 0.2);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(113, 32, 176, 0.1),
+    0 0 40px rgba(113, 32, 176, 0.05);
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      linear-gradient(135deg, rgba(113, 32, 176, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 50% 0%, rgba(113, 32, 176, 0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(113, 32, 176, 0.4);
+    box-shadow: 
+      0 8px 30px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(113, 32, 176, 0.3),
+      0 0 60px rgba(113, 32, 176, 0.15);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
   @media (max-width: 768px) {
-    width: 200px;
+    width: 260px;
   }
 
   @media (max-width: 480px) {
-    width: 180px;
+    width: 240px;
   }
 `;
 
 const ImageContainer = styled.div`
   width: 100%;
   aspect-ratio: 1;
-  background: linear-gradient(135deg, #2a0f3d 0%, #3d1557 50%, #5a1f7a 100%);
-  border-radius: 16px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 1.25rem;
-  box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3), 0 0 0 1px rgba(113, 32, 176, 0.1);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid rgba(113, 32, 176, 0.2);
+  background: linear-gradient(135deg, #1a0f2e 0%, #2d1a3d 100%);
 
-  ${MemberCard}:hover & {
-    transform: translateY(-8px);
-    box-shadow: 0 16px 50px rgba(113, 32, 176, 0.6), 0 0 0 1px rgba(113, 32, 176, 0.3);
-    border-color: rgba(113, 32, 176, 0.5);
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
   }
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
-    z-index: 1;
-    position: relative;
+    object-position: 50% 25%;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Placeholder background for missing images */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(42, 15, 61, 0.95) 0%, rgba(61, 21, 87, 0.95) 50%, rgba(90, 31, 122, 0.95) 100%);
-    z-index: 0;
+  ${MemberCard}:hover img {
+    transform: scale(1.03);
   }
 `;
 
@@ -246,219 +295,230 @@ const PlaceholderIcon = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90px;
-  height: 90px;
-  background: rgba(255, 255, 255, 0.08);
+  width: 80px;
+  height: 80px;
+  background: rgba(113, 32, 176, 0.1);
   border-radius: 50%;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  border: 2px solid rgba(113, 32, 176, 0.2);
 
   &::before {
     content: '👤';
-    font-size: 2.8rem;
-    opacity: 0.5;
+    font-size: 2.5rem;
+    opacity: 0.4;
   }
+`;
+
+const ContentContainer = styled.div`
+  padding: 1.5rem 1.5rem 1.75rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+`;
+
+const MemberName = styled.h3`
+  font-size: 1.25rem;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+
+  ${MemberCard}:hover & {
+    color: #7120b0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.15rem;
+  }
+`;
+
+const MemberTitle = styled.p`
+  font-size: 0.7rem;
+  color: rgba(113, 32, 176, 0.7);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0;
+  line-height: 1.4;
 `;
 
 const SocialIconsContainer = styled.div`
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 0.75rem;
+  right: 0.75rem;
   display: flex;
-  gap: 8px;
-  z-index: 3;
+  gap: 0.5rem;
+  align-items: center;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.4rem;
+  border-radius: 8px;
+  border: 1px solid rgba(113, 32, 176, 0.2);
 `;
 
 const SocialIcon = styled(motion.a)`
-  width: 38px;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 10px;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid rgba(113, 32, 176, 0.5);
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.type === 'linkedin' ? '#0077b5' : '#000000'};
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(113, 32, 176, 0.1);
+  opacity: 0.8;
 
   &:hover {
-    background: #ffffff;
-    transform: translateY(-3px) scale(1.08);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.1);
-  }
-
-  &:active {
-    transform: translateY(-1px) scale(1.05);
+    opacity: 1;
+    border-color: rgba(113, 32, 176, 0.9);
+    color: #ffffff;
+    background: rgba(113, 32, 176, 0.2);
+    transform: translateY(-2px);
   }
 
   svg {
-    font-size: 1.1rem;
+    font-size: 0.85rem;
   }
 `;
 
-const RoleLabel = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%);
-  padding: 0.75rem 0.9rem;
-  color: #ffffff;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  text-align: center;
-  z-index: 2;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-`;
-
-const MemberName = styled.h3`
-  font-size: 1.15rem;
-  color: #ffffff;
-  font-weight: 600;
-  text-align: center;
-  margin-top: 0.75rem;
-  letter-spacing: 0.3px;
-  line-height: 1.4;
-
-  @media (max-width: 768px) {
-    font-size: 1.05rem;
+// Extract name from image path (e.g., "eli_dubizh.jpg" -> "eli_dubizh")
+const getNameFromImage = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // Handle both string paths and imported modules
+  let path = '';
+  if (typeof imagePath === 'string') {
+    path = imagePath;
+  } else if (imagePath.default) {
+    path = imagePath.default;
+  } else if (typeof imagePath === 'object' && imagePath.toString) {
+    path = imagePath.toString();
+  } else {
+    return null;
   }
-`;
+  
+  // Extract filename from path
+  const filename = path.split('/').pop().split('\\').pop();
+  
+  // Remove file extension (handles both regular and webpack hashed files)
+  // Pattern: name.hash.ext or name.ext -> extract "name" part
+  // For hashed files like "eli_dubizh.abc123.jpg", we want "eli_dubizh"
+  const withoutExt = filename.replace(/\.(jpg|jpeg|png|JPG|JPEG|PNG|gif|GIF|webp|WEBP)$/i, '');
+  
+  // If it contains dots (webpack hash), take the part before the first dot after the underscore pattern
+  // e.g., "eli_dubizh.abc123" -> "eli_dubizh"
+  if (withoutExt.includes('.')) {
+    // Find the pattern "first_last" before any hash
+    const underscoreIndex = withoutExt.indexOf('_');
+    if (underscoreIndex !== -1) {
+      // Find the next dot after the underscore (this is where the hash starts)
+      const dotAfterUnderscore = withoutExt.indexOf('.', underscoreIndex);
+      if (dotAfterUnderscore !== -1) {
+        return withoutExt.substring(0, dotAfterUnderscore);
+      }
+    }
+  }
+  
+  return withoutExt;
+};
 
-// Placeholder team member data
+// Format name from "first_last" to "First Last"
+const formatName = (name, imagePath) => {
+  // If explicit name is provided, use it
+  if (name) {
+    return name
+      .split('_')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+      .join(' ');
+  }
+  
+  // Otherwise, extract from image path
+  if (imagePath) {
+    const extractedName = getNameFromImage(imagePath);
+    if (extractedName) {
+      return extractedName
+        .split('_')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+        .join(' ');
+    }
+  }
+  
+  return 'Team Member';
+};
+
+// Helper function to get title based on category
+const getTitleByCategory = (category) => {
+  const titles = {
+    executive: "Executive Board",
+    developer: "Developer Team",
+    research: "Research Team",
+    operations: "Operations Team"
+  };
+  return titles[category] || "Team Member";
+};
+
+// Team member data - names will be extracted from image filenames
+// Organized by folder structure: exec/, dev/, res/, ops/
 const teamMembers = {
   all: [
-    {
-      id: 1,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "executive",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      id: 2,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "executive",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      id: 3,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "developer",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      id: 4,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "developer",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    }
+    // Executive Board
+    { id: 1, image: eliImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    // Developer Team
+    { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 9, image: danielImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    // Research Team
+    { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 15, image: jacobImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 18, image: nickImage, category: "research", socials: { linkedin: "#", twitter: "#" } }
   ],
   executive: [
-    {
-      id: 1,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "executive",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      id: 2,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "executive",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    }
+    { id: 1, image: eliImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
+    { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "#", twitter: "#" } }
   ],
   developer: [
-    {
-      id: 3,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "developer",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    },
-    {
-      id: 4,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "developer",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    }
+    { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 9, image: danielImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
+    { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "#", twitter: "#" } }
   ],
   research: [
-    {
-      id: 5,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "research",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    }
+    { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 15, image: jacobImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
+    { id: 18, image: nickImage, category: "research", socials: { linkedin: "#", twitter: "#" } }
   ],
-  operations: [
-    {
-      id: 6,
-      name: "Team Member",
-      role: "ROLE",
-      image: null,
-      category: "operations",
-      socials: {
-        linkedin: "#",
-        twitter: "#"
-      }
-    }
-  ]
+  operations: []
 };
 
 const PeopleTeam = () => {
@@ -586,40 +646,38 @@ const PeopleTeam = () => {
                 }}
                 whileHover={{ y: -6, scale: 1.02 }}
               >
-                <ImageContainer>
-                  {member.image ? (
-                    <img src={member.image} alt={member.name} />
-                  ) : null}
-                  {!member.image && <PlaceholderIcon />}
-                  <SocialIconsContainer>
-                    {member.socials.linkedin && member.socials.linkedin !== "#" && (
-                      <SocialIcon
-                        type="linkedin"
-                        href={member.socials.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <FaLinkedin />
-                      </SocialIcon>
-                    )}
-                    {member.socials.twitter && member.socials.twitter !== "#" && (
-                      <SocialIcon
-                        type="twitter"
-                        href={member.socials.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <FaTwitter />
-                      </SocialIcon>
-                    )}
-                  </SocialIconsContainer>
-                  <RoleLabel>{member.role}</RoleLabel>
-                </ImageContainer>
-                <MemberName>{member.name}</MemberName>
+                 <ImageContainer>
+                   {member.image ? (
+                     <img src={member.image} alt={formatName(null, member.image)} />
+                   ) : null}
+                   {!member.image && <PlaceholderIcon />}
+                   <SocialIconsContainer>
+                     <SocialIcon
+                       type="linkedin"
+                       href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
+                       target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
+                       rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
+                       whileHover={{ scale: 1.1 }}
+                       whileTap={{ scale: 0.95 }}
+                     >
+                       <FaLinkedin />
+                     </SocialIcon>
+                     <SocialIcon
+                       type="twitter"
+                       href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
+                       target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
+                       rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
+                       whileHover={{ scale: 1.1 }}
+                       whileTap={{ scale: 0.95 }}
+                     >
+                       <FaTwitter />
+                     </SocialIcon>
+                   </SocialIconsContainer>
+                 </ImageContainer>
+                 <ContentContainer>
+                   <MemberName>{formatName(member.name, member.image)}</MemberName>
+                   <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
+                 </ContentContainer>
               </MemberCard>
             ))}
           </TeamRow>
