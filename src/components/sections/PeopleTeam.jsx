@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { FaLinkedin } from 'react-icons/fa';
+import Twitter from '../../Icons/Twitter';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
 
@@ -387,6 +388,12 @@ const SocialIcon = styled(motion.a)`
   }
 
   svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* LinkedIn icon from react-icons */
+  svg[data-icon="linkedin"] {
     font-size: 0.9rem;
   }
 `;
@@ -468,56 +475,39 @@ const getTitleByCategory = (category) => {
 };
 
 // Team member data - names will be extracted from image filenames
-// Organized by folder structure: exec/, dev/, res/, ops/
+// UPDATE SOCIAL LINKS HERE - Each person only needs to be updated once!
+// Replace "#" with actual LinkedIn/Twitter URLs
+const allTeamMembers = [
+  // Executive Board
+  { id: 1, image: eliImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
+  { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
+  { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
+  { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  // Developer Team
+  { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
+  { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
+  { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/christopherrherzog/", twitter: "https://x.com/chrisherzog78" } },
+  { id: 9, image: danielImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/daniel-gong-27a303383/", twitter: "https://x.com/ManyDZG" } },
+  { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/jazib-qureshi/", twitter: "https://x.com/Jazibrq225" } },
+  { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/matthew-iskandar-1aa425309/", twitter: "https://twitter.com/IskandarMatthew" } },
+  // Research Team
+  { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
+  { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
+  { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
+  { id: 15, image: jacobImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
+  { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
+  { id: 18, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } }
+];
+
+// Automatically organize by category (no need to update socials here)
 const teamMembers = {
-  all: [
-    // Executive Board
-    { id: 1, image: eliImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    // Developer Team
-    { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 9, image: danielImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    // Research Team
-    { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 15, image: jacobImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 18, image: nickImage, category: "research", socials: { linkedin: "#", twitter: "#" } }
-  ],
-  executive: [
-    { id: 1, image: eliImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
-    { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "#", twitter: "#" } }
-  ],
-  developer: [
-    { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 9, image: danielImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
-    { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "#", twitter: "#" } }
-  ],
-  research: [
-    { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 15, image: jacobImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "#", twitter: "#" } },
-    { id: 18, image: nickImage, category: "research", socials: { linkedin: "#", twitter: "#" } }
-  ],
-  operations: []
+  all: allTeamMembers,
+  executive: allTeamMembers.filter(m => m.category === "executive"),
+  developer: allTeamMembers.filter(m => m.category === "developer"),
+  research: allTeamMembers.filter(m => m.category === "research"),
+  operations: allTeamMembers.filter(m => m.category === "operations")
 };
 
 const PeopleTeam = () => {
@@ -651,26 +641,26 @@ const PeopleTeam = () => {
                    ) : null}
                    {!member.image && <PlaceholderIcon />}
                    <SocialIconsContainer>
-                     <SocialIcon
-                       type="linkedin"
-                       href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
-                       target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
-                       rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
-                       whileHover={{ scale: 1.1 }}
-                       whileTap={{ scale: 0.95 }}
-                     >
-                       <FaLinkedin />
-                     </SocialIcon>
-                     <SocialIcon
-                       type="twitter"
-                       href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
-                       target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
-                       rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
-                       whileHover={{ scale: 1.1 }}
-                       whileTap={{ scale: 0.95 }}
-                     >
-                       <FaTwitter />
-                     </SocialIcon>
+                    <SocialIcon
+                      type="linkedin"
+                      href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
+                      target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
+                      rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <FaLinkedin style={{ fontSize: '0.9rem' }} />
+                    </SocialIcon>
+                    <SocialIcon
+                      type="twitter"
+                      href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
+                      target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
+                      rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Twitter width={14} height={14} />
+                    </SocialIcon>
                    </SocialIconsContainer>
                  </ImageContainer>
                  <ContentContainer>
