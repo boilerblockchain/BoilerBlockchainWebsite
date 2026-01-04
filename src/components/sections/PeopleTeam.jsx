@@ -13,16 +13,16 @@ import eliImage from '../../assets/images/pfps/exec/eli_dubizh.jpg';
 import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
 import mahiImage from '../../assets/images/pfps/exec/mahi_tripathi.jpg';
 import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
-
+import albertImage from '../../assets/images/pfps/exec/albert_wu.jpg';
 
 // Developer Team
 import ansonImage from '../../assets/images/pfps/dev/anson_lam.JPG';
-import anubhutiImage from '../../assets/images/pfps/dev/anubhuti_mittal.jpg';
 import aryanSinghalImage from '../../assets/images/pfps/dev/aryan_singhal.png';
 import christopherImage from '../../assets/images/pfps/dev/christopher_herzog.jpg';
 import danielImage from '../../assets/images/pfps/dev/daniel_gong.png';
 import jazibImage from '../../assets/images/pfps/dev/jazib_qureshi.jpg';
 import matthewImage from '../../assets/images/pfps/dev/matthew_iskandar.png';
+import adiImage from '../../assets/images/pfps/dev/adi_chaudhary.png';
 
 // Research Team
 import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
@@ -32,6 +32,10 @@ import jacobImage from '../../assets/images/pfps/res/jacob_gutwein.jpeg';
 import muhammadImage from '../../assets/images/pfps/res/muhammad_ayaan_ameen.jpeg';
 import vaibhavImage from '../../assets/images/pfps/res/vaibhav_sunkada.jpg';
 import nickImage from '../../assets/images/pfps/res/nick_diaz.jpg';
+
+// Operations Team
+import anubhutiImage from '../../assets/images/pfps/ops/anubhuti_mittal.jpg';
+import emilyImage from '../../assets/images/pfps/ops/emily_zhang.jpg';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -483,22 +487,26 @@ const allTeamMembers = [
   { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
   { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
   { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  { id: 5, image: albertImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
   // Developer Team
-  { id: 5, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
-  { id: 6, image: anubhutiImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 6, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 7, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
   { id: 8, image: christopherImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/christopherrherzog/", twitter: "https://x.com/chrisherzog78" } },
   { id: 9, image: danielImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/daniel-gong-27a303383/", twitter: "https://x.com/ManyDZG" } },
   { id: 10, image: jazibImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/jazib-qureshi/", twitter: "https://x.com/Jazibrq225" } },
   { id: 11, image: matthewImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/matthew-iskandar-1aa425309/", twitter: "https://twitter.com/IskandarMatthew" } },
+  { id: 12, image: adiImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/adi-chaudharyy/", twitter: "https://x.com/akc__2025" } },
   // Research Team
-  { id: 12, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
-  { id: 13, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
-  { id: 14, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
-  { id: 15, image: jacobImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 16, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
-  { id: 17, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
-  { id: 18, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } }
+  { id: 13, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
+  { id: 14, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
+  { id: 15, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
+  { id: 16, image: jacobImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 17, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
+  { id: 18, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
+  { id: 19, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
+  // Operations Team
+  { id: 20, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 21, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } }
 ];
 
 // Automatically organize by category (no need to update socials here)
