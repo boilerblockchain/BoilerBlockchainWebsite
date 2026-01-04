@@ -484,7 +484,7 @@ const getTitleByCategory = (category) => {
 // Team member data - names will be extracted from image filenames
 // UPDATE SOCIAL LINKS HERE - Each person only needs to be updated once!
 // Replace "#" with actual LinkedIn/Twitter URLs
-const allTeamMembers = [
+const allTeamMembersUnsorted = [
   // Executive Board
   { id: 1, image: eliImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
   { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
@@ -513,13 +513,21 @@ const allTeamMembers = [
   { id: 24, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } }
 ];
 
+// Sort team members alphabetically by name (extracted from image filename)
+const allTeamMembersSorted = [...allTeamMembersUnsorted].sort((a, b) => {
+  const nameA = formatName(null, a.image).toLowerCase();
+  const nameB = formatName(null, b.image).toLowerCase();
+  return nameA.localeCompare(nameB);
+});
+
 // Automatically organize by category (no need to update socials here)
+// Each category is also sorted alphabetically
 const teamMembers = {
-  all: allTeamMembers,
-  executive: allTeamMembers.filter(m => m.category === "executive"),
-  developer: allTeamMembers.filter(m => m.category === "developer"),
-  research: allTeamMembers.filter(m => m.category === "research"),
-  operations: allTeamMembers.filter(m => m.category === "operations")
+  all: allTeamMembersSorted,
+  executive: allTeamMembersSorted.filter(m => m.category === "executive"),
+  developer: allTeamMembersSorted.filter(m => m.category === "developer"),
+  research: allTeamMembersSorted.filter(m => m.category === "research"),
+  operations: allTeamMembersSorted.filter(m => m.category === "operations")
 };
 
 const PeopleTeam = () => {
