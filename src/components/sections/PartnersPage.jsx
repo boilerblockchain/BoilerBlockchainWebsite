@@ -8,6 +8,7 @@ import Footer from '../Footer';
 
 // Import all partner logos
 import aptosLogo from '../../assets/images/partners/aptos.png';
+import caffeineLogo from '../../assets/images/partners/caffeine.png';
 import celoLogo from '../../assets/images/partners/celo.png';
 import collegexyzLogo from '../../assets/images/partners/collegexyz.png';
 import dormdaoLogo from '../../assets/images/partners/dormdao.png';
@@ -204,6 +205,7 @@ const formatPartnerName = (filename) => {
 // Set needsBackground: true for logos that have light text/light backgrounds and need white background to be visible
 const partners = [
   { name: 'Aptos', logo: aptosLogo, url: '#', needsBackground: false },
+  { name: 'Caffeine', logo: caffeineLogo, url: '#', needsBackground: false },
   { name: 'Celo', logo: celoLogo, url: '#', needsBackground: false },
   { name: 'College XYZ', logo: collegexyzLogo, url: '#', needsBackground: false },
   { name: 'DormDAO', logo: dormdaoLogo, url: '#', needsBackground: false },
