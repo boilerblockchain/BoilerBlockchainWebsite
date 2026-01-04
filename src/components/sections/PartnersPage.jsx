@@ -47,11 +47,13 @@ const PageSection = styled.section`
 
 const Container = styled.div`
   width: 90%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto 4rem;
   padding: 120px 2rem 0;
   position: relative;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
   
   @media (max-width: 1024px) {
     padding: 110px 1.75rem 0;
@@ -102,23 +104,26 @@ const Subtitle = styled(motion.p)`
 `;
 
 const PartnersGrid = styled(motion.div)`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 3rem 4rem;
   margin: 3rem 0;
+  align-items: center;
+  justify-items: center;
 
   @media (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 2.5rem 3.5rem;
   }
 
   @media (max-width: 768px) {
-    gap: 2rem 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 2rem 2.5rem;
     margin: 2rem 0;
   }
 
   @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem 2rem;
   }
 `;
@@ -127,51 +132,60 @@ const PartnerLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: ${props => props.needsBackground ? '1.5rem 2rem' : '0'};
+  padding: 2rem 2.5rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  background: ${props => props.needsBackground ? 'rgba(255, 255, 255, 0.95)' : 'transparent'};
-  border-radius: ${props => props.needsBackground ? '12px' : '0'};
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  width: 100%;
+  min-height: 120px;
 
   img {
-    height: 80px;
+    height: 60px;
     width: auto;
-    max-width: 200px;
+    max-width: 100%;
     object-fit: contain;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: grayscale(100%) brightness(0.3) contrast(1.2);
+    opacity: 0.7;
   }
 
   @media (max-width: 1200px) {
+    padding: 1.75rem 2rem;
+    min-height: 110px;
+    
     img {
-      height: 70px;
-      max-width: 180px;
+      height: 55px;
     }
   }
 
   @media (max-width: 768px) {
-    padding: ${props => props.needsBackground ? '1.25rem 1.75rem' : '0'};
+    padding: 1.5rem 1.75rem;
+    min-height: 100px;
     
     img {
-      height: 60px;
-      max-width: 150px;
+      height: 50px;
     }
   }
 
   @media (max-width: 480px) {
-    padding: ${props => props.needsBackground ? '1rem 1.5rem' : '0'};
+    padding: 1.25rem 1.5rem;
+    min-height: 90px;
     
     img {
-      height: 50px;
-      max-width: 120px;
+      height: 40px;
     }
   }
 
-  ${props => props.needsBackground && `
-    &:hover {
-      background: rgba(255, 255, 255, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    
+    img {
+      opacity: 0.9;
+      filter: grayscale(100%) brightness(0.2) contrast(1.3);
     }
-  `}
+  }
 `;
 
 
@@ -181,10 +195,11 @@ const PartnerCard = styled(motion.a)`
   justify-content: center;
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 
   &:hover {
     ${PartnerLogo} {
-      transform: scale(1.1);
+      transform: translateY(-2px);
     }
   }
 `;
@@ -325,10 +340,10 @@ const PartnersPage = () => {
                 delay: index * 0.05,
                 ease: [0.4, 0, 0.2, 1]
               }}
-              whileHover={{ y: -8, scale: 1.02 }}
+              whileHover={{ y: -2 }}
               style={{ cursor: partner.url !== '#' ? 'pointer' : 'default' }}
             >
-              <PartnerLogo needsBackground={partner.needsBackground || false}>
+              <PartnerLogo>
                 <img src={partner.logo} alt={partner.name} />
               </PartnerLogo>
             </PartnerCard>
