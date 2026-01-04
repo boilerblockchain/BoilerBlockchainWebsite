@@ -316,7 +316,7 @@ export default function Footer() {
             <SectionTitle>Connect</SectionTitle>
             <FooterLinks>
               <li>
-                <FooterLink to="/people/team">Our Team</FooterLink>
+                <FooterLink to="/people/team">The Team</FooterLink>
               </li>
               <li>
                 <FooterLink to="/contact">Contact Us</FooterLink>

@@ -178,12 +178,12 @@ const PartnerLogo = styled.div`
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 1);
+    background: rgba(30, 30, 40, 0.95);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     
     img {
-      opacity: 0.9;
-      filter: grayscale(100%) brightness(0.2) contrast(1.3);
+      opacity: 1;
+      filter: grayscale(0%) brightness(1) contrast(1);
     }
   }
 `;
