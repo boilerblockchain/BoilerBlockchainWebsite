@@ -21,7 +21,9 @@ import meteoraLogo from '../../assets/images/partners/meteora.png';
 import moiLogo from '../../assets/images/partners/moi.png';
 import opLogo from '../../assets/images/partners/op.png';
 import originLogo from '../../assets/images/partners/origin.png';
+import polymarketLogo from '../../assets/images/partners/polymarket.png';
 import purdueLogo from '../../assets/images/partners/purdue.png';
+import collegedaoLogo from '../../assets/images/partners/collegedao.png';
 import sharklabsLogo from '../../assets/images/partners/sharklabs.png';
 import solanaLogo from '../../assets/images/partners/solana.png';
 import sonicLogo from '../../assets/images/partners/sonic.png';
@@ -222,6 +224,7 @@ const partners = [
   { name: 'Aptos', logo: aptosLogo, url: '#', needsBackground: false },
   { name: 'Caffeine', logo: caffeineLogo, url: '#', needsBackground: false },
   { name: 'Celo', logo: celoLogo, url: '#', needsBackground: false },
+  { name: 'College DAO', logo: collegedaoLogo, url: '#', needsBackground: false },
   { name: 'College XYZ', logo: collegexyzLogo, url: '#', needsBackground: false },
   { name: 'DormDAO', logo: dormdaoLogo, url: '#', needsBackground: false },
   { name: 'Eigen', logo: eigenLogo, url: '#', needsBackground: false },
@@ -233,6 +236,7 @@ const partners = [
   { name: 'MOI', logo: moiLogo, url: '#', needsBackground: false },
   { name: 'OP', logo: opLogo, url: '#', needsBackground: false },
   { name: 'Origin', logo: originLogo, url: '#', needsBackground: false },
+  { name: 'Polymarket', logo: polymarketLogo, url: '#', needsBackground: false },
   { name: 'Purdue', logo: purdueLogo, url: '#', needsBackground: false },
   { name: 'SharkLabs', logo: sharklabsLogo, url: '#', needsBackground: false },
   { name: 'Solana', logo: solanaLogo, url: '#', needsBackground: false },
