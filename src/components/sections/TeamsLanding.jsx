@@ -253,7 +253,7 @@ const teams = [
     name: 'Developer Team',
     icon: FiCode,
     description: 'Building the future of blockchain technology through innovative smart contracts, DApps, and Web3 infrastructure.',
-    stats: { members: '30+', projects: '7', languages: '8+' },
+    stats: { members: '40+', projects: '7', languages: '8+' },
     path: '/teams/developer'
   },
   {
@@ -261,7 +261,7 @@ const teams = [
     name: 'Research Team',
     icon: FiSearch,
     description: 'Exploring cutting-edge blockchain research, consensus mechanisms, and emerging technologies in the decentralized space.',
-    stats: { members: '60+', papers: '12+', partnerships: '5+' },
+    stats: { members: '50+', papers: '12+', partnerships: '5+' },
     path: '/teams/research'
   },
   {
@@ -269,7 +269,7 @@ const teams = [
     name: 'Operations Team',
     icon: FiSettings,
     description: 'The engine behind everything: partnerships, events, logistics, and systems that let builders focus and scale impact.',
-    stats: { members: '25+', events: '15+', partners: '20+' },
+    stats: { members: '20+', events: '15+', partners: '20+' },
     path: '/teams/operations'
   }
 ];
