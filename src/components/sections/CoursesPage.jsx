@@ -5,7 +5,7 @@ import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
 import Navigation from '../Navigation';
 import Footer from '../Footer';
-import BBLogo from '../../assets/Boiler_BLockchain_Logo_SVG.png';
+import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
 
 // Education images
 import educationImage1 from '../../assets/images/education/edu1.jpg';

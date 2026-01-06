@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiLinkedin } from 'react-icons/fi';
-import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
+import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";
@@ -64,16 +64,18 @@ const LogoBox = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 
   img {
-    width: 20px;
-    height: 20px;
+    width: 110px;
+    height: auto;
+    max-height: 45px;
+    max-width: 110px;
     object-fit: contain;
   }
 `;

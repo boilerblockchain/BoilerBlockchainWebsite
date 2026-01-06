@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import BBLogo from "../assets/Boiler_BLockchain_Logo_SVG.png";
+import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
 
 const NavHeader = styled.header`
   position: fixed;
@@ -73,11 +73,11 @@ const LogoBox = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 
   @media (max-width: 640px) {
@@ -86,13 +86,15 @@ const LogoBox = styled.div`
   }
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 120px;
+    height: auto;
+    max-height: 50px;
+    max-width: 120px;
     object-fit: contain;
 
     @media (max-width: 640px) {
-      width: 20px;
-      height: 20px;
+      max-height: 45px;
+      max-width: 100px;
     }
   }
 `;

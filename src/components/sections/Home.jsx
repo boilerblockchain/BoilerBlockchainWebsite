@@ -6,7 +6,7 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
-import BBLogo from '../../assets/Boiler_BLockchain_Logo_SVG.png';
+import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
 
 // Education block images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
@@ -27,6 +27,9 @@ import researchImage3 from '../../assets/images/research/res3.jpg';
 import operationsImage1 from '../../assets/images/operations/op1.png';
 import operationsImage2 from '../../assets/images/operations/op2.jpg';
 import operationsImage3 from '../../assets/images/operations/op3.jpeg';
+
+// Club group photo
+import clubGroupPhoto from '../../assets/images/club/BB_group_photo_solana_across_camp.jpg';
 
 // Fallback placeholder if group image doesn't exist
 const placeholderImage = 'https://via.placeholder.com/1200x800/7120b0/ffffff?text=Group+Photo';
@@ -1085,16 +1088,13 @@ const PinnedLogo = styled(motion.div)`
   right: 20px;
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  background: transparent;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  box-shadow: 
-    0 4px 20px rgba(113, 32, 176, 0.4),
-    0 0 0 2px rgba(0, 0, 0, 0.3),
-    0 0 0 4px rgba(113, 32, 176, 0.2);
+  padding: 0;
+  box-shadow: none;
   z-index: 40;
   transform: rotate(5deg);
   
@@ -1910,7 +1910,7 @@ const CTADivider = styled.div`
 const CTASection = styled.section`
   width: 100%;
   max-width: 100vw;
-  padding: 140px 2rem 120px;
+  padding: 140px 2rem 60px;
   background: transparent;
   position: relative;
   z-index: 1;
@@ -1949,11 +1949,11 @@ const CTASection = styled.section`
   }
 
   @media (max-width: 768px) {
-    padding: 100px 1.5rem 80px;
+    padding: 100px 1.5rem 40px;
   }
 
   @media (max-width: 480px) {
-    padding: 80px 1rem 60px;
+    padding: 80px 1rem 30px;
   }
 `;
 
@@ -2205,7 +2205,7 @@ const CTAButton = styled(motion(Link))`
 const WhatWeDoSection = styled.section`
   width: 100%;
   max-width: 100vw;
-  padding: 80px 2rem 120px;
+  padding: 40px 2rem 120px;
   background: transparent;
   position: relative;
   z-index: 1;
@@ -2241,11 +2241,11 @@ const WhatWeDoSection = styled.section`
   }
 
   @media (max-width: 768px) {
-    padding: 60px 1.5rem 100px;
+    padding: 30px 1.5rem 100px;
   }
 
   @media (max-width: 480px) {
-    padding: 50px 1rem 80px;
+    padding: 20px 1rem 80px;
   }
 `;
 
@@ -3770,7 +3770,7 @@ const Home = () => {
           transition={{ duration: 1 }}
         >
           <img 
-            src="/images/club/BB_group_photo_solana_across_camp.jpg" 
+            src={clubGroupPhoto} 
             alt="Boiler Blockchain club members"
             onError={(e) => {
               // Fallback to placeholder if image doesn't exist
