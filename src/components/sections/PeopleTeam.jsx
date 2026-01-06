@@ -11,7 +11,6 @@ import Footer from '../Footer';
 // Executive Board
 import eliImage from '../../assets/images/pfps/exec/eli_dubizh.jpg';
 import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
-import mahiImage from '../../assets/images/pfps/exec/mahi_tripathi.jpg';
 import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
 import albertImage from '../../assets/images/pfps/exec/albert_wu.jpg';
 import siyaImage from '../../assets/images/pfps/exec/siya_jariwala.jpg';
@@ -32,6 +31,8 @@ import sebastianImage from '../../assets/images/pfps/dev/sebastian_ting.png';
 import kritavImage from '../../assets/images/pfps/dev/kritav_dalal.jpg';
 import danielJinImage from '../../assets/images/pfps/dev/daniel_jin.jpg';
 import siddheshImage from '../../assets/images/pfps/dev/siddhesh_songirkar.jpg';
+import dhiyaanImage from '../../assets/images/pfps/dev/dhiyaan_nirmal.jpg';
+import pranavImage from '../../assets/images/pfps/dev/pranav_doshi.png';
 
 // Research Team
 import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
@@ -42,6 +43,7 @@ import vaibhavImage from '../../assets/images/pfps/res/vaibhav_sunkada.jpg';
 import nickImage from '../../assets/images/pfps/res/nick_diaz.jpg';
 import anikethImage from '../../assets/images/pfps/res/aniketh_upadhya.jpg';
 import oscarfImage from '../../assets/images/pfps/res/oscarf_velasco.jpg';
+import kevalImage from '../../assets/images/pfps/res/keval_shah.jpg';
 
 // Operations Team
 import anubhutiImage from '../../assets/images/pfps/ops/anubhuti_mittal.jpg';
@@ -52,6 +54,7 @@ import shariqImage from '../../assets/images/pfps/ops/shariq_kapadia.jpeg';
 import garvImage from '../../assets/images/pfps/ops/garv_tayade.jpg';
 import mugdhaImage from '../../assets/images/pfps/ops/mugdha_patil.jpg';
 import shivamImage from '../../assets/images/pfps/ops/shivam_rastogi.jpg';
+import mahiImage from '../../assets/images/pfps/ops/mahi_tripathi.jpg';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -501,10 +504,9 @@ const allTeamMembersUnsorted = [
   // Executive Board
   { id: 1, image: eliImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
   { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
-  { id: 3, image: mahiImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
-  { id: 4, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
-  { id: 5, image: albertImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
-  { id: 6, image: siyaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
+  { id: 3, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  { id: 4, image: albertImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
+  { id: 5, image: siyaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
   // Developer Team
   { id: 7, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 8, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
@@ -521,24 +523,28 @@ const allTeamMembersUnsorted = [
   { id: 19, image: kritavImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/kritav/", twitter: "https://x.com/kritvd" } },
   { id: 20, image: danielJinImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/djin25/", twitter: "https://x.com/ninebitcomputer" } },
   { id: 21, image: siddheshImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/siddhesh-songirkar/", twitter: "https://x.com/TenerSed5" } },
+  { id: 22, image: dhiyaanImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/dhiyaan/", twitter: "https://x.com/dh1yaan?s=21" } },
+  { id: 23, image: pranavImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/pranav-doshi-60a647213/", twitter: "https://x.com/0xPranavDoshi" } },
   // Research Team
-  { id: 22, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
-  { id: 23, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
-  { id: 24, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
-  { id: 25, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
-  { id: 26, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
-  { id: 27, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
-  { id: 28, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
-  { id: 29, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
+  { id: 24, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
+  { id: 25, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
+  { id: 26, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
+  { id: 27, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
+  { id: 28, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
+  { id: 29, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
+  { id: 30, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
+  { id: 31, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
+  { id: 32, image: kevalImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/keval-shah-3b46a2241", twitter: "https://x.com/kshahdevelops?s=21" } },
   // Operations Team
-  { id: 30, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
-  { id: 31, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 32, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 33, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
-  { id: 34, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
-  { id: 35, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
-  { id: 36, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
-  { id: 37, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } }
+  { id: 33, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 34, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
+  { id: 35, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 36, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
+  { id: 37, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
+  { id: 38, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
+  { id: 39, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
+  { id: 40, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
+  { id: 41, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } }
 ];
 
 // Sort team members alphabetically by name (extracted from image filename)
@@ -683,34 +689,34 @@ const PeopleTeam = () => {
                 }}
                 whileHover={{ y: -6, scale: 1.02 }}
               >
-                 <ImageContainer>
-                   {member.image ? (
+                <ImageContainer>
+                  {member.image ? (
                      <img src={member.image} alt={formatName(null, member.image)} />
-                   ) : null}
-                   {!member.image && <PlaceholderIcon />}
-                   <SocialIconsContainer>
-                    <SocialIcon
-                      type="linkedin"
+                  ) : null}
+                  {!member.image && <PlaceholderIcon />}
+                  <SocialIconsContainer>
+                      <SocialIcon
+                        type="linkedin"
                       href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
                       target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
                       rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
                       <FaLinkedin style={{ fontSize: '0.9rem' }} />
-                    </SocialIcon>
-                    <SocialIcon
-                      type="twitter"
+                      </SocialIcon>
+                      <SocialIcon
+                        type="twitter"
                       href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
                       target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
                       rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
                       <Twitter width={14} height={14} />
-                    </SocialIcon>
-                   </SocialIconsContainer>
-                 </ImageContainer>
+                      </SocialIcon>
+                  </SocialIconsContainer>
+                </ImageContainer>
                  <ContentContainer>
                    <MemberName>{formatName(member.name, member.image)}</MemberName>
                    <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
