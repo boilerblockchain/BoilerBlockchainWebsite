@@ -1084,10 +1084,10 @@ const GlassPanel = styled(motion.div)`
 
 const PinnedLogo = styled(motion.div)`
   position: absolute;
-  top: -20px;
+  top: -40px;
   right: 20px;
-  width: 60px;
-  height: 60px;
+  width: 150px;
+  height: 150px;
   background: transparent;
   border-radius: 8px;
   display: flex;
@@ -1108,30 +1108,30 @@ const PinnedLogo = styled(motion.div)`
   &::before {
     content: '';
     position: absolute;
-    top: -8px;
+    top: -12px;
     right: 50%;
     transform: translateX(50%);
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     background: rgba(0, 0, 0, 0.6);
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
     z-index: -1;
   }
 
   @media (max-width: 768px) {
-    width: 50px;
-    height: 50px;
-    top: -15px;
+    width: 120px;
+    height: 120px;
+    top: -30px;
     right: 15px;
-    padding: 6px;
+    padding: 0;
   }
 
   @media (max-width: 480px) {
-    width: 45px;
-    height: 45px;
-    top: -12px;
+    width: 100px;
+    height: 100px;
+    top: -25px;
     right: 12px;
-    padding: 5px;
+    padding: 0;
   }
 `;
 
