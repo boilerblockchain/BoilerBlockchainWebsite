@@ -2325,7 +2325,7 @@ const WhatWeDoHeader = styled(motion.div)`
 const WhatWeDoTitle = styled(motion.h2)`
   font-size: 4.5rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 50%, rgba(168, 85, 247, 0.9) 100%);
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.98) 30%, rgba(168, 85, 247, 0.95) 70%, rgba(168, 85, 247, 0.85) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -2336,8 +2336,23 @@ const WhatWeDoTitle = styled(motion.h2)`
   font-family: 'Tomorrow', sans-serif;
   position: relative;
   z-index: 2;
-  text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
-  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.2));
+  text-shadow: 0 0 60px rgba(168, 85, 247, 0.4);
+  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.3)) drop-shadow(0 0 40px rgba(168, 85, 247, 0.2));
+
+  &::before {
+    content: 'What We Do';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(168, 85, 247, 0.1) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    z-index: -1;
+    filter: blur(20px);
+    opacity: 0.6;
+  }
 
   &::after {
     content: '';
@@ -2345,11 +2360,13 @@ const WhatWeDoTitle = styled(motion.h2)`
     bottom: -0.75rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 140px;
+    width: 180px;
     height: 4px;
-    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.6), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.6), transparent);
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.9), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.4), transparent);
     border-radius: 2px;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    box-shadow: 
+      0 0 20px rgba(168, 85, 247, 0.5),
+      0 0 40px rgba(168, 85, 247, 0.3);
   }
 
   @media (max-width: 1024px) {
@@ -2382,115 +2399,142 @@ const WhatWeDoTitle = styled(motion.h2)`
 
 const WhatWeDoSubtitle = styled(motion.p)`
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.6;
   max-width: 800px;
-  margin: 0 auto 2rem;
+  margin: 0 auto 1rem;
   text-align: center;
   font-weight: 500;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   font-family: 'Tomorrow', sans-serif;
   position: relative;
   z-index: 2;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  strong {
+    color: rgba(168, 85, 247, 0.95);
+    font-weight: 700;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
 `;
 
 const WhatWeDoNav = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
-  margin-top: 2rem;
+  margin-top: 3rem;
   position: relative;
   z-index: 2;
+  padding: 2rem 0;
 
   @media (max-width: 768px) {
-    gap: 0.75rem;
-    margin-top: 1.5rem;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 1.5rem 0;
   }
 
   @media (max-width: 480px) {
-    gap: 0.5rem;
-    margin-top: 1.25rem;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding: 1.25rem 0;
   }
 `;
 
 const WhatWeDoNavLink = styled.button`
-  padding: 0.625rem 1.25rem;
-  background: rgba(168, 85, 247, 0.1);
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.9375rem;
+  padding: 0.875rem 2rem;
+  background: rgba(25, 25, 35, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(168, 85, 247, 0.4);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 1rem;
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   overflow: hidden;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 
+    0 0 0 1px rgba(168, 85, 247, 0.2) inset,
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(168, 85, 247, 0.1);
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+    background: linear-gradient(
+      135deg,
+      rgba(168, 85, 247, 0.15) 0%,
+      rgba(168, 85, 247, 0.05) 50%,
+      rgba(168, 85, 247, 0.15) 100%
+    );
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: linear-gradient(
+      135deg,
+      rgba(168, 85, 247, 0.6) 0%,
+      rgba(168, 85, 247, 0.3) 50%,
+      rgba(168, 85, 247, 0.6) 100%
+    );
+    opacity: 0;
+    filter: blur(8px);
+    transition: opacity 0.4s ease;
     z-index: -1;
   }
 
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
   &:hover {
-    background: rgba(168, 85, 247, 0.2);
-    border-color: rgba(168, 85, 247, 0.5);
-    color: rgba(255, 255, 255, 1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    background: rgba(30, 30, 40, 0.85);
+    border-color: rgba(168, 85, 247, 0.7);
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 
+      0 0 0 1px rgba(168, 85, 247, 0.3) inset,
+      0 8px 24px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(168, 85, 247, 0.3),
+      0 0 60px rgba(168, 85, 247, 0.15);
 
     &::before {
+      opacity: 1;
+    }
+
+    &::after {
       opacity: 1;
     }
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
   }
 
   @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
+    letter-spacing: 0.4px;
   }
 
   @media (max-width: 480px) {
-    padding: 0.4375rem 0.875rem;
+    padding: 0.625rem 1.25rem;
     font-size: 0.8125rem;
-  }
-
-  /* Accent color for key phrases */
-  strong {
-    color: rgba(168, 85, 247, 0.95);
-    font-weight: 600;
-  }
-
-  @media (max-width: 1024px) {
-    font-size: 1.375rem;
-    max-width: 750px;
-    margin-bottom: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.25rem;
-    line-height: 1.55;
-    margin-bottom: 3rem;
-    padding: 0 1.5rem;
-    max-width: 100%;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.125rem;
-    line-height: 1.5;
-    margin-bottom: 2.5rem;
-    padding: 0 1rem;
+    letter-spacing: 0.3px;
   }
 `;
 
@@ -4051,7 +4095,7 @@ const Home = () => {
                   }
                 }}
               >
-                Education
+                <span>Education</span>
               </WhatWeDoNavLink>
               <WhatWeDoNavLink
                 onClick={() => {
@@ -4067,7 +4111,7 @@ const Home = () => {
                   }
                 }}
               >
-                Development
+                <span>Development</span>
               </WhatWeDoNavLink>
               <WhatWeDoNavLink
                 onClick={() => {
@@ -4083,7 +4127,7 @@ const Home = () => {
                   }
                 }}
               >
-                Research
+                <span>Research</span>
               </WhatWeDoNavLink>
               <WhatWeDoNavLink
                 onClick={() => {
@@ -4099,7 +4143,7 @@ const Home = () => {
                   }
                 }}
               >
-                Operations
+                <span>Operations</span>
               </WhatWeDoNavLink>
             </WhatWeDoNav>
           </WhatWeDoHeader>
