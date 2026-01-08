@@ -58,16 +58,28 @@ const BackButton = styled(Link)`
 const Container = styled.div`
   width: 85%;
   max-width: 1400px;
-  margin: 3rem auto 0;
+  margin: 0 auto 0;
+  padding: 120px 2rem 0;
   position: relative;
   z-index: 2;
   
-  @media (max-width: 70em) {
+  @media (max-width: 1024px) {
     width: 90%;
+    padding: 110px 1.75rem 0;
   }
 
-  @media (max-width: 48em) {
+  @media (max-width: 768px) {
     width: 95%;
+    padding: 100px 1.5rem 0;
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    padding: 80px 1rem 0;
+  }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 0;
   }
 `;
 
@@ -780,13 +792,13 @@ const HackathonsPage = () => {
               color: "#7120b0",
               distance: 150,
               enable: true,
-              opacity: 0.5,
-              width: 1,
+              opacity: 0.7,
+              width: 1.5,
             },
             move: { enable: true, speed: 0.8 },
-            number: { value: 60 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
+            number: { value: 70 },
+            opacity: { value: 0.5 },
+            size: { value: 3 },
           },
           fpsLimit: 120,
           interactivity: {
@@ -799,7 +811,7 @@ const HackathonsPage = () => {
             modes: {
               grab: {
                 distance: 140,
-                links: { opacity: 0.4 }
+                links: { opacity: 0.6 }
               }
             }
           }

@@ -3,8 +3,10 @@ import styled, {keyframes} from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiGithub, FiCode, FiLayers, FiZap, FiExternalLink } from 'react-icons/fi';
+import { FiGithub, FiCode, FiLayers, FiZap, FiExternalLink, FiArrowRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -38,8 +40,10 @@ const PageSection = styled.section`
     background-color: #000000;
     position: relative;
     overflow: hidden;
-    padding: 4rem 0;
+    padding: 4rem 0 0;
     font-family: 'Tomorrow', sans-serif;
+    display: flex;
+    flex-direction: column;
 
     * {
         font-family: 'Tomorrow', sans-serif;
@@ -49,12 +53,28 @@ const PageSection = styled.section`
 const Container = styled.div`
     width: 90%;
     max-width: 1300px;
-    margin: 6rem auto 0;
+    margin: 0 auto 0;
+    padding: 120px 2rem 0;
     position: relative;
     z-index: 2;
 
-    @media (max-width: 70em) {
+    @media (max-width: 1024px) {
         width: 95%;
+        padding: 110px 1.75rem 0;
+    }
+
+    @media (max-width: 768px) {
+        width: 95%;
+        padding: 100px 1.5rem 0;
+    }
+
+    @media (max-width: 480px) {
+        width: 100%;
+        padding: 80px 1rem 0;
+    }
+
+    @media (max-width: 360px) {
+        padding: 70px 0.75rem 0;
     }
 `;
 
@@ -157,24 +177,24 @@ const ExtGrid = styled(motion.div)`
 `;
 
 const ExtCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.6);
+    background: rgba(15, 15, 15, 0.7);
     border: 1px solid ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
-    border-radius: 8px;
-    padding: 1.8rem;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-align: center;
     font-size: 1.5rem;
     position: relative;
     overflow: hidden;
-    opacity: .8;
 
     &:hover {
-        opacity: 1;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        transform: translateY(-6px);
         border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.6)'};
+        background: rgba(15, 15, 15, 0.85);
     }
 
     &::before {
@@ -183,8 +203,14 @@ const ExtCard = styled(motion.div)`
         top: 0;
         left: 0;
         right: 0;
-        height: 2px;
-        background: ${props => props.borderColor || 'rgba(113, 32, 176, 0.6)'};
+        height: 3px;
+        background: ${props => props.borderColor || 'rgba(113, 32, 176, 0.8)'};
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+        opacity: 1;
     }
 `;
 
@@ -223,30 +249,43 @@ const ExtDescription = styled.p`
 
 const ProjectsGrid = styled(motion.div)`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(1000px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 1.5rem;
     margin: 3rem 0;
 
+    @media (max-width: 968px) {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.25rem;
+    }
+
     @media (max-width: 768px) {
         grid-template-columns: 1fr;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    @media (max-width: 480px) {
+        gap: 0.75rem;
     }
 `;
 
 const ProjectCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.6);
+    background: rgba(15, 15, 15, 0.7);
     border: 1px solid rgba(113, 32, 176, 0.3);
-    border-radius: 8px;
-    padding: 1.8rem;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 
     &:hover {
-        box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
-        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
+        transform: translateY(-6px);
         border-color: rgba(113, 32, 176, 0.6);
+        background: rgba(15, 15, 15, 0.85);
     }
 
     &::before {
@@ -255,10 +294,15 @@ const ProjectCard = styled(motion.div)`
         top: 0;
         left: 0;
         right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+        height: 3px;
+        background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
-    
+
+    &:hover::before {
+        opacity: 1;
+    }
 `;
 
 const ProjectTitle = styled.h3`
@@ -300,6 +344,59 @@ const ProjectLinks = styled.div`
         svg {
             font-size: 1rem;
         }
+    }
+`;
+
+const HackathonSection = styled(motion.div)`
+    margin: 6rem 0 4rem;
+    text-align: center;
+`;
+
+const HackathonDescription = styled(motion.p)`
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 2rem auto 3rem;
+    font-family: 'Tomorrow', sans-serif;
+
+    @media (max-width: 768px) {
+        font-size: 1rem;
+        margin: 1.5rem auto 2.5rem;
+    }
+`;
+
+const ViewAllButton = styled(Link)`
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    border: none;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Tomorrow', sans-serif;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
+        background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+    }
+
+    svg {
+        font-size: 1.125rem;
+        transition: transform 0.3s ease;
+    }
+
+    &:hover svg {
+        transform: translateX(4px);
     }
 `;
 
@@ -460,13 +557,13 @@ const DeveloperTeam = () => {
                             color: "#7120b0",
                             distance: 150,
                             enable: true,
-                            opacity: 0.3,
-                            width: 1,
+                            opacity: 0.7,
+                            width: 1.5,
                         },
-                        move: { enable: true, speed: 0.5 },
-                        number: { value: 40 },
-                        opacity: { value: 0.2 },
-                        size: { value: 1.5 },
+                        move: { enable: true, speed: 0.8 },
+                        number: { value: 70 },
+                        opacity: { value: 0.5 },
+                        size: { value: 3 },
                     },
                     fpsLimit: 120,
                     interactivity: {
@@ -478,8 +575,8 @@ const DeveloperTeam = () => {
                         },
                         modes: {
                             grab: {
-                                distance: 100,
-                                links: { opacity: 0.3 }
+                                distance: 140,
+                                links: { opacity: 0.6 }
                             }
                         }
                     }
@@ -518,7 +615,7 @@ const DeveloperTeam = () => {
                 >
                     <StatCard whileHover={{ y: -2 }}>
                         <StatLabel>Deploying</StatLabel>
-                        <StatNumber><CountUp end={30} suffix="+" /></StatNumber>
+                        <StatNumber><CountUp end={40} suffix="+" /></StatNumber>
                         <StatLabel>Developers</StatLabel>
                     </StatCard>
                     <StatCard whileHover={{ y: -2 }}>
@@ -601,7 +698,45 @@ const DeveloperTeam = () => {
                         </ProjectCard>
                     ))}
                 </ProjectsGrid>
+
+                <HackathonSection
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <SectionTitle
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        Hackathon <span>Projects</span>
+                    </SectionTitle>
+
+                    <HackathonDescription
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Explore our past hackathon projects and see what we've built.
+                    </HackathonDescription>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                        <ViewAllButton to="/hackathons">
+                            View All Hackathons
+                            <FiArrowRight />
+                        </ViewAllButton>
+                    </motion.div>
+                </HackathonSection>
             </Container>
+            <Footer />
         </PageSection>
     );
 };

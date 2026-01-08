@@ -24,9 +24,8 @@ body{
     font-family: 'Lato', sans-serif;
     overflow-x: hidden;
     height: 100%;
-    background-image: ${(props) => props.theme.body};
-    background-size: 100% 100%;
-    animation: Gradient 1s linear infinite;
+    background: #000000 !important;
+    background-image: none !important;
     overflow-x: hidden;
 }
 

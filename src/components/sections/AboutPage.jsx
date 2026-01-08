@@ -1,15 +1,15 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion, useInView } from "framer-motion";
-
-import img5 from "../../assets/images/5.jpg";
-import img6 from "../../assets/images/6.jpg";
-import img7 from "../../assets/images/7.jpg";
-import img9 from "../../assets/images/9.jpg";
 import Navigation from '../Navigation';
+
+// Placeholder images - Replace with actual images when ready
+const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+1';
+const img6 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=About+Image+2';
+const img7 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=About+Image+3';
+const img9 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+4';
 
 const fadeInUp = {
   initial: {
@@ -47,7 +47,7 @@ const Container = styled(motion.div)`
   width: 85%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 0;
+  padding: 120px 2rem 4rem;
   position: relative;
   z-index: 2;
   display: flex;
@@ -55,8 +55,21 @@ const Container = styled(motion.div)`
   align-items: center;
   font-family: 'Tomorrow', sans-serif;
 
-  @media (max-width: 70em) {
+  @media (max-width: 1024px) {
     width: 90%;
+    padding: 110px 1.75rem 3.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 100px 1.5rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 80px 1rem 2rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 70px 0.75rem 1.5rem;
   }
 `;
 
@@ -265,13 +278,13 @@ const ParticlesBackground = ({ keyId }) => {
             color: "#7120b0",
             distance: 150,
             enable: true,
-            opacity: 0.5,
-            width: 1,
+            opacity: 0.7,
+            width: 1.5,
           },
           move: { enable: true, speed: 0.8 },
-          number: { value: 60 },
-          size: { value: 2 },
-          opacity: { value: 0.3 },
+          number: { value: 70 },
+          size: { value: 3 },
+          opacity: { value: 0.5 },
         },
         fpsLimit: 120,
         interactivity: {
@@ -284,7 +297,7 @@ const ParticlesBackground = ({ keyId }) => {
           modes: {
             grab: {
               distance: 140,
-              links: { opacity: 0.4 }
+              links: { opacity: 0.6 }
             }
           }
         }
