@@ -166,17 +166,41 @@ const StatLabel = styled.p`
 
 const ExtGrid = styled(motion.div)`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2.5rem;
     margin: 4rem 0;
-    margin-bottom: 8rem;
+    margin-bottom: 4rem;
+
+    @media (max-width: 300px) {
+        grid-template-columns: 1fr;
+    }
+`;
+
+const HackathonGrid = styled(motion.div)`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(1000px, 1fr));
+    gap: 2.5rem;
+    margin: 4rem 0;
+    margin-bottom: 4rem;
 
     @media (max-width: 1000px) {
         grid-template-columns: 1fr;
     }
 `;
 
-const ExtCard = styled(motion.div)`
+
+
+const HackathonCell = styled(motion.div)`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2.5rem;
+    margin: 0rem 0;
+    margin-bottom: 0rem;
+
+    @media (max-width: 1000px) {
+        grid-template-columns: 1fr;
+    }
+    
     background: rgba(15, 15, 15, 0.7);
     border: 1px solid ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
     border-radius: 12px;
@@ -193,8 +217,8 @@ const ExtCard = styled(motion.div)`
     &:hover {
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         transform: translateY(-6px);
-        border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.6)'};
-        background: rgba(15, 15, 15, 0.85);
+        border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
+        background: ${props => props.backgroundColor || 'rgba(15, 15, 15, 0.7);'};
     }
 
     &::before {
@@ -214,18 +238,85 @@ const ExtCard = styled(motion.div)`
     }
 `;
 
-const ExtIcon = styled.div`
-    width: 80px;
-    height: 80px;
+const HackathonImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
+`;
+
+const ExtCard = styled(motion.div)`
+    text-align: center;
+    font-size: 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    background: rgba(15, 15, 15, 0.7);
+    border: 1px solid ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    font-size: 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        transform: translateY(-6px);
+        border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
+        background: ${props => props.backgroundColor || 'rgba(15, 15, 15, 0.7);'};
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: ${props => props.borderColor || 'rgba(113, 32, 176, 0.8)'};
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover::before {
+        opacity: 1;
+    }
+
+`;
+
+const HackathonCard = styled(motion.div)`
+    text-align: center;
+    font-size: 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+`;
+
+const ExtIcon = styled.div`
+    width: 120px;
+    height: 120px;
+    border-radius: 0px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
+    margin: 0 auto 3rem;
 
-    svg {
-        color: #7120b0;
-        font-size: 1.3rem;
+    img {
+        width: 120%;
+        height: 120%;
     }
 `;
 
@@ -242,7 +333,7 @@ const ExtName = styled.h4`
 const ExtDescription = styled.p`
     color: rgba(255, 255, 255, 0.7);
     line-height: 1.5;
-    margin-bottom: 1.5rem;
+    margin-bottom: 3.5rem;
     font-size: 0.9rem;
     font-family: 'Tomorrow', sans-serif;
 `;
@@ -442,23 +533,40 @@ const ExternalProjects = [
         name: 'MOI Labs',
         description: 'Developing X for Moi Labs...',
         icon: 'https://www.daas4pro.com/dass4pro-mist/images-mist/images/webimages/about-us/4.png',
-        borderColor: 'rgba(68, 54, 194, 0.6)',
+        borderColor: 'rgba(68, 54, 194, 0.8)',
         link: 'https://moi.technology/'
     },
     {
         name: 'SUI',
         description: 'Working alongside SUI... ',
         icon: 'https://s3.coinmarketcap.com/static-gravity/image/5bd0f43855f6434386c59f2341c5aaf0.png',
-        borderColor: 'rgba(70, 132, 232, 0.6)',
+        borderColor: 'rgba(70, 132, 232, 0.8)',
         link: 'https://sui.io/'
     },
     {
         name: 'Eigen Layer',
         description: 'Building new protocols...',
         icon: 'https://canada1.discourse-cdn.com/flex028/uploads/eigenlayer/original/2X/c/c7059fe3480f52c3324c3c8c5f9e40c2eaca18fc.png',
-        borderColor: 'rgba(91, 102, 117, 0.6)',
+        borderColor: 'rgba(91, 102, 117, 0.8)',
         link: 'https://app.eigenlayer.xyz/'
     },
+];
+
+const Grants = [
+    {
+        name: 'Metorite Collective Labs',
+        description: 'Bringing Purdue to MBC',
+        icon: 'https://pbs.twimg.com/profile_images/1939324765707137024/OPn6_FWW_400x400.jpg',
+        borderColor: 'rgba(227, 85, 29, 0.8)',
+        link: 'https://x.com/MeteoriteCol'
+    },
+    {
+        name: 'Gemini',
+        description: 'Bringing Purdue to EthDenver',
+        icon: 'https://pbs.twimg.com/profile_images/1927424793436942336/W9dVrsPJ_400x400.jpg',
+        borderColor: 'rgba(227, 85, 29, 0.8)',
+        link: 'https://x.com/Gemini'
+    }
 ];
 
 const InternalProjects = [
@@ -470,7 +578,7 @@ const InternalProjects = [
     },
     {
         title: 'On-Chain Attendance',
-        description: 'Using X to enable attendance using assigned NFTs from our collection.',
+        description: 'Using Smart Contracts to enable attendance using assigned NFTs from our collection.',
         github: 'https://github.com/boilerblockchain/nft-marketplace',
         demo: 'https://nft.boilerblockchain.org'
     },
@@ -481,7 +589,7 @@ const InternalProjects = [
         demo: 'https://dao.boilerblockchain.org'
     },
     {
-        title: 'This Website',
+        title: 'BoilerBlockchain.org',
         description: 'Managing and improving the Boiler Blockchain website.',
         github: 'https://github.com/boilerblockchain/dao-governance',
         demo: 'https://dao.boilerblockchain.org'
@@ -510,6 +618,36 @@ const projects = [
         github: 'https://github.com/boilerblockchain/dao-governance',
         demo: 'https://dao.boilerblockchain.org'
     }
+];
+
+const HackathonProjects = [
+    {
+        name: 'HyperSphere',
+        description: '1st Place in Circle Bounty @MBC - P2P and merchant grade USDC payments via NFC. On-chain across Solana and Base.',
+        icon: 'https://pbs.twimg.com/profile_images/1996518927099170816/dsQBVPnD_400x400.jpg',
+        image: 'https://pbs.twimg.com/media/G72lg-bWYAA-NgC?format=jpg&name=4096x4096',
+        borderColor: 'rgba(54, 173, 194, 0.6)',
+        backgroundColor: 'rgba(54, 173, 194, 0.3)',
+        link: 'https://x.com/HyperSphereBC'
+    },
+    {
+        name: 'Jaeger',
+        description: '1st Place in Polymarket Bounty @MBC - Chrome extension surfacing relevant Polymarket prediction markets on any page and directly into your Twitter feed.',
+        icon: 'https://pbs.twimg.com/profile_images/1996853127849353216/YlMyM8Af_400x400.jpg',
+        image: 'https://pbs.twimg.com/media/G72lJ6_W8AEPq4D?format=jpg&name=4096x4096',
+        borderColor: 'rgba(244, 216, 75, 0.6)',
+        backgroundColor: 'rgba(244, 216, 75, 0.3)',
+        link: 'https://x.com/bomJAEGER'
+    },
+    {
+        name: 'TMap',
+        description: '2nd Place in Base Hackathon @MBC -  Creates an on-chain social map of food trends where your taste has real value.',
+        icon: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/004/064/780/datas/medium.png',
+        image: 'https://d112y698adiu2z.cloudfront.net/photos/production/software_thumbnail_photos/004/064/780/datas/medium.png',
+        borderColor: 'rgba(200, 148, 213, 0.6)',
+        backgroundColor: 'rgba(200, 148, 213, 0.3)',
+        link: 'https://devpost.com/software/tmap?_gl=1*1gdyazr*_gcl_au*MTYzMDI2NjI3Ni4xNzY0OTc0NDg0*_ga*MTI0MDQ0NDUwNC4xNzY0OTc0NDg1*_ga_0YHJK3Y10M*czE3Njc4ODcwNzckbzIkZzEkdDE3Njc4ODcwODckajUwJGwwJGgw'
+    },
 ];
 
 const trueSize = keyframes`
@@ -625,6 +763,11 @@ const DeveloperTeam = () => {
                     </StatCard>
                 </StatsContainer>}
 
+                {/*<img src="https://pbs.twimg.com/media/G72lkYCXYAEXB5g?format=jpg&name=4096x4096" alt="Boiler Blockchain developers at MBC" />*/}
+
+
+                
+                {/*
                 <SectionTitle
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -659,7 +802,8 @@ const DeveloperTeam = () => {
                             <ExtDescription>{tech.description}</ExtDescription>
                         </ExtCard>
                     ))}
-                </ExtGrid>
+                </ExtGrid>*/}
+                
 
 
                 <SectionTitle
@@ -668,7 +812,7 @@ const DeveloperTeam = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
                 >
-                    Internal <span>Projects</span>
+                    <span>Internal</span> Projects
                 </SectionTitle>
 
                 <ProjectsGrid
@@ -711,7 +855,7 @@ const DeveloperTeam = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
                     >
-                        Hackathon <span>Projects</span>
+                        <span>Hackathons</span>
                     </SectionTitle>
 
                     <HackathonDescription
@@ -720,7 +864,47 @@ const DeveloperTeam = () => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Explore our past hackathon projects and see what we've built.
+                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Here's our recent wins.
+                    </HackathonDescription>
+
+                    <HackathonGrid
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                    {HackathonProjects.map((tech, index) => (
+                        
+                        <HackathonCell
+                            key={tech.name}
+                            borderColor={tech.borderColor}
+                            backgroundColor={tech.backgroundColor}
+                            initial={{ opacity: 0, y: 20}}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.1}}
+                            whileHover={{ y: -2 }}
+                        > <HackathonCard>
+                            <a href={tech.link} target="_blank" rel="noopener noreferrer">
+                                <ExtIcon>
+                                    <img src={tech.icon} alt={`${tech.name} logo`} />
+                                </ExtIcon>
+                            </a>
+                            <ExtName>{tech.name}</ExtName>
+                            <ExtDescription>{tech.description}</ExtDescription>
+                        </HackathonCard>
+                        <HackathonImage src={tech.image} alt={`${tech.name} image`} />
+                        </HackathonCell>
+                    ))}
+                    </HackathonGrid>
+
+                    <HackathonDescription
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                    >
+                        Explore our past hackathon projects and see what we've built.
                     </HackathonDescription>
 
                     <motion.div
@@ -734,7 +918,53 @@ const DeveloperTeam = () => {
                             <FiArrowRight />
                         </ViewAllButton>
                     </motion.div>
+
                 </HackathonSection>
+
+                <SectionTitle
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                    <span>Grants</span>
+                </SectionTitle>
+
+                <ExtGrid
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                    {Grants.map((tech, index) => (
+                        <ExtCard
+                            key={tech.name}
+                            borderColor={tech.borderColor}
+                            initial={{ opacity: 0, y: 20}}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.1}}
+                            whileHover={{ y: -2 }}
+                        >
+                            <a href={tech.link} target="_blank" rel="noopener noreferrer">
+                                <ExtIcon>
+                                    <img src={tech.icon} alt={`${tech.name} logo`} />
+                                </ExtIcon>
+                            </a>
+                            <ExtName>{tech.name}</ExtName>
+                            <ExtDescription>{tech.description}</ExtDescription>
+                        </ExtCard>
+                    ))}
+                </ExtGrid>
+
+                <SectionTitle
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                >
+                     Bounties
+                </SectionTitle>
             </Container>
             <Footer />
         </PageSection>
