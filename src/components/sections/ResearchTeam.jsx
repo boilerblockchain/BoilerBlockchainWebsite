@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiSearch, FiBook, FiTrendingUp, FiUsers, FiExternalLink } from 'react-icons/fi';
@@ -263,23 +263,64 @@ const PublicationsList = styled(motion.div)`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
-const PublicationRow = styled(motion.a)`
-  display: grid;
-  grid-template-columns: 120px 1fr 200px;
-  align-items: center;
-  padding: 1.5rem 0;
+const PublicationRow = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  group;
+  cursor: pointer;
+  transition: background 0.2s ease;
 
   &:hover {
     background: rgba(113, 32, 176, 0.03);
   }
+`;
 
+const RowHeader = styled.div`
+  display: grid;
+  grid-template-columns: 120px 1fr 200px;
+  align-items: center;
+  padding: 1.5rem 0;
+  
   @media (max-width: 768px) {
     grid-template-columns: 80px 1fr;
-    gap: 0.5rem;
+  }
+`;
+
+const ExpandedContent = styled(motion.div)`
+  overflow: hidden;
+  padding: 0 0 1.5rem 120px; /* Aligns with the start of the Title */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0 1.5rem 80px;
+  }
+`;
+
+const AuthorList = styled.p`
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  max-width: 600px;
+`;
+
+const ReadButton = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #7120b0;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  width: fit-content;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #bb20ff;
   }
 `;
 
@@ -346,6 +387,8 @@ const PublicationAbstract = styled.p`
   line-height: 1.5;
   font-family: 'Tomorrow', sans-serif;
 `;
+
+
 
 const SectionTitle = styled(motion.h2)`
   font-size: 2.5rem;
@@ -459,6 +502,12 @@ const publications = [
 ];
 
 const ResearchTeam = () => {
+  const [expandedIndex, setExpandedIndex] = useState(null);
+
+  const toggleExpand = (index) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
+  
   const [particleKey, setParticleKey] = useState(Date.now());
 
   const particlesInit = useCallback(async (engine) => {
@@ -513,7 +562,7 @@ const ResearchTeam = () => {
       </ResearchGrid>
 
       {/* Publications Section */}
-      <SectionTitle
+      /*<SectionTitle
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -521,7 +570,7 @@ const ResearchTeam = () => {
         Recent <span>Publications</span>
       </SectionTitle>
       
-      <SectionTitle
+      {/*<SectionTitle
   initial={{ opacity: 0 }}
   whileInView={{ opacity: 1 }}
   viewport={{ once: true }}
@@ -529,21 +578,46 @@ const ResearchTeam = () => {
 >
   Recent <span>Publications</span>
 </SectionTitle>
-
+*/}
 <PublicationsList>
-  {publications.map((pub, index) => (
-    <PublicationRow 
-      key={index} 
-      href={pub.url}
-      initial={{ opacity: 0, x: -10 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-    >
-      <PubDate>{pub.date}</PubDate>
-      <PubTitle>{pub.title}</PubTitle>
-      <PubTeamBadge>{pub.team}</PubTeamBadge>
-    </PublicationRow>
-  ))}
+  {publications.map((pub, index) => {
+    const isExpanded = expandedIndex === index;
+    
+    return (
+      <PublicationRow 
+        key={index} 
+        onClick={() => toggleExpand(index)}
+        initial={false}
+      >
+        <RowHeader>
+          <PubDate>{pub.date}</PubDate>
+          <PubTitle style={{ color: isExpanded ? '#bb20ff' : '#ffffff' }}>
+            {pub.title}
+          </PubTitle>
+          <PubTeamBadge>{pub.team}</PubTeamBadge>
+        </RowHeader>
+
+        {/* Expansion Logic */}
+        <AnimatePresence>
+          {isExpanded && (
+            <ExpandedContent
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <AuthorList>
+                <strong>Authors:</strong> {pub.authors}
+              </AuthorList>
+              <ReadButton href={pub.url} target="_blank" onClick={(e) => e.stopPropagation()}>
+                Read Full Paper <FiExternalLink />
+              </ReadButton>
+            </ExpandedContent>
+          )}
+        </AnimatePresence>
+      </PublicationRow>
+    );
+  })}
 </PublicationsList>
     </Container>
     <Footer />
