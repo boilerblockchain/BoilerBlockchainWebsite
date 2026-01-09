@@ -502,127 +502,153 @@ const publications = [
 ];
 
 const ResearchTeam = () => {
+  // 1. State and Particles Logic
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [particleKey, setParticleKey] = useState(Date.now());
 
   const toggleExpand = (index) => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
-  
-  const [particleKey, setParticleKey] = useState(Date.now());
 
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
   }, []);
 
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
-
+  // 2. The Final Return (Replace your entire return block with this)
   return (
-  <PageSection>
-    <Navigation />
-    <Particles /* ... same options as before ... */ />
-    
-    <Container>
-      {/* Landing Text */}
-      <Title
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        Research <span>Team</span>
-      </Title>
-
-      <Subtitle
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-      >
-        Advancing blockchain technology through rigorous academic research and innovative solutions.
-      </Subtitle>
-
-      {/* The 4 Team Boxes */}
-      <ResearchGrid
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.4 }}
-      >
-        {researchAreas.map((area) => (
-          <ResearchCard key={area.title} whileHover={{ y: -10 }}>
-            <ResearchIcon>
-              <area.icon />
-            </ResearchIcon>
-            <ResearchTitle>{area.title}</ResearchTitle>
-            <ResearchDescription>{area.description}</ResearchDescription>
-            <ResearchLink href={area.link}>
-              <FiExternalLink /> Learn More
-            </ResearchLink>
-          </ResearchCard>
-        ))}
-      </ResearchGrid>
-
-      {/* Publications Section */}
-      /*<SectionTitle
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        Recent <span>Publications</span>
-      </SectionTitle>
+    <PageSection>
+      <Navigation />
       
-      {/*<SectionTitle
-  initial={{ opacity: 0 }}
-  whileInView={{ opacity: 1 }}
-  viewport={{ once: true }}
-  style={{ textAlign: 'left', marginBottom: '1rem' }} // Stripe style usually aligns left
->
-  Recent <span>Publications</span>
-</SectionTitle>
-*/}
-<PublicationsList>
-  {publications.map((pub, index) => {
-    const isExpanded = expandedIndex === index;
-    
-    return (
-      <PublicationRow 
-        key={index} 
-        onClick={() => toggleExpand(index)}
-        initial={false}
-      >
-        <RowHeader>
-          <PubDate>{pub.date}</PubDate>
-          <PubTitle style={{ color: isExpanded ? '#bb20ff' : '#ffffff' }}>
-            {pub.title}
-          </PubTitle>
-          <PubTeamBadge>{pub.team}</PubTeamBadge>
-        </RowHeader>
+      {/* Background Particles - Placed once at the top level */}
+      <Particles
+        key={particleKey}
+        init={particlesInit}
+        options={{
+          background: { color: "transparent" },
+          particles: {
+            color: { value: ["#7120b0", "#9d20b0"] },
+            links: {
+              color: "#7120b0",
+              distance: 150,
+              enable: true,
+              opacity: 0.4,
+              width: 1,
+            },
+            move: { enable: true, speed: 0.6 },
+            number: { value: 60 },
+            opacity: { value: 0.3 },
+            size: { value: 2 },
+          },
+          interactivity: {
+            events: { onHover: { enable: true, mode: "grab" } },
+          }
+        }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 1,
+        }}
+      />
+      
+      {/* Main Content Container */}
+      <Container style={{ zIndex: 2, position: 'relative' }}>
+        
+        {/* SECTION 1: Header */}
+        <Title
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Research <span>Team</span>
+        </Title>
 
-        {/* Expansion Logic */}
-        <AnimatePresence>
-          {isExpanded && (
-            <ExpandedContent
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <AuthorList>
-                <strong>Authors:</strong> {pub.authors}
-              </AuthorList>
-              <ReadButton href={pub.url} target="_blank" onClick={(e) => e.stopPropagation()}>
-                Read Full Paper <FiExternalLink />
-              </ReadButton>
-            </ExpandedContent>
-          )}
-        </AnimatePresence>
-      </PublicationRow>
-    );
-  })}
-</PublicationsList>
-    </Container>
-    <Footer />
-  </PageSection>
+        <Subtitle
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Advancing blockchain technology through rigorous academic research and innovative solutions.
+        </Subtitle>
+
+        {/* SECTION 2: The 4 Big Team Boxes */}
+        <ResearchGrid
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          {researchAreas.map((area) => (
+            <ResearchCard key={area.title} whileHover={{ y: -10 }}>
+              <ResearchIcon><area.icon /></ResearchIcon>
+              <ResearchTitle>{area.title}</ResearchTitle>
+              <ResearchDescription>{area.description}</ResearchDescription>
+              <ResearchLink href={area.link}>
+                <FiExternalLink /> Learn More
+              </ResearchLink>
+            </ResearchCard>
+          ))}
+        </ResearchGrid>
+
+        {/* SECTION 3: Expandable Publications */}
+        <SectionTitle
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          style={{ textAlign: 'left', marginTop: '4rem' }}
+        >
+          Recent <span>Publications</span>
+        </SectionTitle>
+
+        <PublicationsList>
+          {publications.map((pub, index) => {
+            const isExpanded = expandedIndex === index;
+            return (
+              <PublicationRow 
+                key={index} 
+                onClick={() => toggleExpand(index)}
+                initial={false}
+              >
+                <RowHeader>
+                  <PubDate>{pub.date}</PubDate>
+                  <PubTitle style={{ color: isExpanded ? '#bb20ff' : '#ffffff' }}>
+                    {pub.title}
+                  </PubTitle>
+                  <PubTeamBadge>{pub.team}</PubTeamBadge>
+                </RowHeader>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <ExpandedContent
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                      <AuthorList>
+                        <strong>Authors:</strong> {pub.authors}
+                      </AuthorList>
+                      <ReadButton 
+                        href={pub.url} 
+                        target="_blank" 
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Read Full Paper <FiExternalLink />
+                      </ReadButton>
+                    </ExpandedContent>
+                  )}
+                </AnimatePresence>
+              </PublicationRow>
+            );
+          })}
+        </PublicationsList>
+      </Container>
+      
+      <Footer />
+    </PageSection>
   );
 };
+
 
 export default ResearchTeam;
