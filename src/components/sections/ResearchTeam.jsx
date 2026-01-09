@@ -165,58 +165,42 @@ const StatLabel = styled.p`
 
 const ResearchGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin: 3rem 0;
+  grid-template-columns: repeat(2, 1fr); /* Creates 2 large columns */
+  gap: 2rem;
+  margin: 5rem 0 8rem; /* Large bottom margin to separate from Publications */
 
   @media (max-width: 968px) {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin: 2rem 0;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.75rem;
+    grid-template-columns: 1fr; /* Stacks them on tablets/phones */
+    gap: 1.5rem;
   }
 `;
 
 const ResearchCard = styled(motion.div)`
   background: rgba(15, 15, 15, 0.7);
   border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
+  padding: 4rem 3rem; /* Extra padding makes the boxes feel massive and premium */
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
   position: relative;
   overflow: hidden;
 
-  &:hover {
-    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
-    transform: translateY(-6px);
-    border-color: rgba(113, 32, 176, 0.6);
-    background: rgba(15, 15, 15, 0.85);
-  }
-
-  &::before {
+  &::after {
     content: '';
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #7120b0, transparent);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s;
   }
 
-  &:hover::before {
+  &:hover::after {
     opacity: 1;
   }
 `;
@@ -238,13 +222,11 @@ const ResearchIcon = styled.div`
 `;
 
 const ResearchTitle = styled.h3`
+  font-size: 2rem; /* Much larger titles */
   color: #ffffff;
-  font-size: ${props => props.theme.fontlg};
-  margin-bottom: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin: 1.5rem 0 1rem;
   font-family: 'Tomorrow', sans-serif;
+  letter-spacing: 1px;
 `;
 
 const ResearchDescription = styled.p`
@@ -274,50 +256,64 @@ const ResearchLink = styled.a`
   }
 `;
 
-const PublicationsGrid = styled(motion.div)`
+const PublicationsList = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0 8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+const PublicationRow = styled(motion.a)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 1.5rem;
-  margin: 3rem 0;
+  grid-template-columns: 120px 1fr 200px;
+  align-items: center;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  group;
+
+  &:hover {
+    background: rgba(113, 32, 176, 0.03);
+  }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 80px 1fr;
+    gap: 0.5rem;
   }
 `;
 
-const PublicationCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+const PubDate = styled.span`
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+`;
 
-  &:hover {
-    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
-    transform: translateY(-6px);
-    border-color: rgba(113, 32, 176, 0.6);
-    background: rgba(15, 15, 15, 0.85);
+const PubTitle = styled.span`
+  font-size: 1.1rem;
+  color: #ffffff;
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  ${PublicationRow}:hover & {
+    color: #bb20ff;
   }
+`;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
+const PubTeamBadge = styled.span`
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #7120b0;
+  background: rgba(113, 32, 176, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  justify-self: end;
 
-  &:hover::before {
-    opacity: 1;
+  @media (max-width: 768px) {
+    grid-column: 2;
+    justify-self: start;
   }
 `;
 
@@ -367,92 +363,98 @@ const SectionTitle = styled(motion.h2)`
 `;
 
 const researchAreas = [
-  {
-    title: 'TradFi & DeFi',
-    description: 'Researching the breakthroughs decentralized finance offers over traditional institutions. ',
-    icon: FiTrendingUp,
-    link: '#'
-  },
-  {
-    title: 'Decentralization & Regulation',
-    description: 'Analyzing the mechanisms, benefits, and tradeoffs of using a decentralized system.',
-    icon: FiSearch,
-    link: '#'
-  },
-  {
-    title: 'Blockchain Architecture',
-    description: 'Exploring the backbone behind what makes Blockchain Possible.',
-    icon: FiUsers,
-    link: '#'
-  },
-  {
-    title: 'Privacy & Cryptography',
-    description: 'Investigating zero-knowledge proof systems and privacy-focused blockchain applications.',
-    icon: FiBook,
-    link: '#'
-  },
+  { title: 'Investment Team', description: 'Deep-dive analysis on tokenomics and VC opportunities.', icon: FiTrendingUp, link: '#' },
+  { title: 'Consulting Team', description: 'Advising protocols on governance and growth strategy.', icon: FiUsers, link: '#' },
+  { title: 'Due Diligence Team', description: 'Technical audits and whitepaper fundamental analysis.', icon: FiSearch, link: '#' },
+  { title: 'Trading Team', description: 'Quantitative strategies and MEV research.', icon: FiBook, link: '#' },
 ];
 
 const publications = [
     {
+        date: 'OCT 2025',
         title: 'Why Crypto Tokens Aren\'t Just Stocks',
         authors: 'Alex Belanger, Viswa Choudhary, Vincent Zeng, Gavin Kulak, Adrian Mathew',
-        abstract: 'TradFi & Defi'
+        abstract: 'TradFi & Defi',
+        team: 'Investment Team',
+        url: '#'
     },
     {
+        date: 'OCT 2025',
         title: 'Tokenization Made Simple: Turning Real Things into Crypto',
         authors: 'Alex Belanger, Tobey Uhm, Preston Bunch, Sreevar Rao Patiyara, Nuraly Sermagambet, Abraham Kabon, Pratyush Ananth',
-        abstract: 'TradFi & Defi'
+        abstract: 'TradFi & Defi',
+        team: 'Investment Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Stablecoins Explained: Why Crypto Needs a Dollar Twin',
         authors: 'Jacob Gutwein, Christopher Herzog, Jazib Qureshi, Sahil Jain, Aamiya Hashim',
-        abstract: 'TradFi & Defi'
+        abstract: 'TradFi & Defi',
+        team: 'Investment Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Banks vs Blockchain: Who Holds Your Money?',
         authors: 'Jacob Gutwein, Eric Sadowski, Saahas Kandru, Keval S, Jackson Fuelling',
-        abstract: 'TradFi & Defi'
+        abstract: 'TradFi & Defi',
+        team: 'Investment Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Proof of Work vs Proof of Stake: Which Is Better?',
         authors: 'Mahi Tripathi, Elizabeth Guo, Rohit Kelkar, Arnav Nayak, Ivy Wei',
-        abstract: 'Blockchain Architecture'
+        abstract: 'Blockchain Architecture',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'What Makes a Blockchain Different from a Database?',
         authors: 'Neena Naikar, Nikhil Aerabati, Daniel Jin, Adwika Mourya, Aryan Kondapalli',
-        abstract: 'Blockchain Architecture'
+        abstract: 'Blockchain Architecture',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Smart Contracts: Digital Agreements Without Lawyers',
         authors: 'Albert Wu, Gleb Yanchenko, Venkat Mamidi, Nikhil Madakasira, Aayush Rao',
-        abstract: 'Blockchain Architecture'
+        abstract: 'Blockchain Architecture',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Layer 0, 1, 2, 3: The Easy Guide to Blockchain Layers',
         authors: 'Albert Wu, Advait Bhowmik, Saket Banda, Aditya Tyagi, Vedh Janardhanan',
-        abstract: 'Blockchain Architecture'
+        abstract: 'Blockchain Architecture',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Zero Knowledge Proofs: How to Prove Without Showing',
         authors: 'Eli Dubizh, Divyansh Pramanick, Samuel Stearns, Davis Renner, Peijia Guo',
-        abstract: 'Privacy & Cryptography'
+        abstract: 'Privacy & Cryptography',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'What Is Bitcoin Mining? A Beginner’s Guide',
         authors: 'Siya Jariwala, Shrey Jain, Aniketh Upadhya, Srinidhi Tammana, Jason Kohut, Saketh Subramanian',
-        abstract: 'Privacy & Cryptography'
+        abstract: 'Privacy & Cryptography',
+        team: 'Consulting Team'
+
     },
     {
+        date: 'OCT 2025', 
         title: 'How Do DAOs Actually Make Decisions?',
         authors: 'Shariq Kapadia, Oscar Velasco, Arnav Mody, Sarathi Velmurugan, Ayaan Ameen, Lakulish Saini',
-        abstract: 'Decentralization & Regulation'
+        abstract: 'Decentralization & Regulation',
+        team: 'Consulting Team'
     },
     {
+        date: 'OCT 2025',
         title: 'Centralization vs Decentralization: Pros and Cons of DAOs',
         authors: 'Pradyumn Malik, Vaibhav Sunkada, Aryan Patel, Sohum Kashyap, Nick Diaz',
-        abstract: 'Decentralization & Regulation'
+        abstract: 'Decentralization & Regulation',
+        team: 'Consulting Team'
     }
 ];
 
@@ -468,158 +470,84 @@ const ResearchTeam = () => {
   }, []);
 
   return (
-    <PageSection>
-      <Navigation />
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
+  <PageSection>
+    <Navigation />
+    <Particles /* ... same options as before ... */ />
+    
+    <Container>
+      {/* Landing Text */}
+      <Title
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        Research <span>Team</span>
+      </Title>
+
+      <Subtitle
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        Advancing blockchain technology through rigorous academic research and innovative solutions.
+      </Subtitle>
+
+      {/* The 4 Team Boxes */}
+      <ResearchGrid
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      >
+        {researchAreas.map((area) => (
+          <ResearchCard key={area.title} whileHover={{ y: -10 }}>
+            <ResearchIcon>
+              <area.icon />
+            </ResearchIcon>
+            <ResearchTitle>{area.title}</ResearchTitle>
+            <ResearchDescription>{area.description}</ResearchDescription>
+            <ResearchLink href={area.link}>
+              <FiExternalLink /> Learn More
+            </ResearchLink>
+          </ResearchCard>
+        ))}
+      </ResearchGrid>
+
+      {/* Publications Section */}
+      <SectionTitle
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+      >
+        Recent <span>Publications</span>
+      </SectionTitle>
       
-      <Container>
-        <Title
-          initial={{ opacity: .5, y: 0, scale: .85 }}
-          animate={{ opacity: 1, y: 0, scale: .95 }}
-          transition={{ duration: 0.9, delay: .2, ease: "easeInOut" }}
-        >
-          Research <span>Team</span>
-        </Title>
+      <SectionTitle
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  viewport={{ once: true }}
+  style={{ textAlign: 'left', marginBottom: '1rem' }} // Stripe style usually aligns left
+>
+  Recent <span>Publications</span>
+</SectionTitle>
 
-        <Subtitle
-          initial={{ opacity: 0, y: 20, scale: .85}}
-          animate={{ opacity: 1, y: 0, scale: .85 }}
-          transition={{ duration: 0.7, delay: 0.4, ease: "easeInOut" }}
-        >
-          Advancing blockchain technology through rigorous academic research and innovative solutions
-        </Subtitle>
-
-        <StatsContainer
-          initial={{ opacity: 0, y: 0 }}
-          animate={{ opacity: 1, y: -40 }}
-          transition={{ duration: 0.8, delay: 0.3 , ease: "easeInOut"}}
-        >
-          <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={50} suffix="+" /></StatNumber>
-            <StatLabel>Researchers</StatLabel>
-          </StatCard>
-          <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={12} /></StatNumber>
-            <StatLabel>Teams</StatLabel>
-          </StatCard>
-          <StatCard whileHover={{ y: -2 }}>
-            <StatNumber><CountUp end={4} /></StatNumber>
-            <StatLabel>Research Areas</StatLabel>
-          </StatCard>
-        </StatsContainer>
-
-        <SectionTitle
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          Research <span>Areas</span>
-        </SectionTitle>
-        
-        <ResearchGrid
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          {researchAreas.map((area, index) => (
-            <ResearchCard
-              key={area.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              whileHover={{ y: -2 }}
-            >
-              <ResearchIcon>
-                <area.icon />
-              </ResearchIcon>
-              <ResearchTitle>{area.title}</ResearchTitle>
-              <ResearchDescription>{area.description}</ResearchDescription>
-              <ResearchLink href={area.link}>
-                <FiExternalLink /> Learn More
-              </ResearchLink>
-            </ResearchCard>
-          ))}
-        </ResearchGrid>
-
-        <SectionTitle
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          Recent <span>Publications</span>
-        </SectionTitle>
-        
-        <PublicationsGrid
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1}}
-        >
-          {publications.map((pub, index) => (
-            <PublicationCard
-              key={pub.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1}}
-              whileHover={{ y: -2 }}
-            >
-              <PublicationTitle>{pub.title}</PublicationTitle>
-              <PublicationAuthors>{pub.authors}</PublicationAuthors>
-              <PublicationAbstract>{pub.abstract}</PublicationAbstract>
-            </PublicationCard>
-          ))}
-        </PublicationsGrid>
-      </Container>
-      <Footer />
-    </PageSection>
+<PublicationsList>
+  {publications.map((pub, index) => (
+    <PublicationRow 
+      key={index} 
+      href={pub.url}
+      initial={{ opacity: 0, x: -10 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05 }}
+    >
+      <PubDate>{pub.date}</PubDate>
+      <PubTitle>{pub.title}</PubTitle>
+      <PubTeamBadge>{pub.team}</PubTeamBadge>
+    </PublicationRow>
+  ))}
+</PublicationsList>
+    </Container>
+    <Footer />
+  </PageSection>
   );
 };
 
