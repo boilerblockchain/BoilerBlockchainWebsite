@@ -14,6 +14,7 @@ import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
 import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
 import albertImage from '../../assets/images/pfps/exec/albert_wu.jpg';
 import siyaImage from '../../assets/images/pfps/exec/siya_jariwala.jpg';
+import adityaImage from '../../assets/images/pfps/exec/aditya_kattil.jpeg';
 
 // Developer Team
 import ansonImage from '../../assets/images/pfps/dev/anson_lam.JPG';
@@ -33,6 +34,8 @@ import danielJinImage from '../../assets/images/pfps/dev/daniel_jin.jpg';
 import siddheshImage from '../../assets/images/pfps/dev/siddhesh_songirkar.jpg';
 import dhiyaanImage from '../../assets/images/pfps/dev/dhiyaan_nirmal.jpg';
 import pranavImage from '../../assets/images/pfps/dev/pranav_doshi.png';
+import manasviImage from '../../assets/images/pfps/dev/manasvi_meka.PNG';
+import joshuaImage from '../../assets/images/pfps/dev/joshua_cho.JPG';
 
 // Research Team
 import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
@@ -44,6 +47,9 @@ import nickImage from '../../assets/images/pfps/res/nick_diaz.jpg';
 import anikethImage from '../../assets/images/pfps/res/aniketh_upadhya.jpg';
 import oscarfImage from '../../assets/images/pfps/res/oscarf_velasco.jpg';
 import kevalImage from '../../assets/images/pfps/res/keval_shah.jpg';
+import lakulishImage from '../../assets/images/pfps/res/lakulish_saini.png';
+import nikhilImage from '../../assets/images/pfps/res/nikhil_aerabati.jpeg';
+import sohumImage from '../../assets/images/pfps/res/sohum_kashyap.jpg';
 
 // Operations Team
 import anubhutiImage from '../../assets/images/pfps/ops/anubhuti_mittal.jpg';
@@ -55,6 +61,8 @@ import garvImage from '../../assets/images/pfps/ops/garv_tayade.jpg';
 import mugdhaImage from '../../assets/images/pfps/ops/mugdha_patil.jpg';
 import shivamImage from '../../assets/images/pfps/ops/shivam_rastogi.jpg';
 import mahiImage from '../../assets/images/pfps/ops/mahi_tripathi.jpg';
+import akashImage from '../../assets/images/pfps/ops/akash_mishra.jpg';
+import pradyumnImage from '../../assets/images/pfps/ops/pradyumn_malik.jpeg';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -101,42 +109,82 @@ const Container = styled.div`
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 4rem; 
+  font-size: 5rem; 
   color: #ffffff;
   text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
+  margin-bottom: 2rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 3px;
-  line-height: 1.2;
+  letter-spacing: 4px;
+  line-height: 1.1;
+  position: relative;
+  text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.2));
 
   span {
-    color: #7120b0;
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 30%, rgba(168, 85, 247, 0.95) 70%, rgba(168, 85, 247, 0.85) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  @media (max-width: 40em) {
-    font-size: 2.8rem;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.9), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.4), transparent);
+    border-radius: 2px;
+    box-shadow: 
+      0 0 20px rgba(168, 85, 247, 0.5),
+      0 0 40px rgba(168, 85, 247, 0.3);
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 4rem;
+    letter-spacing: 3px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 3rem;
     letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+    letter-spacing: 1.5px;
   }
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: 1.15rem;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
   text-align: center;
-  max-width: 850px;
-  margin: 0 auto 5rem;
-  line-height: 1.7;
+  max-width: 900px;
+  margin: 0 auto 4rem;
+  line-height: 1.8;
   font-weight: 400;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 1024px) {
+    font-size: 1.15rem;
+    margin-bottom: 3.5rem;
+  }
 
   @media (max-width: 768px) {
     font-size: 1rem;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9375rem;
+    margin-bottom: 2.5rem;
   }
 `;
 
@@ -144,61 +192,99 @@ const FilterNav = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin-bottom: 5rem;
   flex-wrap: wrap;
-  padding: 0.5rem;
-  background: rgba(15, 15, 15, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  background: rgba(25, 25, 35, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
   max-width: fit-content;
   margin-left: auto;
   margin-right: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(168, 85, 247, 0.1) inset,
+    0 0 40px rgba(168, 85, 247, 0.05);
 
   @media (max-width: 768px) {
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 12px;
+    margin-bottom: 4rem;
+  }
+
+  @media (max-width: 480px) {
     gap: 0.4rem;
     padding: 0.4rem;
-    border-radius: 10px;
+    margin-bottom: 3rem;
   }
 `;
 
 const FilterButton = styled(motion.button)`
-  padding: 0.75rem 1.5rem;
-  background: ${props => props.active ? 'linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%)' : 'transparent'};
-  border: none;
-  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  font-size: 0.8rem;
-  font-weight: ${props => props.active ? '600' : '500'};
+  padding: 0.875rem 1.75rem;
+  background: ${props => props.active 
+    ? 'linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%)' 
+    : 'rgba(30, 30, 40, 0.6)'};
+  border: ${props => props.active 
+    ? '1.5px solid rgba(168, 85, 247, 0.5)' 
+    : '1px solid rgba(168, 85, 247, 0.2)'};
+  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.75)'};
+  font-size: 0.875rem;
+  font-weight: ${props => props.active ? '700' : '600'};
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 8px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
   font-family: 'Tomorrow', sans-serif;
   position: relative;
   white-space: nowrap;
+  box-shadow: ${props => props.active 
+    ? '0 4px 16px rgba(113, 32, 176, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)' 
+    : '0 2px 8px rgba(0, 0, 0, 0.2)'};
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 8px;
-    padding: 1px;
-    background: ${props => props.active ? 'linear-gradient(135deg, #7120b0, #8d2dd4)' : 'transparent'};
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+    opacity: ${props => props.active ? 1 : 0};
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .count {
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    font-weight: 500;
   }
 
   &:hover {
     color: #ffffff;
-    background: ${props => props.active ? 'linear-gradient(135deg, #8d2dd4 0%, #a040e8 100%)' : 'rgba(113, 32, 176, 0.15)'};
-    transform: translateY(-1px);
+    background: ${props => props.active 
+      ? 'linear-gradient(135deg, #8d2dd4 0%, #a040e8 100%)' 
+      : 'rgba(113, 32, 176, 0.2)'};
+    border-color: ${props => props.active 
+      ? 'rgba(168, 85, 247, 0.7)' 
+      : 'rgba(168, 85, 247, 0.4)'};
+    transform: translateY(-2px);
+    box-shadow: ${props => props.active 
+      ? '0 6px 24px rgba(113, 32, 176, 0.5), 0 0 30px rgba(168, 85, 247, 0.3)' 
+      : '0 4px 12px rgba(168, 85, 247, 0.2)'};
+
+    &::before {
+      opacity: 1;
+    }
   }
 
   &:active {
@@ -206,45 +292,76 @@ const FilterButton = styled(motion.button)`
   }
 
   @media (max-width: 768px) {
-    padding: 0.6rem 1rem;
-    font-size: 0.7rem;
+    padding: 0.7rem 1.25rem;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+
+    .count {
+      font-size: 0.6875rem;
+      margin-left: 0.375rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.625rem 1rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.8px;
+
+    .count {
+      font-size: 0.625rem;
+      margin-left: 0.25rem;
+    }
   }
 `;
 
 const TeamRow = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  justify-items: center;
+  align-items: start;
   gap: 2.5rem;
-  flex-wrap: wrap;
-  margin: 6rem 0;
-  min-height: 400px;
+  margin: 4rem 0 6rem;
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
 
   @media (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     gap: 2rem;
   }
 
   @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.75rem;
+    margin: 3rem 0 4rem;
+    padding: 0 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    margin: 3rem 0;
+    margin: 2.5rem 0 3.5rem;
+    padding: 0 1rem;
   }
 `;
 
 const MemberCard = styled(motion.div)`
-  width: 290px;
-  background: rgba(15, 15, 20, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(113, 32, 176, 0.2);
+  width: 100%;
+  max-width: 290px;
+  background: rgba(25, 25, 35, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+  border: 1.5px solid rgba(168, 85, 247, 0.25);
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(113, 32, 176, 0.1),
-    0 0 40px rgba(113, 32, 176, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(168, 85, 247, 0.15) inset,
+    0 0 60px rgba(168, 85, 247, 0.08);
   padding: 0;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 
   &::before {
@@ -252,33 +369,54 @@ const MemberCard = styled(motion.div)`
     position: absolute;
     inset: 0;
     background: 
-      linear-gradient(135deg, rgba(113, 32, 176, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 50% 0%, rgba(113, 32, 176, 0.05) 0%, transparent 70%);
+      linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s ease;
     pointer-events: none;
     z-index: 1;
+    border-radius: 20px;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.1));
+    opacity: 0;
+    filter: blur(12px);
+    transition: opacity 0.5s ease;
+    z-index: -1;
+    pointer-events: none;
   }
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(113, 32, 176, 0.4);
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(168, 85, 247, 0.5);
     box-shadow: 
-      0 8px 30px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(113, 32, 176, 0.3),
-      0 0 60px rgba(113, 32, 176, 0.15);
+      0 12px 48px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(168, 85, 247, 0.3) inset,
+      0 0 80px rgba(168, 85, 247, 0.25),
+      0 0 120px rgba(168, 85, 247, 0.1);
   }
 
   &:hover::before {
     opacity: 1;
   }
 
+  &:hover::after {
+    opacity: 1;
+  }
+
   @media (max-width: 768px) {
-    width: 260px;
+    max-width: 100%;
+    border-radius: 18px;
   }
 
   @media (max-width: 480px) {
-    width: 240px;
+    max-width: 100%;
+    border-radius: 16px;
   }
 `;
 
@@ -337,40 +475,73 @@ const PlaceholderIcon = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  padding: 1.5rem 1.5rem 1.75rem;
+  padding: 1.75rem 1.5rem 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.875rem;
+  position: relative;
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1.25rem 1.75rem;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.25rem 1rem 1.5rem;
+    gap: 0.625rem;
+  }
 `;
 
 const MemberName = styled.h3`
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   color: #ffffff;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   line-height: 1.3;
-  transition: color 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   ${MemberCard}:hover & {
-    color: #7120b0;
+    color: #a855f7;
+    text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
   }
 
   @media (max-width: 768px) {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.125rem;
   }
 `;
 
 const MemberTitle = styled.p`
-  font-size: 0.7rem;
-  color: rgba(113, 32, 176, 0.7);
-  font-weight: 500;
+  font-size: 0.75rem;
+  color: rgba(168, 85, 247, 0.8);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
+  letter-spacing: 1.5px;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  ${MemberCard}:hover & {
+    color: rgba(168, 85, 247, 1);
+    text-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.6875rem;
+    letter-spacing: 1.2px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.625rem;
+    letter-spacing: 1px;
+  }
 `;
 
 const SocialIconsContainer = styled.div`
@@ -500,13 +671,18 @@ const getTitleByCategory = (category) => {
 // Team member data - names will be extracted from image filenames
 // UPDATE SOCIAL LINKS HERE - Each person only needs to be updated once!
 // Replace "#" with actual LinkedIn/Twitter URLs
+// 
+// TO ADD A CUSTOM TITLE: Add a "title" property to any member object
+// Example: { id: 1, image: eliImage, category: "executive", title: "President", socials: {...} }
+// If no "title" is provided, it will default to the team name (e.g., "Executive Board", "Developer Team")
 const allTeamMembersUnsorted = [
   // Executive Board
-  { id: 1, image: eliImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
-  { id: 2, image: joeyImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
-  { id: 3, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  { id: 1, image: eliImage, category: "executive", title: "President", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
+  { id: 2, image: joeyImage, category: "executive", title: "Janitor", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
+  { id: 3, image: neenaImage, category: "executive", title: "Head of Operations", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
   { id: 4, image: albertImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
   { id: 5, image: siyaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
+  { id: 6, image: adityaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/", twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w" } },
   // Developer Team
   { id: 7, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 8, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
@@ -525,26 +701,33 @@ const allTeamMembersUnsorted = [
   { id: 21, image: siddheshImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/siddhesh-songirkar/", twitter: "https://x.com/TenerSed5" } },
   { id: 22, image: dhiyaanImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/dhiyaan/", twitter: "https://x.com/dh1yaan?s=21" } },
   { id: 23, image: pranavImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/pranav-doshi-60a647213/", twitter: "https://x.com/0xPranavDoshi" } },
+  { id: 24, image: manasviImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/manasvi-meka-80221327a/", twitter: "https://x.com/manasvi60777" } },
+  { id: 25, image: joshuaImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/sanghyun-j-cho/", twitter: "https://x.com/himynameisjahsh" } },
   // Research Team
-  { id: 24, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
-  { id: 25, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
-  { id: 26, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
-  { id: 27, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
-  { id: 28, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
-  { id: 29, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
-  { id: 30, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
-  { id: 31, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
-  { id: 32, image: kevalImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/keval-shah-3b46a2241", twitter: "https://x.com/kshahdevelops?s=21" } },
+  { id: 26, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
+  { id: 27, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
+  { id: 28, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
+  { id: 29, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
+  { id: 30, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
+  { id: 31, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
+  { id: 32, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
+  { id: 33, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
+  { id: 34, image: kevalImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/keval-shah-3b46a2241", twitter: "https://x.com/kshahdevelops?s=21" } },
+  { id: 35, image: lakulishImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/lakulishsaini/", twitter: "https://x.com/lakulishsaini" } },
+  { id: 36, image: nikhilImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nikhil-aerabati/", twitter: "https://twitter.com/nikhilaerabati" } },
+  { id: 37, image: sohumImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/sohumkashyap/", twitter: "https://x.com/SohumKashyap" } },
   // Operations Team
-  { id: 33, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
-  { id: 34, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 35, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 36, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
-  { id: 37, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
-  { id: 38, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
-  { id: 39, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
-  { id: 40, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
-  { id: 41, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } }
+  { id: 38, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 39, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
+  { id: 40, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 41, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
+  { id: 42, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
+  { id: 43, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
+  { id: 44, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
+  { id: 45, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
+  { id: 46, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
+  { id: 47, image: akashImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/the-akash-mishra/", twitter: "https://x.com/Akash_Mishra3" } },
+  { id: 48, image: pradyumnImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/pradyumn-malik/", twitter: "https://x.com/MalikPradyumn" } }
 ];
 
 // Sort team members alphabetically by name (extracted from image filename)
@@ -566,7 +749,7 @@ const teamMembers = {
 
 const PeopleTeam = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [activeFilters, setActiveFilters] = useState(new Set());
 
   const particlesInit = useCallback(async (engine) => {
     await loadFull(engine);
@@ -577,14 +760,28 @@ const PeopleTeam = () => {
   }, []);
 
   const filters = [
-    { id: 'all', label: 'ALL' },
     { id: 'developer', label: 'DEVELOPER TEAM' },
     { id: 'research', label: 'RESEARCH TEAM' },
     { id: 'operations', label: 'OPERATIONS TEAM' },
     { id: 'executive', label: 'EXECUTIVE BOARD' }
   ];
 
-  const displayedMembers = teamMembers[activeFilter] || teamMembers.all;
+  const toggleFilter = (filterId) => {
+    setActiveFilters(prev => {
+      const newFilters = new Set(prev);
+      if (newFilters.has(filterId)) {
+        newFilters.delete(filterId);
+      } else {
+        newFilters.add(filterId);
+      }
+      return newFilters;
+    });
+  };
+
+  // If no filters are active, show everyone. Otherwise, show members from active filters
+  const displayedMembers = activeFilters.size === 0
+    ? teamMembers.all
+    : allTeamMembersSorted.filter(member => activeFilters.has(member.category));
 
   return (
     <PageSection>
@@ -656,22 +853,25 @@ const PeopleTeam = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {filters.map((filter) => (
-            <FilterButton
-              key={filter.id}
-              active={activeFilter === filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {filter.label}
-            </FilterButton>
-          ))}
+          {filters.map((filter) => {
+            const isActive = activeFilters.has(filter.id);
+            return (
+              <FilterButton
+                key={filter.id}
+                active={isActive}
+                onClick={() => toggleFilter(filter.id)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span>{filter.label}</span>
+              </FilterButton>
+            );
+          })}
         </FilterNav>
 
         <AnimatePresence mode="wait">
           <TeamRow
-            key={activeFilter}
+            key={Array.from(activeFilters).sort().join(',') || 'all'}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}

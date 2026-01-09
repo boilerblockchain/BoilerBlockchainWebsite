@@ -7,6 +7,7 @@ import { loadFull } from 'tsparticles';
 import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
 import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
+import Footer from '../Footer';
 
 // Education block images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
@@ -15,7 +16,7 @@ import educationImage3 from '../../assets/images/education/edu3.jpg';
 
 // Development block images
 import developmentImage1 from '../../assets/images/development/dev1.jpg';
-import developmentImage2 from '../../assets/images/development/dev2.JPEG';
+import developmentImage2 from '../../assets/images/development/dev2.jpg';
 import developmentImage3 from '../../assets/images/development/dev3.JPEG';
 
 // Research block images

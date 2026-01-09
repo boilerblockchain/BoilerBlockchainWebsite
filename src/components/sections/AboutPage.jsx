@@ -4,6 +4,7 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion, useInView } from "framer-motion";
 import Navigation from '../Navigation';
+import Footer from '../Footer';
 
 // Placeholder images - Replace with actual images when ready
 const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+1';
@@ -505,6 +506,7 @@ const AboutPage = () => {
           })}
         </Grid>
       </Container>
+      <Footer />
     </PageSection>
   );
 };
