@@ -577,11 +577,11 @@ const CoursesPage = () => {
             >
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Location</h4>
-                <p>TBD</p>
+                <p>WANG 2599</p>
               </InfoCard>
               <InfoCard as={motion.div} variants={fadeInUp}>
                 <h4>Schedule</h4>
-                <p>TBD</p>
+                <p>Mondays 6-7 PM </p>
               </InfoCard>
               <InfoCard className="large" as={motion.div} variants={fadeInUp}>
                 <h4>Course Staff</h4>
@@ -661,10 +661,10 @@ const CoursesPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.5 }}
-              href="./Syllabus.pdf"
-              download="Blockchain_Course_Syllabus.pdf"
+              href="#"
+              download="#"
             >
-              Download Syllabus
+              Download Syllabus (Coming Soon)
             </DownloadButton>
           </CourseInfo>
         </CourseCard>
