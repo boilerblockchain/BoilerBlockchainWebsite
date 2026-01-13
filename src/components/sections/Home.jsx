@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiCode, FiUsers, FiAward, FiBook, FiZap, FiTrendingUp, FiGithub, FiTarget, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
+import { FiCode, FiAward, FiBook, FiZap, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
 import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
 
@@ -64,21 +64,21 @@ const HeroSection = styled.section`
   z-index: 1;
 
   @media (max-width: 1024px) {
-    padding: 110px 1.75rem 3.5rem;
+    padding: 110px 1.5rem 3.5rem;
   }
 
   @media (max-width: 768px) {
-    padding: 100px 1.5rem 3rem;
+    padding: 100px 1rem 3rem;
     min-height: calc(100vh - 60px);
   }
 
   @media (max-width: 480px) {
-    padding: 80px 1rem 2rem;
+    padding: 80px 0.75rem 2rem;
     min-height: auto;
   }
 
   @media (max-width: 360px) {
-    padding: 70px 0.75rem 1.5rem;
+    padding: 70px 0.5rem 1.5rem;
   }
 `;
 
@@ -100,17 +100,19 @@ const HeroContent = styled(motion.div)`
   z-index: 2;
   padding: 0 1rem;
   box-sizing: border-box;
+  overflow-x: hidden;
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
+    max-width: 100%;
   }
 
   @media (max-width: 480px) {
-    padding: 0 0.5rem;
+    padding: 0 0.25rem;
   }
 
   @media (max-width: 360px) {
-    padding: 0 0.25rem;
+    padding: 0;
   }
 `;
 
@@ -143,6 +145,10 @@ const HeroTitle = styled(motion.h1)`
   margin-bottom: 2rem;
   letter-spacing: -1px;
   font-family: 'Tomorrow', sans-serif;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 
   .gradient-text {
     background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
@@ -157,15 +163,16 @@ const HeroTitle = styled(motion.h1)`
   }
 
   @media (max-width: 768px) {
-    font-size: 3rem;
-    letter-spacing: 0;
+    font-size: 2.75rem;
+    letter-spacing: -0.5px;
     margin-bottom: 1.5rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 2.25rem;
+    font-size: 2rem;
     margin-bottom: 1rem;
     line-height: 1.2;
+    letter-spacing: 0;
   }
 `;
 
@@ -178,19 +185,21 @@ const HeroDescription = styled(motion.p)`
   font-weight: 400;
   letter-spacing: 0.3px;
   font-family: 'Tomorrow', sans-serif;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   @media (max-width: 768px) {
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1.6;
     margin: 0 auto 2rem;
-    padding: 0 1rem;
+    padding: 0 0.5rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 1rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     margin: 0 auto 1.5rem;
-    padding: 0 0.5rem;
+    padding: 0 0.25rem;
   }
 `;
 
@@ -302,242 +311,6 @@ const DiscordButton = styled(motion.a)`
   }
 `;
 
-const Section = styled.section`
-  width: 100%;
-  max-width: 100vw;
-  padding: 6rem 2rem;
-  background: transparent;
-  position: relative;
-  z-index: 1;
-  z-index: 1;
-  box-sizing: border-box;
-
-  @media (max-width: 1024px) {
-    padding: 5rem 1.75rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 4rem 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 3rem 1rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 2.5rem 0.75rem;
-  }
-`;
-
-const Container = styled.div`
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  position: relative;
-  z-index: 2;
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  @media (max-width: 768px) {
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0;
-  }
-`;
-
-const SectionTitle = styled(motion.h2)`
-  font-size: 3rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  text-align: center;
-  letter-spacing: -0.5px;
-  font-family: 'Tomorrow', sans-serif;
-
-  .gradient-text {
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  @media (max-width: 1024px) {
-    font-size: 2.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2.25rem;
-    margin-bottom: 0.875rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.75rem;
-    margin-bottom: 0.75rem;
-    letter-spacing: 0;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 1.5rem;
-  }
-`;
-
-const SectionDescription = styled(motion.p)`
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.8;
-  max-width: 700px;
-  margin: 0 auto 3rem;
-  text-align: center;
-  font-family: 'Tomorrow', sans-serif;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0 auto 2rem;
-    padding: 0 1rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    margin: 0 auto 1.5rem;
-    padding: 0 0.5rem;
-  }
-`;
-
-const Grid = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-  width: 100%;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 968px) {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  @media (max-width: 360px) {
-    gap: 0.75rem;
-  }
-`;
-
-const Card = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 2.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  @media (max-width: 768px) {
-  padding: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem;
-  }
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    border-color: rgba(113, 32, 176, 0.6);
-    transform: translateY(-8px);
-    box-shadow: 0 16px 40px rgba(113, 32, 176, 0.3);
-    background: rgba(15, 15, 15, 0.85);
-
-    &::before {
-      opacity: 1;
-    }
-  }
-`;
-
-const CardIcon = styled.div`
-  width: 48px;
-  height: 48px;
-  background: rgba(113, 32, 176, 0.15);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  
-  svg {
-    color: #7120b0;
-    font-size: 24px;
-  }
-
-  @media (max-width: 768px) {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 1.25rem;
-
-    svg {
-      font-size: 22px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 1rem;
-
-    svg {
-      font-size: 20px;
-    }
-  }
-`;
-
-const CardTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 1rem;
-  letter-spacing: 0.3px;
-  line-height: 1.3;
-  font-family: 'Tomorrow', sans-serif;
-
-  @media (max-width: 768px) {
-    font-size: 1.25rem;
-    margin-bottom: 0.875rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.125rem;
-    margin-bottom: 0.75rem;
-  }
-`;
 
 const CardText = styled.p`
   font-size: 1rem;
@@ -557,141 +330,6 @@ const CardText = styled.p`
   }
 `;
 
-const StatCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 2.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-
-  @media (max-width: 768px) {
-    padding: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.5rem;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover {
-    border-color: rgba(113, 32, 176, 0.6);
-    transform: translateY(-8px);
-    box-shadow: 0 16px 40px rgba(113, 32, 176, 0.3);
-    background: rgba(15, 15, 15, 0.85);
-
-    &::before {
-      opacity: 1;
-    }
-  }
-`;
-
-const StatNumber = styled.div`
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: #7120b0;
-  margin-bottom: 0.5rem;
-  font-family: 'Tomorrow', sans-serif;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2rem;
-  }
-`;
-
-const StatLabel = styled.div`
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
-  font-family: 'Tomorrow', sans-serif;
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9375rem;
-  }
-`;
-
-const StatCardText = styled(CardText)`
-  margin-top: 1rem;
-  font-size: 0.9rem;
-
-  @media (max-width: 768px) {
-    font-size: 0.875rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.8125rem;
-  }
-`;
-
-const TwoColumn = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 1.5rem;
-  }
-`;
-
-const TextContent = styled.div`
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.8;
-
-  p {
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    line-height: 1.6;
-
-    p {
-      margin-bottom: 1.25rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9375rem;
-    line-height: 1.5;
-
-    p {
-      margin-bottom: 1rem;
-    }
-  }
-`;
 
 // Glitch animation keyframes
 const glitchTop = `
@@ -1281,19 +919,6 @@ const nodeDrift = keyframes`
   }
 `;
 
-const lineDraw = keyframes`
-  0% {
-    stroke-dashoffset: 1000;
-    opacity: 0;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-`;
 
 const particleFloat = keyframes`
   0%, 100% {
@@ -3257,80 +2882,6 @@ const WhatWeDoMetaPill = styled.span`
   }
 `;
 
-const WhatWeDoOutcome = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
-  margin: 1.5rem 0 1rem 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(168, 85, 247, 0.2);
-  border-radius: 10px;
-  position: relative;
-  z-index: 2;
-  box-shadow: 
-    0 0 0 1px rgba(168, 85, 247, 0.1) inset,
-    0 2px 8px rgba(0, 0, 0, 0.3);
-
-  ${WhatWeDoBlock}:hover & {
-    border-color: rgba(168, 85, 247, 0.3);
-    background: rgba(0, 0, 0, 0.5);
-    box-shadow: 
-      0 0 0 1px rgba(168, 85, 247, 0.15) inset,
-      0 4px 12px rgba(168, 85, 247, 0.15);
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.75rem 0.875rem;
-    margin: 1.25rem 0 0.875rem 0;
-    gap: 0.875rem;
-  }
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding: 0.625rem 0.75rem;
-    margin: 1rem 0 0.75rem 0;
-  }
-`;
-
-const OutcomeLabel = styled.span`
-  font-size: 0.625rem;
-  font-weight: 700;
-  color: rgba(168, 85, 247, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-  white-space: nowrap;
-  flex-shrink: 0;
-
-  @media (max-width: 480px) {
-    font-size: 0.5625rem;
-  }
-`;
-
-const OutcomeText = styled.span`
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.4;
-  font-family: 'Tomorrow', sans-serif;
-  flex: 1;
-  text-align: right;
-
-  @media (max-width: 768px) {
-    font-size: 0.75rem;
-  }
-
-  @media (max-width: 480px) {
-    text-align: left;
-    font-size: 0.6875rem;
-  }
-`;
 
 const WhatWeDoBlockBody = styled.ul`
   font-size: 1.0625rem;
@@ -3724,27 +3275,6 @@ const Home = () => {
     setParticleKey(Date.now());
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
 
   return (
     <PageContainer>
