@@ -13,7 +13,7 @@ ${
 }
 
 html{
-    scroll-behavior: smooth;
+    /* scroll-behavior removed to allow instant scroll to top on navigation */
 }
 *,*::before,*::after{
     margin: 0;
