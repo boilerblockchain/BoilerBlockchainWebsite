@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import Particles from 'react-tsparticles';
@@ -14,6 +14,7 @@ import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
 import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
 import albertImage from '../../assets/images/pfps/exec/albert_wu.jpg';
 import siyaImage from '../../assets/images/pfps/exec/siya_jariwala.jpg';
+import adityaImage from '../../assets/images/pfps/exec/aditya_kattil.jpeg';
 
 // Developer Team
 import ansonImage from '../../assets/images/pfps/dev/anson_lam.JPG';
@@ -33,6 +34,7 @@ import danielJinImage from '../../assets/images/pfps/dev/daniel_jin.jpg';
 import siddheshImage from '../../assets/images/pfps/dev/siddhesh_songirkar.jpg';
 import dhiyaanImage from '../../assets/images/pfps/dev/dhiyaan_nirmal.jpg';
 import pranavImage from '../../assets/images/pfps/dev/pranav_doshi.png';
+import manasviImage from '../../assets/images/pfps/dev/manasvi_meka.PNG';
 
 // Research Team
 import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
@@ -55,6 +57,7 @@ import garvImage from '../../assets/images/pfps/ops/garv_tayade.jpg';
 import mugdhaImage from '../../assets/images/pfps/ops/mugdha_patil.jpg';
 import shivamImage from '../../assets/images/pfps/ops/shivam_rastogi.jpg';
 import mahiImage from '../../assets/images/pfps/ops/mahi_tripathi.jpg';
+import akashImage from '../../assets/images/pfps/ops/akash_mishra.jpg';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -233,6 +236,7 @@ const TeamRow = styled(motion.div)`
 
 const MemberCard = styled(motion.div)`
   width: 290px;
+  max-width: 100%;
   background: rgba(15, 15, 20, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -246,6 +250,7 @@ const MemberCard = styled(motion.div)`
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  box-sizing: border-box;
 
   &::before {
     content: '';
@@ -507,6 +512,7 @@ const allTeamMembersUnsorted = [
   { id: 3, image: neenaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
   { id: 4, image: albertImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
   { id: 5, image: siyaImage, category: "executive", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
+  { id: 6, image: adityaImage, category: "executive", socials: { linkedin: "#", twitter: "#" } },
   // Developer Team
   { id: 7, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 8, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
@@ -525,43 +531,38 @@ const allTeamMembersUnsorted = [
   { id: 21, image: siddheshImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/siddhesh-songirkar/", twitter: "https://x.com/TenerSed5" } },
   { id: 22, image: dhiyaanImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/dhiyaan/", twitter: "https://x.com/dh1yaan?s=21" } },
   { id: 23, image: pranavImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/pranav-doshi-60a647213/", twitter: "https://x.com/0xPranavDoshi" } },
+  { id: 24, image: manasviImage, category: "developer", socials: { linkedin: "#", twitter: "#" } },
   // Research Team
-  { id: 24, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
-  { id: 25, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
-  { id: 26, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
-  { id: 27, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
-  { id: 28, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
-  { id: 29, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
-  { id: 30, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
-  { id: 31, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
-  { id: 32, image: kevalImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/keval-shah-3b46a2241", twitter: "https://x.com/kshahdevelops?s=21" } },
+  { id: 25, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
+  { id: 26, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },
+  { id: 27, image: ishaanImage, category: "research", socials: { linkedin: "http://linkedin.com/in/ishaan-saxena-75b1262a5", twitter: "https://x.com/Ishsax07" } },
+  { id: 28, image: muhammadImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/muhammad-ayaan-ameen-17178b2b2/", twitter: "https://twitter.com/Ayaanafterhours" } },
+  { id: 29, image: vaibhavImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/vaibhav-sunkada", twitter: "https://x.com/vaibhavsunkada?s=21" } },
+  { id: 30, image: nickImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nickdiaz-/", twitter: "https://x.com/authnick34" } },
+  { id: 31, image: anikethImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aniketh-upadhya-079b68316/", twitter: "https://x.com/anikethu138?s=21" } },
+  { id: 32, image: oscarfImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/oscarf-velasco/", twitter: "https://x.com/oscar_vec" } },
+  { id: 33, image: kevalImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/keval-shah-3b46a2241", twitter: "https://x.com/kshahdevelops?s=21" } },
   // Operations Team
-  { id: 33, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
-  { id: 34, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 35, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 36, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
-  { id: 37, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
-  { id: 38, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
-  { id: 39, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
-  { id: 40, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
-  { id: 41, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } }
+  { id: 34, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 35, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
+  { id: 36, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 37, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
+  { id: 38, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
+  { id: 39, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
+  { id: 40, image: mugdhaImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
+  { id: 41, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
+  { id: 42, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
+  { id: 43, image: akashImage, category: "operations", socials: { linkedin: "#", twitter: "#" } }
 ];
 
-// Sort team members alphabetically by name (extracted from image filename)
-const allTeamMembersSorted = [...allTeamMembersUnsorted].sort((a, b) => {
-  const nameA = formatName(null, a.image).toLowerCase();
-  const nameB = formatName(null, b.image).toLowerCase();
-  return nameA.localeCompare(nameB);
-});
-
-// Automatically organize by category (no need to update socials here)
-// Each category is also sorted alphabetically
-const teamMembers = {
-  all: allTeamMembersSorted,
-  executive: allTeamMembersSorted.filter(m => m.category === "executive"),
-  developer: allTeamMembersSorted.filter(m => m.category === "developer"),
-  research: allTeamMembersSorted.filter(m => m.category === "research"),
-  operations: allTeamMembersSorted.filter(m => m.category === "operations")
+// Fisher-Yates shuffle algorithm for random ordering
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 };
 
 const PeopleTeam = () => {
@@ -575,6 +576,28 @@ const PeopleTeam = () => {
   useEffect(() => {
     setParticleKey(Date.now());
   }, []);
+
+  // Memoize team organization to ensure consistent random order during session
+  // Executive board always first, then random others (no duplicates)
+  const teamMembers = useMemo(() => {
+    // Separate executive board from other members
+    const executiveMembers = allTeamMembersUnsorted.filter(m => m.category === "executive");
+    const nonExecutiveMembers = allTeamMembersUnsorted.filter(m => m.category !== "executive");
+
+    // Shuffle non-executive members randomly
+    const shuffledNonExec = shuffleArray(nonExecutiveMembers);
+
+    // Combine: Executive board first, then random others (no duplicates)
+    const allTeamMembersSorted = [...executiveMembers, ...shuffledNonExec];
+
+    return {
+      all: allTeamMembersSorted,
+      executive: executiveMembers,
+      developer: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "developer")),
+      research: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "research")),
+      operations: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "operations"))
+    };
+  }, []); // Empty dependency array means this only runs once on mount
 
   const filters = [
     { id: 'all', label: 'ALL' },

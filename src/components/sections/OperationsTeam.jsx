@@ -129,6 +129,7 @@ const StatCard = styled(motion.div)`
   min-width: 180px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
@@ -144,6 +145,16 @@ const StatCard = styled(motion.div)`
     right: 0;
     height: 2px;
     background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1.25rem;
+    min-width: 150px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.25rem 1rem;
+    min-width: 130px;
   }
 `;
 
@@ -195,6 +206,7 @@ const OperationsCard = styled(motion.div)`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
@@ -217,6 +229,18 @@ const OperationsCard = styled(motion.div)`
 
   &:hover::before {
     opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.75rem 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1.25rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.25rem 1rem;
   }
 `;
 

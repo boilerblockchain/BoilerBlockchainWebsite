@@ -1964,9 +1964,14 @@ const CTAContainer = styled.div`
   position: relative;
   z-index: 2;
   padding: 0 1rem;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 0 0.5rem;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 0.75rem;
   }
 `;
 
@@ -1990,6 +1995,8 @@ const CTAContent = styled(motion.div)`
     0 8px 32px rgba(168, 85, 247, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     inset 0 -1px 0 rgba(168, 85, 247, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
 
   /* Additional inner glow */
   &::before {
@@ -2013,7 +2020,7 @@ const CTAContent = styled(motion.div)`
   }
 
   @media (max-width: 768px) {
-    padding: 3rem 2rem;
+    padding: 2.5rem 1.5rem;
     border-radius: 24px;
 
     &::before {
@@ -2022,11 +2029,20 @@ const CTAContent = styled(motion.div)`
   }
 
   @media (max-width: 480px) {
-    padding: 2.5rem 1.5rem;
+    padding: 2rem 1.25rem;
     border-radius: 20px;
 
     &::before {
       border-radius: 20px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.75rem 1rem;
+    border-radius: 16px;
+
+    &::before {
+      border-radius: 16px;
     }
   }
 `;
@@ -2039,19 +2055,26 @@ const CTATitle = styled.h2`
   line-height: 1.2;
   letter-spacing: -0.02em;
   font-family: 'Tomorrow', sans-serif;
+  box-sizing: border-box;
+  word-wrap: break-word;
 
   @media (max-width: 968px) {
     font-size: 3rem;
   }
 
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     margin-bottom: 1.25rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 2rem;
+    font-size: 1.875rem;
     margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 1.625rem;
   }
 `;
 
@@ -2085,19 +2108,26 @@ const CTADescription = styled.p`
   margin: 0 auto 3rem;
   font-family: 'Tomorrow', sans-serif;
   font-weight: 400;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     font-size: 1.125rem;
     line-height: 1.7;
-    margin-bottom: 2.5rem;
-    padding: 0 1rem;
+    margin-bottom: 2rem;
+    padding: 0;
+    max-width: 100%;
   }
 
   @media (max-width: 480px) {
     font-size: 1rem;
     line-height: 1.6;
-    margin-bottom: 2rem;
-    padding: 0 0.5rem;
+    margin-bottom: 1.75rem;
+    padding: 0;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 0.9375rem;
+    margin-bottom: 1.5rem;
   }
 `;
 
@@ -2107,17 +2137,22 @@ const CTAButtonGroup = styled(motion.div)`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  box-sizing: border-box;
 
   @media (max-width: 768px) {
     gap: 1rem;
     flex-direction: column;
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
     margin: 0 auto;
   }
 
   @media (max-width: 480px) {
     gap: 0.875rem;
+  }
+
+  @media (max-width: 360px) {
+    gap: 0.75rem;
   }
 `;
 
@@ -2134,10 +2169,13 @@ const CTAButton = styled(motion(Link))`
   font-family: 'Tomorrow', sans-serif;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  white-space: nowrap;
 
   svg {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
     transition: transform 0.3s ease;
   }
 
@@ -2146,15 +2184,22 @@ const CTAButton = styled(motion(Link))`
   }
 
   @media (max-width: 768px) {
-    padding: 1rem 2rem;
+    padding: 1rem 1.75rem;
     font-size: 1rem;
     width: 100%;
     justify-content: center;
+    max-width: 100%;
   }
 
   @media (max-width: 480px) {
-    padding: 0.875rem 1.75rem;
+    padding: 0.875rem 1.5rem;
     font-size: 0.9375rem;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
   }
 
   &.primary {
@@ -2325,7 +2370,7 @@ const WhatWeDoHeader = styled(motion.div)`
 const WhatWeDoTitle = styled(motion.h2)`
   font-size: 4.5rem;
   font-weight: 900;
-  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.98) 30%, rgba(168, 85, 247, 0.95) 70%, rgba(168, 85, 247, 0.85) 100%);
+  background: linear-gradient(135deg, #a855f7 0%, #bb20ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

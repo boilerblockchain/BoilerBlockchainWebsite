@@ -12,9 +12,7 @@ ${
 } */
 }
 
-html{
-    /* scroll-behavior removed to allow instant scroll to top on navigation */
-}
+
 *,*::before,*::after{
     margin: 0;
     padding: 0;
@@ -26,7 +24,8 @@ body{
     height: 100%;
     background: #000000 !important;
     background-image: none !important;
-    overflow-x: hidden;
+    max-width: 100vw;
+    box-sizing: border-box;
 }
 
 @keyframes Gradient {

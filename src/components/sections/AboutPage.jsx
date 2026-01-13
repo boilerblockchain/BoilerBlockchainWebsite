@@ -152,6 +152,8 @@ const ContentBlock = styled(motion.div)`
   font-family: 'Tomorrow', sans-serif;
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
   
   &:hover {
     box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
@@ -170,6 +172,7 @@ const ContentBlock = styled(motion.div)`
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
+    word-wrap: break-word;
   }
 
   p {
@@ -178,11 +181,46 @@ const ContentBlock = styled(motion.div)`
     margin-bottom: 1.5rem;
     line-height: 1.6;
     font-family: 'Tomorrow', sans-serif;
+    word-wrap: break-word;
   }
   .button-container {
     display: flex;
     justify-content: center;
     margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.75rem 1.25rem;
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    .button-container {
+      margin-top: 1.5rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.5rem 1rem;
+
+    h2 {
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
+    }
   }
 `;
 
@@ -248,6 +286,9 @@ const LinkButton = styled(motion.div)`
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  max-width: 100%;
 
   &:hover {
     background-color: #9d20b0;
@@ -258,6 +299,11 @@ const LinkButton = styled(motion.div)`
   @media (max-width: 40em) {
     font-size: ${(props) => props.theme.fontsm};
     padding: 0.8rem 1.5rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0.75rem 1.25rem;
+    letter-spacing: 0.5px;
   }
 `;
 

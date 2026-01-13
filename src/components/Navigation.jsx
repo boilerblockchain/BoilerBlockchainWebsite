@@ -11,15 +11,32 @@ const NavHeader = styled.header`
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding-top: 1.5rem;
+  padding-top: ${props => props.isScrolled ? '1rem' : '1.5rem'};
   padding-left: 1rem;
   padding-right: 1rem;
   pointer-events: none;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, padding-top 0.3s ease-out;
+  transform: ${props => props.isScrolled ? 'translateY(-5px)' : 'translateY(0)'};
+  opacity: ${props => props.isScrolled ? '0.95' : '1'};
+  box-sizing: border-box;
+  max-width: 100vw;
+  overflow: hidden;
 
   @media (max-width: 768px) {
-    padding-top: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-top: ${props => props.isScrolled ? '0.625rem' : '0.875rem'};
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding-top: ${props => props.isScrolled ? '0.5rem' : '0.75rem'};
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+  }
+
+  @media (max-width: 360px) {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
   }
 `;
 
@@ -28,6 +45,11 @@ const Nav = styled.nav`
   max-width: 1280px;
   pointer-events: auto;
   position: relative;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const NavContainer = styled.div`
@@ -35,25 +57,41 @@ const NavContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   background-color: ${props => props.isScrolled 
-    ? 'rgba(30, 30, 40, 0.75)' 
+    ? 'rgba(30, 30, 40, 0.85)' 
     : 'rgba(25, 25, 35, 0.65)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 16px;
-  padding: 1rem 1.5rem;
+  padding: ${props => props.isScrolled ? '0.875rem 1.5rem' : '1rem 1.5rem'};
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  box-shadow: ${props => props.isScrolled 
+    ? '0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset'
+    : '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset'};
   gap: 1rem;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 
   @media (max-width: 1024px) {
-    padding: 0.875rem 1.25rem;
+    padding: ${props => props.isScrolled ? '0.75rem 1rem' : '0.875rem 1.25rem'};
     gap: 0.75rem;
   }
 
   @media (max-width: 768px) {
-    padding: 0.75rem 1rem;
-    gap: 0.5rem;
+    padding: ${props => props.isScrolled ? '0.625rem 0.75rem' : '0.75rem 0.875rem'};
+    gap: 0.4rem;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: ${props => props.isScrolled ? '0.5rem 0.5rem' : '0.625rem 0.625rem'};
+    gap: 0.25rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: ${props => props.isScrolled ? '0.5rem 0.375rem' : '0.625rem 0.5rem'};
+    gap: 0.25rem;
   }
 `;
 
@@ -63,9 +101,14 @@ const LogoLink = styled(Link)`
   gap: 0.75rem;
   text-decoration: none;
   flex-shrink: 0;
+  min-width: 0;
 
   @media (max-width: 640px) {
     gap: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.375rem;
   }
 `;
 
@@ -79,22 +122,39 @@ const LogoBox = styled.div`
   justify-content: center;
   overflow: visible;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 
   @media (max-width: 640px) {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
+  }
+
+  @media (max-width: 480px) {
+    width: 28px;
+    height: 28px;
   }
 
   img {
-    width: 120px;
+    width: 110px;
     height: auto;
     max-height: 50px;
-    max-width: 120px;
+    max-width: 110px;
     object-fit: contain;
+    transition: all 0.3s ease;
+
+    @media (max-width: 768px) {
+      max-height: 38px;
+      max-width: 75px;
+    }
 
     @media (max-width: 640px) {
-      max-height: 45px;
-      max-width: 100px;
+      max-height: 35px;
+      max-width: 65px;
+    }
+
+    @media (max-width: 480px) {
+      max-height: 32px;
+      max-width: 55px;
     }
   }
 `;
@@ -105,12 +165,27 @@ const LogoText = styled.span`
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
   white-space: nowrap;
+  transition: all 0.3s ease;
+  flex-shrink: 1;
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 
   @media (max-width: 640px) {
-    font-size: 1rem;
+    font-size: 0.75rem;
   }
 
   @media (max-width: 480px) {
+    font-size: 0.6875rem;
+  }
+
+  @media (max-width: 400px) {
+    display: none;
+  }
+
+  @media (max-width: 540px) {
     display: none;
   }
 `;
@@ -206,6 +281,15 @@ const ContactButtonWrapper = styled.div`
   align-items: center;
   gap: 0.75rem;
   flex-shrink: 0;
+  min-width: 0;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.375rem;
+  }
 `;
 
 const ContactButton = styled(Link)`
@@ -224,6 +308,7 @@ const ContactButton = styled(Link)`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
+  flex-shrink: 0;
 
   &:hover {
     transform: translateY(-2px);
@@ -235,14 +320,24 @@ const ContactButton = styled(Link)`
     transform: translateY(0);
   }
 
+  @media (max-width: 968px) {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.75rem;
+    border-radius: 10px;
+  }
+
   @media (max-width: 640px) {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.8125rem;
+    padding: 0.4375rem 0.75rem;
+    font-size: 0.6875rem;
   }
 
   @media (max-width: 480px) {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.625rem;
   }
 `;
 
@@ -258,19 +353,37 @@ const MobileMenuButton = styled.button`
   color: #ffffff;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 
   @media (max-width: 968px) {
     display: flex;
   }
 
   @media (max-width: 640px) {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 480px) {
+    width: 30px;
+    height: 30px;
+  }
+
+  @media (max-width: 360px) {
+    width: 28px;
+    height: 28px;
   }
 
   svg {
     width: 20px;
     height: 20px;
+    transition: all 0.3s ease;
+
+    @media (max-width: 640px) {
+      width: 18px;
+      height: 18px;
+    }
   }
 `;
 
@@ -376,7 +489,7 @@ const Navigation = () => {
   };
 
   return (
-    <NavHeader>
+    <NavHeader isScrolled={isScrolled}>
       <Nav>
         <NavContainer isScrolled={isScrolled}>
           <LogoLink to="/">
