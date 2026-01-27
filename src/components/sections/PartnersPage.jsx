@@ -56,6 +56,8 @@ const Container = styled.div`
   z-index: 2;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
   
   @media (max-width: 1024px) {
     padding: 110px 1.75rem 0;
@@ -112,6 +114,7 @@ const PartnersGrid = styled(motion.div)`
   margin: 3rem 0;
   align-items: center;
   justify-items: center;
+  box-sizing: border-box;
 
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -120,13 +123,17 @@ const PartnersGrid = styled(motion.div)`
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 2rem 2.5rem;
+    gap: 2rem 2rem;
     margin: 2rem 0;
   }
 
   @media (max-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem 2rem;
+    gap: 1.5rem 1.5rem;
+  }
+
+  @media (max-width: 360px) {
+    gap: 1.25rem 1.25rem;
   }
 `;
 
@@ -141,6 +148,8 @@ const PartnerLogo = styled.div`
   border-radius: 8px;
   width: 100%;
   min-height: 120px;
+  box-sizing: border-box;
+  overflow: hidden;
 
   img {
     height: 60px;
@@ -162,7 +171,7 @@ const PartnerLogo = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 1.5rem 1.75rem;
+    padding: 1.5rem 1.5rem;
     min-height: 100px;
     
     img {
@@ -171,11 +180,20 @@ const PartnerLogo = styled.div`
   }
 
   @media (max-width: 480px) {
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.25rem;
     min-height: 90px;
     
     img {
       height: 40px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    padding: 1rem 1rem;
+    min-height: 80px;
+    
+    img {
+      height: 36px;
     }
   }
 
@@ -198,6 +216,8 @@ const PartnerCard = styled(motion.a)`
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
 
   &:hover {
     ${PartnerLogo} {

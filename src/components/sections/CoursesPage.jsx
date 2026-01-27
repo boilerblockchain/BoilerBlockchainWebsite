@@ -37,16 +37,19 @@ const staggerContainer = {
 const PageSection = styled.section`
   min-height: 100vh;
   width: 100%;
+  max-width: 100vw;
   background-color: #000000;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   padding-top: 4rem;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   
   * {
-    font-family: 'Tomorrow', sans-serif; 
+    font-family: 'Tomorrow', sans-serif;
+    box-sizing: border-box;
   }
 `;
 
@@ -60,6 +63,7 @@ const Container = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
+  box-sizing: border-box;
   
   @media (min-width: 768px) {
     width: 85%;
@@ -73,21 +77,21 @@ const Container = styled(motion.div)`
   }
 
   @media (max-width: 1024px) {
-    padding: 110px 1.75rem 2rem;
+    padding: 110px 1.5rem 2rem;
   }
 
   @media (max-width: 768px) {
-    width: 95%;
-    padding: 100px 1.5rem 2rem;
+    width: 100%;
+    padding: 100px 1rem 2rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    padding: 80px 1rem 1.5rem;
+    padding: 80px 0.75rem 1.5rem;
   }
 
   @media (max-width: 360px) {
-    padding: 70px 0.75rem 1.5rem;
+    padding: 70px 0.5rem 1.5rem;
   }
 `;
 
@@ -102,9 +106,31 @@ const Title = styled(motion.h1)`
   letter-spacing: 2px;
   font-family:'Tomorrow', sans-serif; 
   grid-column: 1 / -1;
+  word-wrap: break-word;
+  max-width: 100%;
+  padding: 0 0.5rem;
 
-  @media (max-width: 40em) {
-    font-size: 4rem;
+  @media (max-width: 1024px) {
+    font-size: 3.5rem;
+    letter-spacing: 1.5px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 1.75rem;
+    letter-spacing: 0.25px;
   }
 `;
 
@@ -113,6 +139,9 @@ const ImageSection = styled(motion.div)`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   
   @media (min-width: 768px) {
     gap: 2rem;
@@ -144,9 +173,23 @@ const CourseCard = styled(motion.div)`
     0 0 0 1px rgba(168, 85, 247, 0.1) inset;
   transition: all 0.3s ease;
   position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
 
   @media (min-width: 768px) {
     border-radius: 8px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.75rem 1.25rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.5rem 1rem;
   }
 
   &:hover {
@@ -165,13 +208,26 @@ const CourseCard = styled(motion.div)`
 
 const CourseTitle = styled.h2`
   font-family: 'Tomorrow', sans-serif;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.25rem, 4vw, 2.5rem);
   color: #ffffff;
   margin-bottom: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-align: center;
+  word-wrap: break-word;
+  max-width: 100%;
+  padding: 0 0.5rem;
+
+  @media (max-width: 480px) {
+    font-size: 1.375rem;
+    letter-spacing: 0.5px;
+    padding: 0 0.25rem;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const CourseInfo = styled.div`
@@ -181,13 +237,26 @@ const CourseInfo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   > * {
-    width: 100%; 
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   @media (min-width: 768px) {
     padding: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0.75rem;
   }
 `;
 
@@ -196,9 +265,17 @@ const InfoGrid = styled(motion.div)`
   grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
-  @media (min-width: 480px) {
+  @media (min-width: 600px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -211,6 +288,8 @@ const InfoCard = styled(motion.div)`
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 
   &:hover {
     border-color: rgba(113, 32, 176, 0.5);
@@ -221,6 +300,14 @@ const InfoCard = styled(motion.div)`
     padding: 1.5rem;
   }
 
+  @media (max-width: 480px) {
+    padding: 1.125rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1rem;
+  }
+
   &.large {
     grid-column: 1 / -1;
     
@@ -228,6 +315,7 @@ const InfoCard = styled(motion.div)`
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
+      max-width: 100%;
       
       span {
         background: rgba(113, 32, 176, 0.1);
@@ -235,9 +323,21 @@ const InfoCard = styled(motion.div)`
         border-radius: 15px;
         font-size: 0.85rem;
         border: 1px solid rgba(113, 32, 176, 0.3);
+        word-wrap: break-word;
+        max-width: 100%;
 
         @media (min-width: 768px) {
           font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.8rem;
+          padding: 0.25rem 0.65rem;
+        }
+
+        @media (max-width: 360px) {
+          font-size: 0.75rem;
+          padding: 0.2rem 0.5rem;
         }
       }
     }
@@ -249,18 +349,31 @@ const InfoCard = styled(motion.div)`
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 1px;
+    word-wrap: break-word;
+    max-width: 100%;
 
     @media (min-width: 768px) {
       font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
     }
   }
 
   p {
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
+    word-wrap: break-word;
+    max-width: 100%;
 
     @media (min-width: 768px) {
       font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.85rem;
     }
   }
 `;
@@ -269,24 +382,44 @@ const List = styled.ul`
   list-style: none;
   padding: 0;
   margin: 1rem 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   li {
     color: #ffffff;
     padding: 0.8rem 0;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     font-family: 'Tomorrow', sans-serif;
     font-size: ${(props) => props.theme.fontmd};
     line-height: 1.6;
+    word-wrap: break-word;
+    max-width: 100%;
+
+    @media (max-width: 480px) {
+      font-size: 0.875rem;
+      padding: 0.6rem 0;
+      line-height: 1.5;
+    }
 
     &:before {
       content: "";
       display: inline-block;
       width: 8px;
       height: 8px;
+      min-width: 8px;
       margin-right: 1rem;
+      margin-top: 0.5rem;
       background-color: #7120b0;
       border-radius: 50%;
+
+      @media (max-width: 480px) {
+        margin-right: 0.75rem;
+        width: 6px;
+        height: 6px;
+        min-width: 6px;
+      }
     }
   }
 `;
@@ -300,12 +433,14 @@ const DetailsSection = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100%;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 
   &::before {
     content: '';
@@ -334,14 +469,41 @@ const DetailsSection = styled(motion.div)`
     margin: 2rem 0;
   }
 
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.25rem 0.75rem;
+  }
+
   h3 {
     color: #ffffff;
     margin-bottom: 1.5rem;
     font-size: 2rem;
     width: 100%;
+    max-width: 100%;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
+    word-wrap: break-word;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.25rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 360px) {
+      font-size: 1.125rem;
+    }
   }
 
   p {
@@ -349,22 +511,38 @@ const DetailsSection = styled(motion.div)`
     font-size: ${props => props.theme.fontlg};
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    word-wrap: break-word;
+    max-width: 100%;
+
+    @media (max-width: 480px) {
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
   }
 
   ${List} {
     width: 100%;
+    max-width: 100%;
     margin-bottom: 0;
   }
 `;
 
 const ImageContainer = styled.div`
-  height: 250px;
+  height: 200px;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
   flex: 1;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(113, 32, 176, 0.3);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  
+  @media (min-width: 600px) {
+    height: 230px;
+  }
   
   @media (min-width: 768px) {
     height: calc((100% - 4rem) / 3); 
@@ -396,7 +574,7 @@ const pulseGlow = keyframes`
 `;
 
 const FloatingLogoContainer = styled(motion.div)`
-  height: 250px;
+  height: 200px;
   position: relative;
   flex: 1;
   display: flex;
@@ -404,6 +582,13 @@ const FloatingLogoContainer = styled(motion.div)`
   justify-content: center;
   background: transparent;
   overflow: visible;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  
+  @media (min-width: 600px) {
+    height: 230px;
+  }
   
   @media (min-width: 768px) {
     height: calc((100% - 4rem) / 3); 
@@ -412,14 +597,20 @@ const FloatingLogoContainer = styled(motion.div)`
 `;
 
 const LogoImage = styled.img`
-  width: 250px;
-  height: 250px;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
   animation: ${pulseGlow} 3s ease-in-out infinite;
+  max-width: 100%;
+  
+  @media (min-width: 600px) {
+    width: 220px;
+    height: 220px;
+  }
   
   @media (min-width: 768px) {
-    width: 320px;
-    height: 320px;
+    width: 280px;
+    height: 280px;
   }
   
   @media (min-width: 1200px) {
@@ -437,14 +628,16 @@ const DownloadButton = styled.a`
   text-decoration: none;
   font-size: ${(props) => props.theme.fontmd};
   transition: all 0.3s ease;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: center;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   width: fit-content;
-  max-width: 100%;
+  max-width: calc(100% - 2rem);
+  box-sizing: border-box;
+  white-space: normal;
 
   &:hover {
     background-color: #9d20b0;
@@ -452,9 +645,21 @@ const DownloadButton = styled.a`
     transform: translateY(-3px);
   }
 
-  @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontsm};
-    padding: 0.8rem 1.5rem;
+  @media (max-width: 768px) {
+    margin: 1.5rem auto 0;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    padding: 0.875rem 1.5rem;
+    letter-spacing: 0.5px;
+    margin: 1.25rem auto 0;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.25px;
   }
 `;
 

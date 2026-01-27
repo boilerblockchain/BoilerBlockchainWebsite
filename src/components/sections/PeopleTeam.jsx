@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import Particles from 'react-tsparticles';
@@ -416,6 +416,7 @@ const MemberCard = styled(motion.div)`
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  box-sizing: border-box;
 
   &::before {
     content: '';
@@ -843,21 +844,14 @@ const allTeamMembersUnsorted = [
   { id: 51, image: alexImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
 ];
 
-// Sort team members alphabetically by name (extracted from image filename)
-const allTeamMembersSorted = [...allTeamMembersUnsorted].sort((a, b) => {
-  const nameA = formatName(null, a.image).toLowerCase();
-  const nameB = formatName(null, b.image).toLowerCase();
-  return nameA.localeCompare(nameB);
-});
-
-// Automatically organize by category (no need to update socials here)
-// Each category is also sorted alphabetically
-const teamMembers = {
-  all: allTeamMembersSorted,
-  executive: allTeamMembersSorted.filter(m => m.category === "executive"),
-  developer: allTeamMembersSorted.filter(m => m.category === "developer"),
-  research: allTeamMembersSorted.filter(m => m.category === "research"),
-  operations: allTeamMembersSorted.filter(m => m.category === "operations")
+// Fisher-Yates shuffle algorithm for random ordering
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 };
 
 const PeopleTeam = () => {
@@ -871,6 +865,28 @@ const PeopleTeam = () => {
   useEffect(() => {
     setParticleKey(Date.now());
   }, []);
+
+  // Memoize team organization to ensure consistent random order during session
+  // Executive board always first, then random others (no duplicates)
+  const teamMembers = useMemo(() => {
+    // Separate executive board from other members
+    const executiveMembers = allTeamMembersUnsorted.filter(m => m.category === "executive");
+    const nonExecutiveMembers = allTeamMembersUnsorted.filter(m => m.category !== "executive");
+
+    // Shuffle non-executive members randomly
+    const shuffledNonExec = shuffleArray(nonExecutiveMembers);
+
+    // Combine: Executive board first, then random others (no duplicates)
+    const allTeamMembersSorted = [...executiveMembers, ...shuffledNonExec];
+
+    return {
+      all: allTeamMembersSorted,
+      executive: executiveMembers,
+      developer: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "developer")),
+      research: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "research")),
+      operations: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "operations"))
+    };
+  }, []); // Empty dependency array means this only runs once on mount
 
   const filters = [
     { id: 'developer', label: 'DEVELOPER TEAM' },

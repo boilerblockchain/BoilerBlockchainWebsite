@@ -23,6 +23,7 @@ import PeopleTeam from "./components/sections/PeopleTeam";
 // Other Pages
 import PartnersPage from "./components/sections/PartnersPage";
 import ContactPage from "./components/sections/ContactPage";
+import NotFound from "./components/sections/NotFound";
 
 // Utilities
 import ScrollToTop from "./components/ScrollToTop";
@@ -53,6 +54,9 @@ root.render(
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/hackathons" element={<Hackathons />} />
       <Route path="/" element={<App />} />
+      
+      {/* 404 Not Found - Catch all route */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>,
 );

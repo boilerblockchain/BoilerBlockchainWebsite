@@ -10,11 +10,9 @@ function App() {
   return (
     <ThemeProvider theme={light}>
       <GlobalStyles />
-      <main style={{ background: '#000000', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <main style={{ background: '#000000', minHeight: '100vh', maxWidth: '100vw', overflowX: 'hidden', boxSizing: 'border-box' }}>
         <Navigation />
-        <div style={{ flex: 1 }}>
-          <Home />
-        </div>
+        <Home />
         <Footer />
       </main>
     </ThemeProvider>

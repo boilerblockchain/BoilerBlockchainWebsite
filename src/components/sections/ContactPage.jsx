@@ -78,17 +78,23 @@ const InfoCard = styled(motion.div)`
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 
   &:hover {
     border-color: rgba(113, 32, 176, 0.3);
   }
 
   @media (max-width: 768px) {
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
   }
 
   @media (max-width: 480px) {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.75rem 1.25rem;
   }
 `;
 
@@ -194,17 +200,23 @@ const FormCard = styled(motion.div)`
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  overflow: hidden;
 
   &:hover {
     border-color: rgba(113, 32, 176, 0.3);
   }
 
   @media (max-width: 768px) {
-    padding: 2.5rem;
+    padding: 2.5rem 2rem;
   }
 
   @media (max-width: 480px) {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.75rem 1.25rem;
   }
 `;
 
@@ -289,6 +301,7 @@ const SubmitButton = styled.button`
   letter-spacing: 0.05em;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 
   &::before {
     content: '';
