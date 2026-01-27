@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { FiExternalLink, FiAward, FiLink } from 'react-icons/fi';
+import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -985,6 +986,7 @@ const HackathonsPage = () => {
           </ExpandedModal>
         )}
       </Container>
+      <Footer />
     </PageSection>
   );
 };

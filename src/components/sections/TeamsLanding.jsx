@@ -186,34 +186,6 @@ const TeamDescription = styled.p`
   margin-bottom: 2rem;
 `;
 
-const TeamStats = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const StatItem = styled.div`
-  text-align: center;
-  
-  .number {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #7120b0;
-    display: block;
-  }
-  
-  .label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-`;
 
 const ViewTeamButton = styled(Link)`
   display: inline-flex;
@@ -253,7 +225,6 @@ const teams = [
     name: 'Developer Team',
     icon: FiCode,
     description: 'Building the future of blockchain technology through innovative smart contracts, DApps, and Web3 infrastructure.',
-    stats: { members: '40+', projects: '7', languages: '8+' },
     path: '/teams/developer'
   },
   {
@@ -261,7 +232,6 @@ const teams = [
     name: 'Research Team',
     icon: FiSearch,
     description: 'Exploring cutting-edge blockchain research, consensus mechanisms, and emerging technologies in the decentralized space.',
-    stats: { members: '50+', papers: '12+', partnerships: '5+' },
     path: '/teams/research'
   },
   {
@@ -269,7 +239,6 @@ const teams = [
     name: 'Operations Team',
     icon: FiSettings,
     description: 'The engine behind everything: partnerships, events, logistics, and systems that let builders focus and scale impact.',
-    stats: { members: '20+', events: '15+', partners: '20+' },
     path: '/teams/operations'
   }
 ];
@@ -286,7 +255,8 @@ const TeamsLanding = () => {
   }, []);
 
   return (
-    <PageSection>
+    <>
+      <PageSection>
       <Navigation />
       <Particles
         key={particleKey}
@@ -371,15 +341,6 @@ const TeamsLanding = () => {
               
               <TeamDescription>{team.description}</TeamDescription>
               
-              <TeamStats>
-                {Object.entries(team.stats).map(([key, value]) => (
-                  <StatItem key={key}>
-                    <span className="number">{value}</span>
-                    <span className="label">{key}</span>
-                  </StatItem>
-                ))}
-              </TeamStats>
-              
               <ViewTeamButton to={team.path}>
                 View Team <FiArrowRight />
               </ViewTeamButton>
@@ -387,8 +348,9 @@ const TeamsLanding = () => {
           ))}
         </TeamsGrid>
       </Container>
+      </PageSection>
       <Footer />
-    </PageSection>
+    </>
   );
 };
 
