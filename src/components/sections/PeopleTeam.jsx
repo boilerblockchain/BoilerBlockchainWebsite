@@ -844,16 +844,6 @@ const allTeamMembersUnsorted = [
   { id: 51, image: alexImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
 ];
 
-// Fisher-Yates shuffle algorithm for random ordering
-const shuffleArray = (array) => {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-};
-
 const PeopleTeam = () => {
   const [particleKey, setParticleKey] = useState(Date.now());
   const [activeFilters, setActiveFilters] = useState(new Set());
@@ -866,25 +856,33 @@ const PeopleTeam = () => {
     setParticleKey(Date.now());
   }, []);
 
-  // Memoize team organization to ensure consistent random order during session
-  // Executive board always first, then random others (no duplicates)
+  // Memoize team organization to ensure consistent sorted order during session
+  // Sort by FIRST name (then last name as tie-breaker)
   const teamMembers = useMemo(() => {
-    // Separate executive board from other members
-    const executiveMembers = allTeamMembersUnsorted.filter(m => m.category === "executive");
-    const nonExecutiveMembers = allTeamMembersUnsorted.filter(m => m.category !== "executive");
+    const sortByName = (members) => {
+      return [...members].sort((a, b) => {
+        const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
+        const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
 
-    // Shuffle non-executive members randomly
-    const shuffledNonExec = shuffleArray(nonExecutiveMembers);
+        const firstCmp = firstA.localeCompare(firstB);
+        if (firstCmp !== 0) return firstCmp;
 
-    // Combine: Executive board first, then random others (no duplicates)
-    const allTeamMembersSorted = [...executiveMembers, ...shuffledNonExec];
+        // Tie-breaker: compare the remaining parts (last name, etc.) for stable ordering
+        const lastA = restA.join(' ');
+        const lastB = restB.join(' ');
+        return lastA.localeCompare(lastB);
+      });
+    };
+
+    const allSorted = sortByName(allTeamMembersUnsorted);
+    const executiveSorted = sortByName(allTeamMembersUnsorted.filter(m => m.category === "executive"));
 
     return {
-      all: allTeamMembersSorted,
-      executive: executiveMembers,
-      developer: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "developer")),
-      research: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "research")),
-      operations: shuffleArray(allTeamMembersUnsorted.filter(m => m.category === "operations"))
+      all: allSorted,
+      executive: executiveSorted,
+      developer: sortByName(allTeamMembersUnsorted.filter(m => m.category === "developer")),
+      research: sortByName(allTeamMembersUnsorted.filter(m => m.category === "research")),
+      operations: sortByName(allTeamMembersUnsorted.filter(m => m.category === "operations"))
     };
   }, []); // Empty dependency array means this only runs once on mount
 
@@ -910,7 +908,19 @@ const PeopleTeam = () => {
   // If no filters are active, show everyone. Otherwise, show members from active filters
   const displayedMembers = activeFilters.size === 0
     ? teamMembers.all
-    : allTeamMembersSorted.filter(member => activeFilters.has(member.category));
+    : allTeamMembersUnsorted
+        .filter(member => activeFilters.has(member.category))
+        .sort((a, b) => {
+          const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
+          const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
+
+          const firstCmp = firstA.localeCompare(firstB);
+          if (firstCmp !== 0) return firstCmp;
+
+          const lastA = restA.join(' ');
+          const lastB = restB.join(' ');
+          return lastA.localeCompare(lastB);
+        });
 
   return (
     <PageSection>
