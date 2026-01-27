@@ -20,7 +20,7 @@ import developmentImage2 from '../../assets/images/development/dev2.jpg';
 import developmentImage3 from '../../assets/images/development/dev3.JPEG';
 
 // Research block images
-import researchImage1 from '../../assets/images/research/res1.jpg';
+import researchImage1 from '../../assets/images/research/res1.jpeg';
 import researchImage2 from '../../assets/images/research/res2.jpg';
 import researchImage3 from '../../assets/images/research/res3.jpg';
 

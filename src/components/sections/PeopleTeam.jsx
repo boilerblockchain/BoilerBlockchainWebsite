@@ -38,6 +38,7 @@ import manasviImage from '../../assets/images/pfps/dev/manasvi_meka.PNG';
 import joshuaImage from '../../assets/images/pfps/dev/joshua_cho.JPG';
 import yashImage from '../../assets/images/pfps/dev/yash_bapat.jpeg';
 import manningImage from '../../assets/images/pfps/dev/manning_wu.jpeg';
+import vatsalImage from '../../assets/images/pfps/dev/vatsal_maheshwari.jpeg';
 
 // Research Team
 import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
@@ -56,7 +57,7 @@ import sohumImage from '../../assets/images/pfps/res/sohum_kashyap.jpg';
 // Operations Team
 import anubhutiImage from '../../assets/images/pfps/ops/anubhuti_mittal.jpg';
 import emilyImage from '../../assets/images/pfps/ops/emily_zhang.jpg';
-import jacobImage from '../../assets/images/pfps/ops/jacob_gutwein.jpeg';
+import jacobImage from '../../assets/images/pfps/ops/jacob_gutwein.png';
 import sahilImage from '../../assets/images/pfps/ops/sahil_shaikh.jpg';
 import shariqImage from '../../assets/images/pfps/ops/shariq_kapadia.jpeg';
 import garvImage from '../../assets/images/pfps/ops/garv_tayade.jpg';
@@ -813,6 +814,7 @@ const allTeamMembersUnsorted = [
   { id: 25, image: joshuaImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/sanghyun-j-cho/", twitter: "https://x.com/himynameisjahsh" } },
   { id: 26, image: yashImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/yash-bapat-4810a4251/", twitter: "https://twitter.com/YashBapat178164" } },
   { id: 27, image: manningImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/manning-w-9a0399318/", twitter: "https://x.com/manningwu_" } },
+  { id: 52, image: vatsalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/vatsal-maheshwari-m30/", twitter: "https://x.com/blackopps16666" } },
   // Research Team
   { id: 28, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
   { id: 29, image: divyanshImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/divyansh-pramanick/", twitter: "https://x.com/DivPramanick" } },

@@ -368,7 +368,7 @@ const Navigation = () => {
   const navLinks = [
     { label: 'Technical Course', path: '/courses/technical' },
     { label: 'Partners', path: '/partners' },
-    { label: 'The Team', path: '/people/team' }
+    { label: 'Our Team', path: '/people/team' }
   ];
 
   const isActiveRoute = (path) => {
