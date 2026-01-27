@@ -226,17 +226,6 @@ const PartnerCard = styled(motion.a)`
   }
 `;
 
-// Helper function to format partner name from filename
-const formatPartnerName = (filename) => {
-  return filename
-    .replace('.png', '')
-    .replace('.jpg', '')
-    .replace('.jpeg', '')
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
-
 // Partner data - UPDATE URLs HERE when you have them
 // Replace "#" with actual partner website URLs
 // Set needsBackground: true for logos that have light text/light backgrounds and need white background to be visible

@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import styled, {keyframes} from 'styled-components';
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import { FiGithub, FiCode, FiLayers, FiZap, FiExternalLink, FiArrowRight } from 'react-icons/fi';
+import { FiGithub, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import Navigation from '../Navigation';
 import Footer from '../Footer';
@@ -471,28 +471,6 @@ const SectionTitle = styled(motion.h2)`
     }
 `;
 
-const technologies = [
-    {
-        name: 'Solidity',
-        description: 'Smart contract development',
-        icon: FiCode
-    },
-    {
-        name: 'React',
-        description: 'Frontend framework',
-        icon: FiLayers
-    },
-    {
-        name: 'Node.js',
-        description: 'Backend runtime',
-        icon: FiZap
-    },
-    {
-        name: 'Web3.js',
-        description: 'Blockchain integration',
-        icon: FiExternalLink
-    }
-];
 const ExternalProjects = [
     {
         name: 'MOI Labs',
@@ -545,48 +523,6 @@ const InternalProjects = [
 
 
 ];
-
-
-const projects = [
-    {
-        title: 'DeFi Trading Platform',
-        description: 'Comprehensive decentralized finance platform for automated trading and yield farming with advanced portfolio management.',
-        github: 'https://github.com/boilerblockchain/defi-platform',
-        demo: 'https://demo.boilerblockchain.org'
-    },
-    {
-        title: 'NFT Marketplace',
-        description: 'Full-stack NFT marketplace with minting, trading, and auction features built on Ethereum blockchain.',
-        github: 'https://github.com/boilerblockchain/nft-marketplace',
-        demo: 'https://nft.boilerblockchain.org'
-    },
-    {
-        title: 'DAO Governance Tool',
-        description: 'Decentralized autonomous organization management platform with voting mechanisms and proposal systems.',
-        github: 'https://github.com/boilerblockchain/dao-governance',
-        demo: 'https://dao.boilerblockchain.org'
-    }
-];
-
-const trueSize = keyframes`
-    0% {
-        height: 100vh;
-    }
-    100% {
-        height: 30vh;
-    }
-`;
-
-const fadeUp = keyframes`
-    0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.95);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-`;
 
 const DeveloperTeam = () => {
     const [particleKey, setParticleKey] = useState(Date.now());

@@ -386,7 +386,7 @@ const NotFound = () => {
         <GlitchText
           variants={fadeInUp}
         >
-          // ERROR: PAGE_NOT_FOUND
+          {"// ERROR: PAGE_NOT_FOUND"}
         </GlitchText>
       </Container>
     </PageSection>

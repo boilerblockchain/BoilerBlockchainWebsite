@@ -374,13 +374,6 @@ const PublicationAuthors = styled.p`
   font-family: 'Tomorrow', sans-serif;
 `;
 
-const PublicationVenue = styled.p`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: ${props => props.theme.fontsm};
-  margin-bottom: 1rem;
-  font-family: 'Tomorrow', sans-serif;
-`;
-
 const PublicationAbstract = styled.p`
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;

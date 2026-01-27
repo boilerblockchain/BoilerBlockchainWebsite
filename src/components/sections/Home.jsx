@@ -7,7 +7,6 @@ import { loadFull } from 'tsparticles';
 import { FiCode, FiAward, FiBook, FiZap, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
 import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
-import Footer from '../Footer';
 
 // Education block images
 import educationImage1 from '../../assets/images/education/edu1.jpg';
@@ -309,25 +308,6 @@ const DiscordButton = styled(motion.a)`
       width: 18px;
       height: 18px;
     }
-  }
-`;
-
-
-const CardText = styled.p`
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.7;
-  letter-spacing: 0.2px;
-  font-family: 'Tomorrow', sans-serif;
-
-  @media (max-width: 768px) {
-    font-size: 0.9375rem;
-    line-height: 1.6;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.875rem;
-    line-height: 1.5;
   }
 `;
 
