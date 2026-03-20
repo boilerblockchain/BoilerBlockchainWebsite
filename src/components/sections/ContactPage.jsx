@@ -472,7 +472,7 @@ const ContactPage = () => {
                 <a href="https://instagram.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                   <FiInstagram />
                 </a>
-                <a href="https://discord.gg/hnjtVpb9H5" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+                <a href="https://discord.gg/vNwXZ39vmG" target="_blank" rel="noopener noreferrer" aria-label="Discord">
                   <Discord width={20} height={20} />
                 </a>
                 <a href="https://linkedin.com/company/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">

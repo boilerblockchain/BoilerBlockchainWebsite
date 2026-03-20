@@ -3335,7 +3335,7 @@ const Home = () => {
             The next generation of blockchain engineers, researchers, and founders
           </HeroDescription>
           <DiscordButton
-            href="https://discord.gg/hnjtVpb9H5"
+            href="https://discord.gg/vNwXZ39vmG"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 20 }}
@@ -4026,7 +4026,7 @@ const Home = () => {
             >
               <CTAButton
               as="a"
-              href="https://discord.gg/hnjtVpb9H5"
+              href="https://discord.gg/vNwXZ39vmG"
               target="_blank"
               rel="noopener noreferrer"
               className="primary"
