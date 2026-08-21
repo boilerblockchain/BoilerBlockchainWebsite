@@ -1,12 +1,19 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FiGithub, FiArrowRight } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
+
+import { Arrow } from '../ui/Arrow';
+import Github from '../../Icons/Github';
+import {
+    Section,
+    Container,
+    GridBackdrop,
+    Eyebrow,
+    SectionTitle,
+    Lead,
+    Card,
+    ButtonLink,
+} from '../ui/primitives';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -34,440 +41,130 @@ const CountUp = ({ end, duration = 2000, suffix = "" }) => {
     return <span>{count}{suffix}</span>;
 };
 
-const PageSection = styled.section`
-    min-height: 100vh;
-    width: 100%;
-    background-color: #000000;
-    position: relative;
-    overflow: hidden;
-    padding: 4rem 0 0;
-    font-family: 'Tomorrow', sans-serif;
+const Head = styled.div`
+    margin-bottom: ${({ theme }) => theme.space[12]};
+`;
+
+/* The reveal sits on a wrapper so framer's inline transform never fights a
+   card's own hover translate. */
+const Reveal = styled(motion.div)`
+    display: flex;
+    min-width: 0;
+`;
+
+const StatsRow = styled.div`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: ${({ theme }) => theme.space[6]};
+    margin-top: ${({ theme }) => theme.space[12]};
+
+    ${({ theme }) => theme.media.sm} {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+`;
+
+const StatCard = styled(Card)`
+    flex: 1;
+    min-width: 0;
+`;
+
+const StatNumber = styled.div`
+    font-family: ${({ theme }) => theme.fontFamily.display};
+    font-size: ${({ theme }) => theme.fontSize.stat};
+    font-weight: ${({ theme }) => theme.fontWeight.bold};
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: ${({ theme }) => theme.color.accent};
+    font-variant-numeric: tabular-nums;
+`;
+
+const StatLabel = styled.div`
+    font-family: ${({ theme }) => theme.fontFamily.mono};
+    font-size: ${({ theme }) => theme.fontSize.micro};
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.color.textFaint};
+
+    & + ${StatNumber} {
+        margin-top: ${({ theme }) => theme.space[2]};
+    }
+
+    ${StatNumber} + & {
+        margin-top: ${({ theme }) => theme.space[3]};
+    }
+`;
+
+const CardGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: ${({ theme }) => theme.space[6]};
+`;
+
+const ExtCard = styled(Card)`
+    flex: 1;
     display: flex;
     flex-direction: column;
-
-    * {
-        font-family: 'Tomorrow', sans-serif;
-    }
+    align-items: flex-start;
+    min-width: 0;
 `;
 
-const Container = styled.div`
-    width: 90%;
-    max-width: 1300px;
-    margin: 0 auto 0;
-    padding: 120px 2rem 0;
-    position: relative;
-    z-index: 2;
+const ExtIcon = styled.a`
+    display: block;
+    width: 56px;
+    height: 56px;
+    margin-bottom: ${({ theme }) => theme.space[5]};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    /* Light plate, matching the partners wall. Partner marks are a mix of
+       light and dark artwork, so a dark tile makes the light ones vanish. */
+    background: #f2f2f4;
+    padding: 6px;
 
-    @media (max-width: 1024px) {
-        width: 95%;
-        padding: 110px 1.75rem 0;
-    }
-
-    @media (max-width: 768px) {
-        width: 95%;
-        padding: 100px 1.5rem 0;
-    }
-
-    @media (max-width: 480px) {
+    img {
         width: 100%;
-        padding: 80px 1rem 0;
-    }
-
-    @media (max-width: 360px) {
-        padding: 70px 0.75rem 0;
+        height: 100%;
+        object-fit: contain;
+        display: block;
     }
 `;
 
-const Title = styled(motion.h1)`
-    font-size: 3.5rem;
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 1rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Tomorrow', sans-serif;
-
-    span {
-        color: #7120b0;
-    }
-
-    @media (max-width: 40em) {
-        font-size: 2.5rem;
-    }
+const CardTitle = styled.h3`
+    font-family: ${({ theme }) => theme.fontFamily.display};
+    font-size: ${({ theme }) => theme.fontSize.h4};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
+    line-height: 1.2;
+    color: ${({ theme }) => theme.color.text};
+    margin-bottom: ${({ theme }) => theme.space[3]};
 `;
 
-const Subtitle = styled(motion.p)`
-    font-size: ${props => props.theme.fontlg};
-    color: rgba(255, 255, 255, 0.7);
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto 3rem;
-    line-height: 1.5;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const StatsContainer = styled(motion.div)`
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin: 4rem 0;
-
-    @media (max-width: 768px) {
-        gap: 1rem;
-    }
-`;
-
-const StatCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.6);
-    border: 1px solid rgba(113, 32, 176, 0.3);
-    border-radius: 8px;
-    padding: 1.8rem;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
-    transition: all 0.3s ease;
-    text-align: center;
-    min-width: 180px;
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-
-    &:hover {
-        box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
-        transform: translateY(-2px);
-        border-color: rgba(113, 32, 176, 0.6);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
-    }
-
-    @media (max-width: 480px) {
-        padding: 1.5rem 1.25rem;
-        min-width: 150px;
-    }
-
-    @media (max-width: 360px) {
-        padding: 1.25rem 1rem;
-        min-width: 130px;
-    }
-`;
-
-const StatNumber = styled.h3`
-    font-size: 2.5rem;
-    color: #7120b0;
-    font-weight: 700;
-    margin: 0.5rem;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const StatLabel = styled.p`
-    color: rgba(255, 255, 255, 0.8);
-    font-size: ${props => props.theme.fontmd};
-    font-weight: 500;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const ExtGrid = styled(motion.div)`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2.5rem;
-    margin: 4rem 0;
-    margin-bottom: 8rem;
-
-    @media (max-width: 1000px) {
-        grid-template-columns: 1fr;
-    }
-`;
-
-const ExtCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.7);
-    border: 1px solid ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
-    border-radius: 12px;
-    padding: 2rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-align: center;
-    font-size: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-
-    &:hover {
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        transform: translateY(-6px);
-        border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.6)'};
-        background: rgba(15, 15, 15, 0.85);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: ${props => props.borderColor || 'rgba(113, 32, 176, 0.8)'};
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    &:hover::before {
-        opacity: 1;
-    }
-
-    @media (max-width: 768px) {
-        padding: 1.75rem 1.5rem;
-    }
-
-    @media (max-width: 480px) {
-        padding: 1.5rem 1.25rem;
-    }
-
-    @media (max-width: 360px) {
-        padding: 1.25rem 1rem;
-    }
-`;
-
-const ExtIcon = styled.div`
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-
-    svg {
-        color: #7120b0;
-        font-size: 1.3rem;
-    }
-`;
-
-const ExtName = styled.h4`
-    color: #ffffff;
-    font-size: ${props => props.theme.fontlg};
-    margin-bottom: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const ExtDescription = styled.p`
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const ProjectsGrid = styled(motion.div)`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 1.5rem;
-    margin: 3rem 0;
-
-    @media (max-width: 968px) {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.25rem;
-    }
-
-    @media (max-width: 768px) {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin: 2rem 0;
-    }
-
-    @media (max-width: 480px) {
-        gap: 0.75rem;
-    }
-`;
-
-const ProjectCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.7);
-    border: 1px solid rgba(113, 32, 176, 0.3);
-    border-radius: 12px;
-    padding: 2rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-
-    &:hover {
-        box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
-        transform: translateY(-6px);
-        border-color: rgba(113, 32, 176, 0.6);
-        background: rgba(15, 15, 15, 0.85);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    &:hover::before {
-        opacity: 1;
-    }
-
-    @media (max-width: 768px) {
-        padding: 1.75rem 1.5rem;
-    }
-
-    @media (max-width: 480px) {
-        padding: 1.5rem 1.25rem;
-    }
-
-    @media (max-width: 360px) {
-        padding: 1.25rem 1rem;
-    }
-`;
-
-const ProjectTitle = styled.h3`
-    color: #ffffff;
-    font-size: ${props => props.theme.fontlg};
-    margin-bottom: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-family: 'Tomorrow', sans-serif;
-`;
-
-const ProjectDescription = styled.p`
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-    font-family: 'Tomorrow', sans-serif;
+const CardText = styled.p`
+    font-family: ${({ theme }) => theme.fontFamily.body};
+    font-size: ${({ theme }) => theme.fontSize.body};
+    line-height: 1.6;
+    color: ${({ theme }) => theme.color.textMuted};
+    margin-bottom: ${({ theme }) => theme.space[6]};
 `;
 
 const ProjectLinks = styled.div`
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: ${({ theme }) => theme.space[4]};
+    margin-top: auto;
 
     a {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        color: #7120b0;
+        gap: ${({ theme }) => theme.space[2]};
+        font-family: ${({ theme }) => theme.fontFamily.mono};
+        font-size: ${({ theme }) => theme.fontSize.small};
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: ${({ theme }) => theme.color.accent};
         text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-        font-family: 'Tomorrow', sans-serif;
+        transition: color ${({ theme }) => theme.motion.base};
 
         &:hover {
-            color: #bb20ff;
+            color: ${({ theme }) => theme.color.accentBright};
         }
-
-        svg {
-            font-size: 1rem;
-        }
-    }
-`;
-
-const HackathonSection = styled(motion.div)`
-    margin: 6rem 0 4rem;
-    text-align: center;
-`;
-
-const HackathonDescription = styled(motion.p)`
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.125rem;
-    line-height: 1.7;
-    max-width: 700px;
-    margin: 2rem auto 3rem;
-    font-family: 'Tomorrow', sans-serif;
-
-    @media (max-width: 768px) {
-        font-size: 1rem;
-        margin: 1.5rem auto 2.5rem;
-    }
-`;
-
-const ViewAllButton = styled(Link)`
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 2rem;
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-    border: none;
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Tomorrow', sans-serif;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-sizing: border-box;
-    white-space: nowrap;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
-        background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
-    }
-
-    svg {
-        font-size: 1.125rem;
-        flex-shrink: 0;
-        transition: transform 0.3s ease;
-    }
-
-    &:hover svg {
-        transform: translateX(4px);
-    }
-
-    @media (max-width: 768px) {
-        padding: 0.875rem 1.75rem;
-        font-size: 0.9375rem;
-    }
-
-    @media (max-width: 480px) {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.875rem;
-        gap: 0.5rem;
-    }
-
-    @media (max-width: 360px) {
-        padding: 0.75rem 1.25rem;
-        font-size: 0.8125rem;
-    }
-`;
-
-const SectionTitle = styled(motion.h2)`
-    font-size: 2.5rem;
-    color: #ffffff;
-    text-align: center;
-    margin-bottom: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Tomorrow', sans-serif;
-
-    span {
-        color: #7120b0;
     }
 `;
 
@@ -475,22 +172,19 @@ const ExternalProjects = [
     {
         name: 'MOI Labs',
         description: 'Developing X for Moi Labs...',
-        icon: 'https://www.daas4pro.com/dass4pro-mist/images-mist/images/webimages/about-us/4.png',
-        borderColor: 'rgba(68, 54, 194, 0.6)',
+        icon: '/images/partners/moi.webp',
         link: 'https://moi.technology/'
     },
     {
         name: 'SUI',
         description: 'Working alongside SUI... ',
-        icon: 'https://s3.coinmarketcap.com/static-gravity/image/5bd0f43855f6434386c59f2341c5aaf0.png',
-        borderColor: 'rgba(70, 132, 232, 0.6)',
+        icon: '/images/partners/sui.webp',
         link: 'https://sui.io/'
     },
     {
         name: 'Eigen Layer',
         description: 'Building new protocols...',
-        icon: 'https://canada1.discourse-cdn.com/flex028/uploads/eigenlayer/original/2X/c/c7059fe3480f52c3324c3c8c5f9e40c2eaca18fc.png',
-        borderColor: 'rgba(91, 102, 117, 0.6)',
+        icon: '/images/partners/eigen.webp',
         link: 'https://app.eigenlayer.xyz/'
     },
 ];
@@ -524,212 +218,125 @@ const InternalProjects = [
 
 ];
 
+const reveal = {
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: '-80px' },
+};
+
 const DeveloperTeam = () => {
-    const [particleKey, setParticleKey] = useState(Date.now());
-
-    const particlesInit = useCallback(async (engine) => {
-        await loadFull(engine);
-    }, []);
-
-    useEffect(() => {
-        setParticleKey(Date.now());
-    }, []);
-
     return (
-        <PageSection>
-            <Navigation />
-            <Particles
-                key={particleKey}
-                init={particlesInit}
-                options={{
-                    background: { color: "000000" },
-                    particles: {
-                        color: { value: ["#7120b0", "#9d20b0"] },
-                        links: {
-                            color: "#7120b0",
-                            distance: 150,
-                            enable: true,
-                            opacity: 0.7,
-                            width: 1.5,
-                        },
-                        move: { enable: true, speed: 0.8 },
-                        number: { value: 70 },
-                        opacity: { value: 0.5 },
-                        size: { value: 3 },
-                    },
-                    fpsLimit: 120,
-                    interactivity: {
-                        events: {
-                            onHover: {
-                                enable: true,
-                                mode: "grab"
-                            },
-                        },
-                        modes: {
-                            grab: {
-                                distance: 140,
-                                links: { opacity: 0.6 }
-                            }
-                        }
-                    }
-                }}
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    zIndex: 1,
-                }}
-            />
+        <>
+            <Section $divided={false}>
+                <GridBackdrop />
+                <Container>
+                    <Eyebrow>Development</Eyebrow>
+                    <SectionTitle as="h1">Developer Team</SectionTitle>
+                    <Lead style={{ marginTop: '1rem' }}>
+                        Building the future of decentralized technology with cutting-edge blockchain solutions
+                    </Lead>
 
-            <Container>
-                <Title
-                    initial={{ opacity: .5, scale: .85}}
-                    animate={{ opacity: 1, scale: .90}}
-                    transition={{ duration: 0.9, delay: .2, ease: [0.42, 0, 0.58, 1]}}
-                >
-                    Developer <span>Team</span>
-                </Title>
+                    <StatsRow>
+                        <Reveal {...reveal} transition={{ duration: 0.4 }}>
+                            <StatCard>
+                                <StatLabel>Deploying</StatLabel>
+                                <StatNumber><CountUp end={40} suffix="+" /></StatNumber>
+                                <StatLabel>Developers</StatLabel>
+                            </StatCard>
+                        </Reveal>
+                        <Reveal {...reveal} transition={{ duration: 0.4, delay: 0.06 }}>
+                            <StatCard>
+                                <StatLabel>Across</StatLabel>
+                                <StatNumber><CountUp end={7} /></StatNumber>
+                                <StatLabel>Active Projects</StatLabel>
+                            </StatCard>
+                        </Reveal>
+                    </StatsRow>
+                </Container>
+            </Section>
 
-                <Subtitle
-                    initial={{ opacity: 1 , y: 20, scale: .85}}
-                    animate={{ opacity: 1 , y: 0, scale: .85}}
-                    transition={{ duration: 0.7, delay: .4, ease: [0.42, 0, 0.58, 1]}}
-                >
-                    Building the future of decentralized technology with cutting-edge blockchain solutions
-                </Subtitle>
+            <Section>
+                <GridBackdrop />
+                <Container>
+                    <Head>
+                        <Eyebrow>Partners</Eyebrow>
+                        <SectionTitle>External Projects</SectionTitle>
+                    </Head>
 
-                {<StatsContainer
-                    initial={{ opacity: 0, y: 0}}
-                    animate={{ opacity: 1, y: -40 }}
-                    transition={{ duration: .8, delay: 0.3, ease: [.42, 0, .58, 1]}}
-                >
-                    <StatCard whileHover={{ y: -2 }}>
-                        <StatLabel>Deploying</StatLabel>
-                        <StatNumber><CountUp end={40} suffix="+" /></StatNumber>
-                        <StatLabel>Developers</StatLabel>
-                    </StatCard>
-                    <StatCard whileHover={{ y: -2 }}>
-                        <StatLabel>Across</StatLabel>
-                        <StatNumber><CountUp end={7} /></StatNumber>
-                        <StatLabel>Active Projects</StatLabel>
-                    </StatCard>
-                </StatsContainer>}
+                    <CardGrid>
+                        {ExternalProjects.map((tech, index) => (
+                            <Reveal
+                                key={tech.name}
+                                {...reveal}
+                                transition={{ duration: 0.4, delay: index * 0.06 }}
+                            >
+                                <ExtCard>
+                                    <ExtIcon href={tech.link} target="_blank" rel="noopener noreferrer">
+                                        <img
+                                            src={tech.icon}
+                                            alt={`${tech.name} logo`}
+                                            loading="lazy"
+                                            width="56"
+                                            height="56"
+                                        />
+                                    </ExtIcon>
+                                    <CardTitle>{tech.name}</CardTitle>
+                                    <CardText>{tech.description}</CardText>
+                                </ExtCard>
+                            </Reveal>
+                        ))}
+                    </CardGrid>
+                </Container>
+            </Section>
 
-                <SectionTitle
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <span>External</span> Projects
-                </SectionTitle>
+            <Section>
+                <GridBackdrop />
+                <Container>
+                    <Head>
+                        <Eyebrow>In-house</Eyebrow>
+                        <SectionTitle>Internal Projects</SectionTitle>
+                    </Head>
 
-                <ExtGrid
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                >
-                    {ExternalProjects.map((tech, index) => (
-                        <ExtCard
-                            key={tech.name}
-                            borderColor={tech.borderColor}
-                            initial={{ opacity: 0, y: 20}}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.1}}
-                            whileHover={{ y: -2 }}
-                        >
-                            <a href={tech.link} target="_blank" rel="noopener noreferrer">
-                                <ExtIcon>
-                                    <img src={tech.icon} alt={`${tech.name} logo`} />
-                                </ExtIcon>
-                            </a>
-                            <ExtName>{tech.name}</ExtName>
-                            <ExtDescription>{tech.description}</ExtDescription>
-                        </ExtCard>
-                    ))}
-                </ExtGrid>
+                    <CardGrid>
+                        {InternalProjects.map((project, index) => (
+                            <Reveal
+                                key={project.title}
+                                {...reveal}
+                                transition={{ duration: 0.4, delay: index * 0.06 }}
+                            >
+                                <ExtCard>
+                                    <CardTitle>{project.title}</CardTitle>
+                                    <CardText>{project.description}</CardText>
+                                    <ProjectLinks>
+                                        <a href={project.github} target="_blank" rel="noopener noreferrer">
+                                            <Github width={16} height={16} /> View Code
+                                        </a>
+                                    </ProjectLinks>
+                                </ExtCard>
+                            </Reveal>
+                        ))}
+                    </CardGrid>
+                </Container>
+            </Section>
 
+            <Section>
+                <GridBackdrop />
+                <Container>
+                    <Eyebrow>Competing</Eyebrow>
+                    <SectionTitle>Hackathon Projects</SectionTitle>
+                    <Lead style={{ marginTop: '1rem' }}>
+                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Explore our past hackathon projects and see what we&apos;ve built.
+                    </Lead>
 
-                <SectionTitle
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                >
-                    Internal <span>Projects</span>
-                </SectionTitle>
-
-                <ProjectsGrid
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6}}
-                >
-                    {InternalProjects.map((project, index) => (
-                        <ProjectCard
-                            key={project.title}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.1}}
-                        >
-                            <ProjectTitle>{project.title}</ProjectTitle>
-                            <ProjectDescription>{project.description}</ProjectDescription>
-                            <ProjectLinks>
-                                <a href={project.github} target="_blank" rel="noopener noreferrer">
-                                    <FiGithub /> View Code
-                                </a>
-                                {/*<a href={project.demo} target="_blank" rel="noopener noreferrer">
-                                    <FiExternalLink/> Live Demo
-                                </a>*/}
-                            </ProjectLinks>
-                        </ProjectCard>
-                    ))}
-                </ProjectsGrid>
-
-                <HackathonSection
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <SectionTitle
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        Hackathon <span>Projects</span>
-                    </SectionTitle>
-
-                    <HackathonDescription
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
-                        Our team has participated in numerous hackathons, building innovative blockchain solutions and winning multiple awards. Explore our past hackathon projects and see what we've built.
-                    </HackathonDescription>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.3 }}
-                    >
-                        <ViewAllButton to="/hackathons">
+                    <div style={{ marginTop: '2rem' }}>
+                        <ButtonLink to="/hackathons">
                             View All Hackathons
-                            <FiArrowRight />
-                        </ViewAllButton>
-                    </motion.div>
-                </HackathonSection>
-            </Container>
-            <Footer />
-        </PageSection>
+                            <Arrow size={16} />
+                        </ButtonLink>
+                    </div>
+                </Container>
+            </Section>
+        </>
     );
 };
 

@@ -1,75 +1,61 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiLinkedin } from 'react-icons/fi';
-import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";
 import Medium from "../Icons/Medium";
 import Github from "../Icons/Github";
+import LinkedIn from "../Icons/LinkedIn";
 
 const FooterContainer = styled.footer`
   width: 100%;
-  background: #000000;
-  padding: 4rem 2rem 2rem;
   margin-top: auto;
+  flex-shrink: 0;
   position: relative;
   z-index: 10;
-  flex-shrink: 0;
-
-  @media (max-width: 768px) {
-    padding: 3rem 1.5rem 1.5rem;
-  }
+  background: ${({ theme }) => theme.color.black};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+  padding-block: ${({ theme }) => theme.space[16]} ${({ theme }) => theme.space[8]};
+  padding-inline: ${({ theme }) => theme.sectionPadding.inline};
 `;
 
 const FooterContent = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 4rem;
-  margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[10]};
+  max-width: ${({ theme }) => theme.layout.maxWidth};
+  margin-inline: auto;
+  margin-bottom: ${({ theme }) => theme.space[12]};
 
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    gap: 3rem;
-  }
-
-  @media (max-width: 768px) {
-    gap: 2.5rem;
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: ${({ theme }) => theme.space[16]};
   }
 `;
 
 const LeftSection = styled.div`
   display: flex;
-    flex-direction: column;
-  gap: 1.5rem;
-  flex: 1;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.space[5]};
   max-width: 400px;
-
-  @media (max-width: 1024px) {
-    max-width: 100%;
-  }
 `;
 
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: ${({ theme }) => theme.space[3]};
 `;
 
 const LogoBox = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
+  overflow: visible;
 
   img {
     width: 110px;
@@ -81,44 +67,39 @@ const LogoBox = styled.div`
 `;
 
 const LogoText = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0;
-  font-family: 'Tomorrow', sans-serif;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.color.text};
 `;
 
 const LogoDescription = styled.p`
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.small};
   line-height: 1.6;
-  margin: 0;
-  font-family: 'Tomorrow', sans-serif;
+  color: ${({ theme }) => theme.color.textMuted};
 `;
 
 const SocialLinks = styled.ul`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: ${({ theme }) => theme.space[4]};
   list-style: none;
-  padding: 0;
-  margin: 0;
 `;
 
 const SocialLink = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.7);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  line-height: 0;
   width: 24px;
   height: 24px;
+  line-height: 0;
+  color: ${({ theme }) => theme.color.textMuted};
+  transition: color ${({ theme }) => theme.motion.base};
 
   &:hover {
-    color: #7120b0;
-    opacity: 0.9;
+    color: ${({ theme }) => theme.color.accent};
   }
 
   svg {
@@ -126,7 +107,7 @@ const SocialLink = styled.a`
     height: 100%;
     display: block;
     flex-shrink: 0;
-    
+
     path {
       fill: currentColor;
     }
@@ -134,78 +115,60 @@ const SocialLink = styled.a`
 `;
 
 const RightSection = styled.div`
-  display: flex;
-  gap: 3rem;
-  flex: 1;
-  justify-content: flex-end;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: ${({ theme }) => theme.space[8]};
 
-  @media (max-width: 1024px) {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 2rem;
+  ${({ theme }) => theme.media.lg} {
+    justify-content: end;
   }
 `;
 
 const FooterSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-width: 140px;
+  min-width: 0;
 `;
 
 const SectionTitle = styled.h4`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0 0 0.5rem 0;
-  text-transform: none;
-  letter-spacing: 0;
-  font-family: 'Tomorrow', sans-serif;
+  margin-bottom: ${({ theme }) => theme.space[4]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const FooterLinks = styled.ul`
   list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: ${({ theme }) => theme.space[2]};
 `;
 
 const FooterLink = styled(Link)`
-  color: rgba(255, 255, 255, 0.7);
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  color: ${({ theme }) => theme.color.textMuted};
   text-decoration: none;
-  font-size: 0.875rem;
-  transition: color 0.2s ease;
-  font-family: 'Tomorrow', sans-serif;
+  transition: color ${({ theme }) => theme.motion.base};
 
   &:hover {
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
   }
 `;
 
 const BottomBar = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
+  max-width: ${({ theme }) => theme.layout.maxWidth};
+  margin-inline: auto;
+  padding-top: ${({ theme }) => theme.space[8]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
 `;
 
 const Copyright = styled.div`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.875rem;
-  font-weight: 400;
-  font-family: 'Tomorrow', sans-serif;
-  text-align: center;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.12em;
+  color: ${({ theme }) => theme.color.textFaint};
 `;
 
 export default function Footer() {
@@ -215,7 +178,13 @@ export default function Footer() {
         <LeftSection>
           <LogoContainer>
             <LogoBox>
-              <img src={BBLogo} alt="Boiler Blockchain Logo" />
+              <img
+                src={BBLogo}
+                alt="Boiler Blockchain Logo"
+                width="110"
+                height="45"
+                loading="lazy"
+              />
             </LogoBox>
             <LogoText>Boiler Blockchain</LogoText>
           </LogoContainer>
@@ -260,7 +229,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               aria-label="LinkedIn"
             >
-                <FiLinkedin size={20} />
+                <LinkedIn width={20} height={20} />
             </SocialLink>
           </li>
           <li>

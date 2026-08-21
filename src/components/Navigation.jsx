@@ -1,514 +1,439 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
+import styled, { css } from 'styled-components';
 
-const NavHeader = styled.header`
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
+
+/**
+ * Flat technical navbar.
+ *
+ * Opaque at all times: the home hero photo runs to the top edge, and a
+ * transparent bar left the right-hand links unreadable on top of it.
+ */
+const Header = styled.header`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0 0 auto 0;
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding-top: 1.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  pointer-events: none;
-
-  @media (max-width: 768px) {
-    padding-top: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
+  height: ${({ theme }) => theme.layout.navHeight};
+  padding-inline: ${({ theme }) => theme.sectionPadding.inline};
+  background: ${({ theme }) => theme.color.black};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 `;
 
-const Nav = styled.nav`
+const Bar = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[6]};
   width: 100%;
-  max-width: 1280px;
-  pointer-events: auto;
-  position: relative;
+  max-width: ${({ theme }) => theme.layout.maxWidthWide};
 `;
 
-const NavContainer = styled.div`
+const Brand = styled(Link)`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: ${props => props.isScrolled 
-    ? 'rgba(30, 30, 40, 0.75)' 
-    : 'rgba(25, 25, 35, 0.65)'};
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  gap: 1rem;
-  transition: all 0.3s ease;
-
-  @media (max-width: 1024px) {
-    padding: 0.875rem 1.25rem;
-    gap: 0.75rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.75rem 1rem;
-    gap: 0.5rem;
-  }
-`;
-
-const LogoLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
+  gap: ${({ theme }) => theme.space[3]};
   flex-shrink: 0;
-
-  @media (max-width: 640px) {
-    gap: 0.5rem;
-  }
+  margin-right: auto;
 `;
 
-const LogoBox = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-  flex-shrink: 0;
-
-  @media (max-width: 640px) {
-    width: 36px;
-    height: 36px;
-  }
-
-  img {
-    width: 120px;
-    height: auto;
-    max-height: 50px;
-    max-width: 120px;
-    object-fit: contain;
-
-    @media (max-width: 640px) {
-      max-height: 45px;
-      max-width: 100px;
-    }
-  }
+/* The asset is square (276x275). It used to be forced to width:120px inside a
+   40px box with overflow:visible, so it spilled onto the wordmark. */
+const Mark = styled.img`
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  display: block;
 `;
 
-const LogoText = styled.span`
-  color: #ffffff;
-  font-size: 1.125rem;
-  font-weight: 600;
-  font-family: 'Tomorrow', sans-serif;
+const Wordmark = styled.span`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.text};
   white-space: nowrap;
 
-  @media (max-width: 640px) {
-    font-size: 1rem;
-  }
-
-  @media (max-width: 480px) {
+  /* Only drop the wordmark on the narrowest phones; there is room at 390px. */
+  ${({ theme }) => theme.mediaDown.xs} {
     display: none;
   }
 `;
 
-const DesktopNav = styled.div`
-  display: flex;
+const Links = styled.div`
+  display: none;
   align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-  justify-content: center;
-  margin-left: 3rem;
-  margin-right: 3rem;
+  gap: ${({ theme }) => theme.space[1]};
 
-  @media (max-width: 1024px) {
-    margin-left: 2rem;
-    margin-right: 2rem;
-    gap: 0.375rem;
+  ${({ theme }) => theme.media.lg} {
+    display: flex;
+  }
+`;
+
+/**
+ * Active state is an accent underline rather than a filled pill — it reads as
+ * a position indicator instead of a second button.
+ */
+const linkStyles = css`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[1]};
+  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: ${({ $active, theme }) =>
+    $active ? theme.color.text : theme.color.textMuted};
+  transition: color ${({ theme }) => theme.motion.fast};
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: ${({ theme }) => theme.space[3]};
+    right: ${({ theme }) => theme.space[3]};
+    bottom: 2px;
+    height: 2px;
+    background: ${({ theme }) => theme.color.accent};
+    transform: scaleX(${({ $active }) => ($active ? 1 : 0)});
+    transform-origin: left;
+    transition: transform ${({ theme }) => theme.motion.fast};
   }
 
-  @media (max-width: 968px) {
-    display: none;
+  &:hover {
+    color: ${({ theme }) => theme.color.text};
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
   }
 `;
 
 const NavLink = styled(Link)`
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  background-color: ${props => props.isActive || props.isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
-  font-size: 0.875rem;
-  font-weight: 500;
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.2s ease;
+  ${linkStyles}
+`;
 
-  &:hover {
-    color: #ffffff;
-    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
-  }
+const DropdownTrigger = styled(Link)`
+  ${linkStyles}
 
-  @media (max-width: 1024px) {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8125rem;
+  svg {
+    transition: transform ${({ theme }) => theme.motion.fast};
+    transform: rotate(${({ $open }) => ($open ? '180deg' : '0deg')});
   }
 `;
 
-const DropdownContainer = styled.div`
+const Dropdown = styled.div`
   position: relative;
 `;
 
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding-top: 0.5rem;
-  z-index: 1001;
-`;
-
-const DropdownContent = styled.div`
-  background-color: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 0.5rem 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  min-width: 224px;
-`;
-
-const DropdownItem = styled(Link)`
-  display: block;
-  padding: 0.625rem 1rem;
-  text-decoration: none;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
-  font-size: 0.875rem;
-  font-weight: ${props => props.isActive ? 500 : 400};
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: #ffffff;
-    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
-  }
-`;
-
-const ContactButtonWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
-`;
-
-const ContactButton = styled(Link)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.625rem 1.5rem;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
-  border: none;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #ffffff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
-
-  &:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
-    box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 640px) {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.8125rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-  }
-`;
-
-const MobileMenuButton = styled.button`
-  display: none;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #ffffff;
-  cursor: pointer;
-  flex-shrink: 0;
-
-  @media (max-width: 968px) {
-    display: flex;
-  }
-
-  @media (max-width: 640px) {
-    width: 36px;
-    height: 36px;
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
-const MobileNav = styled.div`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
-  flex-direction: column;
-  gap: 0.5rem;
+const Menu = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  right: 0;
-  margin-top: 0.5rem;
-  background-color: rgba(17, 24, 39, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  z-index: 1001;
+  min-width: 210px;
+  padding-block: ${({ theme }) => theme.space[2]};
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+`;
 
-  @media (min-width: 969px) {
+const MenuItem = styled(Link)`
+  display: block;
+  padding: ${({ theme }) => theme.space[3]} ${({ theme }) => theme.space[4]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${({ $active, theme }) =>
+    $active ? theme.color.accent : theme.color.textMuted};
+  border-left: 2px solid
+    ${({ $active, theme }) => ($active ? theme.color.accent : 'transparent')};
+  transition: color ${({ theme }) => theme.motion.fast},
+              background ${({ theme }) => theme.motion.fast},
+              border-color ${({ theme }) => theme.motion.fast};
+
+  &:hover {
+    color: ${({ theme }) => theme.color.text};
+    background: ${({ theme }) => theme.color.accentWash};
+    border-left-color: ${({ theme }) => theme.color.accent};
+  }
+`;
+
+const ContactButton = styled(Link)`
+  display: none;
+  align-items: center;
+  padding: ${({ theme }) => theme.space[3]} ${({ theme }) => theme.space[5]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: ${({ theme }) => theme.color.text};
+  border: 1px solid ${({ theme }) => theme.color.accent};
+  transition: background ${({ theme }) => theme.motion.fast},
+              color ${({ theme }) => theme.motion.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.color.accent};
+    color: #ffffff;
+  }
+
+  ${({ theme }) => theme.media.sm} {
+    display: inline-flex;
+  }
+`;
+
+const MenuToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  color: ${({ theme }) => theme.color.text};
+  cursor: pointer;
+  transition: border-color ${({ theme }) => theme.motion.fast};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.color.accent};
+  }
+
+  ${({ theme }) => theme.media.lg} {
     display: none;
   }
 `;
 
-const MobileNavLink = styled(Link)`
-  display: block;
-  padding: 0.75rem;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: ${props => props.isActive ? 500 : 400};
-  font-family: 'Tomorrow', sans-serif;
-  border-radius: 8px;
-  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
-  transition: all 0.2s ease;
+const MobilePanel = styled.div`
+  position: fixed;
+  top: ${({ theme }) => theme.layout.navHeight};
+  left: 0;
+  right: 0;
+  max-height: calc(100dvh - ${({ theme }) => theme.layout.navHeight});
+  overflow-y: auto;
+  background: ${({ theme }) => theme.color.black};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+  display: ${({ $open }) => ($open ? 'block' : 'none')};
 
-  &:hover {
-    color: #ffffff;
-    background-color: rgba(255, 255, 255, 0.05);
+  ${({ theme }) => theme.media.lg} {
+    display: none;
   }
 `;
 
-const MobileDropdownSection = styled.div`
-  margin-bottom: 0.5rem;
+const MobileLink = styled(Link)`
+  display: block;
+  /* 44px minimum tap target. */
+  padding: ${({ theme }) => theme.space[4]}
+    ${({ theme }) => theme.sectionPadding.inline};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: ${({ $active, theme }) =>
+    $active ? theme.color.accent : theme.color.textMuted};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+
+  &:hover {
+    color: ${({ theme }) => theme.color.text};
+    background: ${({ theme }) => theme.color.accentWash};
+  }
 `;
 
-const MobileDropdownTitle = styled.div`
-  padding: 0.75rem;
-  color: #ffffff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: 'Tomorrow', sans-serif;
+const MobileGroupLabel = styled.div`
+  padding: ${({ theme }) => theme.space[4]}
+    ${({ theme }) => theme.sectionPadding.inline}
+    ${({ theme }) => theme.space[2]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textFaint};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
 `;
 
-const MobileDropdownItems = styled.div`
-  padding-left: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+const MobileSubLink = styled(MobileLink)`
+  border-top: 0;
+  padding-left: calc(${({ theme }) => theme.sectionPadding.inline} + 1rem);
 `;
 
-const Navigation = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
+const Chevron = (props) => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    aria-hidden="true"
+    {...props}
+  >
+    <path
+      d="M3 4.5 6 7.5 9 4.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    setActiveDropdown(null);
-    setIsMobileMenuOpen(false);
-  }, [location]);
-
-  const dropdownData = {
-    teams: {
-      label: 'Teams',
-      path: '/teams',
-      items: [
-        { label: 'Developer Team', path: '/teams/developer' },
-        { label: 'Research Team', path: '/teams/research' },
-        { label: 'Operations Team', path: '/teams/operations' }
-      ]
-    }
-  };
-
-  const navLinks = [
-    { label: 'Technical Course', path: '/courses/technical' },
-    { label: 'Partners', path: '/partners' },
-    { label: 'Our Team', path: '/people/team' }
-  ];
-
-  const isActiveRoute = (path) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/');
-  };
-
-  return (
-    <NavHeader>
-      <Nav>
-        <NavContainer isScrolled={isScrolled}>
-          <LogoLink to="/">
-            <LogoBox>
-              <img src={BBLogo} alt="Boiler Blockchain Logo" />
-            </LogoBox>
-            <LogoText>Boiler Blockchain</LogoText>
-          </LogoLink>
-
-          <DesktopNav>
-            {Object.entries(dropdownData).map(([key, dropdown]) => {
-              const isActive = isActiveRoute(dropdown.path);
-              const isOpen = activeDropdown === key;
-              
-              return (
-                <DropdownContainer
-                  key={key}
-                  onMouseEnter={() => setActiveDropdown(key)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <NavLink
-                    to={dropdown.path}
-                    isActive={isActive}
-                    isOpen={isOpen}
-                  >
-                    {dropdown.label}
-                    <svg
-                      style={{
-                        width: '14px',
-                        height: '14px',
-                        transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.2s ease',
-                      }}
-                      viewBox="0 0 12 12"
-                      fill="none"
-                    >
-                      <path
-                        d="M3 4.5L6 7.5L9 4.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </NavLink>
-
-                  {isOpen && (
-                    <DropdownMenu>
-                      <DropdownContent>
-                        {dropdown.items.map((item, index) => (
-                          <DropdownItem
-                            key={index}
-                            to={item.path}
-                            isActive={isActiveRoute(item.path)}
-                          >
-                            {item.label}
-                          </DropdownItem>
-                        ))}
-                      </DropdownContent>
-                    </DropdownMenu>
-                  )}
-                </DropdownContainer>
-              );
-            })}
-
-            {navLinks.map((link) => (
-              <NavLink
-                  key={link.path}
-                  to={link.path}
-                isActive={isActiveRoute(link.path)}
-                >
-                  {link.label}
-              </NavLink>
-            ))}
-          </DesktopNav>
-
-          <ContactButtonWrapper>
-            <ContactButton to="/contact">
-              Contact Us
-            </ContactButton>
-
-            <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                {isMobileMenuOpen ? (
-                  <path d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </MobileMenuButton>
-          </ContactButtonWrapper>
-        </NavContainer>
-
-        <MobileNav isOpen={isMobileMenuOpen}>
-            {Object.entries(dropdownData).map(([key, dropdown]) => (
-            <MobileDropdownSection key={key}>
-              <MobileDropdownTitle>{dropdown.label}</MobileDropdownTitle>
-              <MobileDropdownItems>
-                {dropdown.items.map((item, index) => (
-                  <MobileNavLink
-                    key={index}
-                    to={item.path}
-                    isActive={isActiveRoute(item.path)}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                    {item.label}
-                  </MobileNavLink>
-                ))}
-              </MobileDropdownItems>
-            </MobileDropdownSection>
-            ))}
-            {navLinks.map((link) => (
-            <MobileNavLink
-                key={link.path}
-                to={link.path}
-              isActive={isActiveRoute(link.path)}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.label}
-            </MobileNavLink>
-            ))}
-          <ContactButton
-              to="/contact"
-              onClick={() => setIsMobileMenuOpen(false)}
-            style={{ marginTop: '0.5rem', justifyContent: 'center' }}
-            >
-              Contact Us
-          </ContactButton>
-        </MobileNav>
-      </Nav>
-    </NavHeader>
-  );
+const teamsDropdown = {
+  label: 'Teams',
+  path: '/teams',
+  items: [
+    { label: 'Developer Team', path: '/teams/developer' },
+    { label: 'Research Team', path: '/teams/research' },
+    { label: 'Operations Team', path: '/teams/operations' },
+  ],
 };
 
-export default Navigation;
+const navLinks = [
+  { label: 'Technical Course', path: '/courses/technical' },
+  { label: 'Partners', path: '/partners' },
+  { label: 'Our Team', path: '/people/team' },
+];
+
+export default function Navigation() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setDropdownOpen(false);
+    setMobileOpen(false);
+  }, [location]);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+      setDropdownOpen(false);
+      setMobileOpen(false);
+    };
+    // Clicking anywhere outside the dropdown closes it; previously it only
+    // closed on mouseleave, so a tap on touch left it stuck open.
+    const onPointerDown = (event) => {
+      if (dropdownRef.current?.contains(event.target)) return;
+      setDropdownOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, []);
+
+  // Stop the page scrolling behind the open mobile panel.
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  return (
+    <>
+      <Header>
+        <Bar>
+          <Brand to="/" aria-label="Boiler Blockchain, home">
+            <Mark src={BBLogo} alt="" width="32" height="32" />
+            <Wordmark>Boiler Blockchain</Wordmark>
+          </Brand>
+
+          <Links>
+            <Dropdown
+              ref={dropdownRef}
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <DropdownTrigger
+                to={teamsDropdown.path}
+                $active={isActive(teamsDropdown.path)}
+                $open={dropdownOpen}
+                aria-expanded={dropdownOpen}
+                onClick={() => setDropdownOpen(false)}
+              >
+                {teamsDropdown.label}
+                <Chevron />
+              </DropdownTrigger>
+              {dropdownOpen && (
+                <Menu>
+                  {teamsDropdown.items.map((item) => (
+                    <MenuItem
+                      key={item.path}
+                      to={item.path}
+                      $active={isActive(item.path)}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              )}
+            </Dropdown>
+
+            {navLinks.map((link) => (
+              <NavLink key={link.path} to={link.path} $active={isActive(link.path)}>
+                {link.label}
+              </NavLink>
+            ))}
+          </Links>
+
+          <ContactButton to="/contact">Contact</ContactButton>
+
+          <MenuToggle
+            onClick={() => setMobileOpen((open) => !open)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              {mobileOpen ? (
+                <path d="M6 18 18 6M6 6l12 12" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              )}
+            </svg>
+          </MenuToggle>
+        </Bar>
+      </Header>
+
+      <MobilePanel id="mobile-nav" $open={mobileOpen}>
+        <MobileGroupLabel>{teamsDropdown.label}</MobileGroupLabel>
+        {teamsDropdown.items.map((item) => (
+          <MobileSubLink
+            key={item.path}
+            to={item.path}
+            $active={isActive(item.path)}
+          >
+            {item.label}
+          </MobileSubLink>
+        ))}
+        {navLinks.map((link) => (
+          <MobileLink key={link.path} to={link.path} $active={isActive(link.path)}>
+            {link.label}
+          </MobileLink>
+        ))}
+        <MobileLink to="/contact" $active={isActive('/contact')}>
+          Contact
+        </MobileLink>
+      </MobilePanel>
+    </>
+  );
+}

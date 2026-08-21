@@ -1,483 +1,151 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FaLinkedin } from 'react-icons/fa';
+import LinkedIn from '../../Icons/LinkedIn';
 import Twitter from '../../Icons/Twitter';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
+import {
+  Section,
+  Container,
+  GridBackdrop,
+  Eyebrow,
+  Lead,
+} from '../ui/primitives';
 
 // Executive Board
-import eliImage from '../../assets/images/pfps/exec/eli_dubizh.jpg';
-import joeyImage from '../../assets/images/pfps/exec/joey_kokinda.jpg';
-import neenaImage from '../../assets/images/pfps/exec/neena_naikar.jpg';
-import albertImage from '../../assets/images/pfps/exec/albert_wu.jpg';
-import siyaImage from '../../assets/images/pfps/exec/siya_jariwala.jpg';
-import adityaImage from '../../assets/images/pfps/exec/aditya_kattil.jpeg';
+const eliImage = '/images/pfps/exec/eli_dubizh.webp';
+const joeyImage = '/images/pfps/exec/joey_kokinda.webp';
+const neenaImage = '/images/pfps/exec/neena_naikar.webp';
+const siyaImage = '/images/pfps/exec/siya_jariwala.webp';
+const adityaImage = '/images/pfps/exec/aditya_kattil.webp';
 
 // Developer Team
-import ansonImage from '../../assets/images/pfps/dev/anson_lam.JPG';
-import aryanSinghalImage from '../../assets/images/pfps/dev/aryan_singhal.png';
-import christopherImage from '../../assets/images/pfps/dev/christopher_herzog.jpg';
-import danielImage from '../../assets/images/pfps/dev/daniel_gong.png';
-import jazibImage from '../../assets/images/pfps/dev/jazib_qureshi.jpg';
-import matthewImage from '../../assets/images/pfps/dev/matthew_iskandar.png';
-import adiImage from '../../assets/images/pfps/dev/adi_chaudhary.png';
-import abrahamImage from '../../assets/images/pfps/dev/abraham_kabon.jpg';
-import rithvikImage from '../../assets/images/pfps/dev/rithvik_krishnan.png';
-import ishanImage from '../../assets/images/pfps/dev/ishan_ghosh.jpg';
-import juliusImage from '../../assets/images/pfps/dev/julius_zhou.jpg';
-import sebastianImage from '../../assets/images/pfps/dev/sebastian_ting.png';
-import kritavImage from '../../assets/images/pfps/dev/kritav_dalal.jpg';
-import danielJinImage from '../../assets/images/pfps/dev/daniel_jin.jpg';
-import siddheshImage from '../../assets/images/pfps/dev/siddhesh_songirkar.jpg';
-import dhiyaanImage from '../../assets/images/pfps/dev/dhiyaan_nirmal.jpg';
-import pranavImage from '../../assets/images/pfps/dev/pranav_doshi.png';
-import manasviImage from '../../assets/images/pfps/dev/manasvi_meka.PNG';
-import joshuaImage from '../../assets/images/pfps/dev/joshua_cho.JPG';
-import yashImage from '../../assets/images/pfps/dev/yash_bapat.jpeg';
-import manningImage from '../../assets/images/pfps/dev/manning_wu.jpeg';
-import vatsalImage from '../../assets/images/pfps/dev/vatsal_maheshwari.jpeg';
+const ansonImage = '/images/pfps/dev/anson_lam.webp';
+const aryanSinghalImage = '/images/pfps/dev/aryan_singhal.webp';
+const christopherImage = '/images/pfps/dev/christopher_herzog.webp';
+const danielImage = '/images/pfps/dev/daniel_gong.webp';
+const jazibImage = '/images/pfps/dev/jazib_qureshi.webp';
+const matthewImage = '/images/pfps/dev/matthew_iskandar.webp';
+const adiImage = '/images/pfps/dev/adi_chaudhary.webp';
+const abrahamImage = '/images/pfps/dev/abraham_kabon.webp';
+const rithvikImage = '/images/pfps/dev/rithvik_krishnan.webp';
+const ishanImage = '/images/pfps/dev/ishan_ghosh.webp';
+const juliusImage = '/images/pfps/dev/julius_zhou.webp';
+const sebastianImage = '/images/pfps/dev/sebastian_ting.webp';
+const kritavImage = '/images/pfps/dev/kritav_dalal.webp';
+const danielJinImage = '/images/pfps/dev/daniel_jin.webp';
+const siddheshImage = '/images/pfps/dev/siddhesh_songirkar.webp';
+const dhiyaanImage = '/images/pfps/dev/dhiyaan_nirmal.webp';
+const pranavImage = '/images/pfps/dev/pranav_doshi.webp';
+const manasviImage = '/images/pfps/dev/manasvi_meka.webp';
+const joshuaImage = '/images/pfps/dev/joshua_cho.webp';
+const yashImage = '/images/pfps/dev/yash_bapat.webp';
+const manningImage = '/images/pfps/dev/manning_wu.webp';
+const vatsalImage = '/images/pfps/dev/vatsal_maheshwari.webp';
 
 // Research Team
-import aryanPatelImage from '../../assets/images/pfps/res/aryan_patel.png';
-import divyanshImage from '../../assets/images/pfps/res/divyansh_pramanick.jpg';
-import ishaanImage from '../../assets/images/pfps/res/ishaan_saxena.png';
-import muhammadImage from '../../assets/images/pfps/res/ayaan_ameen.jpeg';
-import vaibhavImage from '../../assets/images/pfps/res/vaibhav_sunkada.jpg';
-import nickImage from '../../assets/images/pfps/res/nick_diaz.jpg';
-import anikethImage from '../../assets/images/pfps/res/aniketh_upadhya.jpg';
-import oscarfImage from '../../assets/images/pfps/res/oscarf_velasco.jpg';
-import kevalImage from '../../assets/images/pfps/res/keval_shah.jpg';
-import lakulishImage from '../../assets/images/pfps/res/lakulish_saini.png';
-import nikhilImage from '../../assets/images/pfps/res/nikhil_aerabati.jpeg';
-import sohumImage from '../../assets/images/pfps/res/sohum_kashyap.jpg';
+const aryanPatelImage = '/images/pfps/res/aryan_patel.webp';
+const divyanshImage = '/images/pfps/res/divyansh_pramanick.webp';
+const ishaanImage = '/images/pfps/res/ishaan_saxena.webp';
+const muhammadImage = '/images/pfps/res/ayaan_ameen.webp';
+const vaibhavImage = '/images/pfps/res/vaibhav_sunkada.webp';
+const nickImage = '/images/pfps/res/nick_diaz.webp';
+const anikethImage = '/images/pfps/res/aniketh_upadhya.webp';
+const oscarfImage = '/images/pfps/res/oscarf_velasco.webp';
+const kevalImage = '/images/pfps/res/keval_shah.webp';
+const lakulishImage = '/images/pfps/res/lakulish_saini.webp';
+const nikhilImage = '/images/pfps/res/nikhil_aerabati.webp';
+const sohumImage = '/images/pfps/res/sohum_kashyap.webp';
 
 // Operations Team
-import anubhutiImage from '../../assets/images/pfps/ops/anubhuti_mittal.jpg';
-import emilyImage from '../../assets/images/pfps/ops/emily_zhang.jpg';
-import jacobImage from '../../assets/images/pfps/ops/jacob_gutwein.png';
-import sahilImage from '../../assets/images/pfps/ops/sahil_shaikh.jpg';
-import shariqImage from '../../assets/images/pfps/ops/shariq_kapadia.jpeg';
-import garvImage from '../../assets/images/pfps/ops/garv_tayade.jpg';
-import mugdhaImage from '../../assets/images/pfps/ops/mugdha_patil.jpg';
-import shivamImage from '../../assets/images/pfps/ops/shivam_rastogi.jpg';
-import mahiImage from '../../assets/images/pfps/ops/mahi_tripathi.jpg';
-import akashImage from '../../assets/images/pfps/ops/akash_mishra.jpg';
-import pradyumnImage from '../../assets/images/pfps/ops/pradyumn_malik.jpeg';
-import alexImage from '../../assets/images/pfps/ops/alex_belanger.png';
+const anubhutiImage = '/images/pfps/ops/anubhuti_mittal.webp';
+const emilyImage = '/images/pfps/ops/emily_zhang.webp';
+const jacobImage = '/images/pfps/ops/jacob_gutwein.webp';
+const sahilImage = '/images/pfps/ops/sahil_shaikh.webp';
+const shariqImage = '/images/pfps/ops/shariq_kapadia.webp';
+const garvImage = '/images/pfps/ops/garv_tayade.webp';
+const mugdhaImage = '/images/pfps/ops/mugdha_patil.webp';
+const shivamImage = '/images/pfps/ops/shivam_rastogi.webp';
+const mahiImage = '/images/pfps/ops/mahi_tripathi.webp';
+const akashImage = '/images/pfps/ops/akash_mishra.webp';
+const pradyumnImage = '/images/pfps/ops/pradyumn_malik.webp';
+const alexImage = '/images/pfps/ops/alex_belanger.webp';
 
-const PageSection = styled.section`
-  min-height: 100vh;
-  width: 100%;
-  background-color: #000000;
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 8rem 0 0;
-  font-family: 'Tomorrow', sans-serif;
-  display: flex;
-  flex-direction: column;
-  
-  * {
-    font-family: 'Tomorrow', sans-serif;
-  }
-
-  @media (max-width: 480px) {
-    padding: 6rem 0 0;
-  }
+const Head = styled.div`
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
-const Container = styled.div`
-  width: 90%;
-  max-width: 1400px;
-  margin: 0 auto 0;
-  padding: 120px 2rem 0;
-  position: relative;
-  z-index: 2;
-  
-  @media (max-width: 1024px) {
-    width: 95%;
-    padding: 110px 1.75rem 0;
-  }
-
-  @media (max-width: 768px) {
-    width: 95%;
-    padding: 100px 1.5rem 0;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 80px 1rem 0;
-  }
-
-  @media (max-width: 360px) {
-    padding: 70px 0.75rem 0;
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 5rem; 
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  line-height: 1.1;
-  position: relative;
-  text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
-  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.2));
+const Title = styled.h1`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h1};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[4]};
 
   span {
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 30%, rgba(168, 85, 247, 0.95) 70%, rgba(168, 85, 247, 0.85) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.9), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.4), transparent);
-    border-radius: 2px;
-    box-shadow: 
-      0 0 20px rgba(168, 85, 247, 0.5),
-      0 0 40px rgba(168, 85, 247, 0.3);
-
-    @media (max-width: 768px) {
-      width: 150px;
-      height: 3px;
-      bottom: -0.75rem;
-    }
-
-    @media (max-width: 480px) {
-      width: 120px;
-      height: 2px;
-      bottom: -0.5rem;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    font-size: 4rem;
-    letter-spacing: 3px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 3rem;
-    letter-spacing: 2px;
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.5rem;
-    letter-spacing: 1.5px;
-    word-break: break-word;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 2rem;
-    letter-spacing: 1px;
-    margin-bottom: 1.25rem;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 1.75rem;
-    letter-spacing: 0.5px;
-    margin-bottom: 1rem;
+    color: ${({ theme }) => theme.color.accent};
   }
 `;
 
-const Subtitle = styled(motion.p)`
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto 4rem;
-  line-height: 1.8;
-  font-weight: 400;
-  letter-spacing: 0.4px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-
-  @media (max-width: 1024px) {
-    font-size: 1.15rem;
-    margin-bottom: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    margin-bottom: 3rem;
-    line-height: 1.7;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9375rem;
-    margin-bottom: 2.5rem;
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 0.875rem;
-    margin-bottom: 2rem;
-  }
-`;
-
-const FilterNav = styled(motion.div)`
+const FilterNav = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 5rem;
   flex-wrap: wrap;
-  padding: 0;
-  width: 100%;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 768px) {
-    gap: 0.5rem;
-    margin-bottom: 4rem;
-    max-width: 95%;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.4rem;
-    margin-bottom: 3rem;
-    max-width: 100%;
-  }
-
-  @media (max-width: 360px) {
-    gap: 0.3rem;
-    margin-bottom: 2.5rem;
-  }
+  gap: ${({ theme }) => theme.space[2]};
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
+/* `$active` is transient: styled-components strips it instead of forwarding it
+   to the underlying <button>, which is what React was warning about. */
 const FilterButton = styled(motion.button)`
-  padding: 0.875rem 1.75rem;
-  background: ${props => props.active 
-    ? 'linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%)' 
-    : 'rgba(30, 30, 40, 0.6)'};
-  border: ${props => props.active 
-    ? '1.5px solid rgba(168, 85, 247, 0.5)' 
-    : '1px solid rgba(168, 85, 247, 0.2)'};
-  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.75)'};
-  font-size: 0.875rem;
-  font-weight: ${props => props.active ? '700' : '600'};
+  padding: 0.7rem 1.25rem;
+  min-height: 44px;
+  background: ${({ theme, $active }) =>
+    $active ? theme.color.accentDeep : 'transparent'};
+  border: 1px solid
+    ${({ theme, $active }) =>
+      $active ? theme.color.accentDeep : theme.color.border};
+  color: ${({ theme, $active }) =>
+    $active ? theme.color.text : theme.color.textMuted};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 10px;
-  font-family: 'Tomorrow', sans-serif;
-  position: relative;
   white-space: nowrap;
-  box-shadow: ${props => props.active 
-    ? '0 4px 16px rgba(113, 32, 176, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)' 
-    : '0 2px 8px rgba(0, 0, 0, 0.2)'};
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
-    opacity: ${props => props.active ? 1 : 0};
-    transition: opacity 0.4s ease;
-    z-index: 0;
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
-
-  .count {
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    opacity: 0.8;
-    font-weight: 500;
-  }
+  cursor: pointer;
+  border-radius: ${({ theme }) => theme.radius.none};
+  transition: background ${({ theme }) => theme.motion.base},
+    border-color ${({ theme }) => theme.motion.base},
+    color ${({ theme }) => theme.motion.base};
 
   &:hover {
-    color: #ffffff;
-    background: ${props => props.active 
-      ? 'linear-gradient(135deg, #8d2dd4 0%, #a040e8 100%)' 
-      : 'rgba(113, 32, 176, 0.2)'};
-    border-color: ${props => props.active 
-      ? 'rgba(168, 85, 247, 0.7)' 
-      : 'rgba(168, 85, 247, 0.4)'};
-    transform: translateY(-2px);
-    box-shadow: ${props => props.active 
-      ? '0 6px 24px rgba(113, 32, 176, 0.5), 0 0 30px rgba(168, 85, 247, 0.3)' 
-      : '0 4px 12px rgba(168, 85, 247, 0.2)'};
-
-    &::before {
-      opacity: 1;
-    }
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.7rem 1.25rem;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-
-    .count {
-      font-size: 0.6875rem;
-      margin-left: 0.375rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.6875rem;
-    letter-spacing: 0.8px;
-    min-height: 44px;
-
-    .count {
-      font-size: 0.625rem;
-      margin-left: 0.25rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    padding: 0.5625rem 0.75rem;
-    font-size: 0.625rem;
-    min-height: 42px;
-    letter-spacing: 0.6px;
+    color: ${({ theme }) => theme.color.text};
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
 const TeamRow = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   align-items: start;
-  justify-content: center;
-  gap: 2.5rem;
-  margin: 4rem 0 6rem;
-  width: 100%;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 2rem;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-    gap: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.75rem;
-    margin: 3rem 0 4rem;
-    padding: 0 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin: 2.5rem 0 3.5rem;
-    padding: 0 0.75rem;
-    max-width: 100%;
-  }
-
-  @media (max-width: 360px) {
-    gap: 1.25rem;
-    margin: 2rem 0 3rem;
-    padding: 0 0.5rem;
-  }
+  gap: ${({ theme }) => theme.space[6]};
 `;
 
 const MemberCard = styled(motion.div)`
-  width: 100%;
-  max-width: 290px;
-  margin: 0 auto;
-  background: rgba(25, 25, 35, 0.9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 20px;
-  border: 1.5px solid rgba(168, 85, 247, 0.25);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(168, 85, 247, 0.15) inset,
-    0 0 60px rgba(168, 85, 247, 0.08);
-  padding: 0;
-  overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  box-sizing: border-box;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: 
-      linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    z-index: 1;
-    border-radius: 20px;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.1));
-    opacity: 0;
-    filter: blur(12px);
-    transition: opacity 0.5s ease;
-    z-index: -1;
-    pointer-events: none;
-  }
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
+  overflow: hidden;
+  transition: border-color ${({ theme }) => theme.motion.base},
+    transform ${({ theme }) => theme.motion.base};
 
   &:hover {
-    transform: translateY(-6px) scale(1.02);
-    border-color: rgba(168, 85, 247, 0.5);
-    box-shadow: 
-      0 12px 48px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(168, 85, 247, 0.3) inset,
-      0 0 80px rgba(168, 85, 247, 0.25),
-      0 0 120px rgba(168, 85, 247, 0.1);
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    transform: translateY(-3px);
   }
 
-  &:hover::before {
-    opacity: 1;
-  }
-
-  &:hover::after {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    max-width: 100%;
-    border-radius: 18px;
-  }
-
-  @media (max-width: 480px) {
-    max-width: 100%;
-    border-radius: 16px;
-  }
-
-  @media (max-width: 360px) {
-    border-radius: 14px;
-  }
-
-  /* Disable hover effects on touch devices */
   @media (hover: none) {
     &:hover {
       transform: none;
@@ -486,219 +154,86 @@ const MemberCard = styled(motion.div)`
 `;
 
 const ImageContainer = styled.div`
+  position: relative;
   width: 100%;
   aspect-ratio: 1;
-  position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a0f2e 0%, #2d1a3d 100%);
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
-    z-index: 1;
-    pointer-events: none;
-  }
+  background: ${({ theme }) => theme.color.surface};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 
   img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: 50% 25%;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  ${MemberCard}:hover img {
-    transform: scale(1.03);
   }
 `;
 
 const PlaceholderIcon = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background: rgba(113, 32, 176, 0.1);
-  border-radius: 50%;
-  z-index: 2;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(113, 32, 176, 0.2);
+  color: ${({ theme }) => theme.color.textFaint};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 
   &::before {
-    content: '👤';
-    font-size: 2.5rem;
-    opacity: 0.4;
+    content: 'BB';
   }
 `;
 
 const ContentContainer = styled.div`
-  padding: 1.75rem 1.5rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.875rem;
-  position: relative;
-  z-index: 2;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 1.25rem 1.75rem;
-    gap: 0.75rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.25rem 1rem 1.5rem;
-    gap: 0.625rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 1rem 0.875rem 1.25rem;
-    gap: 0.5rem;
-  }
+  padding: ${({ theme }) => theme.space[5]};
 `;
 
 const MemberName = styled.h3`
-  font-size: 1.375rem;
-  color: #ffffff;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: 0.3px;
-  line-height: 1.3;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  ${MemberCard}:hover & {
-    color: #a855f7;
-    text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.25rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.125rem;
-    line-height: 1.4;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 1rem;
-  }
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  line-height: 1.25;
+  color: ${({ theme }) => theme.color.text};
 `;
 
 const MemberTitle = styled.p`
-  font-size: 0.75rem;
-  color: rgba(168, 85, 247, 0.8);
-  font-weight: 600;
+  margin-top: ${({ theme }) => theme.space[2]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin: 0;
-  line-height: 1.5;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  ${MemberCard}:hover & {
-    color: rgba(168, 85, 247, 1);
-    text-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    font-size: 0.6875rem;
-    letter-spacing: 1.2px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.625rem;
-    letter-spacing: 1px;
-  }
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const SocialIconsContainer = styled.div`
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: ${({ theme }) => theme.space[2]};
+  right: ${({ theme }) => theme.space[2]};
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  gap: ${({ theme }) => theme.space[2]};
   z-index: 2;
-
-  @media (max-width: 480px) {
-    top: 0.5rem;
-    right: 0.5rem;
-    gap: 0.375rem;
-  }
 `;
 
-const SocialIcon = styled(motion.a)`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+const SocialIcon = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.9);
+  width: 36px;
+  height: 36px;
+  color: ${({ theme }) => theme.color.textMuted};
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  opacity: 0.85;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  min-width: 32px;
-  min-height: 32px;
-
-  @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  @media (max-width: 360px) {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
-  }
+  transition: color ${({ theme }) => theme.motion.fast},
+    border-color ${({ theme }) => theme.motion.fast};
 
   &:hover {
-    opacity: 1;
-    color: #ffffff;
-    background: rgba(113, 32, 176, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-color: rgba(113, 32, 176, 0.5);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(113, 32, 176, 0.3);
-  }
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  @media (max-width: 480px) {
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  /* LinkedIn icon from react-icons */
-  svg[data-icon="linkedin"] {
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 480px) {
-    svg[data-icon="linkedin"] {
-      font-size: 1rem;
-    }
+    color: ${({ theme }) => theme.color.accent};
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
@@ -783,16 +318,15 @@ const getTitleByCategory = (category) => {
 // Replace "#" with actual LinkedIn/Twitter URLs
 // 
 // TO ADD A CUSTOM TITLE: Add a "title" property to any member object
-// Example: { id: 1, image: eliImage, category: "executive", title: "President", socials: {...} }
+// Example: { id: 1, image: eliImage, category: "executive", title: "Advisor", socials: {...} }
 // If no "title" is provided, it will default to the team name (e.g., "Executive Board", "Developer Team")
 const allTeamMembersUnsorted = [
   // Executive Board
-  { id: 1, image: eliImage, category: "executive", title: "President", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
+  { id: 1, image: eliImage, category: "executive", title: "Advisor", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
   { id: 2, image: joeyImage, category: "executive", title: "Chief Degen Officer", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
-  { id: 3, image: neenaImage, category: "executive", title: "Head of Operations", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
-  { id: 4, image: albertImage, category: "executive", title: "Chief Legal Officer", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
-  { id: 5, image: siyaImage, category: "executive", title: "Vice President", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
-  { id: 6, image: adityaImage, category: "executive", title: "Head of Education", socials: { linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/", twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w" } },
+  { id: 3, image: neenaImage, category: "executive", title: "Co-President", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  { id: 5, image: siyaImage, category: "executive", title: "Co-President", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
+  { id: 6, image: adityaImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/", twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w" } },
   // Developer Team
   { id: 7, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 8, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
@@ -830,60 +364,66 @@ const allTeamMembersUnsorted = [
   { id: 38, image: nikhilImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nikhil-aerabati/", twitter: "https://twitter.com/nikhilaerabati" } },
   { id: 39, image: sohumImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/sohumkashyap/", twitter: "https://x.com/SohumKashyap" } },
   // Operations Team
-  { id: 40, image: anubhutiImage, category: "operations", title: "Partnerships Lead", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 40, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
   { id: 41, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 42, image: jacobImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 43, image: sahilImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
-  { id: 44, image: shariqImage, category: "operations", title: "Head of Consulting", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
-  { id: 45, image: garvImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
-  { id: 46, image: mugdhaImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
-  { id: 47, image: shivamImage, category: "operations", title: "Head Instructor", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
-  { id: 48, image: mahiImage, category: "operations", title: "Head of Marketing", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
-  { id: 49, image: akashImage, category: "operations", title: "Partnerships Lead", socials: { linkedin: "https://www.linkedin.com/in/the-akash-mishra/", twitter: "https://x.com/Akash_Mishra3" } },
+  { id: 42, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 43, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
+  { id: 44, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
+  { id: 45, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
+  { id: 46, image: mugdhaImage, category: "operations", title: "External Dev Lead", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
+  { id: 47, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
+  { id: 48, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
+  { id: 49, image: akashImage, category: "operations", title: "Internal Dev Lead", socials: { linkedin: "https://www.linkedin.com/in/the-akash-mishra/", twitter: "https://x.com/Akash_Mishra3" } },
   { id: 50, image: pradyumnImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/pradyumn-malik/", twitter: "https://x.com/MalikPradyumn" } },
-  { id: 51, image: alexImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
+  { id: 51, image: alexImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
 ];
 
 const PeopleTeam = () => {
-  const [particleKey, setParticleKey] = useState(Date.now());
   const [activeFilters, setActiveFilters] = useState(new Set());
 
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
-
-  // Memoize team organization to ensure consistent sorted order during session
-  // Sort by FIRST name (then last name as tie-breaker)
-  const teamMembers = useMemo(() => {
-    const sortByName = (members) => {
-      return [...members].sort((a, b) => {
-        const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
-        const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
-
-        const firstCmp = firstA.localeCompare(firstB);
-        if (firstCmp !== 0) return firstCmp;
-
-        // Tie-breaker: compare the remaining parts (last name, etc.) for stable ordering
-        const lastA = restA.join(' ');
-        const lastB = restB.join(' ');
-        return lastA.localeCompare(lastB);
-      });
+  /**
+   * Display order, computed once per page load.
+   *
+   * Executive board first, ranked by role rather than by name, then everyone
+   * else shuffled. The shuffle lives in a useMemo with an empty dependency
+   * array so toggling a filter re-renders against the same order instead of
+   * dealing a new one and making every card jump.
+   */
+  const orderedMembers = useMemo(() => {
+    /* Fisher-Yates on a copy. Never sort/shuffle the module-level array in
+       place: it is shared across every mount and navigation. */
+    const shuffle = (members) => {
+      const result = [...members];
+      for (let i = result.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
     };
 
-    const allSorted = sortByName(allTeamMembersUnsorted);
-    const executiveSorted = sortByName(allTeamMembersUnsorted.filter(m => m.category === "executive"));
+    /* Only these roles are ranked. Everything else on the board is peer level,
+       so it gets shuffled with the rest of the exec block. */
+    const execRoleOrder = ['Co-President'];
 
-    return {
-      all: allSorted,
-      executive: executiveSorted,
-      developer: sortByName(allTeamMembersUnsorted.filter(m => m.category === "developer")),
-      research: sortByName(allTeamMembersUnsorted.filter(m => m.category === "research")),
-      operations: sortByName(allTeamMembersUnsorted.filter(m => m.category === "operations"))
-    };
+    const isExecutive = (member) => member.category === 'executive';
+
+    const executives = allTeamMembersUnsorted.filter(isExecutive);
+    /* filter, not find: a role can be held by more than one person (there are
+       two Co-Presidents), and find would silently drop all but the first.
+       Same-rank holders are shuffled so neither is permanently listed first. */
+    const ranked = execRoleOrder.flatMap((role) =>
+      shuffle(executives.filter((member) => member.title === role)),
+    );
+    const rankedIds = new Set(ranked.map((member) => member.id));
+    const remainingExecutives = shuffle(
+      executives.filter((member) => !rankedIds.has(member.id)),
+    );
+
+    const everyoneElse = shuffle(
+      allTeamMembersUnsorted.filter((member) => !isExecutive(member)),
+    );
+
+    return [...ranked, ...remainingExecutives, ...everyoneElse];
   }, []); // Empty dependency array means this only runs once on mount
 
   const filters = [
@@ -905,102 +445,37 @@ const PeopleTeam = () => {
     });
   };
 
-  // If no filters are active, show everyone. Otherwise, show members from active filters
+  /* Filtering only removes members, so the order above carries into every
+     filtered view unchanged. */
   const displayedMembers = activeFilters.size === 0
-    ? teamMembers.all
-    : allTeamMembersUnsorted
-        .filter(member => activeFilters.has(member.category))
-        .sort((a, b) => {
-          const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
-          const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
-
-          const firstCmp = firstA.localeCompare(firstB);
-          if (firstCmp !== 0) return firstCmp;
-
-          const lastA = restA.join(' ');
-          const lastB = restB.join(' ');
-          return lastA.localeCompare(lastB);
-        });
+    ? orderedMembers
+    : orderedMembers.filter((member) => activeFilters.has(member.category));
 
   return (
-    <PageSection>
-      <Navigation />
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-      
-      <Container>
-        <Title
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          OUR <span>TEAM</span>
-        </Title>
+    <Section $divided={false}>
+      <GridBackdrop />
+      <Container $wide>
+        <Head>
+          <Eyebrow>Who we are</Eyebrow>
+          <Title>
+            OUR <span>TEAM</span>
+          </Title>
+          <Lead>
+            Meet the passionate individuals who lead and drive innovation at
+            Boiler Blockchain
+          </Lead>
+        </Head>
 
-        <Subtitle
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Meet the passionate individuals who lead and drive innovation at Boiler Blockchain
-        </Subtitle>
-
-        <FilterNav
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <FilterNav>
           {filters.map((filter) => {
             const isActive = activeFilters.has(filter.id);
             return (
               <FilterButton
                 key={filter.id}
-                active={isActive}
+                $active={isActive}
+                aria-pressed={isActive}
                 onClick={() => toggleFilter(filter.id)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <span>{filter.label}</span>
               </FilterButton>
@@ -1011,62 +486,54 @@ const PeopleTeam = () => {
         <AnimatePresence mode="wait">
           <TeamRow
             key={Array.from(activeFilters).sort().join(',') || 'all'}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           >
-            {displayedMembers.map((member, index) => (
-              <MemberCard
-                key={member.id}
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.4, 
-                  delay: index * 0.08,
-                  ease: [0.4, 0, 0.2, 1]
-                }}
-                whileHover={{ y: -6, scale: 1.02 }}
-              >
+            {displayedMembers.map((member) => (
+              <MemberCard key={member.id}>
                 <ImageContainer>
                   {member.image ? (
-                     <img src={member.image} alt={formatName(null, member.image)} />
-                  ) : null}
-                  {!member.image && <PlaceholderIcon />}
+                    <img
+                      src={member.image}
+                      alt={formatName(null, member.image)}
+                      width="400"
+                      height="400"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <PlaceholderIcon />
+                  )}
                   <SocialIconsContainer>
-                      <SocialIcon
-                        type="linkedin"
+                    <SocialIcon
+                      aria-label={`${formatName(member.name, member.image)} on LinkedIn`}
                       href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
                       target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
                       rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                      <FaLinkedin style={{ fontSize: '0.9rem' }} />
-                      </SocialIcon>
-                      <SocialIcon
-                        type="twitter"
+                    >
+                      <LinkedIn width={14} height={14} />
+                    </SocialIcon>
+                    <SocialIcon
+                      aria-label={`${formatName(member.name, member.image)} on X`}
                       href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
                       target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
                       rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
+                    >
                       <Twitter width={14} height={14} />
-                      </SocialIcon>
+                    </SocialIcon>
                   </SocialIconsContainer>
                 </ImageContainer>
-                 <ContentContainer>
-                   <MemberName>{formatName(member.name, member.image)}</MemberName>
-                   <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
-                 </ContentContainer>
+                <ContentContainer>
+                  <MemberName>{formatName(member.name, member.image)}</MemberName>
+                  <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
+                </ContentContainer>
               </MemberCard>
             ))}
           </TeamRow>
         </AnimatePresence>
       </Container>
-      <Footer />
-    </PageSection>
+    </Section>
   );
 };
 
