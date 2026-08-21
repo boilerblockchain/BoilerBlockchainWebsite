@@ -41,8 +41,8 @@ const Brand = styled(Link)`
 /* The asset is square (276x275). It used to be forced to width:120px inside a
    40px box with overflow:visible, so it spilled onto the wordmark. */
 const Mark = styled.img`
-  width: 38px;
-  height: 38px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
   display: block;
 `;

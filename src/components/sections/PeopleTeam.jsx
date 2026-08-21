@@ -15,7 +15,6 @@ import {
 const eliImage = '/images/pfps/exec/eli_dubizh.webp';
 const joeyImage = '/images/pfps/exec/joey_kokinda.webp';
 const neenaImage = '/images/pfps/exec/neena_naikar.webp';
-const albertImage = '/images/pfps/exec/albert_wu.webp';
 const siyaImage = '/images/pfps/exec/siya_jariwala.webp';
 const adityaImage = '/images/pfps/exec/aditya_kattil.webp';
 
@@ -319,16 +318,15 @@ const getTitleByCategory = (category) => {
 // Replace "#" with actual LinkedIn/Twitter URLs
 // 
 // TO ADD A CUSTOM TITLE: Add a "title" property to any member object
-// Example: { id: 1, image: eliImage, category: "executive", title: "President", socials: {...} }
+// Example: { id: 1, image: eliImage, category: "executive", title: "Advisor", socials: {...} }
 // If no "title" is provided, it will default to the team name (e.g., "Executive Board", "Developer Team")
 const allTeamMembersUnsorted = [
   // Executive Board
-  { id: 1, image: eliImage, category: "executive", title: "President", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
+  { id: 1, image: eliImage, category: "executive", title: "Advisor", socials: { linkedin: "https://www.linkedin.com/in/eli-dubizh/", twitter: "https://x.com/EliDubizh" } },
   { id: 2, image: joeyImage, category: "executive", title: "Chief Degen Officer", socials: { linkedin: "https://www.linkedin.com/in/jkokinda", twitter: "https://x.com/sp3ked" } },
-  { id: 3, image: neenaImage, category: "executive", title: "Head of Operations", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
-  { id: 4, image: albertImage, category: "executive", title: "Chief Legal Officer", socials: { linkedin: "https://www.linkedin.com/in/ajxwu/", twitter: "https://x.com/Hauntpex" } },
-  { id: 5, image: siyaImage, category: "executive", title: "Vice President", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
-  { id: 6, image: adityaImage, category: "executive", title: "Head of Education", socials: { linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/", twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w" } },
+  { id: 3, image: neenaImage, category: "executive", title: "Co-President", socials: { linkedin: "https://www.linkedin.com/in/neena-naikar/", twitter: "https://x.com/neenanaikar" } },
+  { id: 5, image: siyaImage, category: "executive", title: "Co-President", socials: { linkedin: "https://www.linkedin.com/in/siya-jariwala", twitter: "https://x.com/siyasiyasiyaaa" } },
+  { id: 6, image: adityaImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aditya-kuniyil-kattil/", twitter: "https://x.com/iamadityakk?s=21&t=Aw27j3VM8u8ewB9mb4Ga-w" } },
   // Developer Team
   { id: 7, image: ansonImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/ansonlam23/", twitter: "https://twitter.com/anslam23" } },
   { id: 8, image: aryanSinghalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/aryan-singhal-ai/", twitter: "https://x.com/ai_singhal" } },
@@ -366,18 +364,18 @@ const allTeamMembersUnsorted = [
   { id: 38, image: nikhilImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/nikhil-aerabati/", twitter: "https://twitter.com/nikhilaerabati" } },
   { id: 39, image: sohumImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/sohumkashyap/", twitter: "https://x.com/SohumKashyap" } },
   // Operations Team
-  { id: 40, image: anubhutiImage, category: "operations", title: "Partnerships Lead", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
+  { id: 40, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
   { id: 41, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 42, image: jacobImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
-  { id: 43, image: sahilImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
-  { id: 44, image: shariqImage, category: "operations", title: "Head of Consulting", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
-  { id: 45, image: garvImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
-  { id: 46, image: mugdhaImage, category: "operations", title: "Developer Lead", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
-  { id: 47, image: shivamImage, category: "operations", title: "Head Instructor", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
-  { id: 48, image: mahiImage, category: "operations", title: "Head of Marketing", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
-  { id: 49, image: akashImage, category: "operations", title: "Partnerships Lead", socials: { linkedin: "https://www.linkedin.com/in/the-akash-mishra/", twitter: "https://x.com/Akash_Mishra3" } },
+  { id: 42, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
+  { id: 43, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
+  { id: 44, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
+  { id: 45, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
+  { id: 46, image: mugdhaImage, category: "operations", title: "External Dev Lead", socials: { linkedin: "https://www.linkedin.com/in/mugdhadpatil/", twitter: "https://x.com/mugdhapatil17?s=21" } },
+  { id: 47, image: shivamImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/rastog18", twitter: "https://x.com/rastog1800" } },
+  { id: 48, image: mahiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/mahi-tripathi", twitter: "https://x.com/mahi_tripathii" } },
+  { id: 49, image: akashImage, category: "operations", title: "Internal Dev Lead", socials: { linkedin: "https://www.linkedin.com/in/the-akash-mishra/", twitter: "https://x.com/Akash_Mishra3" } },
   { id: 50, image: pradyumnImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/pradyumn-malik/", twitter: "https://x.com/MalikPradyumn" } },
-  { id: 51, image: alexImage, category: "operations", title: "Investments Lead", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
+  { id: 51, image: alexImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/belangeralexander/", twitter: "https://x.com/thedcfguy" } }
 ];
 
 const PeopleTeam = () => {
@@ -403,16 +401,19 @@ const PeopleTeam = () => {
       return result;
     };
 
-    /* Only these two roles are ranked. Everything else on the board is peer
-       level, so it gets shuffled with the rest of the exec block. */
-    const execRoleOrder = ['President', 'Vice President'];
+    /* Only these roles are ranked. Everything else on the board is peer level,
+       so it gets shuffled with the rest of the exec block. */
+    const execRoleOrder = ['Co-President'];
 
     const isExecutive = (member) => member.category === 'executive';
 
     const executives = allTeamMembersUnsorted.filter(isExecutive);
-    const ranked = execRoleOrder
-      .map((role) => executives.find((member) => member.title === role))
-      .filter(Boolean);
+    /* filter, not find: a role can be held by more than one person (there are
+       two Co-Presidents), and find would silently drop all but the first.
+       Same-rank holders are shuffled so neither is permanently listed first. */
+    const ranked = execRoleOrder.flatMap((role) =>
+      shuffle(executives.filter((member) => member.title === role)),
+    );
     const rankedIds = new Set(ranked.map((member) => member.id));
     const remainingExecutives = shuffle(
       executives.filter((member) => !rankedIds.has(member.id)),

@@ -11,6 +11,35 @@ const GlobalStyles = createGlobalStyle`
     /* Safety net for the horizontal scroll. 'clip' rather than 'hidden' so it
        does not silently create a scroll container and break position: sticky. */
     overflow-x: clip;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #7120B0 #000000;
+  }
+
+  /* WebKit / Blink */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #000000;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #7120B0;
+    /* Inset border reads as padding, so the thumb looks slimmer than the
+       track without shrinking the grab area. */
+    border: 3px solid #000000;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #A855F7;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: #000000;
   }
 
   body {
