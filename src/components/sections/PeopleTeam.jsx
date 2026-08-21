@@ -3,6 +3,13 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import LinkedIn from '../../Icons/LinkedIn';
 import Twitter from '../../Icons/Twitter';
+import {
+  Section,
+  Container,
+  GridBackdrop,
+  Eyebrow,
+  Lead,
+} from '../ui/primitives';
 
 // Executive Board
 const eliImage = '/images/pfps/exec/eli_dubizh.webp';
@@ -64,250 +71,58 @@ const akashImage = '/images/pfps/ops/akash_mishra.webp';
 const pradyumnImage = '/images/pfps/ops/pradyumn_malik.webp';
 const alexImage = '/images/pfps/ops/alex_belanger.webp';
 
-const PageSection = styled.section`
-  width: 100%;
-  background-color: ${({ theme }) => theme.color.black};
-  position: relative;
-  padding: 8rem 0 0;
-  font-family: 'Tomorrow', sans-serif;
-  display: flex;
-  flex-direction: column;
-  
-  * {
-    font-family: 'Tomorrow', sans-serif;
-  }
-
-  @media (max-width: 480px) {
-    padding: 6rem 0 0;
-  }
+const Head = styled.div`
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
-const Container = styled.div`
-  width: 90%;
-  max-width: 1400px;
-  margin: 0 auto 0;
-  padding: 120px 2rem 0;
-  position: relative;
-  z-index: 2;
-  
-  @media (max-width: 1024px) {
-    width: 95%;
-    padding: 110px 1.75rem 0;
-  }
-
-  @media (max-width: 768px) {
-    width: 95%;
-    padding: 100px 1.5rem 0;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 80px 1rem 0;
-  }
-
-  @media (max-width: 360px) {
-    padding: 70px 0.75rem 0;
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 5rem; 
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 2rem;
+const Title = styled.h1`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h1};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  line-height: 1.1;
-  position: relative;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[4]};
 
   span {
     color: ${({ theme }) => theme.color.accent};
   }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 1px;
-    background: ${({ theme }) => theme.color.accentBorder};
-
-    @media (max-width: 768px) {
-      width: 150px;
-      bottom: -0.75rem;
-    }
-
-    @media (max-width: 480px) {
-      width: 120px;
-      bottom: -0.5rem;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    font-size: 4rem;
-    letter-spacing: 3px;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 3rem;
-    letter-spacing: 2px;
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 2.5rem;
-    letter-spacing: 1.5px;
-    word-break: break-word;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 2rem;
-    letter-spacing: 1px;
-    margin-bottom: 1.25rem;
-  }
-
-  @media (max-width: 320px) {
-    font-size: 1.75rem;
-    letter-spacing: 0.5px;
-    margin-bottom: 1rem;
-  }
 `;
 
-const Subtitle = styled(motion.p)`
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto 4rem;
-  line-height: 1.8;
-  font-weight: 400;
-  letter-spacing: 0.4px;
-
-  @media (max-width: 1024px) {
-    font-size: 1.15rem;
-    margin-bottom: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    margin-bottom: 3rem;
-    line-height: 1.7;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.9375rem;
-    margin-bottom: 2.5rem;
-    padding: 0 0.5rem;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 0.875rem;
-    margin-bottom: 2rem;
-  }
-`;
-
-const FilterNav = styled(motion.div)`
+const FilterNav = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 5rem;
   flex-wrap: wrap;
-  padding: 0;
-  width: 100%;
-  max-width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 768px) {
-    gap: 0.5rem;
-    margin-bottom: 4rem;
-    max-width: 95%;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.4rem;
-    margin-bottom: 3rem;
-    max-width: 100%;
-  }
-
-  @media (max-width: 360px) {
-    gap: 0.3rem;
-    margin-bottom: 2.5rem;
-  }
+  gap: ${({ theme }) => theme.space[2]};
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
+/* `$active` is transient: styled-components strips it instead of forwarding it
+   to the underlying <button>, which is what React was warning about. */
 const FilterButton = styled(motion.button)`
-  padding: 0.875rem 1.75rem;
-  background: ${({ theme, active }) => active ? theme.color.accentDeep : theme.color.surfaceRaised};
-  border: 1px solid ${({ theme, active }) => active ? theme.color.accentBorderStrong : theme.color.accentBorder};
-  color: ${({ theme, active }) => active ? theme.color.text : theme.color.textMuted};
-  font-size: 0.875rem;
+  padding: 0.7rem 1.25rem;
+  min-height: 44px;
+  background: ${({ theme, $active }) =>
+    $active ? theme.color.accentDeep : 'transparent'};
+  border: 1px solid
+    ${({ theme, $active }) =>
+      $active ? theme.color.accentDeep : theme.color.border};
+  color: ${({ theme, $active }) =>
+    $active ? theme.color.text : theme.color.textMuted};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
   font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  cursor: pointer;
-  transition: background ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base},
-              color ${({ theme }) => theme.motion.base},
-              transform ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
-  border-radius: ${({ theme }) => theme.radius.sm};
-  font-family: 'Tomorrow', sans-serif;
-  position: relative;
   white-space: nowrap;
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-
-  .count {
-    margin-left: 0.5rem;
-    font-size: 0.75rem;
-    opacity: 0.8;
-    font-weight: 500;
-  }
+  cursor: pointer;
+  border-radius: ${({ theme }) => theme.radius.none};
+  transition: background ${({ theme }) => theme.motion.base},
+    border-color ${({ theme }) => theme.motion.base},
+    color ${({ theme }) => theme.motion.base};
 
   &:hover {
     color: ${({ theme }) => theme.color.text};
-    background: ${({ theme, active }) => active ? theme.color.accent : theme.color.surfaceHover};
-    border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    transform: translateY(-2px);
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  @media (max-width: 768px) {
-    padding: 0.7rem 1.25rem;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-
-    .count {
-      font-size: 0.6875rem;
-      margin-left: 0.375rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    padding: 0.625rem 0.875rem;
-    font-size: 0.6875rem;
-    letter-spacing: 0.8px;
-    min-height: 44px;
-
-    .count {
-      font-size: 0.625rem;
-      margin-left: 0.25rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    padding: 0.5625rem 0.75rem;
-    font-size: 0.625rem;
-    min-height: 42px;
-    letter-spacing: 0.6px;
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
@@ -315,34 +130,23 @@ const TeamRow = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   align-items: start;
-  gap: 2rem;
-  margin: 4rem auto 6rem;
-  width: 100%;
-  max-width: 1400px;
-  padding: 0 ${({ theme }) => theme.sectionPadding.inline};
+  gap: ${({ theme }) => theme.space[6]};
 `;
 
 const MemberCard = styled(motion.div)`
-  width: 100%;
-  background: ${({ theme }) => theme.color.surfaceRaised};
-  border-radius: ${({ theme }) => theme.radius.lg};
-  border: 1px solid ${({ theme }) => theme.color.border};
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-  padding: 0;
-  overflow: hidden;
-  transition: transform ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
   position: relative;
-  box-sizing: border-box;
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
+  overflow: hidden;
+  transition: border-color ${({ theme }) => theme.motion.base},
+    transform ${({ theme }) => theme.motion.base};
 
   &:hover {
-    transform: translateY(-4px);
     border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    box-shadow: ${({ theme }) => theme.elevation[2]}, 0 0 32px ${({ theme }) => theme.color.accentGlow};
+    transform: translateY(-3px);
   }
 
-  /* Disable hover effects on touch devices */
   @media (hover: none) {
     &:hover {
       transform: none;
@@ -351,11 +155,12 @@ const MemberCard = styled(motion.div)`
 `;
 
 const ImageContainer = styled.div`
+  position: relative;
   width: 100%;
   aspect-ratio: 1;
-  position: relative;
   overflow: hidden;
-  background: ${({ theme }) => theme.color.surfaceHover};
+  background: ${({ theme }) => theme.color.surface};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 
   img {
     display: block;
@@ -363,177 +168,73 @@ const ImageContainer = styled.div`
     height: 100%;
     object-fit: cover;
     object-position: 50% 25%;
-    transition: transform ${({ theme }) => theme.motion.base};
-  }
-
-  ${MemberCard}:hover img {
-    transform: scale(1.03);
   }
 `;
 
 const PlaceholderIcon = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background: ${({ theme }) => theme.color.accentWash};
-  border-radius: 50%;
-  z-index: 2;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${({ theme }) => theme.color.accentBorder};
+  color: ${({ theme }) => theme.color.textFaint};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 
   &::before {
-    content: '👤';
-    font-size: 2.5rem;
-    opacity: 0.4;
+    content: 'BB';
   }
 `;
 
 const ContentContainer = styled.div`
-  padding: 1.75rem 1.5rem 2rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.875rem;
-  position: relative;
-  z-index: 2;
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 1.25rem 1.75rem;
-    gap: 0.75rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.25rem 1rem 1.5rem;
-    gap: 0.625rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 1rem 0.875rem 1.25rem;
-    gap: 0.5rem;
-  }
+  padding: ${({ theme }) => theme.space[5]};
 `;
 
 const MemberName = styled.h3`
-  font-size: 1.375rem;
-  color: #ffffff;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: 0.3px;
-  line-height: 1.3;
-  transition: color ${({ theme }) => theme.motion.base};
-
-  ${MemberCard}:hover & {
-    color: ${({ theme }) => theme.color.accent};
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.25rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.125rem;
-    line-height: 1.4;
-  }
-
-  @media (max-width: 360px) {
-    font-size: 1rem;
-  }
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  line-height: 1.25;
+  color: ${({ theme }) => theme.color.text};
 `;
 
 const MemberTitle = styled.p`
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.color.accent};
-  font-weight: 600;
+  margin-top: ${({ theme }) => theme.space[2]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin: 0;
-  line-height: 1.5;
-
-  @media (max-width: 768px) {
-    font-size: 0.6875rem;
-    letter-spacing: 1.2px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 0.625rem;
-    letter-spacing: 1px;
-  }
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const SocialIconsContainer = styled.div`
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: ${({ theme }) => theme.space[2]};
+  right: ${({ theme }) => theme.space[2]};
   display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  gap: ${({ theme }) => theme.space[2]};
   z-index: 2;
-
-  @media (max-width: 480px) {
-    top: 0.5rem;
-    right: 0.5rem;
-    gap: 0.375rem;
-  }
 `;
 
-const SocialIcon = styled(motion.a)`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+const SocialIcon = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
   color: ${({ theme }) => theme.color.textMuted};
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
   text-decoration: none;
   transition: color ${({ theme }) => theme.motion.fast},
-              background ${({ theme }) => theme.motion.fast},
-              border-color ${({ theme }) => theme.motion.fast},
-              opacity ${({ theme }) => theme.motion.fast},
-              transform ${({ theme }) => theme.motion.fast};
-  background: rgba(0, 0, 0, 0.55);
-  opacity: 0.85;
-  border: 1px solid ${({ theme }) => theme.color.border};
-  min-width: 32px;
-  min-height: 32px;
-
-  @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  @media (max-width: 360px) {
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    min-height: 38px;
-  }
+    border-color ${({ theme }) => theme.motion.fast};
 
   &:hover {
-    opacity: 1;
-    color: ${({ theme }) => theme.color.text};
-    background: ${({ theme }) => theme.color.accentDeep};
-    border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    transform: translateY(-2px);
-  }
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  @media (max-width: 480px) {
-    svg {
-      width: 16px;
-      height: 16px;
-    }
+    color: ${({ theme }) => theme.color.accent};
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
@@ -682,34 +383,46 @@ const allTeamMembersUnsorted = [
 const PeopleTeam = () => {
   const [activeFilters, setActiveFilters] = useState(new Set());
 
-  // Memoize team organization to ensure consistent sorted order during session
-  // Sort by FIRST name (then last name as tie-breaker)
-  const teamMembers = useMemo(() => {
-    const sortByName = (members) => {
-      return [...members].sort((a, b) => {
-        const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
-        const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
-
-        const firstCmp = firstA.localeCompare(firstB);
-        if (firstCmp !== 0) return firstCmp;
-
-        // Tie-breaker: compare the remaining parts (last name, etc.) for stable ordering
-        const lastA = restA.join(' ');
-        const lastB = restB.join(' ');
-        return lastA.localeCompare(lastB);
-      });
+  /**
+   * Display order, computed once per page load.
+   *
+   * Executive board first, ranked by role rather than by name, then everyone
+   * else shuffled. The shuffle lives in a useMemo with an empty dependency
+   * array so toggling a filter re-renders against the same order instead of
+   * dealing a new one and making every card jump.
+   */
+  const orderedMembers = useMemo(() => {
+    /* Fisher-Yates on a copy. Never sort/shuffle the module-level array in
+       place: it is shared across every mount and navigation. */
+    const shuffle = (members) => {
+      const result = [...members];
+      for (let i = result.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
     };
 
-    const allSorted = sortByName(allTeamMembersUnsorted);
-    const executiveSorted = sortByName(allTeamMembersUnsorted.filter(m => m.category === "executive"));
+    /* Only these two roles are ranked. Everything else on the board is peer
+       level, so it gets shuffled with the rest of the exec block. */
+    const execRoleOrder = ['President', 'Vice President'];
 
-    return {
-      all: allSorted,
-      executive: executiveSorted,
-      developer: sortByName(allTeamMembersUnsorted.filter(m => m.category === "developer")),
-      research: sortByName(allTeamMembersUnsorted.filter(m => m.category === "research")),
-      operations: sortByName(allTeamMembersUnsorted.filter(m => m.category === "operations"))
-    };
+    const isExecutive = (member) => member.category === 'executive';
+
+    const executives = allTeamMembersUnsorted.filter(isExecutive);
+    const ranked = execRoleOrder
+      .map((role) => executives.find((member) => member.title === role))
+      .filter(Boolean);
+    const rankedIds = new Set(ranked.map((member) => member.id));
+    const remainingExecutives = shuffle(
+      executives.filter((member) => !rankedIds.has(member.id)),
+    );
+
+    const everyoneElse = shuffle(
+      allTeamMembersUnsorted.filter((member) => !isExecutive(member)),
+    );
+
+    return [...ranked, ...remainingExecutives, ...everyoneElse];
   }, []); // Empty dependency array means this only runs once on mount
 
   const filters = [
@@ -731,56 +444,37 @@ const PeopleTeam = () => {
     });
   };
 
-  // If no filters are active, show everyone. Otherwise, show members from active filters
+  /* Filtering only removes members, so the order above carries into every
+     filtered view unchanged. */
   const displayedMembers = activeFilters.size === 0
-    ? teamMembers.all
-    : allTeamMembersUnsorted
-        .filter(member => activeFilters.has(member.category))
-        .sort((a, b) => {
-          const [firstA = '', ...restA] = formatName(a.name, a.image).toLowerCase().split(/\s+/).filter(Boolean);
-          const [firstB = '', ...restB] = formatName(b.name, b.image).toLowerCase().split(/\s+/).filter(Boolean);
-
-          const firstCmp = firstA.localeCompare(firstB);
-          if (firstCmp !== 0) return firstCmp;
-
-          const lastA = restA.join(' ');
-          const lastB = restB.join(' ');
-          return lastA.localeCompare(lastB);
-        });
+    ? orderedMembers
+    : orderedMembers.filter((member) => activeFilters.has(member.category));
 
   return (
-    <PageSection>
-      <Container>
-        <Title
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          OUR <span>TEAM</span>
-        </Title>
+    <Section $divided={false}>
+      <GridBackdrop />
+      <Container $wide>
+        <Head>
+          <Eyebrow>Who we are</Eyebrow>
+          <Title>
+            OUR <span>TEAM</span>
+          </Title>
+          <Lead>
+            Meet the passionate individuals who lead and drive innovation at
+            Boiler Blockchain
+          </Lead>
+        </Head>
 
-        <Subtitle
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Meet the passionate individuals who lead and drive innovation at Boiler Blockchain
-        </Subtitle>
-
-        <FilterNav
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <FilterNav>
           {filters.map((filter) => {
             const isActive = activeFilters.has(filter.id);
             return (
               <FilterButton
                 key={filter.id}
-                active={isActive}
+                $active={isActive}
+                aria-pressed={isActive}
                 onClick={() => toggleFilter(filter.id)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
               >
                 <span>{filter.label}</span>
               </FilterButton>
@@ -791,66 +485,54 @@ const PeopleTeam = () => {
         <AnimatePresence mode="wait">
           <TeamRow
             key={Array.from(activeFilters).sort().join(',') || 'all'}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           >
-            {displayedMembers.map((member, index) => (
-              <MemberCard
-                key={member.id}
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  duration: 0.4,
-                  delay: Math.min(index, 8) * 0.04,
-                  ease: [0.4, 0, 0.2, 1]
-                }}
-              >
+            {displayedMembers.map((member) => (
+              <MemberCard key={member.id}>
                 <ImageContainer>
                   {member.image ? (
-                     <img
-                       src={member.image}
-                       alt={formatName(null, member.image)}
-                       width="400"
-                       height="400"
-                       loading="lazy"
-                     />
-                  ) : null}
-                  {!member.image && <PlaceholderIcon />}
+                    <img
+                      src={member.image}
+                      alt={formatName(null, member.image)}
+                      width="400"
+                      height="400"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <PlaceholderIcon />
+                  )}
                   <SocialIconsContainer>
-                      <SocialIcon
-                        type="linkedin"
+                    <SocialIcon
+                      aria-label={`${formatName(member.name, member.image)} on LinkedIn`}
                       href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
                       target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
                       rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
+                    >
                       <LinkedIn width={14} height={14} />
-                      </SocialIcon>
-                      <SocialIcon
-                        type="twitter"
+                    </SocialIcon>
+                    <SocialIcon
+                      aria-label={`${formatName(member.name, member.image)} on X`}
                       href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
                       target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
                       rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
+                    >
                       <Twitter width={14} height={14} />
-                      </SocialIcon>
+                    </SocialIcon>
                   </SocialIconsContainer>
                 </ImageContainer>
-                 <ContentContainer>
-                   <MemberName>{formatName(member.name, member.image)}</MemberName>
-                   <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
-                 </ContentContainer>
+                <ContentContainer>
+                  <MemberName>{formatName(member.name, member.image)}</MemberName>
+                  <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
+                </ContentContainer>
               </MemberCard>
             ))}
           </TeamRow>
         </AnimatePresence>
       </Container>
-    </PageSection>
+    </Section>
   );
 };
 

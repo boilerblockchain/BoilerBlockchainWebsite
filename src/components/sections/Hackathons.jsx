@@ -1,295 +1,147 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink } from '../ui/Arrow';
+import {
+  Section,
+  Container,
+  GridBackdrop,
+  Eyebrow,
+  Lead,
+  Tag,
+} from '../ui/primitives';
 
-const PageSection = styled.section`
-  width: 100%;
-  background-color: ${({ theme }) => theme.color.black};
-  position: relative;
-  padding: 4rem 0;
-  font-family: 'Tomorrow', sans-serif;
-  
-  * {
-    font-family: 'Tomorrow', sans-serif;
-  }
+const Head = styled.div`
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
 const BackButton = styled(Link)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background: rgba(0, 0, 0, 0.95);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontSize.body};
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid ${({ theme }) => theme.color.accentBorder};
-  z-index: 100;
-  backdrop-filter: blur(10px);
+  gap: ${({ theme }) => theme.space[2]};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  font-weight: 600;
+  color: ${({ theme }) => theme.color.textFaint};
+  text-decoration: none;
+  transition: color ${({ theme }) => theme.motion.base};
 
-  &:before {
-    content: "←";
-    color: ${({ theme }) => theme.color.accent};
+  &::before {
+    content: '←';
   }
 
   &:hover {
-    background: ${({ theme }) => theme.color.accentWash};
-  }
-
-  @media (max-width: 40em) {
-    padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontSize.small};
+    color: ${({ theme }) => theme.color.accent};
   }
 `;
 
-const Container = styled.div`
-  width: 85%;
-  max-width: 1400px;
-  margin: 0 auto 0;
-  padding: 120px 2rem 0;
-  position: relative;
-  z-index: 2;
-  
-  @media (max-width: 1024px) {
-    width: 90%;
-    padding: 110px 1.75rem 0;
-  }
-
-  @media (max-width: 768px) {
-    width: 95%;
-    padding: 100px 1.5rem 0;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 80px 1rem 0;
-  }
-
-  @media (max-width: 360px) {
-    padding: 70px 0.75rem 0;
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 6rem; 
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+const Title = styled.h1`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h1};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[4]};
 
   span {
     color: ${({ theme }) => theme.color.accent};
   }
-
-  @media (max-width: 40em) {
-    font-size: 4rem;
-  }
 `;
 
-const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontSize.h3};
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
-  line-height: 1.6;
-`;
-
-const StatsContainer = styled(motion.div)`
+const StatsContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin: 2rem 0 5rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  margin-bottom: ${({ theme }) => theme.space[16]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  ${({ theme }) => theme.media.sm} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 
-const StatCard = styled(motion.div)`
-  background: ${({ theme }) => theme.color.surfaceRaised};
-  border: 1px solid ${({ theme }) => theme.color.accentBorder};
-  border-radius: 8px;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-  transition: transform ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
+const StatCard = styled.div`
+  padding-block: ${({ theme }) => theme.space[8]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 
-  &:hover {
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-    border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    transform: translateY(-5px);
+  ${({ theme }) => theme.media.sm} {
+    border-bottom: 0;
+    border-left: 1px solid ${({ theme }) => theme.color.border};
+    padding-inline: ${({ theme }) => theme.space[6]};
+
+    &:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
   }
 `;
 
 const StatNumber = styled.div`
-  font-size: 3.5rem;
-  font-weight: 700;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.stat};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.color.accent};
-  margin-bottom: 0.5rem;
+  font-variant-numeric: tabular-nums;
 `;
 
 const StatTitle = styled.div`
-  font-size: 1.2rem;
-  color: #ffffff;
+  margin-top: ${({ theme }) => theme.space[3]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  color: ${({ theme }) => theme.color.textMuted};
 `;
 
-// New Blockchain Components
-const BlockchainContainer = styled(motion.div)`
+const BlockGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: ${({ theme }) => theme.space[6]};
+`;
+
+/* `$blockNumber` is transient so styled-components does not forward it to the
+   DOM node, which is what React was warning about. */
+const BlockCard = styled(motion.button)`
   position: relative;
-  margin: 4rem auto;
+  display: block;
   width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: 3rem;
-`;
-
-const BlockchainTrack = styled.div`
-  position: relative;
-  width: 90%;
-  margin: 0 auto;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: ${({ theme }) => theme.color.accentBorder};
-    transform: translateY(-50%);
-    z-index: 1;
-  }
-  
-  @media (max-width: 768px) {
-    width: 100%;
-  }
-`;
-
-const BlockRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  margin: 3rem 0;
-  position: relative;
-  z-index: 2;
-  
-  &:nth-child(even) {
-    flex-direction: row-reverse;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    margin: 1.5rem 0;
-  }
-`;
-
-const BlockCard = styled(motion.div)`
-  width: 300px;
-  background: ${({ theme }) => theme.color.surfaceRaised};
-  border: 1px solid ${({ theme }) => theme.color.accentBorder};
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin: 0 1rem 2rem;
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-  cursor: pointer;
-  position: relative;
-  transition: transform ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
   min-height: 280px;
-  
-  /* Block number */
+  text-align: left;
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
+  padding: ${({ theme }) => theme.space[6]};
+  cursor: pointer;
+  color: inherit;
+  transition: border-color ${({ theme }) => theme.motion.base},
+    transform ${({ theme }) => theme.motion.base};
+
   &::after {
-    content: 'Block #${props => props.blockNumber || 0}';
+    content: 'BLOCK #${({ $blockNumber }) => $blockNumber || 0}';
     position: absolute;
-    bottom: -10px;
-    right: 10px;
-    font-size: 0.7rem;
-    color: rgba(113, 32, 176, 0.8);
-    font-family: monospace;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(113, 32, 176, 0.4);
+    top: ${({ theme }) => theme.space[3]};
+    right: ${({ theme }) => theme.space[4]};
+    font-family: ${({ theme }) => theme.fontFamily.mono};
+    font-size: ${({ theme }) => theme.fontSize.micro};
+    letter-spacing: 0.16em;
+    color: ${({ theme }) => theme.color.textFaint};
   }
-  
-  /* Connector from block to main chain */
-  .connector {
-    position: absolute;
-    width: 2px;
-    background: ${({ theme }) => theme.color.accentBorder};
-    z-index: -1;
-    
-    &.top {
-      top: -40px;
-      left: 50%;
-      height: 40px;
-    }
-    
-    &.bottom {
-      bottom: -40px;
-      left: 50%;
-      height: 40px;
-    }
-  }
-  
-  /* Link node circles */
-  .node {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.color.accent};
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-    
-    &.top {
-      top: -8px;
-    }
-    
-    &.bottom {
-      bottom: -8px;
-    }
-  }
-  
+
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: ${({ theme }) => theme.elevation[2]};
     border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    
-    &::after {
-      color: ${({ theme }) => theme.color.accent};
-    }
+    transform: translateY(-3px);
   }
-  
-  @media (max-width: 768px) {
-    width: 85%;
-    max-width: 300px;
-    margin-bottom: 3rem;
+
+  &:focus-visible {
+    outline: 1px solid ${({ theme }) => theme.color.accent};
+    outline-offset: 2px;
   }
 `;
 
@@ -300,14 +152,11 @@ const BlockContent = styled.div`
 `;
 
 const Hash = styled.div`
-  font-family: monospace;
-  font-size: 0.7rem;
-  color: rgba(113, 32, 176, 0.7);
-  background: rgba(0, 0, 0, 0.5);
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  border: 1px dashed rgba(113, 32, 176, 0.4);
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.color.textFaint};
+  margin-bottom: ${({ theme }) => theme.space[4]};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -316,45 +165,43 @@ const Hash = styled.div`
 
 const BlockHeader = styled.div`
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  gap: ${({ theme }) => theme.space[2]};
+  margin-bottom: ${({ theme }) => theme.space[2]};
 `;
 
 const BlockDate = styled.h3`
-  font-size: 1.3rem;
-  color: #ffffff;
-  font-weight: 700;
-  margin: 0;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  color: ${({ theme }) => theme.color.text};
 `;
 
 const BlockTime = styled.span`
-  font-size: 0.8rem;
-  color: rgba(113, 32, 176, 0.9);
-  background: rgba(0, 0, 0, 0.5);
-  padding: 2px 8px;
-  border-radius: 12px;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  color: ${({ theme }) => theme.color.textFaint};
 `;
 
 const BlockTitle = styled.h4`
-  font-size: 1.1rem;
-  color: ${({ theme }) => theme.color.accentBright};
-  margin-bottom: 1rem;
-  font-weight: 600;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.body};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  letter-spacing: 0.02em;
+  color: ${({ theme }) => theme.color.accent};
+  margin-bottom: ${({ theme }) => theme.space[3]};
 `;
 
 const BlockTeam = styled.div`
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 1rem;
-  line-height: 1.4;
-  
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  line-height: 1.5;
+  color: ${({ theme }) => theme.color.textMuted};
+
   strong {
-    color: #ffffff;
-  }
-  
-  @media (max-width: 768px) {
-    font-size: 0.85rem;
+    color: ${({ theme }) => theme.color.text};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
   }
 `;
 
@@ -369,149 +216,150 @@ const BlockFooter = styled.div`
   right: 15px;
 `;
 
-const PrizeTag = styled.div`
-  background: rgba(113, 32, 176, 0.3);
-  color: #ffffff;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.color.accentBorderStrong};
+const PrizeTag = styled(Tag)`
+  color: ${({ theme }) => theme.color.accent};
+  border-color: ${({ theme }) => theme.color.accentBorderStrong};
 `;
 
-const ViewButton = styled.div`
-  background: rgba(113, 32, 176, 0.2);
-  color: #ffffff;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
+const ViewButton = styled.span`
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  gap: ${({ theme }) => theme.space[2]};
   margin-left: auto;
-  
-  &:hover {
-    background: ${({ theme }) => theme.color.accentWash};
-    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+  padding: 0.3rem 0.7rem;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textMuted};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  transition: color ${({ theme }) => theme.motion.base},
+    border-color ${({ theme }) => theme.motion.base};
+
+  ${BlockCard}:hover & {
+    color: ${({ theme }) => theme.color.accent};
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
-// Expanded Block Modal
 const ExpandedModal = styled(motion.div)`
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: ${({ theme }) => theme.space[4]};
   z-index: 1000;
-  backdrop-filter: blur(10px);
 `;
 
 const ModalContent = styled(motion.div)`
   background: ${({ theme }) => theme.color.surfaceRaised};
-  width: 90%;
+  width: 100%;
   max-width: 600px;
-  border-radius: 10px;
-  padding: 2.5rem;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: ${({ theme }) => theme.radius.none};
+  padding: ${({ theme }) => theme.space[8]};
   position: relative;
-  border: 1px solid ${({ theme }) => theme.color.accentBorderStrong};
-  box-shadow: ${({ theme }) => theme.elevation[2]};
+  border: 1px solid ${({ theme }) => theme.color.borderStrong};
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: ${({ theme }) => theme.space[3]};
+  right: ${({ theme }) => theme.space[3]};
+  width: 36px;
+  height: 36px;
   background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: 1.25rem;
+  line-height: 1;
   cursor: pointer;
-  
+  transition: color ${({ theme }) => theme.motion.base},
+    border-color ${({ theme }) => theme.motion.base};
+
   &:hover {
     color: ${({ theme }) => theme.color.accent};
+    border-color: ${({ theme }) => theme.color.accent};
   }
 `;
 
 const ModalTitle = styled.h2`
-  font-size: 2rem;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h3};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.color.text};
+  padding-right: ${({ theme }) => theme.space[10]};
+  margin-bottom: ${({ theme }) => theme.space[3]};
 `;
 
 const ModalHash = styled.div`
-  font-family: monospace;
-  font-size: 0.8rem;
-  color: rgba(113, 32, 176, 0.7);
-  background: rgba(0, 0, 0, 0.5);
-  padding: 6px 10px;
-  border-radius: 4px;
-  margin-bottom: 1.5rem;
-  border: 1px dashed rgba(113, 32, 176, 0.4);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.color.textFaint};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+  overflow-wrap: anywhere;
   user-select: all;
 `;
 
 const ModalProjectName = styled.div`
-  font-size: 1.3rem;
-  color: ${({ theme }) => theme.color.accentBright};
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+
   a {
-    color: inherit;
-    text-decoration: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    
+    gap: ${({ theme }) => theme.space[2]};
+    color: ${({ theme }) => theme.color.accent};
+    text-decoration: none;
+    transition: color ${({ theme }) => theme.motion.base};
+
     &:hover {
-      color: ${({ theme }) => theme.color.accent};
+      color: ${({ theme }) => theme.color.accentBright};
       text-decoration: underline;
     }
   }
 `;
 
 const ModalTeam = styled.div`
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2rem;
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.body};
   line-height: 1.6;
-  
+  color: ${({ theme }) => theme.color.textMuted};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+
   strong {
-    color: #ffffff;
-    font-weight: 600;
+    color: ${({ theme }) => theme.color.text};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
   }
+`;
+
+const PrizesLabel = styled.div`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const PrizesList = styled.ul`
   list-style: none;
-  padding: 0;
-  margin: 1rem 0 0;
-  
+  margin-top: ${({ theme }) => theme.space[3]};
+
   li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
+    padding: ${({ theme }) => theme.space[2]} 0;
+    border-top: 1px solid ${({ theme }) => theme.color.border};
+    font-family: ${({ theme }) => theme.fontFamily.body};
+    font-size: ${({ theme }) => theme.fontSize.body};
+    color: ${({ theme }) => theme.color.textMuted};
   }
 `;
 
@@ -670,8 +518,6 @@ const enhancedHackathonData = hackathonData.map(item => ({
 const HackathonsPage = () => {
   const [selectedHackathon, setSelectedHackathon] = useState(null);
 
-  // (Removed unused windowSize state; avoids build failure on Vercel)
-
   // Calculate statistics - accurate count of unique hackathons
   const uniqueHackathonNames = new Set();
   hackathonData.forEach(item => {
@@ -694,17 +540,6 @@ const HackathonsPage = () => {
     displayBlockNumber: item.id // Keep original block number
   }));
 
-  // Organize hackathons into rows (3 per row)
-  const organizeHackathonsIntoRows = (data) => {
-    const result = [];
-    for (let i = 0; i < data.length; i += 3) {
-      result.push(data.slice(i, i + 3));
-    }
-    return result;
-  };
-
-  const rows = organizeHackathonsIntoRows(sortedHackathonData);
-
   const handleBlockClick = (hackathon) => {
     setSelectedHackathon(hackathon);
   };
@@ -713,169 +548,168 @@ const HackathonsPage = () => {
     setSelectedHackathon(null);
   };
 
+  // Escape closes the modal, and the body stops scrolling behind it.
+  useEffect(() => {
+    if (!selectedHackathon) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setSelectedHackathon(null);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [selectedHackathon]);
+
   return (
-    <PageSection>
-      <BackButton to="/">Back</BackButton>
-      <Container>
-        <Title
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          Hackathon <span>Highlights</span>
-        </Title>
+    <Section $divided={false}>
+      <GridBackdrop />
+      <Container $wide>
+        <Head>
+          <BackButton to="/">Back</BackButton>
+          <Eyebrow>Where we build</Eyebrow>
+          <Title>
+            Hackathon <span>Highlights</span>
+          </Title>
+          <Lead>
+            Boiler Blockchain members participate in leading Web3 hackathons around the world, building innovative projects and winning recognition
+          </Lead>
+        </Head>
 
-        <Subtitle
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Boiler Blockchain members participate in leading Web3 hackathons around the world, building innovative projects and winning recognition
-        </Subtitle>
-
-        <StatsContainer
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <StatCard whileHover={{ y: -10 }}>
+        <StatsContainer>
+          <StatCard>
             <StatNumber>{totalHackathons}</StatNumber>
             <StatTitle>Hackathons</StatTitle>
           </StatCard>
 
-          <StatCard whileHover={{ y: -10 }}>
+          <StatCard>
             <StatNumber>{totalProjects}</StatNumber>
             <StatTitle>Projects Built</StatTitle>
           </StatCard>
 
-          <StatCard whileHover={{ y: -10 }}>
+          <StatCard>
             <StatNumber>{totalPrizes}</StatNumber>
             <StatTitle>Prizes Won</StatTitle>
           </StatCard>
         </StatsContainer>
 
-        <BlockchainContainer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <BlockchainTrack />
-
-          {rows.map((row, rowIndex) => (
-            <BlockRow key={rowIndex}>
-              {row.map((block, blockIndex) => (
-                <BlockCard
-                  key={block.id}
-                  blockNumber={block.displayBlockNumber}
-                  onClick={() => handleBlockClick(block)}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                    transition: {
-                      type: "spring",
-                      stiffness: 100,
-                      damping: 12,
-                      delay: blockIndex * 0.1
-                    }
-                  }}
-                  viewport={{ once: false, amount: 0.3 }}
-                  whileHover={{
-                    y: -5,
-                    transition: { type: "spring", stiffness: 400, damping: 10 }
-                  }}
-                >
-                  <span className="connector top"></span>
-                  <span className="node top"></span>
-
-                  <BlockContent>
-                    <Hash title={block.hash}>{block.hash.substring(0, 20)}...</Hash>
-
-                    <BlockHeader>
-                      <BlockDate>{block.date}</BlockDate>
-                      <BlockTime>{block.timestamp}</BlockTime>
-                    </BlockHeader>
-
-                    <BlockTitle>{block.project}</BlockTitle>
-
-                    <BlockTeam>
-                      <strong>Team:</strong> {block.devs}
-                    </BlockTeam>
-
-                    <BlockFooter>
-                      {(block.prize && block.prize !== "") || (block.prizes && block.prizes.length > 0) ? (
-                        <PrizeTag>
-                          Winner
-                        </PrizeTag>
-                      ) : (
-                        <div></div>
-                      )}
-
-                      <ViewButton>
-                        <ExternalLink size={14} /> View
-                      </ViewButton>
-                    </BlockFooter>
-                  </BlockContent>
-
-                  <span className="connector bottom"></span>
-                  <span className="node bottom"></span>
-                </BlockCard>
-              ))}
-            </BlockRow>
-          ))}
-        </BlockchainContainer>
-
-        {selectedHackathon && (
-          <ExpandedModal
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <ModalContent
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", damping: 15 }}
+        <BlockGrid>
+          {sortedHackathonData.map((block, index) => (
+            <BlockCard
+              key={block.id}
+              type="button"
+              $blockNumber={block.displayBlockNumber}
+              onClick={() => handleBlockClick(block)}
+              aria-label={`${block.project} — ${block.date}`}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{
+                duration: 0.4,
+                delay: Math.min(index, 6) * 0.05,
+                ease: [0.4, 0, 0.2, 1],
+              }}
             >
-              <CloseButton onClick={closeModal}>×</CloseButton>
-              <ModalTitle>Block #{selectedHackathon.displayBlockNumber} - {selectedHackathon.date}</ModalTitle>
-              <ModalHash title={selectedHackathon.hash}>{selectedHackathon.hash}</ModalHash>
+              <BlockContent>
+                <Hash title={block.hash}>{block.hash.substring(0, 20)}...</Hash>
 
-              <ModalProjectName>
-                <a href={selectedHackathon.link} target="_blank" rel="noopener noreferrer">
-                  {selectedHackathon.project} <ExternalLink size={18} />
-                </a>
-              </ModalProjectName>
+                <BlockHeader>
+                  <BlockDate>{block.date}</BlockDate>
+                  <BlockTime>{block.timestamp}</BlockTime>
+                </BlockHeader>
 
-              <ModalTeam>
-                <strong>Team:</strong> {selectedHackathon.devs}
-              </ModalTeam>
+                <BlockTitle>{block.project}</BlockTitle>
 
-              {selectedHackathon.prizes ? (
-                <>
-                  <strong>Prizes:</strong>
-                  <PrizesList>
-                    {selectedHackathon.prizes.map((prize, i) => (
-                      <li key={i}>
-                        {prize}
+                <BlockTeam>
+                  <strong>Team:</strong> {block.devs}
+                </BlockTeam>
+
+                <BlockFooter>
+                  {(block.prize && block.prize !== "") || (block.prizes && block.prizes.length > 0) ? (
+                    <PrizeTag>
+                      Winner
+                    </PrizeTag>
+                  ) : (
+                    <div></div>
+                  )}
+
+                  <ViewButton>
+                    <ExternalLink size={14} /> View
+                  </ViewButton>
+                </BlockFooter>
+              </BlockContent>
+            </BlockCard>
+          ))}
+        </BlockGrid>
+
+        <AnimatePresence>
+          {selectedHackathon && (
+            <ExpandedModal
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Block ${selectedHackathon.displayBlockNumber} details`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              /* Only a click that starts and ends on the backdrop itself
+                 closes: dragging a text selection out of the panel used to
+                 dismiss it. */
+              onClick={(event) => {
+                if (event.target === event.currentTarget) closeModal();
+              }}
+            >
+              <ModalContent
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <CloseButton onClick={closeModal} aria-label="Close">×</CloseButton>
+                <ModalTitle>Block #{selectedHackathon.displayBlockNumber} - {selectedHackathon.date}</ModalTitle>
+                <ModalHash title={selectedHackathon.hash}>{selectedHackathon.hash}</ModalHash>
+
+                <ModalProjectName>
+                  <a href={selectedHackathon.link} target="_blank" rel="noopener noreferrer">
+                    {selectedHackathon.project} <ExternalLink size={18} />
+                  </a>
+                </ModalProjectName>
+
+                <ModalTeam>
+                  <strong>Team:</strong> {selectedHackathon.devs}
+                </ModalTeam>
+
+                {selectedHackathon.prizes ? (
+                  <>
+                    <PrizesLabel>Prizes:</PrizesLabel>
+                    <PrizesList>
+                      {selectedHackathon.prizes.map((prize, i) => (
+                        <li key={i}>
+                          {prize}
+                        </li>
+                      ))}
+                    </PrizesList>
+                  </>
+                ) : selectedHackathon.prize && selectedHackathon.prize !== "" ? (
+                  <>
+                    <PrizesLabel>Prize:</PrizesLabel>
+                    <PrizesList>
+                      <li>
+                        {selectedHackathon.prize}
                       </li>
-                    ))}
-                  </PrizesList>
-                </>
-              ) : selectedHackathon.prize && selectedHackathon.prize !== "" ? (
-                <>
-                  <strong>Prize:</strong>
-                  <PrizesList>
-                    <li>
-                      {selectedHackathon.prize}
-                    </li>
-                  </PrizesList>
-                </>
-              ) : null}
-            </ModalContent>
-          </ExpandedModal>
-        )}
+                    </PrizesList>
+                  </>
+                ) : null}
+              </ModalContent>
+            </ExpandedModal>
+          )}
+        </AnimatePresence>
       </Container>
-    </PageSection>
+    </Section>
   );
 };
 

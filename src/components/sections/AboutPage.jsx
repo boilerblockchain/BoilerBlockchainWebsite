@@ -1,493 +1,269 @@
-import React, { useRef } from "react";
-import styled from "styled-components";
-import { motion, useInView } from "framer-motion";
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-// Placeholder images - Replace with actual images when ready
-const img5 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+1';
-const img6 = 'https://via.placeholder.com/800x600/9d20b0/ffffff?text=About+Image+2';
-const img7 = 'https://via.placeholder.com/800x600/a855f7/ffffff?text=About+Image+3';
-const img9 = 'https://via.placeholder.com/800x600/7120b0/ffffff?text=About+Image+4';
+import { Arrow, ExternalLink } from '../ui/Arrow';
+import {
+  Section,
+  Container,
+  GridBackdrop,
+  Eyebrow,
+  SectionTitle,
+  Lead,
+  Card,
+  Button,
+  ButtonLink,
+} from '../ui/primitives';
 
-const fadeInUp = {
-  initial: {
-    y: 60,
-    opacity: 0
+/**
+ * The four images here used to point at a placeholder-image CDN that has since
+ * shut down, so the page rendered four broken images. They now reference real
+ * club photos that exist in public/images.
+ */
+const sections = [
+  {
+    title: 'About Us',
+    content:
+      "At Boiler Blockchain, we're building the future of Web3 at Purdue University.",
+    image: '/images/club/bb_group_photo_solana_across_camp.webp',
+    imageWidth: 1280,
+    imageHeight: 960,
+    list: [
+      'Leading student-run blockchain organization fostering innovation and learning since 2021',
+      'Collaborative environment bringing together developers, researchers, and industry partners',
+      'Strong focus on practical implementation and real-world applications',
+      'Active community of 200+ members from diverse academic backgrounds',
+    ],
+    button: {
+      text: 'Join Our Discord',
+      link: 'https://discord.gg/vNwXZ39vmG',
+    },
+    imageFirst: false,
   },
-  animate: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut"
-    }
-  }
-};
+  {
+    title: 'Hackathons & Innovation',
+    content:
+      'Creating breakthrough blockchain solutions through competitive innovation.',
+    image: '/images/development/dev1.webp',
+    imageWidth: 1600,
+    imageHeight: 1200,
+    list: [
+      'Annual flagship hackathon with over $10,000 in prizes and industry sponsorships',
+      'Focused tracks in DeFi, NFTs, Web3 infrastructure, and social impact',
+      'Direct mentorship from experienced developers and industry professionals',
+      'Opportunity to develop projects with real-world implementation potential',
+    ],
+    button: {
+      text: 'Hackathons',
+      link: '/hackathons',
+    },
+    imageFirst: true,
+  },
+  {
+    title: 'Learning & Development',
+    content:
+      'Comprehensive blockchain education from fundamentals to advanced implementation.',
+    image: '/images/education/edu1.webp',
+    imageWidth: 1280,
+    imageHeight: 960,
+    list: [
+      'Structured technical workshops covering Ethereum, Solidity, and Web3 development',
+      'Hands-on experience with smart contracts and decentralized applications',
+      'Access to industry-standard tools and development frameworks',
+      'Collaborative learning environment with peer programming sessions',
+    ],
+    button: {
+      text: 'Education',
+      link: '/education',
+    },
+    imageFirst: false,
+  },
+  {
+    title: 'Community & Network',
+    content: 'Building lasting connections in the blockchain ecosystem.',
+    image: '/images/operations/op1.webp',
+    imageWidth: 1600,
+    imageHeight: 1200,
+    list: [
+      'Regular networking events with industry professionals and alumni',
+      'Opportunities to join specialized project teams and research groups',
+      'Mentorship program connecting experienced members with newcomers',
+      'Social events and collaborative learning sessions to strengthen community bonds',
+    ],
+    button: {
+      text: 'Join Our Discord',
+      link: 'https://discord.gg/vNwXZ39vmG',
+    },
+    imageFirst: true,
+  },
+];
 
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const PageSection = styled.section`
-  min-height: 100vh;
-  width: 100%;
-  background-color: #000000;
-  position: relative;
-  overflow: hidden;
-  padding-top: 4rem;
+const Accent = styled.span`
+  color: ${({ theme }) => theme.color.accent};
 `;
 
-const Container = styled(motion.div)`
-  width: 85%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 120px 2rem 4rem;
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: 'Tomorrow', sans-serif;
-
-  @media (max-width: 1024px) {
-    width: 90%;
-    padding: 110px 1.75rem 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 100px 1.5rem 3rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 80px 1rem 2rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 70px 0.75rem 1.5rem;
-  }
+const Head = styled.div`
+  margin-bottom: ${({ theme }) => theme.space[12]};
 `;
 
-const HeroTitle = styled.h1`
-  font-size: 6rem; 
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  margin-top: 1.5rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family:'Tomorrow', sans-serif; 
-  animation: fadeIn 1s ease-in;
-
-  @media (max-width: 40em) {
-    font-size: 4rem;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-// const SubHeading = styled.h2`
-//   font-size: 1.5rem;
-//   text-transform: uppercase;
-//   color: #7120b0;
-//   letter-spacing: 2px;
-//   margin-bottom: 1rem;
-//   font-weight: 600;
-//   text-align: center;
-// `;
-
-const HeroSubtitle = styled.p`
-  font-size: ${props => props.theme.fontSize.h3};
-  color: rgba(255, 255, 255, 0.8);
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem auto;
-  font-family: 'Tomorrow', sans-serif;
-  line-height: 1.6;
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-`;
-
-const Grid = styled(motion.div)`
+const Row = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2.5rem;
-  width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[8]};
+  align-items: center;
+  padding-block: ${({ theme }) => theme.space[12]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
 
-  @media (max-width: 64em) {
-    grid-template-columns: 1fr;
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: ${({ theme }) => theme.space[16]};
   }
 `;
 
-const ContentBlock = styled(motion.div)`
-  background: ${({ theme }) => theme.color.surfaceRaised};
-  padding: 2.5rem;
-  border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: ${({ theme }) => theme.radius.lg};
-  font-family: 'Tomorrow', sans-serif;
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-  transition: transform ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
-  box-sizing: border-box;
+/* On mobile the photo always leads; on desktop it alternates sides. */
+const Media = styled.div`
+  order: -1;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-
-  &:hover {
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-    border-color: ${({ theme }) => theme.color.accentBorderStrong};
-    transform: translateY(-4px);
-  }
-
-  * {
-    font-family: 'Tomorrow', sans-serif;
-  }
-
-  h2 {
-    color: #ffffff;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    font-family: 'Tomorrow', sans-serif;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    word-wrap: break-word;
-  }
-
-  p {
-    color: rgba(255, 255, 255, 0.8); 
-    font-size: ${props => props.theme.fontSize.bodyLarge};
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-    font-family: 'Tomorrow', sans-serif;
-    word-wrap: break-word;
-  }
-  .button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 2rem 1.5rem;
-
-    h2 {
-      font-size: 2rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    padding: 1.75rem 1.25rem;
-
-    h2 {
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-    }
-
-    p {
-      margin-bottom: 1.25rem;
-    }
-
-    .button-container {
-      margin-top: 1.5rem;
-    }
-  }
-
-  @media (max-width: 360px) {
-    padding: 1.5rem 1rem;
-
-    h2 {
-      font-size: 1.5rem;
-      letter-spacing: 0.5px;
-    }
-  }
-`;
-
-const List = styled.ul`
-  list-style: none;
-  padding: 0;
-
-  li {
-    color: #ffffff;
-    padding: 0.8rem 0;
-    display: flex;
-    align-items: center;
-    font-size: ${(props) => props.theme.fontSize.body};
-    line-height: 1.6;
-
-    &:before {
-      content: "";
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      margin-right: 1rem;
-      background-color: ${({ theme }) => theme.color.accent};
-      border-radius: 50%;
-    }
-  }
-`;
-
-const ImageContainer = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  min-height: 300px;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.elevation[1]};
   border: 1px solid ${({ theme }) => theme.color.border};
+  background: ${({ theme }) => theme.color.surface};
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
   }
-  
-  &:hover img {
-    transform: scale(1.05);
+
+  ${({ theme }) => theme.media.lg} {
+    order: ${({ $flip }) => ($flip ? -1 : 1)};
   }
 `;
 
+const Block = styled(Card)`
+  min-width: 0;
+  padding: ${({ theme }) => theme.space[8]};
+`;
 
+const BlockTitle = styled.h2`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h3};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[4]};
+`;
 
-const LinkButton = styled(motion.div)`
-  display: inline-block;
-  margin: 0 auto;
-  background-color: ${({ theme }) => theme.color.accentDeep};
-  color: #ffffff;
-  padding: 1rem 2rem;
-  text-decoration: none;
-  font-size: ${(props) => props.theme.fontSize.body};
-  transition: all 0.3s ease;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-sizing: border-box;
-  white-space: nowrap;
-  max-width: 100%;
+const BlockBody = styled.p`
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.body};
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.textMuted};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+`;
 
-  &:hover {
-    background-color: ${({ theme }) => theme.color.accent};
-    transform: translateY(-2px);
+const List = styled.ul`
+  list-style: none;
+  margin-bottom: ${({ theme }) => theme.space[8]};
+
+  li {
+    position: relative;
+    padding-left: ${({ theme }) => theme.space[5]};
+    font-family: ${({ theme }) => theme.fontFamily.body};
+    font-size: ${({ theme }) => theme.fontSize.body};
+    line-height: 1.6;
+    color: ${({ theme }) => theme.color.textMuted};
   }
 
-  @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontSize.small};
-    padding: 0.8rem 1.5rem;
+  li + li {
+    margin-top: ${({ theme }) => theme.space[3]};
   }
 
-  @media (max-width: 360px) {
-    padding: 0.75rem 1.25rem;
-    letter-spacing: 0.5px;
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 8px;
+    height: 1px;
+    background: ${({ theme }) => theme.color.accent};
   }
 `;
 
 const AboutPage = () => {
   return (
-    <PageSection>
-      <Container
-        initial="initial"
-        animate="animate"
-        variants={staggerContainer}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+    <Section>
+      <GridBackdrop />
+      <Container $wide>
+        <Head
+          as={motion.div}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         >
-          
-          <HeroTitle>Discover <span style={{ color: "#A855F7" }}>Who we are</span></HeroTitle>
-          <HeroSubtitle>
-            Purdue's premier student-led organization dedicated to advancing blockchain technology 
-            through innovation, education, and community building.
-          </HeroSubtitle>
-        </motion.div>
+          <Eyebrow>About</Eyebrow>
+          <SectionTitle>
+            Discover <Accent>Who we are</Accent>
+          </SectionTitle>
+          <Lead style={{ marginTop: '1rem' }}>
+            Purdue&apos;s premier student-led organization dedicated to advancing
+            blockchain technology through innovation, education, and community
+            building.
+          </Lead>
+        </Head>
 
-        <Grid
-          variants={staggerContainer}
-          initial="initial"
-          animate="animate"
-        >
-          {[
-            {
-              title: "About Us",
-              content: "At Boiler Blockchain, we're building the future of Web3 at Purdue University.",
-              image: img6,
-              list: [
-                "Leading student-run blockchain organization fostering innovation and learning since 2021",
-                "Collaborative environment bringing together developers, researchers, and industry partners",
-                "Strong focus on practical implementation and real-world applications",
-                "Active community of 200+ members from diverse academic backgrounds"
-              ],
-              button: {
-                text: "Join Our Discord",
-                link: "https://discord.gg/vNwXZ39vmG"
-              },
-              imageFirst: false
-            },
-            {
-              title: "Hackathons & Innovation",
-              content: "Creating breakthrough blockchain solutions through competitive innovation.",
-              image: img7,
-              list: [
-                "Annual flagship hackathon with over $10,000 in prizes and industry sponsorships",
-                "Focused tracks in DeFi, NFTs, Web3 infrastructure, and social impact",
-                "Direct mentorship from experienced developers and industry professionals",
-                "Opportunity to develop projects with real-world implementation potential"
-              ],
-              button: {
-                text: "Hackathons",
-                link: "/hackathons"
-              },
-              imageFirst: true
-            },
-            {
-              title: "Learning & Development",
-              content: "Comprehensive blockchain education from fundamentals to advanced implementation.",
-              image: img5,
-              list: [
-                "Structured technical workshops covering Ethereum, Solidity, and Web3 development",
-                "Hands-on experience with smart contracts and decentralized applications",
-                "Access to industry-standard tools and development frameworks",
-                "Collaborative learning environment with peer programming sessions"
-              ],
-              button: {
-                text: "Education",
-                link: "/education"
-              },
-              imageFirst: false
-            },
-            {
-              title: "Community & Network",
-              content: "Building lasting connections in the blockchain ecosystem.",
-              image: img9,
-              list: [
-                "Regular networking events with industry professionals and alumni",
-                "Opportunities to join specialized project teams and research groups",
-                "Mentorship program connecting experienced members with newcomers",
-                "Social events and collaborative learning sessions to strengthen community bonds"
-              ],
-              button: {
-                text: "Join Our Discord",
-                link: "https://discord.gg/vNwXZ39vmG"
-              },
-              imageFirst: true
-            }
-          ].map((section, index) => {
-            const ScrollAnimatedSection = ({ children }) => {
-              const ref = useRef(null);
-              const isInView = useInView(ref, { once: true, margin: "-100px" });
-              
-              return (
-                <motion.div
-                  ref={ref}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  {children}
-                </motion.div>
-              );
-            };
+        {sections.map((section) => {
+          const isExternal = section.button.link.startsWith('http');
 
-            const content = (
-              <ContentBlock
-                variants={fadeInUp}
-                custom={index}
-                initial="initial"
-                animate="animate"
-              >
-                <motion.h2
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  {section.title}
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  {section.content}
-                </motion.p>
+          return (
+            <Row
+              key={section.title}
+              as={motion.div}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <Block>
+                <BlockTitle>{section.title}</BlockTitle>
+                <BlockBody>{section.content}</BlockBody>
                 <List>
-                  {section.list.map((item, i) => (
-                    <motion.li
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + i * 0.1 }}
-                    >
-                      {item}
-                    </motion.li>
+                  {section.list.map((item) => (
+                    <li key={item}>{item}</li>
                   ))}
                 </List>
-                {section.button && (
-                  <div className="button-container">
-                    <LinkButton
-                      as={motion.a}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href={section.button.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {section.button.text}
-                    </LinkButton>
-                  </div>
+                {isExternal ? (
+                  <Button
+                    href={section.button.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    $variant="outline"
+                  >
+                    {section.button.text}
+                    <ExternalLink size={16} />
+                  </Button>
+                ) : (
+                  <ButtonLink to={section.button.link} $variant="outline">
+                    {section.button.text}
+                    <Arrow size={16} />
+                  </ButtonLink>
                 )}
-              </ContentBlock>
-            );
+              </Block>
 
-            const image = (
-              <ImageContainer
-                as={motion.div}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <img src={section.image} alt={section.title} />
-              </ImageContainer>
-            );
-
-            return (
-              <React.Fragment key={section.title}>
-                <ScrollAnimatedSection>
-                  {section.imageFirst ? image : content}
-                </ScrollAnimatedSection>
-                <ScrollAnimatedSection>
-                  {section.imageFirst ? content : image}
-                </ScrollAnimatedSection>
-              </React.Fragment>
-            );
-          })}
-        </Grid>
+              <Media $flip={section.imageFirst}>
+                <img
+                  src={section.image}
+                  alt={section.title}
+                  loading="lazy"
+                  width={section.imageWidth}
+                  height={section.imageHeight}
+                />
+              </Media>
+            </Row>
+          );
+        })}
       </Container>
-    </PageSection>
+    </Section>
   );
 };
 

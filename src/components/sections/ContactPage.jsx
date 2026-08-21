@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { motion } from 'framer-motion';
 import Discord from '../../Icons/Discord';
 import Twitter from '../../Icons/Twitter';
@@ -7,312 +7,175 @@ import Medium from '../../Icons/Medium';
 import Github from '../../Icons/Github';
 import Instagram from '../../Icons/Instagram';
 import LinkedIn from '../../Icons/LinkedIn';
-
-
-const PageSection = styled.section`
-  width: 100%;
-  background-color: ${({ theme }) => theme.color.black};
-  position: relative;
-  font-family: 'Tomorrow', sans-serif;
-  display: flex;
-  flex-direction: column;
-  
-  * {
-    font-family: 'Tomorrow', sans-serif;
-  }
-`;
-
-const Container = styled.div`
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 120px 2rem 4rem;
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  
-  @media (max-width: 1024px) {
-    width: 95%;
-    padding: 110px 1.75rem 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    width: 95%;
-    padding: 100px 1.5rem 3rem;
-  }
-
-  @media (max-width: 480px) {
-    width: 100%;
-    padding: 80px 1rem 2rem;
-  }
-`;
+import {
+  Section,
+  Container,
+  GridBackdrop,
+  SectionTitle,
+  Lead,
+} from '../ui/primitives';
 
 const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  max-width: 1100px;
-  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[8]};
   align-items: start;
 
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 `;
 
-const InfoCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 3rem;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-  overflow: hidden;
+/* Flat panel: 1px border, square corners, no blur and no glow. */
+const Panel = styled(motion.div)`
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  padding: ${({ theme }) => theme.space[8]};
+  color: ${({ theme }) => theme.color.text};
 
-  &:hover {
-    border-color: rgba(113, 32, 176, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    padding: 2.5rem 2rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 2rem 1.5rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 1.75rem 1.25rem;
+  ${({ theme }) => theme.media.md} {
+    padding: ${({ theme }) => theme.space[10]};
   }
 `;
 
 const CardHeader = styled.div`
-  margin-bottom: 2rem;
-`;
-
-const InfoTitle = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: #ffffff;
-  letter-spacing: 0.3px;
-
-  @media (max-width: 768px) {
-    font-size: 1.75rem;
-  }
-`;
-
-const InfoSubtitle = styled.p`
-  font-size: 0.9375rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-  line-height: 1.6;
+  margin-bottom: ${({ theme }) => theme.space[8]};
 `;
 
 const InfoSection = styled.div`
-  margin-bottom: 2rem;
-
-  &:last-of-type {
-    margin-bottom: 0;
+  & + & {
+    margin-top: ${({ theme }) => theme.space[8]};
   }
 `;
 
-const InfoLabel = styled.label`
+/* Mono, wide-tracked label shared by the info blocks and the form fields. */
+const FieldLabel = styled.label`
   display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0.5rem;
+  margin-bottom: ${({ theme }) => theme.space[2]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const InfoText = styled.p`
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0;
-  padding-top: 0.25rem;
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.body};
+  line-height: 1.7;
+  color: ${({ theme }) => theme.color.textMuted};
 `;
 
 const SocialIcons = styled.div`
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
   flex-wrap: wrap;
-  padding-top: 0.25rem;
-  
+  gap: ${({ theme }) => theme.space[2]};
+
   a {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: rgba(20, 20, 20, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1.125rem;
+    background: transparent;
+    border: 1px solid ${({ theme }) => theme.color.border};
+    color: ${({ theme }) => theme.color.textMuted};
     text-decoration: none;
-    transition: all 0.3s ease;
-    
+    transition: color ${({ theme }) => theme.motion.base},
+      border-color ${({ theme }) => theme.motion.base};
+
     svg {
       width: 20px;
       height: 20px;
       flex-shrink: 0;
-      
+
       path {
         fill: currentColor;
       }
     }
-    
+
     &:hover {
       border-color: ${({ theme }) => theme.color.accent};
-      color: ${({ theme }) => theme.color.text};
-      transform: translateY(-2px);
-      box-shadow: ${({ theme }) => theme.elevation[2]};
-      background: ${({ theme }) => theme.color.surfaceHover};
+      color: ${({ theme }) => theme.color.accent};
     }
   }
 `;
 
-const FormCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 3rem;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-  overflow: hidden;
-
-  &:hover {
-    border-color: rgba(113, 32, 176, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    padding: 2.5rem 2rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 2rem 1.5rem;
-  }
-
-  @media (max-width: 360px) {
-    padding: 1.75rem 1.25rem;
-  }
-`;
-
 const FormGroup = styled.div`
-  margin-bottom: 1.5rem;
+  & + & {
+    margin-top: ${({ theme }) => theme.space[5]};
+  }
 `;
 
-const FormLabel = styled.label`
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+/* font-size stays at 16px minimum: anything smaller makes iOS Safari zoom the
+   viewport when the field takes focus. */
+const fieldStyles = css`
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: ${({ theme }) => theme.color.surface};
+  color: ${({ theme }) => theme.color.text};
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: 1rem;
+  line-height: 1.5;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.none};
+  transition: border-color ${({ theme }) => theme.motion.base};
 `;
 
 const FormInput = styled.input`
-  width: 100%;
-  padding: 1rem 1.125rem;
-  background: rgba(20, 20, 20, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
+  ${fieldStyles}
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: ${({ theme }) => theme.color.textFaint};
   }
 
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.color.accent};
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-    background: ${({ theme }) => theme.color.surfaceHover};
   }
 `;
 
 const FormTextarea = styled.textarea`
-  width: 100%;
-  padding: 1rem 1.125rem;
-  background: rgba(20, 20, 20, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 0.9375rem;
-  font-family: 'Tomorrow', sans-serif;
+  ${fieldStyles}
   min-height: 140px;
   resize: vertical;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: ${({ theme }) => theme.color.textFaint};
   }
 
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.color.accent};
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-    background: ${({ theme }) => theme.color.surfaceHover};
   }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
-  padding: 1.125rem;
+  margin-top: ${({ theme }) => theme.space[8]};
+  padding: 0.9rem 1.75rem;
   background: ${({ theme }) => theme.color.accentDeep};
-  border: none;
-  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.color.accentDeep};
+  border-radius: ${({ theme }) => theme.radius.none};
   color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: 'Tomorrow', sans-serif;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background ${({ theme }) => theme.motion.base},
-              transform ${({ theme }) => theme.motion.base},
-              box-shadow ${({ theme }) => theme.motion.base};
-  box-shadow: ${({ theme }) => theme.elevation[1]};
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: relative;
-  box-sizing: border-box;
+    border-color ${({ theme }) => theme.motion.base};
 
   &:hover {
     background: ${({ theme }) => theme.color.accent};
-    box-shadow: ${({ theme }) => theme.elevation[2]};
-    transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
+    border-color: ${({ theme }) => theme.color.accent};
   }
 
   &:disabled {
-    opacity: 0.7;
+    opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
   }
 `;
 
@@ -365,21 +228,25 @@ const ContactPage = () => {
   };
 
   return (
-    <PageSection>
+    <Section $divided={false}>
+      <GridBackdrop />
       <Container>
         <ContentGrid>
-          <InfoCard
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          <Panel
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           >
             <CardHeader>
-              <InfoTitle>Connect with Boiler Blockchain</InfoTitle>
-              <InfoSubtitle>Establish a link with our team</InfoSubtitle>
+              <SectionTitle>Connect with Boiler Blockchain</SectionTitle>
+              <Lead style={{ marginTop: '1rem' }}>
+                Establish a link with our team
+              </Lead>
             </CardHeader>
-            
+
             <InfoSection>
-              <InfoLabel>Weekly Meeting</InfoLabel>
+              <FieldLabel as="p">Weekly Meeting</FieldLabel>
               <InfoText>
                 Boiler Blockchain Weekly Meeting<br />
                 Thursdays · 7–8 PM EST<br />
@@ -388,7 +255,7 @@ const ContactPage = () => {
             </InfoSection>
 
             <InfoSection>
-              <InfoLabel>Follow Us</InfoLabel>
+              <FieldLabel as="p">Follow Us</FieldLabel>
               <SocialIcons>
                 <a href="https://twitter.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
                   <Twitter width={20} height={20} />
@@ -410,16 +277,17 @@ const ContactPage = () => {
                 </a>
               </SocialIcons>
             </InfoSection>
-          </InfoCard>
+          </Panel>
 
-          <FormCard
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+          <Panel
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.4, delay: 0.08, ease: [0.4, 0, 0.2, 1] }}
           >
             <form onSubmit={handleSubmit}>
               <FormGroup>
-                <FormLabel htmlFor="firstName">First Name</FormLabel>
+                <FieldLabel htmlFor="firstName">First Name</FieldLabel>
                 <FormInput
                   type="text"
                   id="firstName"
@@ -432,7 +300,7 @@ const ContactPage = () => {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
                 <FormInput
                   type="text"
                   id="lastName"
@@ -445,7 +313,7 @@ const ContactPage = () => {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel htmlFor="email">Email</FormLabel>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
                 <FormInput
                   type="email"
                   id="email"
@@ -458,7 +326,7 @@ const ContactPage = () => {
               </FormGroup>
 
               <FormGroup>
-                <FormLabel htmlFor="message">Message</FormLabel>
+                <FieldLabel htmlFor="message">Message</FieldLabel>
                 <FormTextarea
                   id="message"
                   name="message"
@@ -473,10 +341,10 @@ const ContactPage = () => {
                 {getButtonText()}
               </SubmitButton>
             </form>
-          </FormCard>
+          </Panel>
         </ContentGrid>
       </Container>
-    </PageSection>
+    </Section>
   );
 };
 
