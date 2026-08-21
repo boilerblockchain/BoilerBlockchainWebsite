@@ -215,6 +215,7 @@ const MobilePanel = styled.div`
   top: ${({ theme }) => theme.layout.navHeight};
   left: 0;
   right: 0;
+  z-index: 999;
   max-height: calc(100dvh - ${({ theme }) => theme.layout.navHeight});
   overflow-y: auto;
   background: ${({ theme }) => theme.color.black};

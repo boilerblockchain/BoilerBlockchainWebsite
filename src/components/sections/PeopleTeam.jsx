@@ -414,16 +414,25 @@ const PeopleTeam = () => {
     const ranked = execRoleOrder.flatMap((role) =>
       shuffle(executives.filter((member) => member.title === role)),
     );
-    const rankedIds = new Set(ranked.map((member) => member.id));
+    /* Keep the requested leaders directly after the two presidents. */
+    const featuredIds = [46, 49, 2, 1]; // Mugdha, Akash, Joey, Eli
+    const featured = featuredIds
+      .map((id) => allTeamMembersUnsorted.find((member) => member.id === id))
+      .filter(Boolean);
+    const rankedIds = new Set(
+      [...ranked, ...featured].map((member) => member.id),
+    );
     const remainingExecutives = shuffle(
       executives.filter((member) => !rankedIds.has(member.id)),
     );
 
     const everyoneElse = shuffle(
-      allTeamMembersUnsorted.filter((member) => !isExecutive(member)),
+      allTeamMembersUnsorted.filter(
+        (member) => !isExecutive(member) && !rankedIds.has(member.id),
+      ),
     );
 
-    return [...ranked, ...remainingExecutives, ...everyoneElse];
+    return [...ranked, ...featured, ...remainingExecutives, ...everyoneElse];
   }, []); // Empty dependency array means this only runs once on mount
 
   const filters = [
