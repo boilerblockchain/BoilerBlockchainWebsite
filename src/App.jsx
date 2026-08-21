@@ -24,10 +24,13 @@ const Shell = styled.div`
   background: ${({ theme }) => theme.color.black};
 `;
 
-/* flex: 1 pins the footer to the bottom on short pages (the 404, mainly). */
+/* flex: 1 pins the footer to the bottom on short pages (the 404, mainly).
+   padding-top clears the fixed, opaque nav. Doing it here once means no page
+   can accidentally render its first element underneath the bar. */
 const Main = styled.main`
   flex: 1;
   width: 100%;
+  padding-top: ${({ theme }) => theme.layout.navHeight};
 `;
 
 function App() {

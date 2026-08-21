@@ -21,9 +21,6 @@ const Wrap = styled.section`
   border-bottom: 1px solid ${({ theme }) => theme.color.border};
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  /* The nav is fixed and opaque, so start the hero below it rather than
-     letting the photo slide underneath. */
-  padding-top: ${({ theme }) => theme.layout.navHeight};
 
   ${({ theme }) => theme.media.lg} {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
