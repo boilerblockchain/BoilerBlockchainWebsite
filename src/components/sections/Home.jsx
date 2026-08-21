@@ -6,30 +6,30 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiAward, FiBook, FiZap, FiSearch, FiSettings, FiDollarSign, FiBriefcase } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
-import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 
 // Education block images
-import educationImage1 from '../../assets/images/education/edu1.jpg';
-import educationImage2 from '../../assets/images/education/edu2.jpg';
-import educationImage3 from '../../assets/images/education/edu3.jpg';
+const educationImage1 = '/images/education/edu1.webp';
+const educationImage2 = '/images/education/edu2.webp';
+const educationImage3 = '/images/education/edu3.webp';
 
 // Development block images
-import developmentImage1 from '../../assets/images/development/dev1.jpg';
-import developmentImage2 from '../../assets/images/development/dev2.jpg';
-import developmentImage3 from '../../assets/images/development/dev3.JPEG';
+const developmentImage1 = '/images/development/dev1.webp';
+const developmentImage2 = '/images/development/dev2.webp';
+const developmentImage3 = '/images/development/dev3.webp';
 
 // Research block images
-import researchImage1 from '../../assets/images/research/res1.jpeg';
-import researchImage2 from '../../assets/images/research/res2.jpg';
-import researchImage3 from '../../assets/images/research/res3.jpg';
+const researchImage1 = '/images/research/res1.webp';
+const researchImage2 = '/images/research/res2.webp';
+const researchImage3 = '/images/research/res3.webp';
 
 // Operations block images
-import operationsImage1 from '../../assets/images/operations/op1.png';
-import operationsImage2 from '../../assets/images/operations/op2.jpg';
-import operationsImage3 from '../../assets/images/operations/op3.jpeg';
+const operationsImage1 = '/images/operations/op1.webp';
+const operationsImage2 = '/images/operations/op2.webp';
+const operationsImage3 = '/images/operations/op3.webp';
 
 // Club group photo
-import clubGroupPhoto from '../../assets/images/club/BB_group_photo_solana_across_camp.jpg';
+const clubGroupPhoto = '/images/club/bb_group_photo_solana_across_camp.webp';
 
 // Fallback placeholder if group image doesn't exist
 const placeholderImage = 'https://via.placeholder.com/1200x800/7120b0/ffffff?text=Group+Photo';

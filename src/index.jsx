@@ -5,13 +5,15 @@ import "normalize.css";
 
 // Real weight files. Previously only 600 was loaded while the CSS asked for
 // 800/900, so every heading was synthetically (badly) bolded by the browser.
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/500.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/tomorrow/400.css";
-import "@fontsource/tomorrow/500.css";
-import "@fontsource/tomorrow/600.css";
-import "@fontsource/tomorrow/700.css";
+// Latin subset only — the full imports pulled Cyrillic, Greek and Vietnamese
+// across 29 woff2 files for a site with no non-Latin copy.
+import "@fontsource/inter/latin-400.css";
+import "@fontsource/inter/latin-500.css";
+import "@fontsource/inter/latin-600.css";
+import "@fontsource/tomorrow/latin-400.css";
+import "@fontsource/tomorrow/latin-500.css";
+import "@fontsource/tomorrow/latin-600.css";
+import "@fontsource/tomorrow/latin-700.css";
 
 import App from "./App";
 import ScrollToTop from "./components/ScrollToTop";

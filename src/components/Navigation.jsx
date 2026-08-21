@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 
 const NavHeader = styled.header`
   position: fixed;

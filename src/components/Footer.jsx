@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { FiLinkedin } from 'react-icons/fi';
-import BBLogo from "../assets/images/logos/Boiler_BLockchain_Logo_SVG.png";
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";

@@ -3,11 +3,11 @@ import styled, { keyframes } from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
-import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
+const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 
 // Education images
-import educationImage1 from '../../assets/images/education/edu1.jpg';
-import educationImage3 from '../../assets/images/education/edu3.jpg';
+const educationImage1 = '/images/education/edu1.webp';
+const educationImage3 = '/images/education/edu3.webp';
 
 const fadeInUp = {
   initial: {
