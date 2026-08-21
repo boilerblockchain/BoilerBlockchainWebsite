@@ -8,8 +8,6 @@ import Discord from '../../Icons/Discord';
 import Twitter from '../../Icons/Twitter';
 import Medium from '../../Icons/Medium';
 import Github from '../../Icons/Github';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 
 const PageSection = styled.section`
@@ -440,7 +438,6 @@ const ContactPage = () => {
         }}
       />
       
-      <Navigation />
       
       <Container>
         <ContentGrid>
@@ -552,7 +549,6 @@ const ContactPage = () => {
           </FormCard>
         </ContentGrid>
       </Container>
-      <Footer />
     </PageSection>
   );
 };

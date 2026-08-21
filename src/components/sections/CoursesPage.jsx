@@ -3,8 +3,6 @@ import styled, { keyframes } from "styled-components";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 import BBLogo from '../../assets/images/logos/Boiler_BLockchain_Logo_SVG.png';
 
 // Education images
@@ -714,7 +712,6 @@ const CoursesPage = () => {
         }}
       />
 
-      <Navigation />
 
       <Container
         variants={staggerContainer}
@@ -874,7 +871,6 @@ const CoursesPage = () => {
           </CourseInfo>
         </CourseCard>
       </Container>
-      <Footer />
     </PageSection>
   );
 };

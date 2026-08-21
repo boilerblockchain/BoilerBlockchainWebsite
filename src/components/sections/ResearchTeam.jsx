@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiSearch, FiBook, FiTrendingUp, FiUsers, FiExternalLink } from 'react-icons/fi';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -499,7 +497,6 @@ const ResearchTeam = () => {
 
   return (
     <PageSection>
-      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -648,7 +645,6 @@ const ResearchTeam = () => {
           ))}
         </PublicationsGrid>
       </Container>
-      <Footer />
     </PageSection>
   );
 };

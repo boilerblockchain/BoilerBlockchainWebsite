@@ -5,8 +5,6 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiCode, FiSearch, FiSettings, FiArrowRight } from 'react-icons/fi';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 const PageSection = styled.section`
   min-height: 100vh;
@@ -257,7 +255,6 @@ const TeamsLanding = () => {
   return (
     <>
       <PageSection>
-      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -349,7 +346,6 @@ const TeamsLanding = () => {
         </TeamsGrid>
       </Container>
       </PageSection>
-      <Footer />
     </>
   );
 };

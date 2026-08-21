@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 // Import all partner logos
 import aptosLogo from '../../assets/images/partners/aptos.png';
@@ -269,7 +267,6 @@ const PartnersPage = () => {
 
   return (
     <PageSection>
-      <Navigation />
       
       <Particles
         key={particleKey}
@@ -363,7 +360,6 @@ const PartnersPage = () => {
           ))}
         </PartnersGrid>
       </Container>
-      <Footer />
     </PageSection>
   );
 };

@@ -5,8 +5,6 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FaLinkedin } from 'react-icons/fa';
 import Twitter from '../../Icons/Twitter';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 // Executive Board
 import eliImage from '../../assets/images/pfps/exec/eli_dubizh.jpg';
@@ -924,7 +922,6 @@ const PeopleTeam = () => {
 
   return (
     <PageSection>
-      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -1065,7 +1062,6 @@ const PeopleTeam = () => {
           </TeamRow>
         </AnimatePresence>
       </Container>
-      <Footer />
     </PageSection>
   );
 };

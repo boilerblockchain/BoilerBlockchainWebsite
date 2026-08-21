@@ -5,8 +5,6 @@ import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiGithub, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -537,7 +535,6 @@ const DeveloperTeam = () => {
 
     return (
         <PageSection>
-            <Navigation />
             <Particles
                 key={particleKey}
                 init={particlesInit}
@@ -728,7 +725,6 @@ const DeveloperTeam = () => {
                     </motion.div>
                 </HackathonSection>
             </Container>
-            <Footer />
         </PageSection>
     );
 };

@@ -4,8 +4,6 @@ import { motion } from 'framer-motion';
 import Particles from 'react-tsparticles';
 import { loadFull } from 'tsparticles';
 import { FiSettings, FiCalendar, FiDollarSign, FiUsers, FiExternalLink } from 'react-icons/fi';
-import Navigation from '../Navigation';
-import Footer from '../Footer';
 
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
   const [count, setCount] = useState(0);
@@ -352,7 +350,6 @@ const OperationsTeam = () => {
 
   return (
     <PageSection>
-      <Navigation />
       <Particles
         key={particleKey}
         init={particlesInit}
@@ -470,7 +467,6 @@ const OperationsTeam = () => {
           ))}
         </OperationsGrid>
       </Container>
-      <Footer />
     </PageSection>
   );
 };
