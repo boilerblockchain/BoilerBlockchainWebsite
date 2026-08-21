@@ -90,7 +90,8 @@ export const fontSize = {
   h2: 'clamp(1.75rem, 1.35rem + 2vw, 3rem)',
   h1: 'clamp(2.25rem, 1.5rem + 3.75vw, 4.5rem)',
   display: 'clamp(2.5rem, 1.4rem + 5.5vw, 5.5rem)',
-  stat: 'clamp(2rem, 1.4rem + 3vw, 3.25rem)',
+  /* Capped so the widest value ("$50,000+") still fits a 4-up column at xl. */
+  stat: 'clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem)',
 };
 
 export const fontFamily = {

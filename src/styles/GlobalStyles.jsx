@@ -50,6 +50,20 @@ const GlobalStyles = createGlobalStyle`
     outline-offset: 3px;
   }
 
+  /*
+   * Verification hook, opt-in via ?nomotion=1.
+   *
+   * Scroll-reveal uses framer's whileInView, which never fires in a headless
+   * browser with a full-page viewport, so elements keep their initial inline
+   * opacity and screenshots show empty sections. This forces framer's inline
+   * start state to its end state. It matches inline styles only, so opacity
+   * driven by styled-components (carousel slides, dropdowns) is untouched.
+   */
+  body.nomotion [style*="opacity: 0"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;

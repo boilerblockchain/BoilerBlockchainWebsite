@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import styled from "styled-components";
@@ -30,6 +31,14 @@ const Main = styled.main`
 `;
 
 function App() {
+  // See GlobalStyles: ?nomotion=1 lets headless screenshots capture the
+  // post-reveal state so layout can actually be verified.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has("nomotion")) {
+      document.body.classList.add("nomotion");
+    }
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />

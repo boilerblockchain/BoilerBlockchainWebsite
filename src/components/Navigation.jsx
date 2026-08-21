@@ -11,22 +11,22 @@ const NavHeader = styled.header`
   z-index: 1000;
   display: flex;
   justify-content: center;
-  padding-top: 1.5rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  pointer-events: none;
-
-  @media (max-width: 768px) {
-    padding-top: 1rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
+  padding-inline: ${({ theme }) => theme.sectionPadding.inline};
+  /* Always opaque. The hero photo runs to the top edge, so a transparent bar
+     left "Partners" and "Our Team" sitting unreadably on top of it. */
+  background: ${({ $isScrolled }) =>
+    $isScrolled ? 'rgba(0, 0, 0, 0.92)' : ' #000000'};
+  backdrop-filter: ${({ $isScrolled }) => ($isScrolled ? 'blur(12px)' : 'none')};
+  -webkit-backdrop-filter: ${({ $isScrolled }) =>
+    $isScrolled ? 'blur(12px)' : 'none'};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+  transition: background ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base};
 `;
 
 const Nav = styled.nav`
   width: 100%;
-  max-width: 1280px;
-  pointer-events: auto;
+  max-width: ${({ theme }) => theme.layout.maxWidthWide};
   position: relative;
 `;
 
@@ -34,17 +34,8 @@ const NavContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: ${props => props.isScrolled 
-    ? 'rgba(30, 30, 40, 0.75)' 
-    : 'rgba(25, 25, 35, 0.65)'};
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 1rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  height: ${({ theme }) => theme.layout.navHeight};
   gap: 1rem;
-  transition: all 0.3s ease;
 
   @media (max-width: 1024px) {
     padding: 0.875rem 1.25rem;
@@ -135,10 +126,9 @@ const NavLink = styled(Link)`
   align-items: center;
   gap: 0.375rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
   text-decoration: none;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  background-color: ${props => props.isActive || props.isOpen ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  background-color: ${props => props.$isActive || props.$isOpen ? 'rgba(168, 85, 247, 0.14)' : 'transparent'};
   font-size: 0.875rem;
   font-weight: 500;
   font-family: 'Tomorrow', sans-serif;
@@ -146,7 +136,7 @@ const NavLink = styled(Link)`
 
   &:hover {
     color: #ffffff;
-    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+    background-color: ${props => props.$isActive ? 'rgba(168, 85, 247, 0.14)' : 'rgba(255, 255, 255, 0.05)'};
   }
 
   @media (max-width: 1024px) {
@@ -169,11 +159,10 @@ const DropdownMenu = styled.div`
 `;
 
 const DropdownContent = styled.div`
-  background-color: rgba(17, 24, 39, 0.95);
+  background-color: #0E0E12;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
   padding: 0.5rem 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   min-width: 224px;
@@ -183,16 +172,16 @@ const DropdownItem = styled(Link)`
   display: block;
   padding: 0.625rem 1rem;
   text-decoration: none;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
-  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  background-color: ${props => props.$isActive ? 'rgba(168, 85, 247, 0.14)' : 'transparent'};
   font-size: 0.875rem;
-  font-weight: ${props => props.isActive ? 500 : 400};
+  font-weight: ${props => props.$isActive ? 500 : 400};
   font-family: 'Tomorrow', sans-serif;
   transition: all 0.2s ease;
 
   &:hover {
     color: #ffffff;
-    background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'rgba(255, 255, 255, 0.05)'};
+    background-color: ${props => props.$isActive ? 'rgba(168, 85, 247, 0.14)' : 'rgba(255, 255, 255, 0.05)'};
   }
 `;
 
@@ -210,8 +199,7 @@ const ContactButton = styled(Link)`
   padding: 0.625rem 1.5rem;
   background: ${({ theme }) => theme.color.accentDeep};
   border: none;
-  border-radius: ${({ theme }) => theme.radius.md};
-  text-decoration: none;
+    text-decoration: none;
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -246,7 +234,6 @@ const MobileMenuButton = styled.button`
   height: 40px;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.1);
   border: none;
   color: #ffffff;
@@ -269,7 +256,7 @@ const MobileMenuButton = styled.button`
 `;
 
 const MobileNav = styled.div`
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: ${props => props.$isOpen ? 'flex' : 'none'};
   flex-direction: column;
   gap: 0.5rem;
   position: absolute;
@@ -277,11 +264,10 @@ const MobileNav = styled.div`
   left: 0;
   right: 0;
   margin-top: 0.5rem;
-  background-color: rgba(17, 24, 39, 0.95);
+  background-color: #0E0E12;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
   padding: 1rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 1001;
@@ -294,13 +280,12 @@ const MobileNav = styled.div`
 const MobileNavLink = styled(Link)`
   display: block;
   padding: 0.75rem;
-  color: ${props => props.isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
+  color: ${props => props.$isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)'};
   text-decoration: none;
   font-size: 0.875rem;
-  font-weight: ${props => props.isActive ? 500 : 400};
+  font-weight: ${props => props.$isActive ? 500 : 400};
   font-family: 'Tomorrow', sans-serif;
-  border-radius: 8px;
-  background-color: ${props => props.isActive ? 'rgba(113, 32, 176, 0.2)' : 'transparent'};
+  background-color: ${props => props.$isActive ? 'rgba(168, 85, 247, 0.14)' : 'transparent'};
   transition: all 0.2s ease;
 
   &:hover {
@@ -381,9 +366,9 @@ const Navigation = () => {
   };
 
   return (
-    <NavHeader>
+    <NavHeader $isScrolled={isScrolled}>
       <Nav>
-        <NavContainer isScrolled={isScrolled}>
+        <NavContainer>
           <LogoLink to="/">
             <LogoBox>
               <img src={BBLogo} alt="Boiler Blockchain Logo" />
@@ -404,8 +389,8 @@ const Navigation = () => {
                 >
                   <NavLink
                     to={dropdown.path}
-                    isActive={isActive}
-                    isOpen={isOpen}
+                    $isActive={isActive}
+                    $isOpen={isOpen}
                   >
                     {dropdown.label}
                     <svg
@@ -435,7 +420,7 @@ const Navigation = () => {
                           <DropdownItem
                             key={index}
                             to={item.path}
-                            isActive={isActiveRoute(item.path)}
+                            $isActive={isActiveRoute(item.path)}
                           >
                             {item.label}
                           </DropdownItem>
@@ -451,7 +436,7 @@ const Navigation = () => {
               <NavLink
                   key={link.path}
                   to={link.path}
-                isActive={isActiveRoute(link.path)}
+                $isActive={isActiveRoute(link.path)}
                 >
                   {link.label}
               </NavLink>
@@ -480,7 +465,7 @@ const Navigation = () => {
           </ContactButtonWrapper>
         </NavContainer>
 
-        <MobileNav id="mobile-nav" isOpen={isMobileMenuOpen}>
+        <MobileNav id="mobile-nav" $isOpen={isMobileMenuOpen}>
             {Object.entries(dropdownData).map(([key, dropdown]) => (
             <MobileDropdownSection key={key}>
               <MobileDropdownTitle>{dropdown.label}</MobileDropdownTitle>
@@ -489,7 +474,7 @@ const Navigation = () => {
                   <MobileNavLink
                     key={index}
                     to={item.path}
-                    isActive={isActiveRoute(item.path)}
+                    $isActive={isActiveRoute(item.path)}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                     {item.label}
@@ -502,7 +487,7 @@ const Navigation = () => {
             <MobileNavLink
                 key={link.path}
                 to={link.path}
-              isActive={isActiveRoute(link.path)}
+              $isActive={isActiveRoute(link.path)}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.label}
