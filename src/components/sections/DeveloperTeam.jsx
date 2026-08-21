@@ -96,7 +96,7 @@ const Title = styled(motion.h1)`
 `;
 
 const Subtitle = styled(motion.p)`
-    font-size: ${props => props.theme.fontlg};
+    font-size: ${props => props.theme.fontSize.bodyLarge};
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
     max-width: 700px;
@@ -168,7 +168,7 @@ const StatNumber = styled.h3`
 
 const StatLabel = styled.p`
     color: rgba(255, 255, 255, 0.8);
-    font-size: ${props => props.theme.fontmd};
+    font-size: ${props => props.theme.fontSize.body};
     font-weight: 500;
     font-family: 'Tomorrow', sans-serif;
 `;
@@ -253,7 +253,7 @@ const ExtIcon = styled.div`
 
 const ExtName = styled.h4`
     color: #ffffff;
-    font-size: ${props => props.theme.fontlg};
+    font-size: ${props => props.theme.fontSize.bodyLarge};
     margin-bottom: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -342,7 +342,7 @@ const ProjectCard = styled(motion.div)`
 
 const ProjectTitle = styled.h3`
     color: #ffffff;
-    font-size: ${props => props.theme.fontlg};
+    font-size: ${props => props.theme.fontSize.bodyLarge};
     margin-bottom: 0.8rem;
     font-weight: 600;
     text-transform: uppercase;

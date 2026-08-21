@@ -1,19 +1,13 @@
-import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FiCode, FiSearch, FiSettings, FiArrowRight } from 'react-icons/fi';
+import { Arrow } from '../ui/Arrow';
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 4rem 0 4rem;
+  padding: ${({ theme }) => theme.sectionPadding.block} 0;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
@@ -74,7 +68,7 @@ const Title = styled(motion.h1)`
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontlg};
+  font-size: ${props => props.theme.fontSize.bodyLarge};
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   max-width: 700px;
@@ -105,66 +99,23 @@ const TeamsGrid = styled(motion.div)`
 `;
 
 const TeamCard = styled(motion.div)`
-  background: linear-gradient(
-    135deg,
-    rgba(40, 35, 50, 0.95) 0%,
-    rgba(35, 30, 45, 0.95) 100%
-  );
-  border: 1px solid rgba(168, 85, 247, 0.3);
-  border-radius: 12px;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 
-    0 4px 20px rgba(168, 85, 247, 0.15),
-    0 0 0 1px rgba(168, 85, 247, 0.1) inset;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  padding: ${({ theme }) => theme.space[8]};
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
   &:hover {
-    box-shadow: 
-      0 12px 40px rgba(168, 85, 247, 0.3),
-      0 0 0 1px rgba(168, 85, 247, 0.4) inset;
-    transform: translateY(-6px);
-    border-color: rgba(168, 85, 247, 0.6);
-    background: linear-gradient(
-      135deg,
-      rgba(45, 40, 55, 1) 0%,
-      rgba(40, 35, 50, 1) 100%
-    );
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-`;
-
-const TeamIcon = styled.div`
-  width: 45px;
-  height: 45px;
-  background: rgba(113, 32, 176, 0.15);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  
-  svg {
-    color: #7120b0;
-    font-size: 1.3rem;
+    transform: translateY(-4px);
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
   }
 `;
 
@@ -178,7 +129,7 @@ const TeamName = styled.h3`
 `;
 
 const TeamDescription = styled.p`
-  font-size: ${props => props.theme.fontmd};
+  font-size: ${props => props.theme.fontSize.body};
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
   margin-bottom: 2rem;
@@ -189,12 +140,12 @@ const ViewTeamButton = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(45deg, #7120b0, #bb20ff);
-  color: white;
+  background: ${({ theme }) => theme.color.accentDeep};
+  color: #ffffff;
   padding: 0.8rem 1.5rem;
   text-decoration: none;
   border-radius: 6px;
-  font-size: ${props => props.theme.fontmd};
+  font-size: ${props => props.theme.fontSize.body};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -204,8 +155,7 @@ const ViewTeamButton = styled(Link)`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(113, 32, 176, 0.4);
-    background: linear-gradient(45deg, #9d20b0, #d175ff);
+    background: ${({ theme }) => theme.color.accent};
   }
 
   svg {
@@ -221,85 +171,26 @@ const teams = [
   {
     id: 'developer',
     name: 'Developer Team',
-    icon: FiCode,
     description: 'Building the future of blockchain technology through innovative smart contracts, DApps, and Web3 infrastructure.',
     path: '/teams/developer'
   },
   {
     id: 'research',
     name: 'Research Team',
-    icon: FiSearch,
     description: 'Exploring cutting-edge blockchain research, consensus mechanisms, and emerging technologies in the decentralized space.',
     path: '/teams/research'
   },
   {
     id: 'operations',
     name: 'Operations Team',
-    icon: FiSettings,
     description: 'The engine behind everything: partnerships, events, logistics, and systems that let builders focus and scale impact.',
     path: '/teams/operations'
   }
 ];
 
 const TeamsLanding = () => {
-  const [particleKey, setParticleKey] = useState(Date.now());
-
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
-
   return (
-    <>
-      <PageSection>
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-      
+    <PageSection>
       <Container>
         <Title
           initial={{ opacity: 0, y: 50 }}
@@ -328,25 +219,19 @@ const TeamsLanding = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 + index * 0.2 }}
-              whileHover={{ y: -5 }}
             >
-              <TeamIcon>
-                <team.icon />
-              </TeamIcon>
-              
               <TeamName>{team.name}</TeamName>
               
               <TeamDescription>{team.description}</TeamDescription>
               
               <ViewTeamButton to={team.path}>
-                View Team <FiArrowRight />
+                View Team <Arrow size={18} />
               </ViewTeamButton>
             </TeamCard>
           ))}
         </TeamsGrid>
       </Container>
-      </PageSection>
-    </>
+    </PageSection>
   );
 };
 

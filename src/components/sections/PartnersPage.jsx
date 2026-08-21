@@ -97,7 +97,7 @@ const Title = styled(motion.h1)`
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontlg};
+  font-size: ${props => props.theme.fontSize.bodyLarge};
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   max-width: 700px;

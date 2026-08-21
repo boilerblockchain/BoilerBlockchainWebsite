@@ -111,7 +111,7 @@ const HeroTitle = styled.h1`
 // `;
 
 const HeroSubtitle = styled.p`
-  font-size: ${props => props.theme.fontxl};
+  font-size: ${props => props.theme.fontSize.h3};
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   max-width: 800px;
@@ -176,7 +176,7 @@ const ContentBlock = styled(motion.div)`
 
   p {
     color: rgba(255, 255, 255, 0.8); 
-    font-size: ${props => props.theme.fontlg};
+    font-size: ${props => props.theme.fontSize.bodyLarge};
     margin-bottom: 1.5rem;
     line-height: 1.6;
     font-family: 'Tomorrow', sans-serif;
@@ -232,7 +232,7 @@ const List = styled.ul`
     padding: 0.8rem 0;
     display: flex;
     align-items: center;
-    font-size: ${(props) => props.theme.fontmd};
+    font-size: ${(props) => props.theme.fontSize.body};
     line-height: 1.6;
 
     &:before {
@@ -277,7 +277,7 @@ const LinkButton = styled(motion.div)`
   color: white;
   padding: 1rem 2rem;
   text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
+  font-size: ${(props) => props.theme.fontSize.body};
   transition: all 0.3s ease;
   border-radius: 5px;
   cursor: pointer;
@@ -296,7 +296,7 @@ const LinkButton = styled(motion.div)`
   }
 
   @media (max-width: 40em) {
-    font-size: ${(props) => props.theme.fontsm};
+    font-size: ${(props) => props.theme.fontSize.small};
     padding: 0.8rem 1.5rem;
   }
 

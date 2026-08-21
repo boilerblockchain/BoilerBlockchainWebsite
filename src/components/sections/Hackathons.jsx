@@ -29,7 +29,7 @@ const BackButton = styled(Link)`
   background: rgba(0, 0, 0, 0.95);
   color: #ffffff;
   text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
+  font-size: ${(props) => props.theme.fontSize.body};
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -51,7 +51,7 @@ const BackButton = styled(Link)`
 
   @media (max-width: 40em) {
     padding: 0.8rem 1rem;
-    font-size: ${(props) => props.theme.fontsm};
+    font-size: ${(props) => props.theme.fontSize.small};
   }
 `;
 
@@ -102,7 +102,7 @@ const Title = styled(motion.h1)`
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontxl};
+  font-size: ${props => props.theme.fontSize.h3};
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   max-width: 800px;

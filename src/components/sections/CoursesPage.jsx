@@ -390,7 +390,7 @@ const List = styled.ul`
     display: flex;
     align-items: flex-start;
     font-family: 'Tomorrow', sans-serif;
-    font-size: ${(props) => props.theme.fontmd};
+    font-size: ${(props) => props.theme.fontSize.body};
     line-height: 1.6;
     word-wrap: break-word;
     max-width: 100%;
@@ -506,7 +506,7 @@ const DetailsSection = styled(motion.div)`
 
   p {
     color: rgba(255, 255, 255, 0.8); 
-    font-size: ${props => props.theme.fontlg};
+    font-size: ${props => props.theme.fontSize.bodyLarge};
     margin-bottom: 1.5rem;
     line-height: 1.6;
     word-wrap: break-word;
@@ -624,7 +624,7 @@ const DownloadButton = styled.a`
   color: white;
   padding: 1rem 2rem;
   text-decoration: none;
-  font-size: ${(props) => props.theme.fontmd};
+  font-size: ${(props) => props.theme.fontSize.body};
   transition: all 0.3s ease;
   border-radius: 8px;
   cursor: pointer;

@@ -95,7 +95,7 @@ const Title = styled(motion.h1)`
 `;
 
 const Subtitle = styled(motion.p)`
-  font-size: ${props => props.theme.fontlg};
+  font-size: ${props => props.theme.fontSize.bodyLarge};
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   max-width: 700px;
@@ -167,7 +167,7 @@ const StatNumber = styled.h3`
 
 const StatLabel = styled.p`
   color: rgba(255, 255, 255, 0.8);
-  font-size: ${props => props.theme.fontmd};
+  font-size: ${props => props.theme.fontSize.body};
   font-weight: 500;
   font-family: 'Tomorrow', sans-serif;
 `;
@@ -261,7 +261,7 @@ const ResearchIcon = styled.div`
 
 const ResearchTitle = styled.h3`
   color: #ffffff;
-  font-size: ${props => props.theme.fontlg};
+  font-size: ${props => props.theme.fontSize.bodyLarge};
   margin-bottom: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -358,7 +358,7 @@ const PublicationCard = styled(motion.div)`
 
 const PublicationTitle = styled.h4`
   color: #ffffff;
-  font-size: ${props => props.theme.fontlg};
+  font-size: ${props => props.theme.fontSize.bodyLarge};
   margin-bottom: 0.5rem;
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
@@ -366,7 +366,7 @@ const PublicationTitle = styled.h4`
 
 const PublicationAuthors = styled.p`
   color: #7120b0;
-  font-size: ${props => props.theme.fontmd};
+  font-size: ${props => props.theme.fontSize.body};
   margin-bottom: 0.5rem;
   font-weight: 500;
   font-family: 'Tomorrow', sans-serif;
