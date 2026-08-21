@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FiLinkedin } from 'react-icons/fi';
 const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 import Discord from "../Icons/Discord";
 import Instagram from "../Icons/Instagram";
 import Twitter from "../Icons/Twitter";
 import Medium from "../Icons/Medium";
 import Github from "../Icons/Github";
+import LinkedIn from "../Icons/LinkedIn";
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -260,7 +260,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               aria-label="LinkedIn"
             >
-                <FiLinkedin size={20} />
+                <LinkedIn width={20} height={20} />
             </SocialLink>
           </li>
           <li>

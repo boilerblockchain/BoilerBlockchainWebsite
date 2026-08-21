@@ -1,21 +1,18 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FiInstagram, FiLinkedin } from 'react-icons/fi';
 import Discord from '../../Icons/Discord';
 import Twitter from '../../Icons/Twitter';
 import Medium from '../../Icons/Medium';
 import Github from '../../Icons/Github';
+import Instagram from '../../Icons/Instagram';
+import LinkedIn from '../../Icons/LinkedIn';
 
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow: hidden;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
@@ -177,11 +174,11 @@ const SocialIcons = styled.div`
     }
     
     &:hover {
-      border-color: #7120b0;
-      color: #ffffff;
+      border-color: ${({ theme }) => theme.color.accent};
+      color: ${({ theme }) => theme.color.text};
       transform: translateY(-2px);
-      box-shadow: 0 0 0 3px rgba(113, 32, 176, 0.1), 0 0 20px rgba(113, 32, 176, 0.2);
-      background: rgba(20, 20, 20, 0.95);
+      box-shadow: ${({ theme }) => theme.elevation[2]};
+      background: ${({ theme }) => theme.color.surfaceHover};
     }
   }
 `;
@@ -250,9 +247,9 @@ const FormInput = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #7120b0;
-    box-shadow: 0 0 0 3px rgba(113, 32, 176, 0.1), 0 0 20px rgba(113, 32, 176, 0.2);
-    background: rgba(20, 20, 20, 0.95);
+    border-color: ${({ theme }) => theme.color.accent};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
+    background: ${({ theme }) => theme.color.surfaceHover};
   }
 `;
 
@@ -276,16 +273,16 @@ const FormTextarea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #7120b0;
-    box-shadow: 0 0 0 3px rgba(113, 32, 176, 0.1), 0 0 20px rgba(113, 32, 176, 0.2);
-    background: rgba(20, 20, 20, 0.95);
+    border-color: ${({ theme }) => theme.color.accent};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
+    background: ${({ theme }) => theme.color.surfaceHover};
   }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
   padding: 1.125rem;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  background: ${({ theme }) => theme.color.accentDeep};
   border: none;
   border-radius: 8px;
   color: #ffffff;
@@ -293,33 +290,19 @@ const SubmitButton = styled.button`
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(113, 32, 176, 0.3);
+  transition: background ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
+  box-shadow: ${({ theme }) => theme.elevation[1]};
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: relative;
-  overflow: hidden;
   box-sizing: border-box;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s ease;
-  }
-
   &:hover {
-    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
-    box-shadow: 0 6px 25px rgba(113, 32, 176, 0.5);
+    background: ${({ theme }) => theme.color.accent};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
     transform: translateY(-2px);
-    
-    &::before {
-      left: 100%;
-    }
   }
 
   &:active {
@@ -343,16 +326,6 @@ const ContactPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-
-  const [particleKey, setParticleKey] = useState(Date.now());
-
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -393,52 +366,6 @@ const ContactPage = () => {
 
   return (
     <PageSection>
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["rgba(113, 32, 176, 0.2)", "rgba(187, 32, 255, 0.2)"] },
-            links: {
-              color: "rgba(113, 32, 176, 0.15)",
-              distance: 150,
-              enable: true,
-              opacity: 0.2,
-              width: 1,
-            },
-            move: { enable: true, speed: 0.3 },
-            number: { value: 25 },
-            opacity: { value: 0.3 },
-            size: { value: 2 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.3 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-      
-      
       <Container>
         <ContentGrid>
           <InfoCard
@@ -467,13 +394,13 @@ const ContactPage = () => {
                   <Twitter width={20} height={20} />
                 </a>
                 <a href="https://instagram.com/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                  <FiInstagram />
+                  <Instagram width={20} height={20} />
                 </a>
                 <a href="https://discord.gg/vNwXZ39vmG" target="_blank" rel="noopener noreferrer" aria-label="Discord">
                   <Discord width={20} height={20} />
                 </a>
                 <a href="https://linkedin.com/company/boilerblockchain" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                  <FiLinkedin />
+                  <LinkedIn width={20} height={20} />
                 </a>
                 <a href="https://boilerblockchain.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium">
                   <Medium width={20} height={20} />

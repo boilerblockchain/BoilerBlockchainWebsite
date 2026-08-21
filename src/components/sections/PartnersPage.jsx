@@ -1,8 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
 
 // Import all partner logos
 const aptosLogo = '/images/partners/aptos.webp';
@@ -31,11 +28,9 @@ const swcLogo = '/images/partners/swc.webp';
 const symphonyLogo = '/images/partners/symphony.webp';
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow: hidden;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
   flex-direction: column;
@@ -88,7 +83,7 @@ const Title = styled(motion.h1)`
   letter-spacing: 1px;
 
   span {
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
   }
 
   @media (max-width: 40em) {
@@ -255,64 +250,8 @@ const partners = [
 ];
 
 const PartnersPage = () => {
-  const [particleKey, setParticleKey] = useState(Date.now());
-
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
-
   return (
     <PageSection>
-      
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-
       <Container>
         <Title
           initial={{ opacity: 0, y: 50 }}

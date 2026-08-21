@@ -1,17 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
-import { FiExternalLink, FiAward, FiLink } from 'react-icons/fi';
+import { ExternalLink } from '../ui/Arrow';
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow: hidden;
   padding: 4rem 0;
   font-family: 'Tomorrow', sans-serif;
   
@@ -34,7 +30,7 @@ const BackButton = styled(Link)`
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(113, 32, 176, 0.3);
+  border-bottom: 1px solid ${({ theme }) => theme.color.accentBorder};
   z-index: 100;
   backdrop-filter: blur(10px);
   text-transform: uppercase;
@@ -42,11 +38,11 @@ const BackButton = styled(Link)`
 
   &:before {
     content: "←";
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
   }
 
   &:hover {
-    background: rgba(113, 32, 176, 0.1);
+    background: ${({ theme }) => theme.color.accentWash};
   }
 
   @media (max-width: 40em) {
@@ -93,7 +89,7 @@ const Title = styled(motion.h1)`
   letter-spacing: 2px;
 
   span {
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
   }
 
   @media (max-width: 40em) {
@@ -122,17 +118,19 @@ const StatsContainer = styled(motion.div)`
 `;
 
 const StatCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
-  border: 1px solid #7120b0;
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
   border-radius: 8px;
   padding: 2.5rem 1.5rem;
   text-align: center;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
 
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
+    box-shadow: ${({ theme }) => theme.elevation[2]};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
     transform: translateY(-5px);
   }
 `;
@@ -140,7 +138,7 @@ const StatCard = styled(motion.div)`
 const StatNumber = styled.div`
   font-size: 3.5rem;
   font-weight: 700;
-  color: #7120b0;
+  color: ${({ theme }) => theme.color.accent};
   margin-bottom: 0.5rem;
 `;
 
@@ -174,11 +172,9 @@ const BlockchainTrack = styled.div`
     top: 50%;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.2), rgba(113, 32, 176, 0.8), rgba(113, 32, 176, 0.2));
+    height: 1px;
+    background: ${({ theme }) => theme.color.accentBorder};
     transform: translateY(-50%);
-    border-radius: 4px;
-    box-shadow: 0 0 15px rgba(113, 32, 176, 0.4);
     z-index: 1;
   }
   
@@ -212,42 +208,18 @@ const BlockRow = styled.div`
 
 const BlockCard = styled(motion.div)`
   width: 300px;
-  background: rgba(15, 15, 15, 0.8);
-  border: 2px solid #7120b0;
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
   border-radius: 10px;
   padding: 1.5rem;
   margin: 0 1rem 2rem;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+  box-shadow: ${({ theme }) => theme.elevation[1]};
   cursor: pointer;
   position: relative;
-  transition: all 0.3s ease;
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   min-height: 280px;
-  
-  /* Grid background pattern */
-  background-image: 
-    linear-gradient(rgba(113, 32, 176, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 32, 176, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  
-  /* Hash pattern at the top */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, 
-      rgba(113, 32, 176, 0.1) 0%, 
-      rgba(113, 32, 176, 0.8) 20%, 
-      rgba(113, 32, 176, 0.2) 40%,
-      rgba(113, 32, 176, 0.8) 60%,
-      rgba(113, 32, 176, 0.2) 80%,
-      rgba(113, 32, 176, 0.9) 100%
-    );
-    border-radius: 8px 8px 0 0;
-  }
   
   /* Block number */
   &::after {
@@ -268,7 +240,7 @@ const BlockCard = styled(motion.div)`
   .connector {
     position: absolute;
     width: 2px;
-    background: linear-gradient(0deg, rgba(113, 32, 176, 0.2), rgba(113, 32, 176, 0.8));
+    background: ${({ theme }) => theme.color.accentBorder};
     z-index: -1;
     
     &.top {
@@ -290,10 +262,9 @@ const BlockCard = styled(motion.div)`
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #7120b0;
+    background: ${({ theme }) => theme.color.accent};
     left: 50%;
     transform: translateX(-50%);
-    box-shadow: 0 0 10px rgba(113, 32, 176, 0.6);
     z-index: 3;
     
     &.top {
@@ -307,11 +278,11 @@ const BlockCard = styled(motion.div)`
   
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.3);
-    border-color: rgba(113, 32, 176, 1);
+    box-shadow: ${({ theme }) => theme.elevation[2]};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
     
     &::after {
-      color: rgba(113, 32, 176, 1);
+      color: ${({ theme }) => theme.color.accent};
     }
   }
   
@@ -355,7 +326,6 @@ const BlockDate = styled.h3`
   color: #ffffff;
   font-weight: 700;
   margin: 0;
-  text-shadow: 0 0 10px rgba(113, 32, 176, 0.5);
 `;
 
 const BlockTime = styled.span`
@@ -368,7 +338,7 @@ const BlockTime = styled.span`
 
 const BlockTitle = styled.h4`
   font-size: 1.1rem;
-  color: #bb20ff;
+  color: ${({ theme }) => theme.color.accentBright};
   margin-bottom: 1rem;
   font-weight: 600;
 `;
@@ -408,11 +378,7 @@ const PrizeTag = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid rgba(113, 32, 176, 0.5);
-  
-  svg {
-    color: #bb20ff;
-  }
+  border: 1px solid ${({ theme }) => theme.color.accentBorderStrong};
 `;
 
 const ViewButton = styled.div`
@@ -430,12 +396,8 @@ const ViewButton = styled.div`
   margin-left: auto;
   
   &:hover {
-    background: rgba(113, 32, 176, 0.4);
-    border-color: rgba(113, 32, 176, 0.7);
-  }
-  
-  svg {
-    color: #bb20ff;
+    background: ${({ theme }) => theme.color.accentWash};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
   }
 `;
 
@@ -455,20 +417,14 @@ const ExpandedModal = styled(motion.div)`
 `;
 
 const ModalContent = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.9);
+  background: ${({ theme }) => theme.color.surfaceRaised};
   width: 90%;
   max-width: 600px;
   border-radius: 10px;
   padding: 2.5rem;
   position: relative;
-  border: 2px solid #7120b0;
-  box-shadow: 0 0 30px rgba(113, 32, 176, 0.4);
-  
-  /* Grid background pattern */
-  background-image: 
-    linear-gradient(rgba(113, 32, 176, 0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 32, 176, 0.2) 1px, transparent 1px);
-  background-size: 20px 20px;
+  border: 1px solid ${({ theme }) => theme.color.accentBorderStrong};
+  box-shadow: ${({ theme }) => theme.elevation[2]};
 `;
 
 const CloseButton = styled.button`
@@ -482,7 +438,7 @@ const CloseButton = styled.button`
   cursor: pointer;
   
   &:hover {
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
   }
 `;
 
@@ -510,7 +466,7 @@ const ModalHash = styled.div`
 
 const ModalProjectName = styled.div`
   font-size: 1.3rem;
-  color: #bb20ff;
+  color: ${({ theme }) => theme.color.accentBright};
   margin-bottom: 1.5rem;
   font-weight: 600;
   display: flex;
@@ -526,7 +482,7 @@ const ModalProjectName = styled.div`
     transition: all 0.3s ease;
     
     &:hover {
-      color: #d175ff;
+      color: ${({ theme }) => theme.color.accent};
       text-decoration: underline;
     }
   }
@@ -556,11 +512,6 @@ const PrizesList = styled.ul`
     padding: 0.5rem 0;
     color: rgba(255, 255, 255, 0.9);
     font-size: 1rem;
-    
-    svg {
-      color: #bb20ff;
-      flex-shrink: 0;
-    }
   }
 `;
 
@@ -719,10 +670,6 @@ const enhancedHackathonData = hackathonData.map(item => ({
 const HackathonsPage = () => {
   const [selectedHackathon, setSelectedHackathon] = useState(null);
 
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
   // (Removed unused windowSize state; avoids build failure on Vercel)
 
   // Calculate statistics - accurate count of unique hackathons
@@ -768,49 +715,6 @@ const HackathonsPage = () => {
 
   return (
     <PageSection>
-      <Particles
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
       <BackButton to="/">Back</BackButton>
       <Container>
         <Title
@@ -834,17 +738,17 @@ const HackathonsPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
+          <StatCard whileHover={{ y: -10 }}>
             <StatNumber>{totalHackathons}</StatNumber>
             <StatTitle>Hackathons</StatTitle>
           </StatCard>
 
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
+          <StatCard whileHover={{ y: -10 }}>
             <StatNumber>{totalProjects}</StatNumber>
             <StatTitle>Projects Built</StatTitle>
           </StatCard>
 
-          <StatCard whileHover={{ y: -10, boxShadow: "0 10px 30px rgba(113, 32, 176, 0.4)" }}>
+          <StatCard whileHover={{ y: -10 }}>
             <StatNumber>{totalPrizes}</StatNumber>
             <StatTitle>Prizes Won</StatTitle>
           </StatCard>
@@ -901,14 +805,14 @@ const HackathonsPage = () => {
                     <BlockFooter>
                       {(block.prize && block.prize !== "") || (block.prizes && block.prizes.length > 0) ? (
                         <PrizeTag>
-                          <FiAward size={14} /> Winner
+                          Winner
                         </PrizeTag>
                       ) : (
                         <div></div>
                       )}
 
                       <ViewButton>
-                        <FiLink size={14} /> View
+                        <ExternalLink size={14} /> View
                       </ViewButton>
                     </BlockFooter>
                   </BlockContent>
@@ -938,7 +842,7 @@ const HackathonsPage = () => {
 
               <ModalProjectName>
                 <a href={selectedHackathon.link} target="_blank" rel="noopener noreferrer">
-                  {selectedHackathon.project} <FiExternalLink size={18} />
+                  {selectedHackathon.project} <ExternalLink size={18} />
                 </a>
               </ModalProjectName>
 
@@ -952,7 +856,7 @@ const HackathonsPage = () => {
                   <PrizesList>
                     {selectedHackathon.prizes.map((prize, i) => (
                       <li key={i}>
-                        <FiAward size={18} /> {prize}
+                        {prize}
                       </li>
                     ))}
                   </PrizesList>
@@ -962,7 +866,7 @@ const HackathonsPage = () => {
                   <strong>Prize:</strong>
                   <PrizesList>
                     <li>
-                      <FiAward size={18} /> {selectedHackathon.prize}
+                      {selectedHackathon.prize}
                     </li>
                   </PrizesList>
                 </>

@@ -1,8 +1,5 @@
-import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 import { motion } from "framer-motion";
 
 const fadeInUp = {
@@ -21,11 +18,10 @@ const fadeInUp = {
 };
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow: hidden;
+  padding: ${({ theme }) => theme.sectionPadding.block} 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,15 +61,10 @@ const Container = styled(motion.div)`
 
 const ErrorCode = styled(motion.h1)`
   font-size: 12rem;
-  color: transparent;
-  background: linear-gradient(135deg, #7120b0 0%, #9d20b0 50%, #a855f7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: ${({ theme }) => theme.color.accent};
   margin: 0;
-  font-weight: 900;
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
   line-height: 1;
-  text-shadow: 0 0 60px rgba(113, 32, 176, 0.5);
   font-family: 'Tomorrow', sans-serif;
 
   @media (max-width: 1024px) {
@@ -95,7 +86,7 @@ const ErrorCode = styled(motion.h1)`
 
 const Title = styled(motion.h2)`
   font-size: 3rem;
-  color: #ffffff;
+  color: ${({ theme }) => theme.color.text};
   margin: 1rem 0;
   font-weight: 700;
   text-transform: uppercase;
@@ -122,7 +113,7 @@ const Title = styled(motion.h2)`
 
 const Description = styled(motion.p)`
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: ${({ theme }) => theme.color.textMuted};
   margin: 1rem 0 2.5rem;
   max-width: 600px;
   line-height: 1.6;
@@ -159,22 +150,24 @@ const ButtonContainer = styled(motion.div)`
 
 const HomeButton = styled(Link)`
   padding: 1rem 2.5rem;
-  background: linear-gradient(135deg, #7120b0 0%, #9d20b0 100%);
+  background: ${({ theme }) => theme.color.accentDeep};
   color: #ffffff;
   text-decoration: none;
-  border-radius: 50px;
+  border-radius: ${({ theme }) => theme.radius.pill};
   font-size: 1.1rem;
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(113, 32, 176, 0.4);
+  transition: background ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
+  box-shadow: ${({ theme }) => theme.elevation[1]};
   border: 2px solid transparent;
 
   &:hover {
-    background: linear-gradient(135deg, #9d20b0 0%, #a855f7 100%);
-    box-shadow: 0 6px 25px rgba(113, 32, 176, 0.6);
+    background: ${({ theme }) => theme.color.accent};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
     transform: translateY(-2px);
   }
 
@@ -198,21 +191,22 @@ const HomeButton = styled(Link)`
 const BackButton = styled(Link)`
   padding: 1rem 2.5rem;
   background: transparent;
-  color: #ffffff;
+  color: ${({ theme }) => theme.color.text};
   text-decoration: none;
-  border-radius: 50px;
+  border-radius: ${({ theme }) => theme.radius.pill};
   font-size: 1.1rem;
   font-weight: 600;
   font-family: 'Tomorrow', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(113, 32, 176, 0.8);
+  transition: background ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base};
+  border: 2px solid ${({ theme }) => theme.color.accentBorderStrong};
 
   &:hover {
-    background: rgba(113, 32, 176, 0.2);
-    border-color: #9d20b0;
-    box-shadow: 0 4px 15px rgba(113, 32, 176, 0.3);
+    background: ${({ theme }) => theme.color.accentWash};
+    border-color: ${({ theme }) => theme.color.accent};
     transform: translateY(-2px);
   }
 
@@ -236,7 +230,7 @@ const BackButton = styled(Link)`
 const GlitchText = styled(motion.div)`
   position: relative;
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: ${({ theme }) => theme.color.textFaint};
   font-family: 'Tomorrow', sans-serif;
   margin-top: 3rem;
   letter-spacing: 3px;
@@ -253,99 +247,8 @@ const GlitchText = styled(motion.div)`
 `;
 
 const NotFound = () => {
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  const particlesOptions = {
-    fullScreen: { enable: false },
-    background: {
-      color: {
-        value: "#000000",
-      },
-    },
-    fpsLimit: 60,
-    interactivity: {
-      events: {
-        onClick: {
-          enable: true,
-          mode: "push",
-        },
-        onHover: {
-          enable: true,
-          mode: "repulse",
-        },
-        resize: true,
-      },
-      modes: {
-        push: {
-          quantity: 4,
-        },
-        repulse: {
-          distance: 150,
-          duration: 0.4,
-        },
-      },
-    },
-    particles: {
-      color: {
-        value: ["#7120b0", "#9d20b0", "#a855f7"],
-      },
-      links: {
-        color: "#7120b0",
-        distance: 150,
-        enable: true,
-        opacity: 0.3,
-        width: 1,
-      },
-      collisions: {
-        enable: true,
-      },
-      move: {
-        direction: "none",
-        enable: true,
-        outModes: {
-          default: "bounce",
-        },
-        random: false,
-        speed: 1.5,
-        straight: false,
-      },
-      number: {
-        density: {
-          enable: true,
-          area: 800,
-        },
-        value: 60,
-      },
-      opacity: {
-        value: 0.4,
-      },
-      shape: {
-        type: "circle",
-      },
-      size: {
-        value: { min: 1, max: 4 },
-      },
-    },
-    detectRetina: true,
-  };
-
   return (
     <PageSection>
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={particlesOptions}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
       <Container
         initial="initial"
         animate="animate"
@@ -370,7 +273,7 @@ const NotFound = () => {
         <Description
           variants={fadeInUp}
         >
-          Oops! It seems like you've ventured into uncharted blockchain territory. 
+          Oops! It seems like you've ventured into uncharted blockchain territory.
           The page you're looking for doesn't exist or has been moved.
         </Description>
         <ButtonContainer

@@ -1,7 +1,5 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
 import { motion, useInView } from "framer-motion";
 
 // Placeholder images - Replace with actual images when ready
@@ -143,20 +141,22 @@ const Grid = styled(motion.div)`
 `;
 
 const ContentBlock = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
+  background: ${({ theme }) => theme.color.surfaceRaised};
   padding: 2.5rem;
-  border: 1px solid #7120b0;
-  border-radius: 8px;
-  backdrop-filter: blur(5px);
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
   font-family: 'Tomorrow', sans-serif;
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   box-sizing: border-box;
   overflow: hidden;
-  
+
   &:hover {
-    box-shadow: 0 4px 30px rgba(113, 32, 176, 0.3);
-    transform: translateY(-5px);
+    box-shadow: ${({ theme }) => theme.elevation[2]};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    transform: translateY(-4px);
   }
 
   * {
@@ -241,7 +241,7 @@ const List = styled.ul`
       width: 8px;
       height: 8px;
       margin-right: 1rem;
-      background-color: #7120b0;
+      background-color: ${({ theme }) => theme.color.accent};
       border-radius: 50%;
     }
   }
@@ -253,8 +253,8 @@ const ImageContainer = styled(motion.div)`
   min-height: 300px;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  border: 1px solid ${({ theme }) => theme.color.border};
 
   img {
     width: 100%;
@@ -273,8 +273,8 @@ const ImageContainer = styled(motion.div)`
 const LinkButton = styled(motion.div)`
   display: inline-block;
   margin: 0 auto;
-  background-color: #7120b0;
-  color: white;
+  background-color: ${({ theme }) => theme.color.accentDeep};
+  color: #ffffff;
   padding: 1rem 2rem;
   text-decoration: none;
   font-size: ${(props) => props.theme.fontSize.body};
@@ -290,9 +290,8 @@ const LinkButton = styled(motion.div)`
   max-width: 100%;
 
   &:hover {
-    background-color: #9d20b0;
-    box-shadow: 0 0 20px rgba(113, 32, 176, 0.6);
-    transform: translateY(-3px);
+    background-color: ${({ theme }) => theme.color.accent};
+    transform: translateY(-2px);
   }
 
   @media (max-width: 40em) {
@@ -306,70 +305,9 @@ const LinkButton = styled(motion.div)`
   }
 `;
 
-const ParticlesBackground = ({ keyId }) => {
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  return (
-    <Particles
-      key={keyId}
-      init={particlesInit}
-      options={{
-        background: { color: "#000000" },
-        particles: {
-          color: { value: ["#7120b0", "#9d20b0"] },
-          links: {
-            color: "#7120b0",
-            distance: 150,
-            enable: true,
-            opacity: 0.7,
-            width: 1.5,
-          },
-          move: { enable: true, speed: 0.8 },
-          number: { value: 70 },
-          size: { value: 3 },
-          opacity: { value: 0.5 },
-        },
-        fpsLimit: 120,
-        interactivity: {
-          events: {
-            onHover: {
-              enable: true,
-              mode: "grab"
-            },
-          },
-          modes: {
-            grab: {
-              distance: 140,
-              links: { opacity: 0.6 }
-            }
-          }
-        }
-      }}
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 1,
-      }}
-    />
-  );
-};
-
 const AboutPage = () => {
-  const [particleKey, setParticleKey] = useState(Date.now());
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
-
   return (
     <PageSection>
-      <ParticlesBackground keyId={particleKey} />
-      
       <Container
         initial="initial"
         animate="animate"
@@ -381,7 +319,7 @@ const AboutPage = () => {
           transition={{ duration: 0.8 }}
         >
           
-          <HeroTitle>Discover <span style={{ color: "#7120b0" }}>Who we are</span></HeroTitle>
+          <HeroTitle>Discover <span style={{ color: "#A855F7" }}>Who we are</span></HeroTitle>
           <HeroSubtitle>
             Purdue's premier student-led organization dedicated to advancing blockchain technology 
             through innovation, education, and community building.

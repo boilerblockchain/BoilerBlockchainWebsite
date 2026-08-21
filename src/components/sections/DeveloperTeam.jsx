@@ -1,10 +1,9 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FiGithub, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { Arrow } from '../ui/Arrow';
+import Github from '../../Icons/Github';
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -87,7 +86,7 @@ const Title = styled(motion.h1)`
     font-family: 'Tomorrow', sans-serif;
 
     span {
-        color: #7120b0;
+        color: ${({ theme }) => theme.color.accent};
     }
 
     @media (max-width: 40em) {
@@ -118,13 +117,14 @@ const StatsContainer = styled(motion.div)`
 `;
 
 const StatCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.6);
-    border: 1px solid rgba(113, 32, 176, 0.3);
-    border-radius: 8px;
+    background: ${({ theme }) => theme.color.surfaceRaised};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.md};
     padding: 1.8rem;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(113, 32, 176, 0.1);
-    transition: all 0.3s ease;
+    box-shadow: ${({ theme }) => theme.elevation[1]};
+    transition: transform ${({ theme }) => theme.motion.base},
+                border-color ${({ theme }) => theme.motion.base},
+                box-shadow ${({ theme }) => theme.motion.base};
     text-align: center;
     min-width: 180px;
     position: relative;
@@ -132,19 +132,9 @@ const StatCard = styled(motion.div)`
     box-sizing: border-box;
 
     &:hover {
-        box-shadow: 0 4px 20px rgba(113, 32, 176, 0.2);
+        box-shadow: ${({ theme }) => theme.elevation[2]};
         transform: translateY(-2px);
-        border-color: rgba(113, 32, 176, 0.6);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, rgba(113, 32, 176, 0.6), rgba(187, 32, 255, 0.6));
+        border-color: ${({ theme }) => theme.color.accentBorderStrong};
     }
 
     @media (max-width: 480px) {
@@ -160,7 +150,7 @@ const StatCard = styled(motion.div)`
 
 const StatNumber = styled.h3`
     font-size: 2.5rem;
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
     font-weight: 700;
     margin: 0.5rem;
     font-family: 'Tomorrow', sans-serif;
@@ -186,14 +176,14 @@ const ExtGrid = styled(motion.div)`
 `;
 
 const ExtCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.7);
-    border: 1px solid ${props => props.borderColor || 'rgba(113, 32, 176, 0.3)'};
-    border-radius: 12px;
+    background: ${({ theme }) => theme.color.surfaceRaised};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.lg};
     padding: 2rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: ${({ theme }) => theme.elevation[1]};
+    transition: transform ${({ theme }) => theme.motion.base},
+                border-color ${({ theme }) => theme.motion.base},
+                box-shadow ${({ theme }) => theme.motion.base};
     text-align: center;
     font-size: 1.5rem;
     position: relative;
@@ -201,26 +191,9 @@ const ExtCard = styled(motion.div)`
     box-sizing: border-box;
 
     &:hover {
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        transform: translateY(-6px);
-        border-color: ${props => props.borderColor || 'rgba(113, 32, 176, 0.6)'};
-        background: rgba(15, 15, 15, 0.85);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: ${props => props.borderColor || 'rgba(113, 32, 176, 0.8)'};
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    &:hover::before {
-        opacity: 1;
+        box-shadow: ${({ theme }) => theme.elevation[2]};
+        transform: translateY(-4px);
+        border-color: ${({ theme }) => theme.color.accentBorderStrong};
     }
 
     @media (max-width: 768px) {
@@ -244,11 +217,6 @@ const ExtIcon = styled.div`
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
-
-    svg {
-        color: #7120b0;
-        font-size: 1.3rem;
-    }
 `;
 
 const ExtName = styled.h4`
@@ -292,39 +260,22 @@ const ProjectsGrid = styled(motion.div)`
 `;
 
 const ProjectCard = styled(motion.div)`
-    background: rgba(15, 15, 15, 0.7);
-    border: 1px solid rgba(113, 32, 176, 0.3);
-    border-radius: 12px;
+    background: ${({ theme }) => theme.color.surfaceRaised};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.lg};
     padding: 2rem;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(113, 32, 176, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: ${({ theme }) => theme.elevation[1]};
+    transition: transform ${({ theme }) => theme.motion.base},
+                border-color ${({ theme }) => theme.motion.base},
+                box-shadow ${({ theme }) => theme.motion.base};
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
 
     &:hover {
-        box-shadow: 0 12px 40px rgba(113, 32, 176, 0.3);
-        transform: translateY(-6px);
-        border-color: rgba(113, 32, 176, 0.6);
-        background: rgba(15, 15, 15, 0.85);
-    }
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    &:hover::before {
-        opacity: 1;
+        box-shadow: ${({ theme }) => theme.elevation[2]};
+        transform: translateY(-4px);
+        border-color: ${({ theme }) => theme.color.accentBorderStrong};
     }
 
     @media (max-width: 768px) {
@@ -366,14 +317,14 @@ const ProjectLinks = styled.div`
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #7120b0;
+        color: ${({ theme }) => theme.color.accent};
         text-decoration: none;
         font-weight: 500;
-        transition: color 0.3s ease;
+        transition: color ${({ theme }) => theme.motion.base};
         font-family: 'Tomorrow', sans-serif;
 
         &:hover {
-            color: #bb20ff;
+            color: ${({ theme }) => theme.color.accentBright};
         }
 
         svg {
@@ -406,16 +357,17 @@ const ViewAllButton = styled(Link)`
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 2rem;
-    background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+    background: ${({ theme }) => theme.color.accentDeep};
     border: none;
-    border-radius: 12px;
+    border-radius: ${({ theme }) => theme.radius.md};
     color: #ffffff;
     font-size: 1rem;
     font-weight: 600;
     font-family: 'Tomorrow', sans-serif;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
+    transition: transform ${({ theme }) => theme.motion.base},
+                background-color ${({ theme }) => theme.motion.base};
+    box-shadow: ${({ theme }) => theme.elevation[1]};
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-sizing: border-box;
@@ -423,8 +375,7 @@ const ViewAllButton = styled(Link)`
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
-        background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
+        background: ${({ theme }) => theme.color.accent};
     }
 
     svg {
@@ -465,7 +416,7 @@ const SectionTitle = styled(motion.h2)`
     font-family: 'Tomorrow', sans-serif;
 
     span {
-        color: #7120b0;
+        color: ${({ theme }) => theme.color.accent};
     }
 `;
 
@@ -523,63 +474,8 @@ const InternalProjects = [
 ];
 
 const DeveloperTeam = () => {
-    const [particleKey, setParticleKey] = useState(Date.now());
-
-    const particlesInit = useCallback(async (engine) => {
-        await loadFull(engine);
-    }, []);
-
-    useEffect(() => {
-        setParticleKey(Date.now());
-    }, []);
-
     return (
         <PageSection>
-            <Particles
-                key={particleKey}
-                init={particlesInit}
-                options={{
-                    background: { color: "000000" },
-                    particles: {
-                        color: { value: ["#7120b0", "#9d20b0"] },
-                        links: {
-                            color: "#7120b0",
-                            distance: 150,
-                            enable: true,
-                            opacity: 0.7,
-                            width: 1.5,
-                        },
-                        move: { enable: true, speed: 0.8 },
-                        number: { value: 70 },
-                        opacity: { value: 0.5 },
-                        size: { value: 3 },
-                    },
-                    fpsLimit: 120,
-                    interactivity: {
-                        events: {
-                            onHover: {
-                                enable: true,
-                                mode: "grab"
-                            },
-                        },
-                        modes: {
-                            grab: {
-                                distance: 140,
-                                links: { opacity: 0.6 }
-                            }
-                        }
-                    }
-                }}
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    zIndex: 1,
-                }}
-            />
-
             <Container>
                 <Title
                     initial={{ opacity: .5, scale: .85}}
@@ -632,7 +528,6 @@ const DeveloperTeam = () => {
                     {ExternalProjects.map((tech, index) => (
                         <ExtCard
                             key={tech.name}
-                            borderColor={tech.borderColor}
                             initial={{ opacity: 0, y: 20}}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -678,10 +573,10 @@ const DeveloperTeam = () => {
                             <ProjectDescription>{project.description}</ProjectDescription>
                             <ProjectLinks>
                                 <a href={project.github} target="_blank" rel="noopener noreferrer">
-                                    <FiGithub /> View Code
+                                    <Github width={16} height={16} /> View Code
                                 </a>
                                 {/*<a href={project.demo} target="_blank" rel="noopener noreferrer">
-                                    <FiExternalLink/> Live Demo
+                                    <ExternalLink size={16} /> Live Demo
                                 </a>*/}
                             </ProjectLinks>
                         </ProjectCard>
@@ -720,7 +615,7 @@ const DeveloperTeam = () => {
                     >
                         <ViewAllButton to="/hackathons">
                             View All Hackathons
-                            <FiArrowRight />
+                            <Arrow size={18} />
                         </ViewAllButton>
                     </motion.div>
                 </HackathonSection>

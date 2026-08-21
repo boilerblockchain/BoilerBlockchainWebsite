@@ -134,26 +134,52 @@ export const sectionPadding = {
   inline: 'clamp(1rem, 0.5rem + 2.5vw, 2rem)',
 };
 
+/**
+ * Square corners. The reference direction (staklabs.ai) uses literally zero
+ * border-radius anywhere, and hard edges read as deliberate where 16px pill
+ * cards read as a template. `sm` exists for the rare control that needs to look
+ * clickable; `pill` is for tags only.
+ */
 export const radius = {
-  sm: '8px',
-  md: '12px',
-  lg: '16px',
-  xl: '24px',
+  none: '0',
+  sm: '2px',
+  md: '2px',
+  lg: '0',
+  xl: '0',
   pill: '999px',
 };
 
 /**
- * Exactly three levels. Cards sit at `1` and rise to `2` on hover. Nothing in
- * this codebase gets seven stacked shadows again.
+ * Flat design uses borders, not shadows, to separate surfaces. These are
+ * near-invisible on black by design — the 1px border does the work. Cards sit
+ * at `1` and rise to `2` on hover.
  */
 export const elevation = {
-  1: '0 1px 2px rgba(0, 0, 0, 0.4)',
+  1: 'none',
   2: '0 8px 24px rgba(0, 0, 0, 0.5)',
   3: '0 16px 48px rgba(0, 0, 0, 0.6)',
 };
 
 /** Reserved for hover only, so a glow signals state instead of decorating. */
-export const accentGlow = `0 0 0 1px ${color.accentBorderStrong}, 0 8px 32px ${color.accentGlow}`;
+export const accentGlow = `0 0 0 1px ${color.accentBorderStrong}`;
+
+/**
+ * The one background treatment for the whole site: a faint dot grid.
+ *
+ * This is the exact recipe from the reference — 1px dots on a 30px cell —
+ * retuned for a dark surface. It replaces the fullscreen particle canvas, the
+ * glitch overlays, the network fields and the SVG node graphs. Apply it to a
+ * section with `background-image: ${dotGrid}; background-size: 30px 30px;`
+ * or use the shared <GridBackdrop /> component.
+ */
+export const dotGrid =
+  'radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px)';
+export const dotGridSize = '30px 30px';
+
+/** Swap into GridBackdrop if square cells read better than dots on a section. */
+export const lineGrid =
+  'linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px), ' +
+  'linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px)';
 
 export const layout = {
   maxWidth: '1200px',

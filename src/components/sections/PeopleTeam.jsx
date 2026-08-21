@@ -1,9 +1,7 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadFull } from 'tsparticles';
-import { FaLinkedin } from 'react-icons/fa';
+import LinkedIn from '../../Icons/LinkedIn';
 import Twitter from '../../Icons/Twitter';
 
 // Executive Board
@@ -67,12 +65,9 @@ const pradyumnImage = '/images/pfps/ops/pradyumn_malik.webp';
 const alexImage = '/images/pfps/ops/alex_belanger.webp';
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
   padding: 8rem 0 0;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
@@ -120,19 +115,14 @@ const Title = styled(motion.h1)`
   color: #ffffff;
   text-align: center;
   margin-bottom: 2rem;
-  font-weight: 900;
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
   text-transform: uppercase;
   letter-spacing: 4px;
   line-height: 1.1;
   position: relative;
-  text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
-  filter: drop-shadow(0 4px 20px rgba(168, 85, 247, 0.2));
 
   span {
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 30%, rgba(168, 85, 247, 0.95) 70%, rgba(168, 85, 247, 0.85) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: ${({ theme }) => theme.color.accent};
   }
 
   &::after {
@@ -142,22 +132,16 @@ const Title = styled(motion.h1)`
     left: 50%;
     transform: translateX(-50%);
     width: 200px;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.9), rgba(168, 85, 247, 0.8), rgba(168, 85, 247, 0.4), transparent);
-    border-radius: 2px;
-    box-shadow: 
-      0 0 20px rgba(168, 85, 247, 0.5),
-      0 0 40px rgba(168, 85, 247, 0.3);
+    height: 1px;
+    background: ${({ theme }) => theme.color.accentBorder};
 
     @media (max-width: 768px) {
       width: 150px;
-      height: 3px;
       bottom: -0.75rem;
     }
 
     @media (max-width: 480px) {
       width: 120px;
-      height: 2px;
       bottom: -0.5rem;
     }
   }
@@ -201,7 +185,6 @@ const Subtitle = styled(motion.p)`
   line-height: 1.8;
   font-weight: 400;
   letter-spacing: 0.4px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 
   @media (max-width: 1024px) {
     font-size: 1.15rem;
@@ -259,42 +242,24 @@ const FilterNav = styled(motion.div)`
 
 const FilterButton = styled(motion.button)`
   padding: 0.875rem 1.75rem;
-  background: ${props => props.active 
-    ? 'linear-gradient(135deg, #7120b0 0%, #8d2dd4 100%)' 
-    : 'rgba(30, 30, 40, 0.6)'};
-  border: ${props => props.active 
-    ? '1.5px solid rgba(168, 85, 247, 0.5)' 
-    : '1px solid rgba(168, 85, 247, 0.2)'};
-  color: ${props => props.active ? '#ffffff' : 'rgba(255, 255, 255, 0.75)'};
+  background: ${({ theme, active }) => active ? theme.color.accentDeep : theme.color.surfaceRaised};
+  border: 1px solid ${({ theme, active }) => active ? theme.color.accentBorderStrong : theme.color.accentBorder};
+  color: ${({ theme, active }) => active ? theme.color.text : theme.color.textMuted};
   font-size: 0.875rem;
-  font-weight: ${props => props.active ? '700' : '600'};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
   text-transform: uppercase;
   letter-spacing: 1.2px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 10px;
+  transition: background ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              color ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
+  border-radius: ${({ theme }) => theme.radius.sm};
   font-family: 'Tomorrow', sans-serif;
   position: relative;
   white-space: nowrap;
-  box-shadow: ${props => props.active 
-    ? '0 4px 16px rgba(113, 32, 176, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)' 
-    : '0 2px 8px rgba(0, 0, 0, 0.2)'};
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 10px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
-    opacity: ${props => props.active ? 1 : 0};
-    transition: opacity 0.4s ease;
-    z-index: 0;
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
+  box-shadow: ${({ theme }) => theme.elevation[1]};
 
   .count {
     margin-left: 0.5rem;
@@ -304,21 +269,11 @@ const FilterButton = styled(motion.button)`
   }
 
   &:hover {
-    color: #ffffff;
-    background: ${props => props.active 
-      ? 'linear-gradient(135deg, #8d2dd4 0%, #a040e8 100%)' 
-      : 'rgba(113, 32, 176, 0.2)'};
-    border-color: ${props => props.active 
-      ? 'rgba(168, 85, 247, 0.7)' 
-      : 'rgba(168, 85, 247, 0.4)'};
+    color: ${({ theme }) => theme.color.text};
+    background: ${({ theme, active }) => active ? theme.color.accent : theme.color.surfaceHover};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
     transform: translateY(-2px);
-    box-shadow: ${props => props.active 
-      ? '0 6px 24px rgba(113, 32, 176, 0.5), 0 0 30px rgba(168, 85, 247, 0.3)' 
-      : '0 4px 12px rgba(168, 85, 247, 0.2)'};
-
-    &::before {
-      opacity: 1;
-    }
+    box-shadow: ${({ theme }) => theme.elevation[2]};
   }
 
   &:active {
@@ -358,121 +313,33 @@ const FilterButton = styled(motion.button)`
 
 const TeamRow = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  justify-items: center;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   align-items: start;
-  justify-content: center;
-  gap: 2.5rem;
-  margin: 4rem 0 6rem;
+  gap: 2rem;
+  margin: 4rem auto 6rem;
   width: 100%;
   max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 2rem;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-    gap: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.75rem;
-    margin: 3rem 0 4rem;
-    padding: 0 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin: 2.5rem 0 3.5rem;
-    padding: 0 0.75rem;
-    max-width: 100%;
-  }
-
-  @media (max-width: 360px) {
-    gap: 1.25rem;
-    margin: 2rem 0 3rem;
-    padding: 0 0.5rem;
-  }
+  padding: 0 ${({ theme }) => theme.sectionPadding.inline};
 `;
 
 const MemberCard = styled(motion.div)`
   width: 100%;
-  max-width: 290px;
-  margin: 0 auto;
-  background: rgba(25, 25, 35, 0.9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 20px;
-  border: 1.5px solid rgba(168, 85, 247, 0.25);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(168, 85, 247, 0.15) inset,
-    0 0 60px rgba(168, 85, 247, 0.08);
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  box-shadow: ${({ theme }) => theme.elevation[1]};
   padding: 0;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   position: relative;
   box-sizing: border-box;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: 
-      linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    z-index: 1;
-    border-radius: 20px;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.1));
-    opacity: 0;
-    filter: blur(12px);
-    transition: opacity 0.5s ease;
-    z-index: -1;
-    pointer-events: none;
-  }
-
   &:hover {
-    transform: translateY(-6px) scale(1.02);
-    border-color: rgba(168, 85, 247, 0.5);
-    box-shadow: 
-      0 12px 48px rgba(0, 0, 0, 0.5),
-      0 0 0 1px rgba(168, 85, 247, 0.3) inset,
-      0 0 80px rgba(168, 85, 247, 0.25),
-      0 0 120px rgba(168, 85, 247, 0.1);
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-
-  &:hover::after {
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    max-width: 100%;
-    border-radius: 18px;
-  }
-
-  @media (max-width: 480px) {
-    max-width: 100%;
-    border-radius: 16px;
-  }
-
-  @media (max-width: 360px) {
-    border-radius: 14px;
+    transform: translateY(-4px);
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    box-shadow: ${({ theme }) => theme.elevation[2]}, 0 0 32px ${({ theme }) => theme.color.accentGlow};
   }
 
   /* Disable hover effects on touch devices */
@@ -488,26 +355,15 @@ const ImageContainer = styled.div`
   aspect-ratio: 1;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a0f2e 0%, #2d1a3d 100%);
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
-    z-index: 1;
-    pointer-events: none;
-  }
+  background: ${({ theme }) => theme.color.surfaceHover};
 
   img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: 50% 25%;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform ${({ theme }) => theme.motion.base};
   }
 
   ${MemberCard}:hover img {
@@ -522,13 +378,13 @@ const PlaceholderIcon = styled.div`
   transform: translate(-50%, -50%);
   width: 80px;
   height: 80px;
-  background: rgba(113, 32, 176, 0.1);
+  background: ${({ theme }) => theme.color.accentWash};
   border-radius: 50%;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(113, 32, 176, 0.2);
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
 
   &::before {
     content: '👤';
@@ -570,11 +426,10 @@ const MemberName = styled.h3`
   margin: 0;
   letter-spacing: 0.3px;
   line-height: 1.3;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color ${({ theme }) => theme.motion.base};
 
   ${MemberCard}:hover & {
-    color: #a855f7;
-    text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    color: ${({ theme }) => theme.color.accent};
   }
 
   @media (max-width: 768px) {
@@ -593,18 +448,12 @@ const MemberName = styled.h3`
 
 const MemberTitle = styled.p`
   font-size: 0.75rem;
-  color: rgba(168, 85, 247, 0.8);
+  color: ${({ theme }) => theme.color.accent};
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   margin: 0;
   line-height: 1.5;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  ${MemberCard}:hover & {
-    color: rgba(168, 85, 247, 1);
-    text-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
-  }
 
   @media (max-width: 768px) {
     font-size: 0.6875rem;
@@ -640,14 +489,16 @@ const SocialIcon = styled(motion.a)`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.9);
+  color: ${({ theme }) => theme.color.textMuted};
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  transition: color ${({ theme }) => theme.motion.fast},
+              background ${({ theme }) => theme.motion.fast},
+              border-color ${({ theme }) => theme.motion.fast},
+              opacity ${({ theme }) => theme.motion.fast},
+              transform ${({ theme }) => theme.motion.fast};
+  background: rgba(0, 0, 0, 0.55);
   opacity: 0.85;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${({ theme }) => theme.color.border};
   min-width: 32px;
   min-height: 32px;
 
@@ -667,13 +518,10 @@ const SocialIcon = styled(motion.a)`
 
   &:hover {
     opacity: 1;
-    color: #ffffff;
-    background: rgba(113, 32, 176, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-color: rgba(113, 32, 176, 0.5);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(113, 32, 176, 0.3);
+    color: ${({ theme }) => theme.color.text};
+    background: ${({ theme }) => theme.color.accentDeep};
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    transform: translateY(-2px);
   }
 
   svg {
@@ -685,17 +533,6 @@ const SocialIcon = styled(motion.a)`
     svg {
       width: 16px;
       height: 16px;
-    }
-  }
-
-  /* LinkedIn icon from react-icons */
-  svg[data-icon="linkedin"] {
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 480px) {
-    svg[data-icon="linkedin"] {
-      font-size: 1rem;
     }
   }
 `;
@@ -843,16 +680,7 @@ const allTeamMembersUnsorted = [
 ];
 
 const PeopleTeam = () => {
-  const [particleKey, setParticleKey] = useState(Date.now());
   const [activeFilters, setActiveFilters] = useState(new Set());
-
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
-  useEffect(() => {
-    setParticleKey(Date.now());
-  }, []);
 
   // Memoize team organization to ensure consistent sorted order during session
   // Sort by FIRST name (then last name as tie-breaker)
@@ -922,51 +750,6 @@ const PeopleTeam = () => {
 
   return (
     <PageSection>
-      <Particles
-        key={particleKey}
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            opacity: { value: 0.5 },
-            size: { value: 3 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-      
       <Container>
         <Title
           initial={{ opacity: 0, y: 50 }}
@@ -1018,16 +801,21 @@ const PeopleTeam = () => {
                 key={member.id}
                 initial={{ opacity: 0, y: 30, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.4, 
-                  delay: index * 0.08,
+                transition={{
+                  duration: 0.4,
+                  delay: Math.min(index, 8) * 0.04,
                   ease: [0.4, 0, 0.2, 1]
                 }}
-                whileHover={{ y: -6, scale: 1.02 }}
               >
                 <ImageContainer>
                   {member.image ? (
-                     <img src={member.image} alt={formatName(null, member.image)} />
+                     <img
+                       src={member.image}
+                       alt={formatName(null, member.image)}
+                       width="400"
+                       height="400"
+                       loading="lazy"
+                     />
                   ) : null}
                   {!member.image && <PlaceholderIcon />}
                   <SocialIconsContainer>
@@ -1039,7 +827,7 @@ const PeopleTeam = () => {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                      <FaLinkedin style={{ fontSize: '0.9rem' }} />
+                      <LinkedIn width={14} height={14} />
                       </SocialIcon>
                       <SocialIcon
                         type="twitter"

@@ -69,16 +69,18 @@ const LogoLink = styled(Link)`
   }
 `;
 
+/**
+ * The logo asset is square (276x275). It was previously forced to width: 120px
+ * inside this 40px box with overflow: visible, so it spilled 80px to the right
+ * and sat on top of the wordmark text.
+ */
 const LogoBox = styled.div`
   width: 40px;
   height: 40px;
-  border-radius: 12px;
-  background: transparent;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
-  flex-shrink: 0;
 
   @media (max-width: 640px) {
     width: 36px;
@@ -86,16 +88,9 @@ const LogoBox = styled.div`
   }
 
   img {
-    width: 120px;
-    height: auto;
-    max-height: 50px;
-    max-width: 120px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-
-    @media (max-width: 640px) {
-      max-height: 45px;
-      max-width: 100px;
-    }
   }
 `;
 
@@ -213,22 +208,21 @@ const ContactButton = styled(Link)`
   align-items: center;
   justify-content: center;
   padding: 0.625rem 1.5rem;
-  background: linear-gradient(135deg, #7120b0 0%, #bb20ff 100%);
+  background: ${({ theme }) => theme.color.accentDeep};
   border: none;
-  border-radius: 12px;
+  border-radius: ${({ theme }) => theme.radius.md};
   text-decoration: none;
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 600;
-  font-family: 'Tomorrow', sans-serif;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  transition: background ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base};
   white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(113, 32, 176, 0.3);
 
   &:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #7a30c0 0%, #c430ff 100%);
-    box-shadow: 0 6px 24px rgba(113, 32, 176, 0.5);
+    background: ${({ theme }) => theme.color.accent};
   }
 
   &:active {
@@ -353,6 +347,17 @@ const Navigation = () => {
     setIsMobileMenuOpen(false);
   }, [location]);
 
+  // Escape closes the mobile menu and any open dropdown.
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+      setIsMobileMenuOpen(false);
+      setActiveDropdown(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const dropdownData = {
     teams: {
       label: 'Teams',
@@ -458,7 +463,12 @@ const Navigation = () => {
               Contact Us
             </ContactButton>
 
-            <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <MobileMenuButton
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-nav"
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 {isMobileMenuOpen ? (
                   <path d="M6 18L18 6M6 6l12 12" />
@@ -470,7 +480,7 @@ const Navigation = () => {
           </ContactButtonWrapper>
         </NavContainer>
 
-        <MobileNav isOpen={isMobileMenuOpen}>
+        <MobileNav id="mobile-nav" isOpen={isMobileMenuOpen}>
             {Object.entries(dropdownData).map(([key, dropdown]) => (
             <MobileDropdownSection key={key}>
               <MobileDropdownTitle>{dropdown.label}</MobileDropdownTitle>

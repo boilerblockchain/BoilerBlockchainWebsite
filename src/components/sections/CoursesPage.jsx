@@ -1,7 +1,4 @@
-import React, { useCallback } from 'react';
-import styled, { keyframes } from "styled-components";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
+import styled from "styled-components";
 import { motion } from "framer-motion";
 const BBLogo = '/images/logos/boiler_blockchain_logo_svg.webp';
 
@@ -33,12 +30,10 @@ const staggerContainer = {
 };
 
 const PageSection = styled.section`
-  min-height: 100vh;
   width: 100%;
   max-width: 100vw;
-  background-color: #000000;
+  background-color: ${({ theme }) => theme.color.black};
   position: relative;
-  overflow-x: hidden;
   padding-top: 4rem;
   font-family: 'Tomorrow', sans-serif;
   display: flex;
@@ -155,21 +150,15 @@ const ImageSection = styled(motion.div)`
 `;
 
 const CourseCard = styled(motion.div)`
-  background: linear-gradient(
-    135deg,
-    rgba(40, 35, 50, 0.95) 0%,
-    rgba(35, 30, 45, 0.95) 100%
-  );
+  background: ${({ theme }) => theme.color.surfaceRaised};
   padding: 2.5rem;
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: 8px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   font-family: 'Tomorrow', sans-serif;
-  box-shadow: 
-    0 4px 20px rgba(168, 85, 247, 0.15),
-    0 0 0 1px rgba(168, 85, 247, 0.1) inset;
-  transition: all 0.3s ease;
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
@@ -191,16 +180,9 @@ const CourseCard = styled(motion.div)`
   }
 
   &:hover {
-    box-shadow: 
-      0 12px 40px rgba(168, 85, 247, 0.3),
-      0 0 0 1px rgba(168, 85, 247, 0.4) inset;
+    box-shadow: ${({ theme }) => theme.elevation[2]};
     transform: translateY(-5px);
-    border-color: rgba(168, 85, 247, 0.6);
-    background: linear-gradient(
-      135deg,
-      rgba(45, 40, 55, 1) 0%,
-      rgba(40, 35, 50, 1) 100%
-    );
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
   }
 `;
 
@@ -278,20 +260,19 @@ const InfoGrid = styled(motion.div)`
 `;
 
 const InfoCard = styled(motion.div)`
-  background: rgba(15, 15, 15, 0.7);
+  background: ${({ theme }) => theme.color.surface};
   padding: 1.25rem;
   border-radius: 12px;
-  border: 1px solid rgba(113, 32, 176, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s ease;
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   box-sizing: border-box;
   overflow: hidden;
 
   &:hover {
-    border-color: rgba(113, 32, 176, 0.5);
-    box-shadow: 0 8px 30px rgba(113, 32, 176, 0.25);
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
   }
 
   @media (min-width: 768px) {
@@ -316,11 +297,11 @@ const InfoCard = styled(motion.div)`
       max-width: 100%;
       
       span {
-        background: rgba(113, 32, 176, 0.1);
+        background: ${({ theme }) => theme.color.accentWash};
         padding: 0.3rem 0.8rem;
         border-radius: 15px;
         font-size: 0.85rem;
-        border: 1px solid rgba(113, 32, 176, 0.3);
+        border: 1px solid ${({ theme }) => theme.color.accentBorder};
         word-wrap: break-word;
         max-width: 100%;
 
@@ -342,7 +323,7 @@ const InfoCard = styled(motion.div)`
   }
 
   h4 {
-    color: #7120b0;
+    color: ${({ theme }) => theme.color.accent};
     margin-bottom: 0.5rem;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -409,7 +390,7 @@ const List = styled.ul`
       min-width: 8px;
       margin-right: 1rem;
       margin-top: 0.5rem;
-      background-color: #7120b0;
+      background-color: ${({ theme }) => theme.color.accent};
       border-radius: 50%;
 
       @media (max-width: 480px) {
@@ -424,42 +405,26 @@ const List = styled.ul`
 
 const DetailsSection = styled(motion.div)`
   padding: 2rem;
-  background: rgba(15, 15, 15, 0.7);
+  background: ${({ theme }) => theme.color.surface};
   border-radius: 12px;
   margin: 1.25rem 0; 
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 100%;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(113, 32, 176, 0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  transition: transform ${({ theme }) => theme.motion.base},
+              border-color ${({ theme }) => theme.motion.base},
+              box-shadow ${({ theme }) => theme.motion.base};
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, rgba(113, 32, 176, 0.8), rgba(187, 32, 255, 0.8));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
   &:hover {
-    box-shadow: 0 12px 40px rgba(113, 32, 176, 0.35);
+    box-shadow: ${({ theme }) => theme.elevation[2]};
     transform: translateY(-6px);
-    background: rgba(15, 15, 15, 0.85);
-  }
-
-  &:hover::before {
-    opacity: 1;
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
   }
 
   @media (min-width: 768px) {
@@ -532,8 +497,8 @@ const ImageContainer = styled.div`
   overflow: hidden;
   position: relative;
   flex: 1;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(113, 32, 176, 0.3);
+  box-shadow: ${({ theme }) => theme.elevation[1]};
+  border: 1px solid ${({ theme }) => theme.color.accentBorder};
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -555,18 +520,6 @@ const ImageContainer = styled.div`
   }
 
   &:hover img {
-    transform: scale(1.05);
-  }
-`;
-
-// Logo animation - pulsing glow
-const pulseGlow = keyframes`
-  0%, 100% {
-    filter: drop-shadow(0 0 40px rgba(113, 32, 176, 0.6)) drop-shadow(0 0 80px rgba(187, 32, 255, 0.4));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 60px rgba(113, 32, 176, 1)) drop-shadow(0 0 120px rgba(187, 32, 255, 0.8));
     transform: scale(1.05);
   }
 `;
@@ -598,7 +551,6 @@ const LogoImage = styled.img`
   width: 180px;
   height: 180px;
   object-fit: contain;
-  animation: ${pulseGlow} 3s ease-in-out infinite;
   max-width: 100%;
   
   @media (min-width: 600px) {
@@ -620,7 +572,7 @@ const LogoImage = styled.img`
 const DownloadButton = styled.a`
   display: inline-block;
   margin: 2rem auto 0;
-  background-color: #7120b0;
+  background-color: ${({ theme }) => theme.color.accentDeep};
   color: white;
   padding: 1rem 2rem;
   text-decoration: none;
@@ -638,8 +590,8 @@ const DownloadButton = styled.a`
   white-space: normal;
 
   &:hover {
-    background-color: #9d20b0;
-    box-shadow: 0 0 20px rgba(113, 32, 176, 0.6);
+    background-color: ${({ theme }) => theme.color.accent};
+    box-shadow: ${({ theme }) => theme.elevation[2]};
     transform: translateY(-3px);
   }
 
@@ -662,57 +614,8 @@ const DownloadButton = styled.a`
 `;
 
 const CoursesPage = () => {
-  const particlesInit = useCallback(async (engine) => {
-    await loadFull(engine);
-  }, []);
-
   return (
     <PageSection>
-      <Particles
-        init={particlesInit}
-        options={{
-          background: { color: "#000000" },
-          particles: {
-            color: { value: ["#7120b0", "#9d20b0"] },
-            links: {
-              color: "#7120b0",
-              distance: 150,
-              enable: true,
-              opacity: 0.7,
-              width: 1.5,
-            },
-            move: { enable: true, speed: 0.8 },
-            number: { value: 70 },
-            size: { value: 3 },
-            opacity: { value: 0.5 },
-          },
-          fpsLimit: 120,
-          interactivity: {
-            events: {
-              onHover: {
-                enable: true,
-                mode: "grab"
-              },
-            },
-            modes: {
-              grab: {
-                distance: 140,
-                links: { opacity: 0.6 }
-              }
-            }
-          }
-        }}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      />
-
-
       <Container
         variants={staggerContainer}
         initial="initial"
@@ -723,7 +626,7 @@ const CoursesPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Intro to <span style={{ color: "#7120b0" }}>Blockchain</span>
+          Intro to <span style={{ color: "#A855F7" }}>Blockchain</span>
         </Title>
 
         <ImageSection
