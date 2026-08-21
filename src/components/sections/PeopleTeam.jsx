@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { motion, AnimatePresence } from 'framer-motion';
-import LinkedIn from '../../Icons/LinkedIn';
-import Twitter from '../../Icons/Twitter';
+import { motion } from 'framer-motion';
+import { FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import {
   Section,
   Container,
@@ -88,52 +87,42 @@ const Title = styled.h1`
   }
 `;
 
-const FilterNav = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.space[2]};
-  margin-bottom: ${({ theme }) => theme.space[10]};
-`;
+const TeamRow = styled(motion.div)`
+  display: grid;
+  grid-template-columns: ${({ $compact }) =>
+    $compact ? 'repeat(3, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))'};
+  align-items: stretch;
+  gap: ${({ theme }) => theme.space[4]};
 
-/* `$active` is transient: styled-components strips it instead of forwarding it
-   to the underlying <button>, which is what React was warning about. */
-const FilterButton = styled(motion.button)`
-  padding: 0.7rem 1.25rem;
-  min-height: 44px;
-  background: ${({ theme, $active }) =>
-    $active ? theme.color.accentDeep : 'transparent'};
-  border: 1px solid
-    ${({ theme, $active }) =>
-      $active ? theme.color.accentDeep : theme.color.border};
-  color: ${({ theme, $active }) =>
-    $active ? theme.color.text : theme.color.textMuted};
-  font-family: ${({ theme }) => theme.fontFamily.mono};
-  font-size: ${({ theme }) => theme.fontSize.micro};
-  font-weight: ${({ theme }) => theme.fontWeight.semibold};
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  cursor: pointer;
-  border-radius: ${({ theme }) => theme.radius.none};
-  transition: background ${({ theme }) => theme.motion.base},
-    border-color ${({ theme }) => theme.motion.base},
-    color ${({ theme }) => theme.motion.base};
+  ${({ theme }) => theme.media.sm} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 
-  &:hover {
-    color: ${({ theme }) => theme.color.text};
-    border-color: ${({ theme }) => theme.color.accent};
+  ${({ theme }) => theme.media.md} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  ${({ theme }) => theme.media.xl} {
+    grid-template-columns: ${({ $compact }) =>
+      $compact ? 'repeat(8, minmax(0, 1fr))' : 'repeat(6, minmax(0, 1fr))'};
   }
 `;
 
-const TeamRow = styled(motion.div)`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  align-items: start;
-  gap: ${({ theme }) => theme.space[6]};
+const TeamDivider = styled.div`
+  height: 1px;
+  margin-block: ${({ theme }) => theme.space[10]};
+  background: ${({ theme }) => theme.color.borderStrong};
 `;
 
 const MemberCard = styled(motion.div)`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: ${({ theme }) => theme.color.surfaceRaised};
   border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: ${({ theme }) => theme.radius.none};
@@ -144,6 +133,49 @@ const MemberCard = styled(motion.div)`
   &:hover {
     border-color: ${({ theme }) => theme.color.accentBorderStrong};
     transform: translateY(-3px);
+  }
+
+  &:focus-within [data-member-photo] img {
+    filter: blur(5px) brightness(0.48);
+    transform: scale(1.04);
+  }
+
+  &:focus-within [data-member-socials] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  @media (hover: hover) {
+    &:hover [data-member-photo] img {
+      filter: blur(5px) brightness(0.48);
+      transform: scale(1.04);
+    }
+
+    &:hover [data-member-socials] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+  }
+
+  ${({ $revealed }) =>
+    $revealed &&
+    `
+      [data-member-photo] img {
+        filter: blur(5px) brightness(0.48);
+        transform: scale(1.04);
+      }
+
+      [data-member-socials] {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+      }
+    `}
+
+  @media (hover: none) {
+    cursor: pointer;
   }
 
   @media (hover: none) {
@@ -167,6 +199,8 @@ const ImageContainer = styled.div`
     height: 100%;
     object-fit: cover;
     object-position: 50% 25%;
+    transition: filter ${({ theme }) => theme.motion.base},
+      transform ${({ theme }) => theme.motion.base};
   }
 `;
 
@@ -188,12 +222,15 @@ const PlaceholderIcon = styled.div`
 `;
 
 const ContentContainer = styled.div`
-  padding: ${({ theme }) => theme.space[5]};
+  flex: 1;
+  padding: ${({ theme, $compact }) =>
+    $compact ? theme.space[3] : theme.space[4]};
 `;
 
 const MemberName = styled.h3`
   font-family: ${({ theme }) => theme.fontFamily.display};
-  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-size: ${({ theme, $compact }) =>
+    $compact ? theme.fontSize.small : theme.fontSize.body};
   font-weight: ${({ theme }) => theme.fontWeight.semibold};
   line-height: 1.25;
   color: ${({ theme }) => theme.color.text};
@@ -206,34 +243,48 @@ const MemberTitle = styled.p`
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.color.accent};
+
+  ${({ $compact }) =>
+    $compact &&
+    `
+      letter-spacing: 0.1em;
+      line-height: 1.35;
+    `}
 `;
 
 const SocialIconsContainer = styled.div`
   position: absolute;
-  top: ${({ theme }) => theme.space[2]};
-  right: ${({ theme }) => theme.space[2]};
+  inset: 0;
   display: flex;
-  gap: ${({ theme }) => theme.space[2]};
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.space[3]};
   z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.92);
+  transition: opacity ${({ theme }) => theme.motion.base},
+    transform ${({ theme }) => theme.motion.base};
+
 `;
 
 const SocialIcon = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: ${({ theme }) => theme.color.textMuted};
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid ${({ theme }) => theme.color.border};
-  border-radius: ${({ theme }) => theme.radius.none};
+  width: ${({ $compact }) => ($compact ? '34px' : '40px')};
+  height: ${({ $compact }) => ($compact ? '34px' : '40px')};
+  color: ${({ $network }) => ($network === 'linkedin' ? '#0A66C2' : '#FFFFFF')};
+  background: transparent;
+  border: 0;
   text-decoration: none;
-  transition: color ${({ theme }) => theme.motion.fast},
-    border-color ${({ theme }) => theme.motion.fast};
+  opacity: 0.9;
+  transition: opacity ${({ theme }) => theme.motion.fast},
+    transform ${({ theme }) => theme.motion.fast};
 
   &:hover {
-    color: ${({ theme }) => theme.color.accent};
-    border-color: ${({ theme }) => theme.color.accent};
+    opacity: 1;
+    transform: scale(1.08);
   }
 `;
 
@@ -379,16 +430,10 @@ const allTeamMembersUnsorted = [
 ];
 
 const PeopleTeam = () => {
-  const [activeFilters, setActiveFilters] = useState(new Set());
+  const [revealedMemberId, setRevealedMemberId] = useState(null);
 
-  /**
-   * Display order, computed once per page load.
-   *
-   * Executive board first, ranked by role rather than by name, then everyone
-   * else shuffled. The shuffle lives in a useMemo with an empty dependency
-   * array so toggling a filter re-renders against the same order instead of
-   * dealing a new one and making every card jump.
-   */
+  /** The top six stay fixed; everyone below the divider gets a fresh order
+   * each time the page mounts. */
   const orderedMembers = useMemo(() => {
     /* Fisher-Yates on a copy. Never sort/shuffle the module-level array in
        place: it is shared across every mount and navigation. */
@@ -401,64 +446,79 @@ const PeopleTeam = () => {
       return result;
     };
 
-    /* Only these roles are ranked. Everything else on the board is peer level,
-       so it gets shuffled with the rest of the exec block. */
-    const execRoleOrder = ['Co-President'];
-
-    const isExecutive = (member) => member.category === 'executive';
-
-    const executives = allTeamMembersUnsorted.filter(isExecutive);
-    /* filter, not find: a role can be held by more than one person (there are
-       two Co-Presidents), and find would silently drop all but the first.
-       Same-rank holders are shuffled so neither is permanently listed first. */
-    const ranked = execRoleOrder.flatMap((role) =>
-      shuffle(executives.filter((member) => member.title === role)),
-    );
-    /* Keep the requested leaders directly after the two presidents. */
-    const featuredIds = [46, 49, 2, 1]; // Mugdha, Akash, Joey, Eli
-    const featured = featuredIds
+    const boardIds = [3, 5, 46, 49, 2, 1];
+    const board = boardIds
       .map((id) => allTeamMembersUnsorted.find((member) => member.id === id))
       .filter(Boolean);
-    const rankedIds = new Set(
-      [...ranked, ...featured].map((member) => member.id),
-    );
-    const remainingExecutives = shuffle(
-      executives.filter((member) => !rankedIds.has(member.id)),
+    const boardIdSet = new Set(boardIds);
+    const team = shuffle(
+      allTeamMembersUnsorted.filter((member) => !boardIdSet.has(member.id)),
     );
 
-    const everyoneElse = shuffle(
-      allTeamMembersUnsorted.filter(
-        (member) => !isExecutive(member) && !rankedIds.has(member.id),
-      ),
-    );
+    return [...board, ...team];
+  }, []);
 
-    return [...ranked, ...featured, ...remainingExecutives, ...everyoneElse];
-  }, []); // Empty dependency array means this only runs once on mount
+  // The first six are the leadership group requested above the divider.
+  const boardMembers = orderedMembers.slice(0, 6);
+  const teamMembers = orderedMembers.slice(6);
 
-  const filters = [
-    { id: 'developer', label: 'DEVELOPER TEAM' },
-    { id: 'research', label: 'RESEARCH TEAM' },
-    { id: 'operations', label: 'OPERATIONS TEAM' },
-    { id: 'executive', label: 'EXECUTIVE BOARD' }
-  ];
-
-  const toggleFilter = (filterId) => {
-    setActiveFilters(prev => {
-      const newFilters = new Set(prev);
-      if (newFilters.has(filterId)) {
-        newFilters.delete(filterId);
-      } else {
-        newFilters.add(filterId);
-      }
-      return newFilters;
-    });
-  };
-
-  /* Filtering only removes members, so the order above carries into every
-     filtered view unchanged. */
-  const displayedMembers = activeFilters.size === 0
-    ? orderedMembers
-    : orderedMembers.filter((member) => activeFilters.has(member.category));
+  const renderMember = (member, compact = false) => (
+    <MemberCard
+      key={member.id}
+      $revealed={revealedMemberId === member.id}
+      onClick={() => {
+        if (window.matchMedia('(hover: none)').matches) {
+          setRevealedMemberId((currentId) =>
+            currentId === member.id ? null : member.id,
+          );
+        }
+      }}
+    >
+      <ImageContainer data-member-photo>
+        {member.image ? (
+          <img
+            src={member.image}
+            alt={formatName(null, member.image)}
+            width="400"
+            height="400"
+            loading="lazy"
+          />
+        ) : (
+          <PlaceholderIcon />
+        )}
+        <SocialIconsContainer data-member-socials>
+          <SocialIcon
+            $compact={compact}
+            $network="linkedin"
+            aria-label={`${formatName(member.name, member.image)} on LinkedIn`}
+            href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
+            target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
+            rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
+          >
+            <FaLinkedin size={compact ? 22 : 26} />
+          </SocialIcon>
+          <SocialIcon
+            $compact={compact}
+            $network="x"
+            aria-label={`${formatName(member.name, member.image)} on X`}
+            href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
+            target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
+            rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
+          >
+            <FaXTwitter size={compact ? 20 : 24} />
+          </SocialIcon>
+        </SocialIconsContainer>
+      </ImageContainer>
+      <ContentContainer $compact={compact}>
+        <MemberName $compact={compact}>
+          {formatName(member.name, member.image)}
+        </MemberName>
+        <MemberTitle $compact={compact}>
+          {member.title || getTitleByCategory(member.category)}
+        </MemberTitle>
+      </ContentContainer>
+    </MemberCard>
+  );
 
   return (
     <Section $divided={false}>
@@ -475,72 +535,24 @@ const PeopleTeam = () => {
           </Lead>
         </Head>
 
-        <FilterNav>
-          {filters.map((filter) => {
-            const isActive = activeFilters.has(filter.id);
-            return (
-              <FilterButton
-                key={filter.id}
-                $active={isActive}
-                aria-pressed={isActive}
-                onClick={() => toggleFilter(filter.id)}
-                whileTap={{ scale: 0.97 }}
-              >
-                <span>{filter.label}</span>
-              </FilterButton>
-            );
-          })}
-        </FilterNav>
+        <TeamRow
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {boardMembers.map((member) => renderMember(member))}
+        </TeamRow>
 
-        <AnimatePresence mode="wait">
-          <TeamRow
-            key={Array.from(activeFilters).sort().join(',') || 'all'}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-          >
-            {displayedMembers.map((member) => (
-              <MemberCard key={member.id}>
-                <ImageContainer>
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={formatName(null, member.image)}
-                      width="400"
-                      height="400"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <PlaceholderIcon />
-                  )}
-                  <SocialIconsContainer>
-                    <SocialIcon
-                      aria-label={`${formatName(member.name, member.image)} on LinkedIn`}
-                      href={member.socials?.linkedin && member.socials.linkedin !== "#" ? member.socials.linkedin : "#"}
-                      target={member.socials?.linkedin && member.socials.linkedin !== "#" ? "_blank" : undefined}
-                      rel={member.socials?.linkedin && member.socials.linkedin !== "#" ? "noopener noreferrer" : undefined}
-                    >
-                      <LinkedIn width={14} height={14} />
-                    </SocialIcon>
-                    <SocialIcon
-                      aria-label={`${formatName(member.name, member.image)} on X`}
-                      href={member.socials?.twitter && member.socials.twitter !== "#" ? member.socials.twitter : "#"}
-                      target={member.socials?.twitter && member.socials.twitter !== "#" ? "_blank" : undefined}
-                      rel={member.socials?.twitter && member.socials.twitter !== "#" ? "noopener noreferrer" : undefined}
-                    >
-                      <Twitter width={14} height={14} />
-                    </SocialIcon>
-                  </SocialIconsContainer>
-                </ImageContainer>
-                <ContentContainer>
-                  <MemberName>{formatName(member.name, member.image)}</MemberName>
-                  <MemberTitle>{member.title || getTitleByCategory(member.category)}</MemberTitle>
-                </ContentContainer>
-              </MemberCard>
-            ))}
-          </TeamRow>
-        </AnimatePresence>
+        <TeamDivider aria-hidden="true" />
+
+        <TeamRow
+          $compact
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.08, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {teamMembers.map((member) => renderMember(member, true))}
+        </TeamRow>
       </Container>
     </Section>
   );
