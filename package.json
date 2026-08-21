@@ -2,50 +2,28 @@
   "name": "boiler-blockchain-website",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
-    "@fontsource/akaya-telivigala": "^5.0.8",
     "@fontsource/inter": "^5.1.0",
-    "@fontsource/lato": "^5.0.20",
-    "@fontsource/sora": "^5.0.15",
     "@fontsource/tomorrow": "^5.1.0",
-    "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
-    "@tsparticles/path-polygon": "^3.5.0",
     "framer-motion": "^11.11.11",
-    "gsap": "^3.9.1",
-    "lucide-react": "^0.456.0",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
-    "react-confetti": "^6.0.1",
     "react-dom": "^18.2.0",
     "react-icons": "^5.3.0",
-    "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "^5.0.1",
-    "react-slick": "^0.30.2",
     "react-tsparticles": "^2.9.3",
-    "react-twitter-embed": "^4.0.4",
-    "react-twitter-widgets": "^1.11.0",
-    "react-use": "^17.3.2",
-    "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.13",
-    "swiper": "^10.3.1",
-    "tsparticles": "^2.9.3",
-    "typewriter-effect": "^2.18.2",
-    "web-vitals": "^3.3.1"
+    "tsparticles": "^2.9.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.7"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -58,14 +36,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "main": "index.js",
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.48",
-    "tailwindcss": "^3.4.14"
   }
 }

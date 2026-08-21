@@ -1,51 +1,63 @@
 import { createGlobalStyle } from "styled-components";
-import "@fontsource/akaya-telivigala";
-import "@fontsource/sora";
-import "@fontsource/lato";
 
 const GlobalStyles = createGlobalStyle`
-
-${
-  "" /* 
-*{
-    outline: 1px solid red !important;
-} */
-}
-
-
-*,*::before,*::after{
+  *, *::before, *::after {
     margin: 0;
     padding: 0;
-}
-
-body{
-    font-family: 'Lato', sans-serif;
-    overflow-x: hidden;
-    height: 100%;
-    background: #000000 !important;
-    background-image: none !important;
-    max-width: 100vw;
     box-sizing: border-box;
-}
-
-@keyframes Gradient {
-    0% {
-      background-position: 0% 50%;  // Start with the gradient at the initial position
-    }
-    100% {
-      background-position: 100% 50%;  // End with the gradient shifted completely to the right
-    }
   }
 
+  html {
+    /* Safety net for the horizontal scroll. 'clip' rather than 'hidden' so it
+       does not silently create a scroll container and break position: sticky. */
+    overflow-x: clip;
+  }
 
-h1,h2,h3,h4,h5,h6{
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #000000;
+    color: #ffffff;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
     margin: 0;
     padding: 0;
-}
-a{
+  }
+
+  a {
     color: inherit;
-    text-decoration:none;
-}
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  /* Visible focus ring for keyboard users only. */
+  :focus-visible {
+    outline: 2px solid #A855F7;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 `;
 
 export default GlobalStyles;

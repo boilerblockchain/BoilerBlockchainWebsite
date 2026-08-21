@@ -1,11 +1,18 @@
 import React from "react";
 import App from "./App";
-import "../node_modules/normalize.css/normalize.css";
+import "normalize.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import AboutPage from "./components/sections/AboutPage";
-import '@fontsource/inter';
+// Real weight files. Previously only 600 was loaded while the CSS asked for
+// 800/900, so every heading was synthetically (badly) bolded by the browser.
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/tomorrow/400.css';
+import '@fontsource/tomorrow/500.css';
 import '@fontsource/tomorrow/600.css';
+import '@fontsource/tomorrow/700.css';
 import Hackathons from "./components/sections/Hackathons";
 
 // Teams
