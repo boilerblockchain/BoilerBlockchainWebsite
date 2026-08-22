@@ -37,18 +37,48 @@ const partners = [
   { name: 'Symphony', logo: '/images/partners/symphony.webp', url: '#' },
 ];
 
+/**
+ * Header sets title against the blurb across a hairline rather than stacking
+ * both down the left edge, which is what left a band of black above the wall.
+ */
 const Head = styled.div`
-  margin-bottom: ${({ theme }) => theme.space[12]};
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[6]};
+  align-items: end;
+  padding-bottom: ${({ theme }) => theme.space[8]};
+  margin-bottom: ${({ theme }) => theme.space[8]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.borderStrong};
+
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: ${({ theme }) => theme.space[12]};
+  }
+`;
+
+const HeadTitle = styled.div`
+  min-width: 0;
+
+  h1 {
+    font-size: ${({ theme }) => theme.fontSize.h1};
+  }
 `;
 
 const Accent = styled.span`
   color: ${({ theme }) => theme.color.accent};
 `;
 
+/* Genuinely unbounded list, so auto-fill stays here. Tighter tracks and a
+   tighter gutter put more of the wall on screen at once. */
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: ${({ theme }) => theme.space[6]};
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: ${({ theme }) => theme.space[3]};
+
+  ${({ theme }) => theme.media.md} {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: ${({ theme }) => theme.space[4]};
+  }
 `;
 
 /**
@@ -66,7 +96,7 @@ const Plate = styled.div`
   align-items: center;
   justify-content: center;
   aspect-ratio: 5 / 3;
-  padding: ${({ theme }) => theme.space[6]};
+  padding: ${({ theme }) => theme.space[5]};
   background: #f2f2f4;
   border: 1px solid ${({ theme }) => theme.color.border};
   transition: background ${({ theme }) => theme.motion.base},
@@ -111,11 +141,13 @@ const PartnersPage = () => {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
         >
-          <Eyebrow>Partners</Eyebrow>
-          <SectionTitle>
-            Our <Accent>Partners</Accent>
-          </SectionTitle>
-          <Lead style={{ marginTop: '1rem' }}>
+          <HeadTitle>
+            <Eyebrow>Partners</Eyebrow>
+            <SectionTitle as="h1">
+              Our <Accent>Partners</Accent>
+            </SectionTitle>
+          </HeadTitle>
+          <Lead>
             Building the future of blockchain together with leading
             organizations, hackathon platforms, and industry pioneers who share
             our vision for innovation

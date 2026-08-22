@@ -14,44 +14,72 @@ import {
   Lead,
 } from '../ui/primitives';
 
-const ContentGrid = styled.div`
+const PageHeader = styled.div`
+  max-width: ${({ theme }) => theme.layout.maxWidthText};
+  margin-bottom: ${({ theme }) => theme.space[8]};
+`;
+
+/**
+ * One composed panel rather than two cards floating in a gap: a single border
+ * around both halves, split by an internal hairline. On mobile the split runs
+ * horizontally, so the two halves stay a single object at every width.
+ */
+const Panel = styled(motion.div)`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: ${({ theme }) => theme.space[8]};
-  align-items: stretch;
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  color: ${({ theme }) => theme.color.text};
 
   ${({ theme }) => theme.media.lg} {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 `;
 
-const PageHeader = styled.div`
-  max-width: ${({ theme }) => theme.layout.maxWidthText};
-  margin-bottom: ${({ theme }) => theme.space[10]};
-`;
+const Half = styled.div`
+  min-width: 0;
+  padding: ${({ theme }) => theme.space[6]};
 
-/* Flat panel: 1px border, square corners, no blur and no glow. */
-const Panel = styled(motion.div)`
-  height: 100%;
-  background: ${({ theme }) => theme.color.surfaceRaised};
-  border: 1px solid ${({ theme }) => theme.color.border};
-  padding: ${({ theme }) => theme.space[8]};
-  color: ${({ theme }) => theme.color.text};
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.color.border};
+  }
 
   ${({ theme }) => theme.media.md} {
-    padding: ${({ theme }) => theme.space[10]};
+    padding: ${({ theme }) => theme.space[8]};
+  }
+
+  ${({ theme }) => theme.media.lg} {
+    & + & {
+      border-top: 0;
+      border-left: 1px solid ${({ theme }) => theme.color.border};
+    }
   }
 `;
 
-const CardHeader = styled.div`
-  margin-bottom: ${({ theme }) => theme.space[8]};
-  padding-bottom: ${({ theme }) => theme.space[6]};
-  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+const HalfTitle = styled.h2`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h3};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[6]};
+  padding-bottom: ${({ theme }) => theme.space[4]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.borderStrong};
 `;
 
+/* Hairline rows: label above, value below, one rule per entry. */
 const InfoSection = styled.div`
-  & + & {
-    margin-top: ${({ theme }) => theme.space[8]};
+  padding-block: ${({ theme }) => theme.space[4]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+
+  &:last-of-type {
+    border-bottom: 0;
+    padding-bottom: 0;
   }
 `;
 
@@ -132,16 +160,14 @@ const ContactPage = () => {
           </Lead>
         </PageHeader>
 
-        <ContentGrid>
-          <Panel
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-          >
-            <CardHeader>
-              <SectionTitle>Contact us</SectionTitle>
-            </CardHeader>
+        <Panel
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <Half>
+            <HalfTitle>Contact us</HalfTitle>
 
             <InfoSection>
               <FieldLabel as="p">Email</FieldLabel>
@@ -160,17 +186,10 @@ const ContactPage = () => {
                 </ContactLink>
               </InfoText>
             </InfoSection>
-          </Panel>
+          </Half>
 
-          <Panel
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.4, delay: 0.08, ease: [0.4, 0, 0.2, 1] }}
-          >
-            <CardHeader>
-              <SectionTitle>Meet &amp; follow</SectionTitle>
-            </CardHeader>
+          <Half>
+            <HalfTitle>Meet &amp; follow</HalfTitle>
 
             <InfoSection>
               <FieldLabel as="p">Weekly Meeting</FieldLabel>
@@ -204,8 +223,8 @@ const ContactPage = () => {
                 </a>
               </SocialIcons>
             </InfoSection>
-          </Panel>
-        </ContentGrid>
+          </Half>
+        </Panel>
       </Container>
     </Section>
   );

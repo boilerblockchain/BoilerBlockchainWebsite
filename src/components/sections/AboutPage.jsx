@@ -9,7 +9,6 @@ import {
   Eyebrow,
   SectionTitle,
   Lead,
-  Card,
   Button,
   ButtonLink,
 } from '../ui/primitives';
@@ -102,25 +101,33 @@ const Accent = styled.span`
 `;
 
 const Head = styled.div`
-  margin-bottom: ${({ theme }) => theme.space[12]};
+  margin-bottom: ${({ theme }) => theme.space[10]};
 `;
 
+/**
+ * The rows used to be a bordered card floating beside a photo, both centred,
+ * with 3rem of padding above and below each. The card is gone: the text is now
+ * a plain column headed by a numbered index plate, so the alternation reads as
+ * a deliberate sequence rather than four identical grey boxes.
+ */
 const Row = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: ${({ theme }) => theme.space[8]};
-  align-items: center;
-  padding-block: ${({ theme }) => theme.space[12]};
+  gap: ${({ theme }) => theme.space[6]};
+  align-items: start;
+  padding-block: ${({ theme }) => theme.space[10]};
   border-top: 1px solid ${({ theme }) => theme.color.border};
 
   ${({ theme }) => theme.media.lg} {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: ${({ theme }) => theme.space[16]};
+    gap: ${({ theme }) => theme.space[12]};
+    padding-block: ${({ theme }) => theme.space[12]};
   }
 `;
 
 /* On mobile the photo always leads; on desktop it alternates sides. */
 const Media = styled.div`
+  position: relative;
   order: -1;
   aspect-ratio: 4 / 3;
   overflow: hidden;
@@ -131,61 +138,87 @@ const Media = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Desaturated at rest so four unrelated snapshots read as one set. */
+    filter: grayscale(1) brightness(0.62);
+    transition: transform ${({ theme }) => theme.motion.slow},
+                filter ${({ theme }) => theme.motion.slow};
+  }
+
+  &:hover img {
+    filter: grayscale(0) brightness(0.85);
+    transform: scale(1.03);
   }
 
   ${({ theme }) => theme.media.lg} {
     order: ${({ $flip }) => ($flip ? -1 : 1)};
+    position: sticky;
+    top: calc(${({ theme }) => theme.layout.navHeight} + ${({ theme }) => theme.space[8]});
   }
 `;
 
-const Block = styled(Card)`
+const Index = styled.span`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.2em;
+  color: ${({ theme }) => theme.color.text};
+  background: ${({ theme }) => theme.color.black};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+  border-right: 1px solid ${({ theme }) => theme.color.border};
+`;
+
+const Block = styled.div`
   min-width: 0;
-  padding: ${({ theme }) => theme.space[8]};
 `;
 
 const BlockTitle = styled.h2`
   font-family: ${({ theme }) => theme.fontFamily.display};
-  font-size: ${({ theme }) => theme.fontSize.h3};
+  font-size: ${({ theme }) => theme.fontSize.h2};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.color.text};
   margin-bottom: ${({ theme }) => theme.space[4]};
 `;
 
 const BlockBody = styled.p`
   font-family: ${({ theme }) => theme.fontFamily.body};
-  font-size: ${({ theme }) => theme.fontSize.body};
+  font-size: ${({ theme }) => theme.fontSize.bodyLarge};
   line-height: 1.6;
   color: ${({ theme }) => theme.color.textMuted};
-  margin-bottom: ${({ theme }) => theme.space[6]};
+  padding-bottom: ${({ theme }) => theme.space[6]};
+  margin-bottom: ${({ theme }) => theme.space[2]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 `;
 
+/* Hairline rows rather than dashes: gives the four bullets structure without
+   adding another surface. */
 const List = styled.ul`
   list-style: none;
   margin-bottom: ${({ theme }) => theme.space[8]};
 
   li {
-    position: relative;
-    padding-left: ${({ theme }) => theme.space[5]};
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: ${({ theme }) => theme.space[2]};
+    align-items: baseline;
+    padding-block: ${({ theme }) => theme.space[3]};
+    border-bottom: 1px solid ${({ theme }) => theme.color.border};
     font-family: ${({ theme }) => theme.fontFamily.body};
     font-size: ${({ theme }) => theme.fontSize.body};
     line-height: 1.6;
     color: ${({ theme }) => theme.color.textMuted};
   }
 
-  li + li {
-    margin-top: ${({ theme }) => theme.space[3]};
-  }
-
   li::before {
     content: '';
-    position: absolute;
-    left: 0;
-    top: 0.65em;
-    width: 8px;
+    width: 10px;
     height: 1px;
     background: ${({ theme }) => theme.color.accent};
+    transform: translateY(-0.3em);
   }
 `;
 
@@ -212,7 +245,7 @@ const AboutPage = () => {
           </Lead>
         </Head>
 
-        {sections.map((section) => {
+        {sections.map((section, index) => {
           const isExternal = section.button.link.startsWith('http');
 
           return (
@@ -258,6 +291,7 @@ const AboutPage = () => {
                   width={section.imageWidth}
                   height={section.imageHeight}
                 />
+                <Index>{String(index + 1).padStart(2, '0')}</Index>
               </Media>
             </Row>
           );
