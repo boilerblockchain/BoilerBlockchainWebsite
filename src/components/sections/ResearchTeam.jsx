@@ -10,8 +10,16 @@ import {
   Eyebrow,
   SectionTitle,
   Lead,
-  Card,
 } from '../ui/primitives';
+
+/**
+ * Research team page.
+ *
+ * Density pass, following the choose-a-team page. Four research areas is a
+ * known set, so the columns are explicit; twelve publications are a list, so
+ * they render as a numbered hairline index rather than twelve identical grey
+ * boxes, which gives the page two levels of hierarchy instead of one.
+ */
 
 // CountUp Animation Component
 const CountUp = ({ end, duration = 2000, suffix = "" }) => {
@@ -39,31 +47,103 @@ const CountUp = ({ end, duration = 2000, suffix = "" }) => {
   return <span>{count}{suffix}</span>;
 };
 
-const Head = styled.div`
-  margin-bottom: ${({ theme }) => theme.space[12]};
+/* ---------------------------------------------------------------- hero band */
+
+const HeroSection = styled(Section)`
+  padding-block: clamp(3rem, 2rem + 4.5vw, 5.5rem);
 `;
 
-/* The reveal sits on a wrapper so framer's inline transform never fights a
-   card's own hover translate. */
-const Reveal = styled(motion.div)`
-  display: flex;
-  min-width: 0;
-`;
-
-const StatsRow = styled.div`
+const HeroGrid = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: ${({ theme }) => theme.space[6]};
-  margin-top: ${({ theme }) => theme.space[12]};
+  gap: ${({ theme }) => theme.space[10]};
+  align-items: center;
+
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: ${({ theme }) => theme.space[12]};
+  }
+`;
+
+/* Leading accent rule, so the top of the page carries some structure. */
+const HeroCopy = styled.div`
+  min-width: 0;
+  border-left: 2px solid ${({ theme }) => theme.color.accent};
+  padding-left: ${({ theme }) => theme.space[5]};
+
+  ${({ theme }) => theme.media.md} {
+    padding-left: ${({ theme }) => theme.space[6]};
+  }
+`;
+
+const PageTitle = styled(SectionTitle)`
+  font-size: ${({ theme }) => theme.fontSize.h1};
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+`;
+
+const Frame = styled.div`
+  position: relative;
+  aspect-ratio: ${({ $ratio }) => $ratio || '4 / 3'};
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.color.border};
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* Greyscale at rest so unrelated snapshots read as one set. */
+    filter: grayscale(1) brightness(0.62);
+    transition: transform ${({ theme }) => theme.motion.slow},
+                filter ${({ theme }) => theme.motion.slow};
+  }
+
+  &:hover img {
+    filter: grayscale(0) brightness(0.88);
+    transform: scale(1.03);
+  }
+`;
+
+const WideFrame = styled(Frame)`
+  aspect-ratio: 16 / 9;
+  margin-bottom: ${({ theme }) => theme.space[10]};
+
+  ${({ theme }) => theme.media.md} {
+    aspect-ratio: 3 / 1;
+  }
+`;
+
+/* ---------------------------------------------------------------- stat strip */
+
+/* Hairline-divided inline row spanning the container, like home/Stats. Three
+   bordered boxes with acres of black around them is what read as empty. */
+const StatStrip = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: ${({ theme }) => theme.space[10]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
 
   ${({ theme }) => theme.media.sm} {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 
-const StatCard = styled(Card)`
-  flex: 1;
+const StatCell = styled(motion.div)`
   min-width: 0;
+  padding-block: ${({ theme }) => theme.space[6]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+
+  ${({ theme }) => theme.media.sm} {
+    border-bottom: 0;
+    border-left: 1px solid ${({ theme }) => theme.color.border};
+    padding-inline: ${({ theme }) => theme.space[6]};
+
+    &:first-child {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
 `;
 
 const StatNumber = styled.div`
@@ -85,18 +165,78 @@ const StatLabel = styled.div`
   color: ${({ theme }) => theme.color.textFaint};
 `;
 
-const CardGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: ${({ theme }) => theme.space[6]};
+/* ------------------------------------------------------------------ headers */
+
+const Head = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.space[4]};
+  margin-bottom: ${({ theme }) => theme.space[8]};
+  padding-bottom: ${({ theme }) => theme.space[5]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 `;
 
-const ItemCard = styled(Card)`
-  flex: 1;
+const Count = styled.span`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textFaint};
+`;
+
+/* The reveal sits on a wrapper so framer's inline transform never fights a
+   card's own hover translate. */
+const Reveal = styled(motion.div)`
+  display: flex;
+  min-width: 0;
+`;
+
+/* Four areas is a known set: explicit columns, so the row fills. */
+const AreaGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[5]};
+
+  ${({ theme }) => theme.media.sm} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+`;
+
+const Panel = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  flex: 1;
   min-width: 0;
+  padding: ${({ theme }) => theme.space[6]};
+  background: ${({ theme }) => theme.color.surfaceRaised};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  transition: border-color ${({ theme }) => theme.motion.base},
+              transform ${({ theme }) => theme.motion.base};
+
+  &:hover {
+    border-color: ${({ theme }) => theme.color.accentBorderStrong};
+    transform: translateY(-3px);
+  }
+`;
+
+/* Numbered index plate: the one piece of contrast on an otherwise flat card. */
+const Index = styled.span`
+  align-self: flex-start;
+  margin-bottom: ${({ theme }) => theme.space[5]};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.2em;
+  color: ${({ theme }) => theme.color.text};
+  background: ${({ theme }) => theme.color.black};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
 `;
 
 const CardTitle = styled.h3`
@@ -113,14 +253,37 @@ const CardText = styled.p`
   font-size: ${({ theme }) => theme.fontSize.body};
   line-height: 1.6;
   color: ${({ theme }) => theme.color.textMuted};
-  margin-bottom: ${({ theme }) => theme.space[6]};
+  margin-bottom: ${({ theme }) => theme.space[5]};
+`;
+
+/* Hairline spec line: label left, accent value right. The value is counted
+   from the publications already in this file, not invented. */
+const Spec = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.space[3]};
+  margin-top: auto;
+  padding-top: ${({ theme }) => theme.space[3]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.color.textFaint};
+
+  span:last-child {
+    color: ${({ theme }) => theme.color.accent};
+  }
 `;
 
 const ResearchLink = styled.a`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.space[2]};
-  margin-top: auto;
+  /* 44px tap target without a visible box. */
+  min-height: 44px;
+  margin-bottom: ${({ theme }) => theme.space[2]};
   font-family: ${({ theme }) => theme.fontFamily.mono};
   font-size: ${({ theme }) => theme.fontSize.small};
   letter-spacing: 0.1em;
@@ -134,11 +297,57 @@ const ResearchLink = styled.a`
   }
 `;
 
+/* ------------------------------------------------------------- publications */
+
+/* Twelve papers as a numbered hairline index. Two columns of rows, so the
+   list fills the container instead of running as one narrow ribbon. */
+const PubList = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: ${({ theme }) => theme.space[12]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`;
+
+const PubRow = styled(motion.article)`
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[4]};
+  padding-block: ${({ theme }) => theme.space[5]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+  transition: background ${({ theme }) => theme.motion.base};
+
+  &:hover {
+    background: ${({ theme }) => theme.color.accentWash};
+  }
+`;
+
+const PubIndex = styled.span`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.color.textFaint};
+  font-variant-numeric: tabular-nums;
+`;
+
+const PublicationTitle = styled.h3`
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.h4};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  line-height: 1.25;
+  color: ${({ theme }) => theme.color.text};
+  margin-bottom: ${({ theme }) => theme.space[2]};
+`;
+
 const PublicationAuthors = styled.p`
   font-family: ${({ theme }) => theme.fontFamily.body};
   font-size: ${({ theme }) => theme.fontSize.small};
   line-height: 1.5;
-  color: ${({ theme }) => theme.color.accent};
+  color: ${({ theme }) => theme.color.textMuted};
   margin-bottom: ${({ theme }) => theme.space[3]};
 `;
 
@@ -147,8 +356,7 @@ const PublicationAbstract = styled.p`
   font-size: ${({ theme }) => theme.fontSize.micro};
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.color.textFaint};
-  margin-top: auto;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const researchAreas = [
@@ -237,6 +445,15 @@ const publications = [
     }
 ];
 
+/* Papers filed under each area, counted rather than authored, so every area
+   card gets a spec line without any new copy. */
+const paperCount = (areaTitle) =>
+  publications.filter(
+    (pub) => pub.abstract.toLowerCase() === areaTitle.toLowerCase(),
+  ).length;
+
+const pad = (index) => String(index + 1).padStart(2, '0');
+
 const reveal = {
   initial: { opacity: 0, y: 16 },
   whileInView: { opacity: 1, y: 0 },
@@ -252,83 +469,117 @@ const stats = [
 const ResearchTeam = () => {
   return (
     <>
-      <Section $divided={false}>
+      <HeroSection $divided={false}>
         <GridBackdrop />
         <Container>
-          <Eyebrow>Research</Eyebrow>
-          <SectionTitle as="h1">Research Team</SectionTitle>
-          <Lead style={{ marginTop: '1rem' }}>
-            Advancing blockchain technology through rigorous academic research and innovative solutions
-          </Lead>
+          <HeroGrid>
+            <HeroCopy>
+              <Eyebrow>Research</Eyebrow>
+              <PageTitle as="h1">Research Team</PageTitle>
+              <Lead style={{ marginTop: '1rem' }}>
+                Advancing blockchain technology through rigorous academic research and innovative solutions
+              </Lead>
+            </HeroCopy>
 
-          <StatsRow>
+            <Frame>
+              <img
+                src="/images/research/res1.webp"
+                alt=""
+                loading="lazy"
+                width="1600"
+                height="1200"
+              />
+            </Frame>
+          </HeroGrid>
+
+          <StatStrip>
             {stats.map((stat, index) => (
-              <Reveal
+              <StatCell
                 key={stat.label}
                 {...reveal}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
               >
-                <StatCard>
-                  <StatNumber><CountUp end={stat.end} suffix={stat.suffix} /></StatNumber>
-                  <StatLabel>{stat.label}</StatLabel>
-                </StatCard>
-              </Reveal>
+                <StatNumber><CountUp end={stat.end} suffix={stat.suffix} /></StatNumber>
+                <StatLabel>{stat.label}</StatLabel>
+              </StatCell>
             ))}
-          </StatsRow>
+          </StatStrip>
         </Container>
-      </Section>
+      </HeroSection>
 
       <Section>
         <GridBackdrop />
         <Container>
           <Head>
-            <Eyebrow>Focus</Eyebrow>
-            <SectionTitle>Research Areas</SectionTitle>
+            <div>
+              <Eyebrow>Focus</Eyebrow>
+              <SectionTitle>Research Areas</SectionTitle>
+            </div>
+            <Count>{String(researchAreas.length).padStart(2, '0')} Areas</Count>
           </Head>
 
-          <CardGrid>
+          <AreaGrid>
             {researchAreas.map((area, index) => (
               <Reveal
                 key={area.title}
                 {...reveal}
                 transition={{ duration: 0.4, delay: index * 0.06 }}
               >
-                <ItemCard>
+                <Panel>
+                  <Index>{pad(index)}</Index>
                   <CardTitle>{area.title}</CardTitle>
                   <CardText>{area.description}</CardText>
                   <ResearchLink href={area.link}>
                     <ExternalLink size={16} /> Learn More
                   </ResearchLink>
-                </ItemCard>
+                  <Spec>
+                    <span>Papers</span>
+                    <span>{String(paperCount(area.title)).padStart(2, '0')}</span>
+                  </Spec>
+                </Panel>
               </Reveal>
             ))}
-          </CardGrid>
+          </AreaGrid>
         </Container>
       </Section>
 
       <Section>
         <GridBackdrop />
         <Container>
+          <WideFrame>
+            <img
+              src="/images/research/res2.webp"
+              alt=""
+              loading="lazy"
+              width="1600"
+              height="1200"
+            />
+          </WideFrame>
+
           <Head>
-            <Eyebrow>Published</Eyebrow>
-            <SectionTitle>Recent Publications</SectionTitle>
+            <div>
+              <Eyebrow>Published</Eyebrow>
+              <SectionTitle>Recent Publications</SectionTitle>
+            </div>
+            <Count>{String(publications.length).padStart(2, '0')} Papers</Count>
           </Head>
 
-          <CardGrid>
+          <PubList>
             {publications.map((pub, index) => (
-              <Reveal
+              <PubRow
                 key={pub.title}
                 {...reveal}
                 transition={{ duration: 0.4, delay: Math.min(index, 6) * 0.05 }}
               >
-                <ItemCard>
-                  <CardTitle>{pub.title}</CardTitle>
+                <PubIndex>{pad(index)}</PubIndex>
+                <div>
+                  <PublicationTitle>{pub.title}</PublicationTitle>
                   <PublicationAuthors>{pub.authors}</PublicationAuthors>
                   <PublicationAbstract>{pub.abstract}</PublicationAbstract>
-                </ItemCard>
-              </Reveal>
+                </div>
+              </PubRow>
             ))}
-          </CardGrid>
+          </PubList>
         </Container>
       </Section>
     </>

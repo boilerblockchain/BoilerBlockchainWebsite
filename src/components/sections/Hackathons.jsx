@@ -102,17 +102,30 @@ const StatTitle = styled.div`
 
 const BlockGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: ${({ theme }) => theme.space[6]};
+  grid-template-columns: minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space[5]};
+
+  ${({ theme }) => theme.media.sm} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Capped at 4. auto-fill at 240px produced five columns at 1440, which was
+     narrow enough that every event title wrapped mid-word. */
+  ${({ theme }) => theme.media.lg} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  ${({ theme }) => theme.media.xl} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 `;
 
-/* `$blockNumber` is transient so styled-components does not forward it to the
-   DOM node, which is what React was warning about. */
 const BlockCard = styled(motion.button)`
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  min-height: 280px;
+  min-height: 260px;
   text-align: left;
   background: ${({ theme }) => theme.color.surfaceRaised};
   border: 1px solid ${({ theme }) => theme.color.border};
@@ -123,16 +136,6 @@ const BlockCard = styled(motion.button)`
   transition: border-color ${({ theme }) => theme.motion.base},
     transform ${({ theme }) => theme.motion.base};
 
-  &::after {
-    content: 'BLOCK #${({ $blockNumber }) => $blockNumber || 0}';
-    position: absolute;
-    top: ${({ theme }) => theme.space[3]};
-    right: ${({ theme }) => theme.space[4]};
-    font-family: ${({ theme }) => theme.fontFamily.mono};
-    font-size: ${({ theme }) => theme.fontSize.micro};
-    letter-spacing: 0.16em;
-    color: ${({ theme }) => theme.color.textFaint};
-  }
 
   &:hover {
     border-color: ${({ theme }) => theme.color.accentBorderStrong};
@@ -147,8 +150,28 @@ const BlockCard = styled(motion.button)`
 
 const BlockContent = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   z-index: 2;
-  padding-bottom: 50px; /* space for footer */
+`;
+
+const MetaRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.space[3]};
+  margin-bottom: ${({ theme }) => theme.space[4]};
+  padding-bottom: ${({ theme }) => theme.space[3]};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+`;
+
+const BlockNumber = styled.span`
+  flex-shrink: 0;
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.16em;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const Hash = styled.div`
@@ -156,7 +179,7 @@ const Hash = styled.div`
   font-size: ${({ theme }) => theme.fontSize.micro};
   letter-spacing: 0.06em;
   color: ${({ theme }) => theme.color.textFaint};
-  margin-bottom: ${({ theme }) => theme.space[4]};
+  min-width: 0;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -164,11 +187,7 @@ const Hash = styled.div`
 `;
 
 const BlockHeader = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.space[2]};
-  margin-bottom: ${({ theme }) => theme.space[2]};
+  margin-bottom: ${({ theme }) => theme.space[3]};
 `;
 
 const BlockDate = styled.h3`
@@ -178,9 +197,11 @@ const BlockDate = styled.h3`
   color: ${({ theme }) => theme.color.text};
 `;
 
-const BlockTime = styled.span`
+const BlockTime = styled.div`
+  margin-top: ${({ theme }) => theme.space[1]};
   font-family: ${({ theme }) => theme.fontFamily.mono};
   font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.1em;
   color: ${({ theme }) => theme.color.textFaint};
 `;
 
@@ -207,13 +228,10 @@ const BlockTeam = styled.div`
 
 const BlockFooter = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  right: 15px;
+  gap: ${({ theme }) => theme.space[3]};
+  margin-top: auto;
+  padding-top: ${({ theme }) => theme.space[5]};
 `;
 
 const PrizeTag = styled(Tag)`
@@ -603,7 +621,6 @@ const HackathonsPage = () => {
             <BlockCard
               key={block.id}
               type="button"
-              $blockNumber={block.displayBlockNumber}
               onClick={() => handleBlockClick(block)}
               aria-label={`${block.project} — ${block.date}`}
               initial={{ opacity: 0, y: 16 }}
@@ -616,7 +633,10 @@ const HackathonsPage = () => {
               }}
             >
               <BlockContent>
-                <Hash title={block.hash}>{block.hash.substring(0, 20)}...</Hash>
+                <MetaRow>
+                  <BlockNumber>BLOCK #{block.displayBlockNumber}</BlockNumber>
+                  <Hash title={block.hash}>{block.hash.substring(0, 14)}...</Hash>
+                </MetaRow>
 
                 <BlockHeader>
                   <BlockDate>{block.date}</BlockDate>
