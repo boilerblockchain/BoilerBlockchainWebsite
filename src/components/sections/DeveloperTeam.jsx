@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 import { Arrow } from '../ui/Arrow';
-import Github from '../../Icons/Github';
 import {
     Section,
     Container,
@@ -317,31 +316,6 @@ const Spec = styled.div`
     }
 `;
 
-const ProjectLinks = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${({ theme }) => theme.space[4]};
-    margin-bottom: ${({ theme }) => theme.space[5]};
-
-    a {
-        display: inline-flex;
-        align-items: center;
-        gap: ${({ theme }) => theme.space[2]};
-        /* 44px tap target without a visible box. */
-        min-height: 44px;
-        font-family: ${({ theme }) => theme.fontFamily.mono};
-        font-size: ${({ theme }) => theme.fontSize.small};
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: ${({ theme }) => theme.color.accent};
-        text-decoration: none;
-        transition: color ${({ theme }) => theme.motion.base};
-
-        &:hover {
-            color: ${({ theme }) => theme.color.accentBright};
-        }
-    }
-`;
 
 /* ------------------------------------------------------------ hackathon band */
 
@@ -386,30 +360,20 @@ const ExternalProjects = [
 const InternalProjects = [
     {
         title: 'NFT Collection',
-        description: 'Creating an Exclusive NFT Collection for Boiler Blockchain',
-        github: 'https://github.com/boilerblockchain/defi-platform',
-        demo: 'https://demo.boilerblockchain.org'
+        description: 'Creating an Exclusive NFT Collection for Boiler Blockchain'
     },
     {
         title: 'On-Chain Attendance',
-        description: 'Using X to enable attendance using assigned NFTs from our collection.',
-        github: 'https://github.com/boilerblockchain/nft-marketplace',
-        demo: 'https://nft.boilerblockchain.org'
+        description: 'Using X to enable attendance using assigned NFTs from our collection.'
     },
     {
         title: 'Boiler Blockchain LLM',
-        description: 'Creating an LLM for the BoilerBlockchain website',
-        github: 'https://github.com/boilerblockchain/dao-governance',
-        demo: 'https://dao.boilerblockchain.org'
+        description: 'Creating an LLM for the BoilerBlockchain website'
     },
     {
         title: 'This Website',
-        description: 'Managing and improving the Boiler Blockchain website.',
-        github: 'https://github.com/boilerblockchain/dao-governance',
-        demo: 'https://dao.boilerblockchain.org'
-    }
-
-
+        description: 'Managing and improving the Boiler Blockchain website.'
+    },
 ];
 
 /* Spec values are derived from the links already in the data rather than
@@ -422,13 +386,6 @@ const hostOf = (url) => {
     }
 };
 
-const repoOf = (url) => {
-    try {
-        return new URL(url).pathname.replace(/^\//, '');
-    } catch {
-        return url;
-    }
-};
 
 const pad = (index) => String(index + 1).padStart(2, '0');
 
@@ -547,15 +504,6 @@ const DeveloperTeam = () => {
                                     </PanelTop>
                                     <CardTitle>{project.title}</CardTitle>
                                     <CardText>{project.description}</CardText>
-                                    <ProjectLinks>
-                                        <a href={project.github} target="_blank" rel="noopener noreferrer">
-                                            <Github width={16} height={16} /> View Code
-                                        </a>
-                                    </ProjectLinks>
-                                    <Spec>
-                                        <span>Repo</span>
-                                        <span>{repoOf(project.github)}</span>
-                                    </Spec>
                                 </Panel>
                             </Reveal>
                         ))}

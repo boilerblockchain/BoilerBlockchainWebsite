@@ -107,6 +107,12 @@ const Frame = styled.div`
 
 const ShortFrame = styled(Frame)`
   aspect-ratio: 16 / 9;
+
+  ${({ theme }) => theme.media.lg} {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 160px;
+  }
 `;
 
 /* ---------------------------------------------------------------- stat strip */
@@ -171,7 +177,9 @@ const Split = styled.div`
   ${({ theme }) => theme.media.lg} {
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     gap: ${({ theme }) => theme.space[12]};
-    align-items: start;
+    /* stretch, not start: with start each column sized to its own content, so
+       the images ended at a different baseline from the card grid. */
+    align-items: stretch;
   }
 `;
 

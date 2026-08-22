@@ -104,12 +104,18 @@ const InfoText = styled.p`
 
 const ContactLink = styled.a`
   color: ${({ theme }) => theme.color.text};
+  /* Always underlined. Without it these read as plain text, since colour alone
+     is not a reliable link affordance. */
+  text-decoration: underline;
   text-decoration-color: ${({ theme }) => theme.color.accent};
-  text-underline-offset: 0.2em;
-  transition: color ${({ theme }) => theme.motion.base};
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color ${({ theme }) => theme.motion.base},
+              text-decoration-color ${({ theme }) => theme.motion.base};
 
   &:hover {
     color: ${({ theme }) => theme.color.accent};
+    text-decoration-color: currentColor;
   }
 `;
 
@@ -182,7 +188,7 @@ const ContactPage = () => {
               <FieldLabel as="p">Discord</FieldLabel>
               <InfoText>
                 <ContactLink href="https://discord.gg/vNwXZ39vmG" target="_blank" rel="noopener noreferrer">
-                  Join the Boiler Blockchain Discord
+                  Join the Discord!
                 </ContactLink>
               </InfoText>
             </InfoSection>
