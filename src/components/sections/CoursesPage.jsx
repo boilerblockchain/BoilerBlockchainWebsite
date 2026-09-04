@@ -24,7 +24,7 @@ import {
 const educationImage1 = '/images/education/edu1.webp';
 const educationImage3 = '/images/education/edu3.webp';
 
-const courseStaff = ['Aditya Kuniyil Kattil', 'Shivam Rastogi'];
+const courseStaff = ['Garv Tayade', 'Aditya Chaudhary'];
 
 const learningOutcomes = [
   'Understand blockchain technologies at a technical level',
@@ -331,8 +331,13 @@ const CoursesPage = () => {
             </Block>
 
             <Footer>
-              <Button href="#" download="#" $variant="outline">
-                Download Syllabus (Coming Soon)
+              <Button
+                href="http://www.eventreg.purdue.edu/online/BlockchainIntro"
+                target="_blank"
+                rel="noreferrer"
+                $variant="outline"
+              >
+                Register for the Course
               </Button>
             </Footer>
           </Main>
