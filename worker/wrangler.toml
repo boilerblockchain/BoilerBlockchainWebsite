@@ -1,0 +1,14 @@
+name = "bb-challenges"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# The site origin allowed to POST the form. Set to your deployed site URL.
+# Use "*" only while testing locally.
+[vars]
+ALLOWED_ORIGIN = "*"
+
+# D1 database for submissions. Fill database_id after `wrangler d1 create`.
+[[d1_databases]]
+binding = "DB"
+database_name = "bb-challenges"
+database_id = "REPLACE_AFTER_D1_CREATE"
