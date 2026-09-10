@@ -22,6 +22,9 @@ const API_BASE =
   import.meta.env.VITE_CHALLENGES_API ||
   'https://bb-challenges.jkokinda9.workers.dev';
 
+// The instancer: each student launches their own isolated challenge instance.
+const LAUNCH_URL = 'https://ctf.jaeger.lol';
+
 const Head = styled.div`
   margin-bottom: ${({ theme }) => theme.space[12]};
 `;
@@ -370,19 +373,19 @@ const vaultChallenges = [
   {
     name: 'Multisig Mayhem',
     difficulty: 'Warm-up',
-    desc: 'A "three-owner" multisig vault that trusts ecrecover without checking whether the recovered address is actually an owner. Forge the signatures, drain the vault.',
+    desc: 'A jackpot vault guarded by a three-owner multisig. It checks the signatures on a withdrawal — but how carefully?',
     file: '/challenges/cex-security-multisig_mayhem.tar.gz',
   },
   {
     name: 'Flash Crash',
     difficulty: 'Medium',
-    desc: 'A flash-credit vault whose session flag lives in EIP-1153 transient storage. Transient storage clears at the end of the transaction, not between calls — open the session and drain in a single tx.',
+    desc: 'A neon flash-credit desk that opens a session for the length of your transaction, then trusts that session a little too much.',
     file: '/challenges/blockchain-flash_crash.tar.gz',
   },
   {
     name: 'Double Down Drain',
     difficulty: 'Hard',
-    desc: 'A vault that merges a delegatecall flash loan with an owner-only skim(). Neither trick drains it alone. Chain both in one transaction.',
+    desc: 'A high-roller vault that runs your module and pays its owner. Neither lever is enough on its own.',
     file: '/challenges/blockchain-double_down_drain.tar.gz',
   },
 ];
@@ -400,7 +403,14 @@ async function postSubmission(form, setStatus) {
       body: JSON.stringify(data),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    setStatus({ state: 'ok', msg: 'Received. Good luck.' });
+    const body = await res.json().catch(() => ({}));
+    if (body.flag_correct === true) {
+      setStatus({ state: 'ok', msg: '✓ Correct flag — nice. Submission recorded.' });
+    } else if (body.flag_correct === false) {
+      setStatus({ state: 'error', msg: 'Recorded, but that flag is not correct.' });
+    } else {
+      setStatus({ state: 'ok', msg: 'Received. Good luck.' });
+    }
     form.reset();
   } catch (err) {
     setStatus({
@@ -485,16 +495,12 @@ function VaultForm() {
         </Select>
       </Field>
       <Field $full>
-        Proof it drains the vault
-        <Input name="onchain" required placeholder="forge test output (balance = 0), or local tx hash" />
-      </Field>
-      <Field $full>
-        Exploit link (repo or gist) — optional if you paste below
-        <Input name="links" placeholder="https://github.com/…  solve script / forge test" />
+        What is the flag?
+        <Input name="flag" required placeholder="boiler{…}  — from /claim after you drain the vault" />
       </Field>
       <Field $full>
         Paste your exploit (forge test / solve script)
-        <Textarea name="exploit" placeholder="Paste your exploit contract or forge test here. No deploy to a public chain needed — it just has to drain the vault locally." style={{ minHeight: '220px', fontFamily: 'ui-monospace, monospace' }} />
+        <Textarea name="exploit" placeholder="Paste the exploit you used to drain the vault." style={{ minHeight: '200px', fontFamily: 'ui-monospace, monospace' }} />
       </Field>
       <Field $full>
         The vulnerability + how you'd fix it
@@ -502,7 +508,7 @@ function VaultForm() {
       </Field>
       <SubmitRow>
         <SubmitButton type="submit" disabled={status.state === 'sending'}>
-          Submit exploit
+          Submit flag
         </SubmitButton>
         {status.msg && <StatusMsg $error={status.state === 'error'}>{status.msg}</StatusMsg>}
       </SubmitRow>
@@ -591,23 +597,19 @@ export default function Challenges() {
           </LevelLabel>
           <LevelHeading>Break a vault</LevelHeading>
           <Body style={{ marginTop: '1rem' }}>
-            Each challenge is a <strong>custom vulnerable contract</strong>, not
-            a textbook example. It ships as a Docker handout you run locally
-            (<code>docker compose up</code>) to develop your exploit against the
-            real bytecode. Find the bug, write an exploit that actually{' '}
-            <strong>drains the vault</strong>, then submit your solve script, the
-            winning transaction, and a short explanation of the vulnerability and
-            how you would fix it. Reading the bug is not enough — you have to make
-            the balance hit zero.
+            Each challenge is a <strong>custom vulnerable contract</strong> on its
+            own live chain. Launch your private instance, find the flaw, and{' '}
+            <strong>drain the vault</strong>. When the balance hits zero the
+            instance hands you a flag — submit it below. Your instance is yours
+            alone, so everyone can play at once.
           </Body>
           <Actions>
             <Button
-              href="/challenges/level-2-guide.md"
+              href={LAUNCH_URL}
               target="_blank"
               rel="noopener noreferrer"
-              $variant="outline"
             >
-              Read the how-to guide <ExternalLink size={15} />
+              Launch your instance <ExternalLink size={15} />
             </Button>
           </Actions>
 
@@ -630,16 +632,18 @@ export default function Challenges() {
                 <CardName>{c.name}</CardName>
                 <CardDesc>{c.desc}</CardDesc>
                 <DownloadLink href={c.file} download>
-                  Download handout ↓
+                  Source (dev locally) ↓
                 </DownloadLink>
               </ChallengeCard>
             ))}
           </ChallengeGrid>
 
           <Note>
-            Each handout runs a local chain that returns a placeholder{' '}
-            <code>fake&#123;flag&#125;</code>. Submit a working exploit plus a
-            short walkthrough. Requires Docker and Foundry.
+            Launch an instance to get a private RPC URL, a funded player key, and
+            the contract addresses. Point Foundry at it, drain the vault, then{' '}
+            <code>POST</code> to its <code>/claim</code> for your flag. Instances
+            expire after 90 minutes. The source download is only if you want to
+            develop locally first.
           </Note>
 
           <div style={{ marginTop: '2.5rem' }}>

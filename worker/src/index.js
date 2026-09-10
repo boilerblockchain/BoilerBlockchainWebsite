@@ -13,7 +13,21 @@
  */
 
 const MAX_FIELD = 20000; // per-field char cap (exploit paste can be long)
-const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'writeup'];
+const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'flag', 'writeup'];
+
+// Real flags are NOT hardcoded (this repo is public). They come from the
+// FLAGS_JSON Worker secret: {"Multisig Mayhem":"boiler{...}", ...}.
+function getFlags(env) {
+  try { return JSON.parse(env.FLAGS_JSON || '{}'); } catch { return {}; }
+}
+
+// Live instance URLs (informational, mirrors the site).
+const LAUNCH_URL = 'https://ctf.jaeger.lol';
+const INSTANCES = {
+  'Multisig Mayhem': LAUNCH_URL,
+  'Flash Crash': LAUNCH_URL,
+  'Double Down Drain': LAUNCH_URL,
+};
 
 function cors(env) {
   return {
@@ -55,7 +69,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Multisig Mayhem',
-    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
     vuln:
       'submitTransaction() recovers a signer with ecrecover but never checks isOwner[signer], and executionThreshold() returns 1. Any signature from any key you control passes.',
     solution:
@@ -65,7 +79,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Flash Crash',
-    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
     vuln:
       'The session flag lives in EIP-1153 transient storage, which clears at the END of the transaction, not between calls. emergencyDrain() only checks sessionOpen — no caller auth.',
     solution:
@@ -75,7 +89,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Double Down Drain',
-    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
     vuln:
       'flashLoan() sets inSession = true then delegatecalls an attacker-supplied module in the vault storage (owner is slot 0). inSession stays true for the rest of the tx, and skim() pays owner.',
     solution:
@@ -84,6 +98,38 @@ const ANSWERS = [
       'Never delegatecall untrusted modules. Use call with explicit value accounting, keep owner immutable / protected, and do not rely on a lingering transient flag to gate skim().',
   },
 ];
+
+// Internal how-to (organizers only). Kept off the public site on purpose so the
+// full recipe can't be pasted into an AI. Served token-gated at /guide.
+const GUIDE = `LEVEL 2 — internal how-to / run sheet
+
+Each challenge is a custom vulnerable contract on a live Anvil chain. Students
+launch their OWN isolated instance (per-student, concurrent) from the instancer,
+solve it, and claim a real flag. Setup.isSolved() is true when the vault is
+drained (balance == 0); the gateway then serves the real flag from /claim.
+
+INSTANCER (public):  https://ctf.jaeger.lol   (also https://ctf.pyras.org once DNS is added)
+  - Student opens it, clicks "Launch instance" for a challenge.
+  - Gets a private RPC at https://ctf.jaeger.lol/i/<id>/ + funded player key + addresses.
+  - Instances are isolated and auto-expire after 90 minutes.
+
+HOW A PLAYER SOLVES ONE
+  1. Launch an instance -> private RPC URL + player key + contract addresses.
+  2. Point Foundry (forge/cast) at the instance RPC URL.
+  3. Write the exploit, drive Setup.isSolved() to true (drain the vault).
+  4. POST {"address":"<setup>"} to <rpc>/claim -> real flag (boiler{...}).
+  5. Submit the flag on the Boiler Blockchain site (auto-checked here).
+
+REFERENCE SOLUTIONS: see the answer key (vuln + solution + fix + flag).
+
+HOSTING / OPS (brach)
+  Instancer service:  systemctl --user status bb-instancer
+  Instancer code:     ~/active/bb-challenges/instancer.py  (stdlib, port 8600)
+  Rebuild images:     ~/active/bb-challenges/deploy-brach.sh
+  Tunnel:             cloudflared user service -> ctf.jaeger.lol / ctf.pyras.org
+  Reset:              automatic. Each launch is a fresh container; expired ones
+                      are reaped (TTL 90m). No manual reset needed.
+  Flags live in the instancer CHALLENGES map and this Worker's FLAGS map.`;
 
 export default {
   async fetch(request, env) {
@@ -106,10 +152,13 @@ export default {
       if (!row.name || !row.email || !row.challenge) {
         return json({ error: 'name, email and challenge are required' }, 422, env);
       }
+      // Auto-mark: does the submitted flag match the real flag for this challenge?
+      const expected = getFlags(env)[row.challenge];
+      const flagCorrect = expected && row.flag && row.flag === expected ? 1 : 0;
       await env.DB.prepare(
         `INSERT INTO submissions
-           (created_at, name, email, challenge, onchain, links, exploit, writeup, ip, ua)
-         VALUES (?,?,?,?,?,?,?,?,?,?)`
+           (created_at, name, email, challenge, onchain, links, exploit, flag, flag_correct, writeup, ip, ua)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
       )
         .bind(
           new Date().toISOString(),
@@ -119,12 +168,15 @@ export default {
           row.onchain,
           row.links,
           row.exploit,
+          row.flag,
+          flagCorrect,
           row.writeup,
           request.headers.get('CF-Connecting-IP') || '',
           (request.headers.get('User-Agent') || '').slice(0, 300)
         )
         .run();
-      return json({ ok: true }, 201, env);
+      // Tell the student whether their flag was accepted (only when they sent one).
+      return json({ ok: true, flag_correct: row.flag ? Boolean(flagCorrect) : null }, 201, env);
     }
 
     // ---- admin JSON ----
@@ -142,7 +194,7 @@ export default {
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'onchain', 'links', 'exploit', 'writeup'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -160,7 +212,18 @@ export default {
     // ---- answer key (token-gated) ----
     if (url.pathname === '/answers' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
-      return json({ answers: ANSWERS }, 200, env);
+      const flags = getFlags(env);
+      const answers = ANSWERS.map((a) => (flags[a.challenge] ? { ...a, flag: flags[a.challenge] } : a));
+      return json({ answers }, 200, env);
+    }
+
+    // ---- internal guide (token-gated) ----
+    if (url.pathname === '/guide' && request.method === 'GET') {
+      if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
+      const flags = getFlags(env);
+      const flagBlock = Object.entries(flags).map(([k, v]) => `  ${k}: ${v}`).join('\n');
+      const guide = GUIDE + (flagBlock ? `\n\nFLAGS\n${flagBlock}` : '');
+      return json({ guide, instances: INSTANCES }, 200, env);
     }
 
     // ---- admin dashboard ----
@@ -225,9 +288,11 @@ const ADMIN_HTML = `<!doctype html>
   <button onclick="load()">Load</button>
   <button onclick="csv()">Export CSV</button>
   <button class="ghost" onclick="toggleAnswers()">Answer key</button>
+  <button class="ghost" onclick="toggleGuide()">Guide</button>
   <span id="msg" class="count"></span>
 </header>
 <div id="answers"><h2>Answer key</h2><div id="answers-body"></div></div>
+<div id="guide" style="display:none;padding:0 1.5rem 1.5rem"><h2 style="font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#C77DFF;border-bottom:1px solid #222;padding-bottom:.5rem">Internal guide</h2><pre id="guide-body" style="white-space:pre-wrap;background:#111;border:1px solid #1c1c24;padding:1rem;font-size:.82rem"></pre></div>
 <div class="wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
 <script>
   const tokenEl = document.getElementById('token');
@@ -240,21 +305,25 @@ const ADMIN_HTML = `<!doctype html>
     const res = await fetch('/list', { headers: headers() });
     if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
     const { submissions } = await res.json();
-    const cols = ['id','created_at','name','email','challenge','onchain','links','exploit','writeup'];
+    const cols = ['id','created_at','name','email','challenge','flag_correct','flag','onchain','links','exploit','writeup'];
     document.querySelector('thead').innerHTML =
-      '<tr>' + cols.map(c=>'<th>'+c+'</th>').join('') + '</tr>';
+      '<tr>' + cols.map(c=>'<th>'+(c==='flag_correct'?'ok':c)+'</th>').join('') + '</tr>';
     const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
     document.querySelector('tbody').innerHTML = submissions.map(r =>
       '<tr>' + cols.map(c => {
         const v = esc(r[c]);
+        if(c==='flag_correct') return r.flag_correct==1
+          ? '<td style="color:#4ade80;font-weight:700">✓</td>'
+          : (r.flag ? '<td style="color:#ff6b6b">✗</td>' : '<td></td>');
         if(c==='challenge') return '<td class="chal">'+v+'</td>';
         if(c==='writeup') return '<td class="writeup">'+v+'</td>';
         if(c==='exploit') return '<td class="writeup"><pre style="margin:0;white-space:pre-wrap;font-size:.78rem">'+v+'</pre></td>';
-        if(c==='onchain'||c==='links') return '<td><code>'+v+'</code></td>';
+        if(c==='flag'||c==='onchain'||c==='links') return '<td><code>'+v+'</code></td>';
         return '<td>'+v+'</td>';
       }).join('') + '</tr>'
     ).join('');
-    msg.textContent = submissions.length + ' submissions'; msg.className='count';
+    const solved = submissions.filter(r=>r.flag_correct==1).length;
+    msg.textContent = submissions.length + ' submissions · ' + solved + ' correct flags'; msg.className='count';
   }
   function csv(){
     const url = '/export';
@@ -279,10 +348,22 @@ const ADMIN_HTML = `<!doctype html>
     const row = (lab,val) => val ? '<div class="row"><span class="lab">'+lab+'</span>'+esc(val)+'</div>' : '';
     document.getElementById('answers-body').innerHTML = answers.map(a =>
       '<div class="akey"><div class="name">'+esc(a.challenge)+'</div>'
-      + row('win condition', a.win) + row('vuln', a.vuln)
+      + row('flag', a.flag) + row('win condition', a.win) + row('vuln', a.vuln)
       + row('solution', a.solution) + row('fix', a.fix) + '</div>'
     ).join('');
     answersLoaded = true;
+  }
+  let guideLoaded = false;
+  async function toggleGuide(){
+    const box = document.getElementById('guide');
+    if(box.style.display === 'block'){ box.style.display='none'; return; }
+    box.style.display='block';
+    if(guideLoaded) return;
+    const res = await fetch('/guide', { headers: headers() });
+    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    const { guide } = await res.json();
+    document.getElementById('guide-body').textContent = guide;
+    guideLoaded = true;
   }
   if(tokenEl.value) load();
 </script>

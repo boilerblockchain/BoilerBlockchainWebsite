@@ -1,0 +1,7 @@
+# Overrides the placeholder FLAG baked into each challenge's compose.yaml with
+# the real flag passed via the FLAG env var (see flags.env / deploy.sh).
+services:
+  challenge:
+    environment:
+      FLAG: ${FLAG:?set FLAG}
+    restart: unless-stopped
