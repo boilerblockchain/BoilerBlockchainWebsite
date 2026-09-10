@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   challenge  TEXT,
   onchain    TEXT,
   links      TEXT,
+  exploit    TEXT,
   writeup    TEXT,
   ip         TEXT,
   ua         TEXT

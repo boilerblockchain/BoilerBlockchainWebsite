@@ -61,12 +61,17 @@ Start with Multisig Mayhem.
 
 ## Submit
 
-On the Challenges page, use the **Level 2** form:
+On the Challenges page, use the **Level 2** form. You do **not** need to deploy
+to a public testnet (that is Level 1's job) — your exploit just has to drain the
+vault, locally is fine.
 
 1. Which challenge.
-2. Link to your exploit (repo or gist): the solve script / forge test.
-3. The winning transaction hash (or the `forge test` output showing the drain).
-4. A short explanation: what the vulnerability is, and how you would fix it.
+2. Proof it drains: the `forge test` output showing the balance hit zero, or the
+   local tx hash.
+3. Your exploit: paste the exploit contract / forge test directly, or link a
+   repo/gist.
+4. A short explanation, in your own words: what the vulnerability is, and how you
+   would fix it.
 
 ## A note on AI
 

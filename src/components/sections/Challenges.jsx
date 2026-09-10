@@ -484,13 +484,17 @@ function VaultForm() {
           ))}
         </Select>
       </Field>
-      <Field>
-        Winning tx hash
-        <Input name="onchain" placeholder="0x… (or forge test output link)" />
+      <Field $full>
+        Proof it drains the vault
+        <Input name="onchain" required placeholder="forge test output (balance = 0), or local tx hash" />
       </Field>
       <Field $full>
-        Exploit link (repo or gist)
-        <Input name="links" required placeholder="https://github.com/…  solve script / forge test" />
+        Exploit link (repo or gist) — optional if you paste below
+        <Input name="links" placeholder="https://github.com/…  solve script / forge test" />
+      </Field>
+      <Field $full>
+        Paste your exploit (forge test / solve script)
+        <Textarea name="exploit" placeholder="Paste your exploit contract or forge test here. No deploy to a public chain needed — it just has to drain the vault locally." style={{ minHeight: '220px', fontFamily: 'ui-monospace, monospace' }} />
       </Field>
       <Field $full>
         The vulnerability + how you'd fix it

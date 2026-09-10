@@ -12,8 +12,8 @@
  *   ALLOWED_ORIGIN  (var)     site origin allowed to POST; "*" while testing.
  */
 
-const MAX_FIELD = 4000; // per-field char cap
-const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'writeup'];
+const MAX_FIELD = 20000; // per-field char cap (exploit paste can be long)
+const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'writeup'];
 
 function cors(env) {
   return {
@@ -108,8 +108,8 @@ export default {
       }
       await env.DB.prepare(
         `INSERT INTO submissions
-           (created_at, name, email, challenge, onchain, links, writeup, ip, ua)
-         VALUES (?,?,?,?,?,?,?,?,?)`
+           (created_at, name, email, challenge, onchain, links, exploit, writeup, ip, ua)
+         VALUES (?,?,?,?,?,?,?,?,?,?)`
       )
         .bind(
           new Date().toISOString(),
@@ -118,6 +118,7 @@ export default {
           row.challenge,
           row.onchain,
           row.links,
+          row.exploit,
           row.writeup,
           request.headers.get('CF-Connecting-IP') || '',
           (request.headers.get('User-Agent') || '').slice(0, 300)
@@ -141,7 +142,7 @@ export default {
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'onchain', 'links', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'writeup'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -239,7 +240,7 @@ const ADMIN_HTML = `<!doctype html>
     const res = await fetch('/list', { headers: headers() });
     if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
     const { submissions } = await res.json();
-    const cols = ['id','created_at','name','email','challenge','onchain','links','writeup'];
+    const cols = ['id','created_at','name','email','challenge','onchain','links','exploit','writeup'];
     document.querySelector('thead').innerHTML =
       '<tr>' + cols.map(c=>'<th>'+c+'</th>').join('') + '</tr>';
     const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
@@ -248,6 +249,7 @@ const ADMIN_HTML = `<!doctype html>
         const v = esc(r[c]);
         if(c==='challenge') return '<td class="chal">'+v+'</td>';
         if(c==='writeup') return '<td class="writeup">'+v+'</td>';
+        if(c==='exploit') return '<td class="writeup"><pre style="margin:0;white-space:pre-wrap;font-size:.78rem">'+v+'</pre></td>';
         if(c==='onchain'||c==='links') return '<td><code>'+v+'</code></td>';
         return '<td>'+v+'</td>';
       }).join('') + '</tr>'
