@@ -22,7 +22,7 @@ function getFlags(env) {
 }
 
 // Live instance URLs (informational, mirrors the site).
-const LAUNCH_URL = 'https://ctf.jaeger.lol';
+const LAUNCH_URL = 'https://ctf.pyras.org';
 const INSTANCES = {
   'Multisig Mayhem': LAUNCH_URL,
   'Flash Crash': LAUNCH_URL,
@@ -69,7 +69,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Multisig Mayhem',
-    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.pyras.org',
     vuln:
       'submitTransaction() recovers a signer with ecrecover but never checks isOwner[signer], and executionThreshold() returns 1. Any signature from any key you control passes.',
     solution:
@@ -79,7 +79,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Flash Crash',
-    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.pyras.org',
     vuln:
       'The session flag lives in EIP-1153 transient storage, which clears at the END of the transaction, not between calls. emergencyDrain() only checks sessionOpen — no caller auth.',
     solution:
@@ -89,7 +89,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Double Down Drain',
-    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.jaeger.lol',
+    win: 'Drain the vault (Setup.isSolved: balance == 0). Launch your own instance at https://ctf.pyras.org',
     vuln:
       'flashLoan() sets inSession = true then delegatecalls an attacker-supplied module in the vault storage (owner is slot 0). inSession stays true for the rest of the tx, and skim() pays owner.',
     solution:
@@ -108,9 +108,9 @@ launch their OWN isolated instance (per-student, concurrent) from the instancer,
 solve it, and claim a real flag. Setup.isSolved() is true when the vault is
 drained (balance == 0); the gateway then serves the real flag from /claim.
 
-INSTANCER (public):  https://ctf.jaeger.lol   (also https://ctf.pyras.org once DNS is added)
+INSTANCER (public):  https://ctf.pyras.org   (https://ctf.jaeger.lol also works)
   - Student opens it, clicks "Launch instance" for a challenge.
-  - Gets a private RPC at https://ctf.jaeger.lol/i/<id>/ + funded player key + addresses.
+  - Gets a private RPC at https://ctf.pyras.org/i/<id>/ + funded player key + addresses.
   - Instances are isolated and auto-expire after 90 minutes.
 
 HOW A PLAYER SOLVES ONE
@@ -126,7 +126,7 @@ HOSTING / OPS (brach)
   Instancer service:  systemctl --user status bb-instancer
   Instancer code:     ~/active/bb-challenges/instancer.py  (stdlib, port 8600)
   Rebuild images:     ~/active/bb-challenges/deploy-brach.sh
-  Tunnel:             cloudflared user service -> ctf.jaeger.lol / ctf.pyras.org
+  Tunnel:             cloudflared user service -> ctf.pyras.org / ctf.jaeger.lol
   Reset:              automatic. Each launch is a fresh container; expired ones
                       are reaped (TTL 90m). No manual reset needed.
   Flags live in the instancer CHALLENGES map and this Worker's FLAGS map.`;

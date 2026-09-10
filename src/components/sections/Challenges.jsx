@@ -23,7 +23,7 @@ const API_BASE =
   'https://bb-challenges.jkokinda9.workers.dev';
 
 // The instancer: each student launches their own isolated challenge instance.
-const LAUNCH_URL = 'https://ctf.jaeger.lol';
+const LAUNCH_URL = 'https://ctf.pyras.org';
 
 const Head = styled.div`
   margin-bottom: ${({ theme }) => theme.space[12]};
