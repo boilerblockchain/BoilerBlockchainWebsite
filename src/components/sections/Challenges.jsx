@@ -210,6 +210,21 @@ const DownloadLink = styled.a`
   }
 `;
 
+const Help = styled.p`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: ${({ theme }) => theme.color.textMuted};
+  max-width: ${({ theme }) => theme.layout.maxWidthText};
+  margin-top: ${({ theme }) => theme.space[6]};
+
+  strong {
+    color: ${({ theme }) => theme.color.accent};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  }
+`;
+
 const Note = styled.p`
   font-family: ${({ theme }) => theme.fontFamily.mono};
   font-size: ${({ theme }) => theme.fontSize.micro};
@@ -463,6 +478,10 @@ export default function Challenges() {
             that get harder as you go. Submit everything at the bottom of this
             page.
           </Lead>
+          <Help>
+            Stuck or have a question? Message <strong>!spek (@sp3ked)</strong> on
+            Discord.
+          </Help>
         </Head>
 
         {/* LEVEL 1 */}
@@ -565,6 +584,10 @@ export default function Challenges() {
             add a short writeup.
           </Body>
           <SubmissionForm />
+          <Help>
+            Problems submitting or a question about a challenge? Message{' '}
+            <strong>!spek (@sp3ked)</strong> on Discord.
+          </Help>
         </div>
       </Container>
     </Section>

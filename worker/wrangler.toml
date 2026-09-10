@@ -5,7 +5,7 @@ compatibility_date = "2024-11-01"
 # The site origin allowed to POST the form. Set to your deployed site URL.
 # Use "*" only while testing locally.
 [vars]
-ALLOWED_ORIGIN = "*"
+ALLOWED_ORIGIN = "https://boilerblockchain.org"
 
 # D1 database for submissions. Fill database_id after `wrangler d1 create`.
 [[d1_databases]]
