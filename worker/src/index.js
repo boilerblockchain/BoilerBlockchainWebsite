@@ -47,7 +47,7 @@ function authorized(request, env) {
 const ANSWERS = [
   {
     challenge: 'Level 1 — TipJar',
-    flag: 'n/a (build task, not a flag)',
+    win: 'Build task, not an exploit — no flag. Judged on the deployed contract + writeup.',
     vuln:
       'Not an exploit. Common misses: overwriting instead of accumulating per-address totals; using OpenZeppelin v4 Ownable patterns that will not compile on v5; no zero-value require.',
     solution:
@@ -55,7 +55,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Multisig Mayhem',
-    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
     vuln:
       'submitTransaction() recovers a signer with ecrecover but never checks isOwner[signer], and executionThreshold() returns 1. Any signature from any key you control passes.',
     solution:
@@ -65,7 +65,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Flash Crash',
-    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
     vuln:
       'The session flag lives in EIP-1153 transient storage, which clears at the END of the transaction, not between calls. emergencyDrain() only checks sessionOpen — no caller auth.',
     solution:
@@ -75,7 +75,7 @@ const ANSWERS = [
   },
   {
     challenge: 'Double Down Drain',
-    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    win: 'Drain the vault — Setup.isSolved() true when balance == 0. (No flag string; grade on the exploit + proof.)',
     vuln:
       'flashLoan() sets inSession = true then delegatecalls an attacker-supplied module in the vault storage (owner is slot 0). inSession stays true for the rest of the tx, and skim() pays owner.',
     solution:
@@ -279,7 +279,7 @@ const ADMIN_HTML = `<!doctype html>
     const row = (lab,val) => val ? '<div class="row"><span class="lab">'+lab+'</span>'+esc(val)+'</div>' : '';
     document.getElementById('answers-body').innerHTML = answers.map(a =>
       '<div class="akey"><div class="name">'+esc(a.challenge)+'</div>'
-      + row('flag', a.flag) + row('vuln', a.vuln)
+      + row('win condition', a.win) + row('vuln', a.vuln)
       + row('solution', a.solution) + row('fix', a.fix) + '</div>'
     ).join('');
     answersLoaded = true;
