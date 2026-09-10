@@ -294,7 +294,6 @@ const teamsDropdown = {
 
 const navLinks = [
   { label: 'Technical Course', path: '/courses/technical' },
-  { label: 'Challenges', path: '/challenges' },
   { label: 'Partners', path: '/partners' },
   { label: 'Our Team', path: '/people/team' },
 ];
