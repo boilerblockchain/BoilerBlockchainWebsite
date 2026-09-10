@@ -111,7 +111,7 @@ drained (balance == 0); the gateway then serves the real flag from /claim.
 INSTANCER (public):  https://ctf.pyras.org   (https://ctf.jaeger.lol also works)
   - Student opens it, clicks "Launch instance" for a challenge.
   - Gets a private RPC at https://ctf.pyras.org/i/<id>/ + funded player key + addresses.
-  - Instances are isolated and auto-expire after 90 minutes.
+  - Instances are isolated and auto-expire after 30 min of inactivity (3h hard cap).
 
 HOW A PLAYER SOLVES ONE
   1. Launch an instance -> private RPC URL + player key + contract addresses.
@@ -127,8 +127,8 @@ HOSTING / OPS (brach)
   Instancer code:     ~/active/bb-challenges/instancer.py  (stdlib, port 8600)
   Rebuild images:     ~/active/bb-challenges/deploy-brach.sh
   Tunnel:             cloudflared user service -> ctf.pyras.org / ctf.jaeger.lol
-  Reset:              automatic. Each launch is a fresh container; expired ones
-                      are reaped (TTL 90m). No manual reset needed.
+  Reset:              automatic. Each launch is a fresh container; idle ones (30m)
+                      are reaped. No manual reset needed.
   Flags live in the instancer CHALLENGES map and this Worker's FLAGS map.`;
 
 export default {

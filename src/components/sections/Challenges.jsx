@@ -641,8 +641,8 @@ export default function Challenges() {
           <Note>
             Launch an instance to get a private RPC URL, a funded player key, and
             the contract addresses. Point Foundry at it, drain the vault, then{' '}
-            <code>POST</code> to its <code>/claim</code> for your flag. Instances
-            expire after 90 minutes. The source download is only if you want to
+            <code>POST</code> to its <code>/claim</code> for your flag. Your instance
+            expires after 30 min of inactivity. The source download is only if you want to
             develop locally first.
           </Note>
 

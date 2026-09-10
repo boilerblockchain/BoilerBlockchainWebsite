@@ -12,7 +12,8 @@ import json, os, re, secrets, subprocess, threading, time, urllib.request, urlli
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 LISTEN_PORT = int(os.environ.get("INSTANCER_PORT", "8600"))
-TTL_SECONDS = int(os.environ.get("TTL_SECONDS", "5400"))      # 90 min
+IDLE_SECONDS = int(os.environ.get("IDLE_SECONDS", "1800"))    # reap after 30 min idle
+MAX_LIFETIME = int(os.environ.get("MAX_LIFETIME", "10800"))    # hard cap 3 h
 MAX_INSTANCES = int(os.environ.get("MAX_INSTANCES", "150"))
 READY_TIMEOUT = 30
 
@@ -68,14 +69,17 @@ def launch(chal: str) -> dict:
         sh("docker", "rm", "-f", name)
         raise RuntimeError("instance did not become ready")
     with _lock:
-        instances[iid] = {"port": port, "chal": chal, "name": name, "created": time.time()}
+        now = time.time()
+        instances[iid] = {"port": port, "chal": chal, "name": name, "created": now, "last": now}
     return {"id": iid, "port": port}
 
 def reaper():
     while True:
         time.sleep(60)
         now = time.time()
-        dead = [(i, v["name"]) for i, v in list(instances.items()) if now - v["created"] > TTL_SECONDS]
+        dead = [(i, v["name"]) for i, v in list(instances.items())
+                if now - v.get("last", v["created"]) > IDLE_SECONDS
+                or now - v["created"] > MAX_LIFETIME]
         for iid, name in dead:
             sh("docker", "rm", "-f", name)
             with _lock:
@@ -145,7 +149,7 @@ class Handler(BaseHTTPRequestHandler):
         gw["rpc_url"] = base
         gw["claim_url"] = base + "claim"
         gw["instance_id"] = iid
-        gw["expires_in_seconds"] = TTL_SECONDS
+        gw["idle_timeout_seconds"] = IDLE_SECONDS
         page = INSTANCE_PAGE(TITLES[chal], base, gw)
         self._send(200, page.encode())
 
@@ -158,6 +162,7 @@ class Handler(BaseHTTPRequestHandler):
         inst = instances.get(iid)
         if not inst:
             return self._send(410, b"instance expired or not found")
+        inst["last"] = time.time()
         target = f"http://127.0.0.1:{inst['port']}{rest}"
         length = int(self.headers.get("Content-Length") or 0)
         body = self.rfile.read(length) if length else None
@@ -190,7 +195,7 @@ LANDING = """<!doctype html><html><head><meta charset=utf-8>
  small{color:#666}
 </style></head><body><div class=wrap>
 <h1>Boiler Blockchain — Level 2</h1>
-<p style="color:#aaa">Launch your own private instance. Drain the vault, then hit <code>/claim</code> to get your flag. Each instance is yours and expires after 90 minutes.</p>
+<p style="color:#aaa">Launch your own private instance. Drain the vault, then hit <code>/claim</code> to get your flag. Each instance is yours and expires after 30 minutes of inactivity.</p>
 <div class=c><h3>Multisig Mayhem</h3><p>Warm-up · signature / authorization.</p>
 <form method=post action=/new><input type=hidden name=chal value=multisig-mayhem><button>Launch instance</button></form></div>
 <div class=c><h3>Flash Crash</h3><p>Medium · EIP-1153 transient storage.</p>
@@ -213,7 +218,7 @@ def INSTANCE_PAGE(title, base, gw):
  a{{color:#C77DFF}}
 </style></head><body><div class=wrap>
 <h1>{title}</h1>
-<p>Your private instance is ready. RPC URL:</p>
+<p>Your private instance is ready (expires after 30 min of inactivity). RPC URL:</p>
 <pre><code>{base}</code></pre>
 <p>Connection details (funded player key + contract addresses):</p>
 <pre>{j}</pre>
