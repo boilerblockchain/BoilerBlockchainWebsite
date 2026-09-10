@@ -40,3 +40,10 @@ Submit on the Challenges page:
 5. Repo link (contract + deploy script; Foundry or Hardhat, your choice).
 6. A short note on how you tested it and any decision you had to make along the
    way.
+
+## A note on AI
+
+AI use is encouraged. But you must understand what you are doing and what is
+happening: be able to explain every line, why you made each decision, and how
+you verified it actually works. The tool is a collaborator, not a substitute for
+understanding, and the writeup is where that understanding shows.

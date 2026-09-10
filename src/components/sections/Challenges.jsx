@@ -63,6 +63,10 @@ const Title = styled.h1`
   }
 `;
 
+const SectionBlock = styled.div`
+  margin-top: ${({ theme }) => theme.space[16]};
+`;
+
 const LevelLabel = styled.div`
   display: flex;
   align-items: center;
@@ -143,7 +147,7 @@ const ChallengeGrid = styled.div`
   margin-top: ${({ theme }) => theme.space[8]};
 
   ${({ theme }) => theme.media.sm} {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `;
 
@@ -210,6 +214,22 @@ const DownloadLink = styled.a`
   }
 `;
 
+const Note = styled.p`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: ${({ theme }) => theme.color.textFaint};
+  max-width: ${({ theme }) => theme.layout.maxWidthText};
+  margin-top: ${({ theme }) => theme.space[8]};
+  padding-top: ${({ theme }) => theme.space[5]};
+  border-top: 1px solid ${({ theme }) => theme.color.border};
+
+  code {
+    color: ${({ theme }) => theme.color.accentBright};
+  }
+`;
+
 const Help = styled.p`
   font-family: ${({ theme }) => theme.fontFamily.mono};
   font-size: ${({ theme }) => theme.fontSize.small};
@@ -225,25 +245,29 @@ const Help = styled.p`
   }
 `;
 
-const Note = styled.p`
-  font-family: ${({ theme }) => theme.fontFamily.mono};
-  font-size: ${({ theme }) => theme.fontSize.micro};
+const AiNote = styled.p`
+  font-family: ${({ theme }) => theme.fontFamily.body};
+  font-size: ${({ theme }) => theme.fontSize.body};
   line-height: 1.6;
-  letter-spacing: 0.04em;
-  color: ${({ theme }) => theme.color.textFaint};
+  color: ${({ theme }) => theme.color.text};
   max-width: ${({ theme }) => theme.layout.maxWidthText};
-  margin-top: ${({ theme }) => theme.space[8]};
-  padding-top: ${({ theme }) => theme.space[5]};
-  border-top: 1px solid ${({ theme }) => theme.color.border};
+  margin-top: ${({ theme }) => theme.space[5]};
+  padding-left: ${({ theme }) => theme.space[4]};
+  border-left: 2px solid ${({ theme }) => theme.color.accent};
+
+  strong {
+    color: ${({ theme }) => theme.color.accentBright};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  }
 `;
 
-/* ---- submission form ---- */
+/* ---- submission forms ---- */
 
 const Form = styled.form`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: ${({ theme }) => theme.space[4]};
-  max-width: 640px;
+  max-width: 680px;
   margin-top: ${({ theme }) => theme.space[6]};
 
   ${({ theme }) => theme.media.sm} {
@@ -342,15 +366,7 @@ const StatusMsg = styled.span`
     $error ? '#ff6b6b' : theme.color.accentBright};
 `;
 
-const challengeOptions = [
-  'Level 1 — TipJar',
-  'Multisig Mayhem',
-  'Flash Crash',
-  'Double Down Drain',
-  'Trusted Transit',
-];
-
-const level2 = [
+const vaultChallenges = [
   {
     name: 'Multisig Mayhem',
     difficulty: 'Warm-up',
@@ -369,54 +385,91 @@ const level2 = [
     desc: 'A vault that merges a delegatecall flash loan with an owner-only skim(). Neither trick drains it alone. Chain both in one transaction.',
     file: '/challenges/blockchain-double_down_drain.tar.gz',
   },
-  {
-    name: 'Trusted Transit',
-    difficulty: 'Bonus · Move / Sui',
-    desc: 'A cross-chain bridge with a flawed attestation check, written in Move for Sui. Different toolchain, different mindset — the advanced bonus round.',
-    file: '/challenges/blockchain-trusted_transit.tar.gz',
-  },
 ];
 
-function SubmissionForm() {
-  const [status, setStatus] = useState({ state: 'idle', msg: '' });
+const vaultOptions = vaultChallenges.map((c) => c.name);
 
-  async function onSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    setStatus({ state: 'sending', msg: 'Submitting…' });
-    try {
-      const res = await fetch(`${API_BASE}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setStatus({ state: 'ok', msg: 'Received. Good luck.' });
-      form.reset();
-    } catch (err) {
-      setStatus({
-        state: 'error',
-        msg: `Could not submit (${err.message}). Try again shortly.`,
-      });
-    }
+/** POSTs the form to the Worker; `track` distinguishes level on the dashboard. */
+async function postSubmission(form, setStatus) {
+  const data = Object.fromEntries(new FormData(form).entries());
+  setStatus({ state: 'sending', msg: 'Submitting…' });
+  try {
+    const res = await fetch(`${API_BASE}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    setStatus({ state: 'ok', msg: 'Received. Good luck.' });
+    form.reset();
+  } catch (err) {
+    setStatus({
+      state: 'error',
+      msg: `Could not submit (${err.message}). Try again shortly.`,
+    });
   }
+}
 
+function TipJarForm() {
+  const [status, setStatus] = useState({ state: 'idle', msg: '' });
   return (
-    <Form onSubmit={onSubmit}>
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+        postSubmission(e.currentTarget, setStatus);
+      }}
+    >
+      <input type="hidden" name="challenge" value="Level 1 — TipJar" />
       <Field>
         Name
         <Input name="name" required placeholder="Your name" autoComplete="name" />
       </Field>
       <Field>
         Email
+        <Input name="email" type="email" required placeholder="you@purdue.edu" autoComplete="email" />
+      </Field>
+      <Field $full>
+        Contract address (Sepolia)
+        <Input name="onchain" required placeholder="0x…" />
+      </Field>
+      <Field $full>
+        Etherscan link, deploy tx, and repo
         <Input
-          name="email"
-          type="email"
+          name="links"
           required
-          placeholder="you@purdue.edu"
-          autoComplete="email"
+          placeholder="https://sepolia.etherscan.io/address/…#code   +   deploy tx   +   https://github.com/…"
         />
+      </Field>
+      <Field $full>
+        How you tested it / decisions you made
+        <Textarea name="writeup" placeholder="Keep it simple and in your own words — don't paste AI slop." />
+      </Field>
+      <SubmitRow>
+        <SubmitButton type="submit" disabled={status.state === 'sending'}>
+          Submit TipJar
+        </SubmitButton>
+        {status.msg && <StatusMsg $error={status.state === 'error'}>{status.msg}</StatusMsg>}
+      </SubmitRow>
+    </Form>
+  );
+}
+
+function VaultForm() {
+  const [status, setStatus] = useState({ state: 'idle', msg: '' });
+  return (
+    <Form
+      onSubmit={(e) => {
+        e.preventDefault();
+        postSubmission(e.currentTarget, setStatus);
+      }}
+    >
+      <Field>
+        Name
+        <Input name="name" required placeholder="Your name" autoComplete="name" />
+      </Field>
+      <Field>
+        Email
+        <Input name="email" type="email" required placeholder="you@purdue.edu" autoComplete="email" />
       </Field>
       <Field>
         Challenge
@@ -424,38 +477,34 @@ function SubmissionForm() {
           <option value="" disabled>
             Select…
           </option>
-          {challengeOptions.map((c) => (
+          {vaultOptions.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
         </Select>
       </Field>
-      <Field>
-        Contract address / tx (if any)
-        <Input name="onchain" placeholder="0x… address, or winning tx hash" />
+      <Field $full>
+        Proof it drains the vault
+        <Input name="onchain" required placeholder="forge test output (balance = 0), or local tx hash" />
       </Field>
       <Field $full>
-        Links (repo, Etherscan, gist)
-        <Input
-          name="links"
-          placeholder="https://github.com/…  https://sepolia.etherscan.io/…"
-        />
+        Exploit link (repo or gist) — optional if you paste below
+        <Input name="links" placeholder="https://github.com/…  solve script / forge test" />
       </Field>
       <Field $full>
-        Writeup / notes
-        <Textarea
-          name="writeup"
-          placeholder="How you approached it, how you tested, the vuln + fix for Level 2."
-        />
+        Paste your exploit (forge test / solve script)
+        <Textarea name="exploit" placeholder="Paste your exploit contract or forge test here. No deploy to a public chain needed — it just has to drain the vault locally." style={{ minHeight: '220px', fontFamily: 'ui-monospace, monospace' }} />
+      </Field>
+      <Field $full>
+        The vulnerability + how you'd fix it
+        <Textarea name="writeup" required placeholder="In your own words, keep it simple — don't paste AI slop. The bug, how your exploit drains it, and the fix." />
       </Field>
       <SubmitRow>
         <SubmitButton type="submit" disabled={status.state === 'sending'}>
-          Submit
+          Submit exploit
         </SubmitButton>
-        {status.msg && (
-          <StatusMsg $error={status.state === 'error'}>{status.msg}</StatusMsg>
-        )}
+        {status.msg && <StatusMsg $error={status.state === 'error'}>{status.msg}</StatusMsg>}
       </SubmitRow>
     </Form>
   );
@@ -475,9 +524,14 @@ export default function Challenges() {
           <Lead>
             Two levels. Level 1 is required: build and ship a contract to a live
             testnet. Level 2 is an optional set of vulnerable-contract puzzles
-            that get harder as you go. Submit everything at the bottom of this
-            page.
+            that get harder as you go. Each level has its own submission form
+            below it.
           </Lead>
+          <AiNote>
+            <strong>AI use is encouraged</strong> — but you must understand what
+            is going on and what you are doing. Be able to explain every line,
+            every decision, and how you verified it works.
+          </AiNote>
           <Help>
             Stuck or have a question? Message <strong>!spek (@sp3ked)</strong> on
             Discord.
@@ -485,63 +539,80 @@ export default function Challenges() {
         </Head>
 
         {/* LEVEL 1 */}
-        <LevelLabel>
-          <LevelNumber>Level 1</LevelNumber>
-          <Tag>Required</Tag>
-        </LevelLabel>
-        <LevelHeading>Ship a TipJar</LevelHeading>
-        <Body style={{ marginTop: '1rem' }}>
-          Write a <code>TipJar</code> contract, deploy it to the{' '}
-          <strong>Sepolia</strong> testnet, verify it on Etherscan, and send a
-          few real transactions through it.
-        </Body>
-        <Steps>
-          <li>
-            Build a <code>TipJar</code>: anyone deposits ETH, totals tracked{' '}
-            <strong>per address</strong>, only the owner withdraws. Use{' '}
-            <strong>OpenZeppelin v5</strong> for <code>Ownable</code>.
-          </li>
-          <li>
-            Deploy to <strong>Sepolia</strong> and verify the source on
-            Etherscan.
-          </li>
-          <li>
-            Send at least two deposits from one address and one withdrawal.
-          </li>
-          <li>
-            Submit the contract address, Etherscan link, deploy tx, repo, and a
-            short note (form below).
-          </li>
-        </Steps>
-        <Actions>
-          <Button
-            href="/challenges/level-1-tipjar.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            $variant="outline"
-          >
-            Read the full brief <ExternalLink size={15} />
-          </Button>
-        </Actions>
+        <SectionBlock>
+          <LevelLabel>
+            <LevelNumber>Level 1</LevelNumber>
+            <Tag>Required</Tag>
+          </LevelLabel>
+          <LevelHeading>Ship a TipJar</LevelHeading>
+          <Body style={{ marginTop: '1rem' }}>
+            Write a <code>TipJar</code> contract, deploy it to the{' '}
+            <strong>Sepolia</strong> testnet, verify it on Etherscan, and send a
+            few real transactions through it.
+          </Body>
+          <Steps>
+            <li>
+              Build a <code>TipJar</code>: anyone deposits ETH, totals tracked{' '}
+              <strong>per address</strong>, only the owner withdraws. Use{' '}
+              <strong>OpenZeppelin v5</strong> for <code>Ownable</code>.
+            </li>
+            <li>
+              Deploy to <strong>Sepolia</strong> and verify the source on
+              Etherscan.
+            </li>
+            <li>
+              Send at least two deposits from one address and one withdrawal.
+            </li>
+          </Steps>
+          <Actions>
+            <Button
+              href="/challenges/level-1-tipjar.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              $variant="outline"
+            >
+              Read the full brief <ExternalLink size={15} />
+            </Button>
+          </Actions>
+
+          <div style={{ marginTop: '2.5rem' }}>
+            <LevelLabel>
+              <LevelNumber>Submit · Level 1</LevelNumber>
+            </LevelLabel>
+            <TipJarForm />
+          </div>
+        </SectionBlock>
 
         {/* LEVEL 2 */}
-        <div style={{ marginTop: '5rem' }}>
+        <SectionBlock>
           <LevelLabel>
             <LevelNumber>Level 2</LevelNumber>
             <Tag>Optional</Tag>
           </LevelLabel>
           <LevelHeading>Break a vault</LevelHeading>
           <Body style={{ marginTop: '1rem' }}>
-            Each challenge is a custom vulnerable contract with a Docker handout
-            you run locally (<code>docker compose up</code>) to develop your
-            exploit against the real bytecode. Find the bug, write an exploit
-            that actually drains the vault, then submit your solve script, the
+            Each challenge is a <strong>custom vulnerable contract</strong>, not
+            a textbook example. It ships as a Docker handout you run locally
+            (<code>docker compose up</code>) to develop your exploit against the
+            real bytecode. Find the bug, write an exploit that actually{' '}
+            <strong>drains the vault</strong>, then submit your solve script, the
             winning transaction, and a short explanation of the vulnerability and
-            how you would fix it.
+            how you would fix it. Reading the bug is not enough — you have to make
+            the balance hit zero.
           </Body>
+          <Actions>
+            <Button
+              href="/challenges/level-2-guide.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              $variant="outline"
+            >
+              Read the how-to guide <ExternalLink size={15} />
+            </Button>
+          </Actions>
 
           <ChallengeGrid>
-            {level2.map((c, i) => (
+            {vaultChallenges.map((c, i) => (
               <ChallengeCard
                 key={c.name}
                 initial={{ opacity: 0, y: 16 }}
@@ -568,27 +639,20 @@ export default function Challenges() {
           <Note>
             Each handout runs a local chain that returns a placeholder{' '}
             <code>fake&#123;flag&#125;</code>. Submit a working exploit plus a
-            short walkthrough. Requires Docker and Foundry (Trusted Transit needs
-            the Sui / Move toolchain).
+            short walkthrough. Requires Docker and Foundry.
           </Note>
-        </div>
 
-        {/* SUBMIT */}
-        <div style={{ marginTop: '5rem' }}>
-          <LevelLabel>
-            <LevelNumber>Submit</LevelNumber>
-          </LevelLabel>
-          <LevelHeading>Send your work</LevelHeading>
-          <Body style={{ marginTop: '1rem' }}>
-            One form for every challenge. Pick which one, drop your links, and
-            add a short writeup.
-          </Body>
-          <SubmissionForm />
-          <Help>
-            Problems submitting or a question about a challenge? Message{' '}
-            <strong>!spek (@sp3ked)</strong> on Discord.
-          </Help>
-        </div>
+          <div style={{ marginTop: '2.5rem' }}>
+            <LevelLabel>
+              <LevelNumber>Submit · Level 2</LevelNumber>
+            </LevelLabel>
+            <VaultForm />
+            <Help>
+              Problems submitting or a question about a challenge? Message{' '}
+              <strong>!spek (@sp3ked)</strong> on Discord.
+            </Help>
+          </div>
+        </SectionBlock>
       </Container>
     </Section>
   );
