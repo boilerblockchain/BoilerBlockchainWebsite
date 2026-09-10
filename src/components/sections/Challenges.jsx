@@ -20,7 +20,7 @@ import {
  */
 const API_BASE =
   import.meta.env.VITE_CHALLENGES_API ||
-  'https://bb-challenges.YOUR-SUBDOMAIN.workers.dev';
+  'https://bb-challenges.jkokinda9.workers.dev';
 
 const Head = styled.div`
   margin-bottom: ${({ theme }) => theme.space[12]};
