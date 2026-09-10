@@ -47,3 +47,5 @@ AI use is encouraged. But you must understand what you are doing and what is
 happening: be able to explain every line, why you made each decision, and how
 you verified it actually works. The tool is a collaborator, not a substitute for
 understanding, and the writeup is where that understanding shows.
+
+yes I used ai to make this doc lol
