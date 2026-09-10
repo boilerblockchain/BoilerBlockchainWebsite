@@ -8,7 +8,6 @@ import {
   Container,
   GridBackdrop,
   Eyebrow,
-  Lead,
   Tag,
   Button,
 } from '../ui/primitives';
@@ -27,29 +26,6 @@ const LAUNCH_URL = 'https://ctf.pyras.org';
 
 const Head = styled.div`
   margin-bottom: ${({ theme }) => theme.space[12]};
-`;
-
-const BackButton = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.space[2]};
-  margin-bottom: ${({ theme }) => theme.space[6]};
-  font-family: ${({ theme }) => theme.fontFamily.mono};
-  font-size: ${({ theme }) => theme.fontSize.micro};
-  font-weight: ${({ theme }) => theme.fontWeight.medium};
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.color.textFaint};
-  text-decoration: none;
-  transition: color ${({ theme }) => theme.motion.base};
-
-  &::before {
-    content: '←';
-  }
-
-  &:hover {
-    color: ${({ theme }) => theme.color.accent};
-  }
 `;
 
 const Title = styled.h1`
@@ -522,17 +498,10 @@ export default function Challenges() {
       <GridBackdrop />
       <Container $wide>
         <Head>
-          <BackButton to="/">Back</BackButton>
           <Eyebrow>Prove it on-chain</Eyebrow>
           <Title>
             Boiler Blockchain <span>Challenges</span>
           </Title>
-          <Lead>
-            Two levels. Level 1 is required: build and ship a contract to a live
-            testnet. Level 2 is an optional set of vulnerable-contract puzzles
-            that get harder as you go. Each level has its own submission form
-            below it.
-          </Lead>
           <AiNote>
             <strong>AI use is encouraged</strong> — but you must understand what
             is going on and what you are doing. Be able to explain every line,
