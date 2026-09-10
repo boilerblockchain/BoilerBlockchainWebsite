@@ -548,7 +548,6 @@ export default function Challenges() {
         <SectionBlock>
           <LevelLabel>
             <LevelNumber>Level 1</LevelNumber>
-            <Tag>Required</Tag>
           </LevelLabel>
           <LevelHeading>Ship a TipJar</LevelHeading>
           <Body style={{ marginTop: '1rem' }}>
@@ -593,7 +592,6 @@ export default function Challenges() {
         <SectionBlock>
           <LevelLabel>
             <LevelNumber>Level 2</LevelNumber>
-            <Tag>Optional</Tag>
           </LevelLabel>
           <LevelHeading>Break a vault</LevelHeading>
           <Body style={{ marginTop: '1rem' }}>
