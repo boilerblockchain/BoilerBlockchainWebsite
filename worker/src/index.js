@@ -42,6 +42,49 @@ function authorized(request, env) {
   return token.length > 0 && token === env.ADMIN_TOKEN;
 }
 
+// Answer key for graders. Served only from /answers behind the admin token —
+// never embedded in the public /admin HTML.
+const ANSWERS = [
+  {
+    challenge: 'Level 1 — TipJar',
+    flag: 'n/a (build task, not a flag)',
+    vuln:
+      'Not an exploit. Common misses: overwriting instead of accumulating per-address totals; using OpenZeppelin v4 Ownable patterns that will not compile on v5; no zero-value require.',
+    solution:
+      'Verify on Sepolia Etherscan that the contract exists, is verified, tracks per-address totals across repeat deposits, and only the owner can withdraw. Check the writeup explains how they tested it.',
+  },
+  {
+    challenge: 'Multisig Mayhem',
+    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    vuln:
+      'submitTransaction() recovers a signer with ecrecover but never checks isOwner[signer], and executionThreshold() returns 1. Any signature from any key you control passes.',
+    solution:
+      'Compute txHash = keccak256(abi.encodePacked(dest, value, data, nonce, wallet)). Sign it with YOUR own key. Call submitTransaction with dest = your address, value = full balance, and your single (v,r,s). Balance goes to zero.',
+    fix:
+      'require(isOwner[signer]); enforce required >= advertisedRequiredSignatures (3); dedupe signers (the > ordering check helps but the missing isOwner check is the hole).',
+  },
+  {
+    challenge: 'Flash Crash',
+    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    vuln:
+      'The session flag lives in EIP-1153 transient storage, which clears at the END of the transaction, not between calls. emergencyDrain() only checks sessionOpen — no caller auth.',
+    solution:
+      'In ONE transaction call openSession() then emergencyDrain(). Do it from an attacker contract (or a multicall) so both run in the same tx; sessionOpen is still true when emergencyDrain sends the balance to msg.sender.',
+    fix:
+      'Do not use a transient flag as authorization. Gate emergencyDrain to the owner / a real flash-loan callback, and clear the session explicitly at the end of the intended flow.',
+  },
+  {
+    challenge: 'Double Down Drain',
+    flag: 'drain the vault (Setup.isSolved: balance == 0)',
+    vuln:
+      'flashLoan() sets inSession = true then delegatecalls an attacker-supplied module in the vault storage (owner is slot 0). inSession stays true for the rest of the tx, and skim() pays owner.',
+    solution:
+      'One tx: call flashLoan(module, data) where the module writes owner = attacker (slot 0) via delegatecall. After flashLoan returns, inSession is still true, so call skim() — it pays the new owner (attacker). Verified draining in a Foundry test.',
+    fix:
+      'Never delegatecall untrusted modules. Use call with explicit value accounting, keep owner immutable / protected, and do not rely on a lingering transient flag to gate skim().',
+  },
+];
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -113,6 +156,12 @@ export default {
       });
     }
 
+    // ---- answer key (token-gated) ----
+    if (url.pathname === '/answers' && request.method === 'GET') {
+      if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
+      return json({ answers: ANSWERS }, 200, env);
+    }
+
     // ---- admin dashboard ----
     if (url.pathname === '/admin' && request.method === 'GET') {
       return new Response(ADMIN_HTML, {
@@ -144,9 +193,19 @@ const ADMIN_HTML = `<!doctype html>
   button { padding:.55rem 1rem; background:#7120B0; border:1px solid #7120B0;
            color:#fff; cursor:pointer; }
   button:hover { background:#A855F7; }
+  button.ghost { background:transparent; border-color:#444; }
   a { color:#C77DFF; }
   .wrap { padding:1.5rem; }
   .count { color:#888; font-size:.85rem; }
+  #answers { padding:0 1.5rem 1.5rem; display:none; }
+  #answers h2 { font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
+                color:#C77DFF; border-bottom:1px solid #222; padding-bottom:.5rem; }
+  .akey { border:1px solid #1c1c24; background:#111; padding:.8rem 1rem;
+          margin-bottom:.8rem; }
+  .akey .name { color:#C77DFF; font-weight:600; margin-bottom:.4rem; }
+  .akey .row { font-size:.85rem; line-height:1.5; margin:.25rem 0; }
+  .akey .lab { color:#888; text-transform:uppercase; letter-spacing:.08em;
+               font-size:.7rem; margin-right:.4rem; }
   table { width:100%; border-collapse:collapse; font-size:.85rem; }
   th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid #1c1c24;
           vertical-align:top; }
@@ -164,8 +223,10 @@ const ADMIN_HTML = `<!doctype html>
   <input id="token" type="password" placeholder="admin token" />
   <button onclick="load()">Load</button>
   <button onclick="csv()">Export CSV</button>
+  <button class="ghost" onclick="toggleAnswers()">Answer key</button>
   <span id="msg" class="count"></span>
 </header>
+<div id="answers"><h2>Answer key</h2><div id="answers-body"></div></div>
 <div class="wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
 <script>
   const tokenEl = document.getElementById('token');
@@ -202,6 +263,24 @@ const ADMIN_HTML = `<!doctype html>
       const a = document.createElement('a');
       a.href = URL.createObjectURL(b); a.download='submissions.csv'; a.click();
     });
+  }
+  let answersLoaded = false;
+  async function toggleAnswers(){
+    const box = document.getElementById('answers');
+    if(box.style.display === 'block'){ box.style.display='none'; return; }
+    box.style.display = 'block';
+    if(answersLoaded) return;
+    const res = await fetch('/answers', { headers: headers() });
+    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    const { answers } = await res.json();
+    const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+    const row = (lab,val) => val ? '<div class="row"><span class="lab">'+lab+'</span>'+esc(val)+'</div>' : '';
+    document.getElementById('answers-body').innerHTML = answers.map(a =>
+      '<div class="akey"><div class="name">'+esc(a.challenge)+'</div>'
+      + row('flag', a.flag) + row('vuln', a.vuln)
+      + row('solution', a.solution) + row('fix', a.fix) + '</div>'
+    ).join('');
+    answersLoaded = true;
   }
   if(tokenEl.value) load();
 </script>
