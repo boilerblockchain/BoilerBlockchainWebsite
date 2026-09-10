@@ -169,9 +169,17 @@ class Handler(BaseHTTPRequestHandler):
         req = urllib.request.Request(target, data=body, method=method)
         ct = self.headers.get("Content-Type")
         if ct: req.add_header("Content-Type", ct)
+        host = self.headers.get("Host", "ctf.pyras.org")
+        internal = f"http://127.0.0.1:{inst['port']}".encode()
+        proxied = f"https://{host}/i/{iid}".encode()
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
                 data = resp.read()
+                # The gateway reports its own internal URL (127.0.0.1:port) in the
+                # root/claim JSON; rewrite it to the public proxied URL so students
+                # always see the address they should actually use.
+                if internal in data:
+                    data = data.replace(internal, proxied)
                 self._send(resp.status, data,
                            ctype=resp.headers.get("Content-Type", "application/json"))
         except urllib.error.HTTPError as e:

@@ -597,11 +597,8 @@ export default function Challenges() {
           </LevelLabel>
           <LevelHeading>Break a vault</LevelHeading>
           <Body style={{ marginTop: '1rem' }}>
-            Each challenge is a <strong>custom vulnerable contract</strong> on its
-            own live chain. Launch your private instance, find the flaw, and{' '}
-            <strong>drain the vault</strong>. When the balance hits zero the
-            instance hands you a flag — submit it below. Your instance is yours
-            alone, so everyone can play at once.
+            Each challenge is a <strong>custom vulnerable contract</strong> with a
+            hidden flaw. Launch your own live instance and exploit it.
           </Body>
           <Actions>
             <Button
@@ -638,12 +635,35 @@ export default function Challenges() {
             ))}
           </ChallengeGrid>
 
+          <Body style={{ marginTop: '2.5rem' }}>
+            <strong>The goal:</strong> every challenge is a vault holding 10 ETH
+            with a hidden flaw. Break it, drain the vault to zero, and capture the
+            flag.
+          </Body>
+          <Steps>
+            <li>
+              <strong>Launch your instance</strong> — you get a private RPC URL, a
+              funded player key, and the contract addresses.
+            </li>
+            <li>
+              <strong>Point Foundry at that RPC</strong> and exploit the bug to{' '}
+              <strong>drain the vault</strong> (balance → 0).
+            </li>
+            <li>
+              <strong>
+                <code>POST</code> to your instance's <code>/claim</code>
+              </strong>{' '}
+              → it hands you the flag.
+            </li>
+            <li>
+              <strong>Paste the flag</strong> into the form below.
+            </li>
+          </Steps>
+
           <Note>
-            Launch an instance to get a private RPC URL, a funded player key, and
-            the contract addresses. Point Foundry at it, drain the vault, then{' '}
-            <code>POST</code> to its <code>/claim</code> for your flag. Your instance
-            expires after 30 min of inactivity. The source download is only if you want to
-            develop locally first.
+            Your instance expires after 30 minutes of inactivity. The source
+            download is optional — for reading the code or testing your exploit
+            locally first. Needs Foundry.
           </Note>
 
           <div style={{ marginTop: '2.5rem' }}>
