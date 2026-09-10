@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS submissions (
   onchain    TEXT,
   links      TEXT,
   exploit    TEXT,
+  flag       TEXT,
+  flag_correct INTEGER DEFAULT 0,
   writeup    TEXT,
   ip         TEXT,
   ua         TEXT
