@@ -40,6 +40,7 @@ const joshuaImage = '/images/pfps/dev/joshua_cho.webp';
 const yashImage = '/images/pfps/dev/yash_bapat.webp';
 const manningImage = '/images/pfps/dev/manning_wu.webp';
 const vatsalImage = '/images/pfps/dev/vatsal_maheshwari.webp';
+const srijanImage = '/images/pfps/dev/srijan_challapalli.webp';
 
 // Research Team
 const aryanPatelImage = '/images/pfps/res/aryan_patel.webp';
@@ -400,6 +401,7 @@ const allTeamMembersUnsorted = [
   { id: 25, image: joshuaImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/sanghyun-j-cho/", twitter: "https://x.com/himynameisjahsh" } },
   { id: 26, image: yashImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/yash-bapat-4810a4251/", twitter: "https://twitter.com/YashBapat178164" } },
   { id: 27, image: manningImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/manning-w-9a0399318/", twitter: "https://x.com/manningwu_" } },
+  { id: 53, image: srijanImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/srijan-challapalli/", twitter: "https://x.com/dongaranga" } },
   { id: 52, image: vatsalImage, category: "developer", socials: { linkedin: "https://www.linkedin.com/in/vatsal-maheshwari-m30/", twitter: "https://x.com/blackopps16666" } },
   // Research Team
   { id: 28, image: aryanPatelImage, category: "research", socials: { linkedin: "https://www.linkedin.com/in/aryan-patel-a59117386/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/aryanmp4_?s=21" } },
@@ -447,15 +449,22 @@ const PeopleTeam = () => {
     };
 
     const boardIds = [3, 5, 46, 49, 2, 1];
+    // Pinned to the first slot of the shuffled team row.
+    const pinnedTeamId = 53;
     const board = boardIds
       .map((id) => allTeamMembersUnsorted.find((member) => member.id === id))
       .filter(Boolean);
     const boardIdSet = new Set(boardIds);
+    const pinnedTeamMember = allTeamMembersUnsorted.find(
+      (member) => member.id === pinnedTeamId,
+    );
     const team = shuffle(
-      allTeamMembersUnsorted.filter((member) => !boardIdSet.has(member.id)),
+      allTeamMembersUnsorted.filter(
+        (member) => !boardIdSet.has(member.id) && member.id !== pinnedTeamId,
+      ),
     );
 
-    return [...board, ...team];
+    return [...board, ...(pinnedTeamMember ? [pinnedTeamMember] : []), ...team];
   }, []);
 
   // The first six are the leadership group requested above the divider.
