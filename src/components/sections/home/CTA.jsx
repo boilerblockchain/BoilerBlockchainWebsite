@@ -76,7 +76,7 @@ export default function CTA() {
           </Copy>
           <Actions>
             <Button
-              href="https://discord.gg/vNwXZ39vmG"
+              href="https://discord.gg/hnjtVpb9H5"
               target="_blank"
               rel="noopener noreferrer"
             >

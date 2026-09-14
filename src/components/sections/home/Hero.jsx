@@ -153,7 +153,7 @@ export default function Hero() {
           </Lead>
           <Actions {...fade(0.18)}>
             <Button
-              href="https://discord.gg/vNwXZ39vmG"
+              href="https://discord.gg/hnjtVpb9H5"
               target="_blank"
               rel="noopener noreferrer"
             >
