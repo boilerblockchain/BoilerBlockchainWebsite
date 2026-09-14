@@ -214,7 +214,7 @@ export default function Footer() {
           </li>
           <li>
             <SocialLink
-                href="https://discord.gg/vNwXZ39vmG"
+                href="https://discord.gg/hnjtVpb9H5"
               target="_blank"
               rel="noopener noreferrer"
                 aria-label="Discord"

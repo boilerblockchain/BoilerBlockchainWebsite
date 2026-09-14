@@ -34,7 +34,7 @@ const sections = [
     ],
     button: {
       text: 'Join Our Discord',
-      link: 'https://discord.gg/vNwXZ39vmG',
+      link: 'https://discord.gg/hnjtVpb9H5',
     },
     imageFirst: false,
   },
@@ -90,7 +90,7 @@ const sections = [
     ],
     button: {
       text: 'Join Our Discord',
-      link: 'https://discord.gg/vNwXZ39vmG',
+      link: 'https://discord.gg/hnjtVpb9H5',
     },
     imageFirst: true,
   },
