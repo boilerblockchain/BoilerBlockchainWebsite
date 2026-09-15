@@ -8,7 +8,7 @@ instance is independent. Instances auto-expire.
 stdlib only. Runs on brach behind the Cloudflare Tunnel.
 """
 from __future__ import annotations
-import json, os, re, secrets, subprocess, threading, time, urllib.request, urllib.error
+import hashlib, hmac, json, os, re, secrets, subprocess, threading, time, urllib.parse, urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 LISTEN_PORT = int(os.environ.get("INSTANCER_PORT", "8600"))
@@ -17,11 +17,16 @@ MAX_LIFETIME = int(os.environ.get("MAX_LIFETIME", "10800"))    # hard cap 3 h
 MAX_INSTANCES = int(os.environ.get("MAX_INSTANCES", "150"))
 READY_TIMEOUT = 30
 
-# chal slug -> (docker image, real flag)
+# Shared with the submissions Worker (its FLAG_SECRET). Flags are minted per
+# instance and signed with it, so the Worker can verify a flag it has never seen
+# without the two services talking to each other.
+FLAG_SECRET = os.environ.get("FLAG_SECRET", "")
+
+# chal slug -> docker image. Flags are no longer static; see mint_flag().
 CHALLENGES = {
-    "multisig-mayhem":   ("multisig-mayhem-challenge",   os.environ.get("MULTISIG_FLAG", "")),
-    "flash-crash":       ("flash-crash-challenge",       os.environ.get("FLASHCRASH_FLAG", "")),
-    "double-down-drain": ("double-down-drain-challenge", os.environ.get("DOUBLEDOWN_FLAG", "")),
+    "multisig-mayhem":   "multisig-mayhem-challenge",
+    "flash-crash":       "flash-crash-challenge",
+    "double-down-drain": "double-down-drain-challenge",
 }
 TITLES = {
     "multisig-mayhem": "Multisig Mayhem",
@@ -30,13 +35,68 @@ TITLES = {
 }
 
 _lock = threading.Lock()
-instances: dict[str, dict] = {}   # id -> {port, chal, name, created}
+instances: dict[str, dict] = {}   # id -> {port, chal, name, flag, created, last}
 
 def sh(*args, timeout=60):
     return subprocess.run(args, capture_output=True, text=True, timeout=timeout)
 
-def launch(chal: str) -> dict:
-    image, flag = CHALLENGES[chal]
+# Append-only record of every launch. This is the evidence a grader shows when a
+# student disputes a flag: it says which email launched which instance, when.
+LAUNCH_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "launches.log")
+
+def normalize_email(email: str) -> str:
+    return email.strip().lower()
+
+def owner_tag(email: str) -> str:
+    """Short stable tag identifying who launched an instance.
+
+    Derived from the email through the secret, so it exposes nothing on its own
+    and cannot be computed by a student, but the Worker can recompute it from
+    the email on the submission and check the two agree.
+    """
+    return hmac.new(
+        FLAG_SECRET.encode(), f"owner:{normalize_email(email)}".encode(), hashlib.sha256
+    ).hexdigest()[:8]
+
+def mint_flag(chal: str, email: str) -> str:
+    """One unforgeable flag per instance, bound to the launcher.
+
+        boiler{<chal>_<owner>_<nonce>_<signature>}
+
+    The signature is an HMAC over all three parts, so the flag cannot be forged
+    or edited. The owner tag ties it to the email that launched the instance,
+    so a flag handed in by anyone else is caught on the FIRST submission rather
+    than only showing up as a duplicate later.
+    """
+    owner = owner_tag(email)
+    nonce = secrets.token_hex(6)
+    signature = hmac.new(
+        FLAG_SECRET.encode(), f"{chal}:{owner}:{nonce}".encode(), hashlib.sha256
+    ).hexdigest()[:16]
+    return f"boiler{{{chal}_{owner}_{nonce}_{signature}}}"
+
+def log_launch(iid: str, chal: str, email: str, flag: str) -> None:
+    entry = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "instance": iid,
+        "chal": chal,
+        "email": normalize_email(email),
+        "owner": owner_tag(email),
+        "flag": flag,
+    }
+    try:
+        with open(LAUNCH_LOG, "a") as fh:
+            fh.write(json.dumps(entry) + "\n")
+    except OSError:
+        pass  # a launch must never fail because the ledger could not be written
+
+def scrub_flag(gateway_info: dict) -> dict:
+    """Never echo the flag back on the instance page, whatever the container reports."""
+    return {k: v for k, v in gateway_info.items() if "flag" not in k.lower()}
+
+def launch(chal: str, email: str) -> dict:
+    image = CHALLENGES[chal]
+    flag = mint_flag(chal, email)
     with _lock:
         if len(instances) >= MAX_INSTANCES:
             raise RuntimeError("instance limit reached, try again shortly")
@@ -70,7 +130,9 @@ def launch(chal: str) -> dict:
         raise RuntimeError("instance did not become ready")
     with _lock:
         now = time.time()
-        instances[iid] = {"port": port, "chal": chal, "name": name, "created": now, "last": now}
+        instances[iid] = {"port": port, "chal": chal, "name": name, "flag": flag,
+                          "email": normalize_email(email), "created": now, "last": now}
+    log_launch(iid, chal, email, flag)
     return {"id": iid, "port": port}
 
 def reaper():
@@ -122,19 +184,31 @@ class Handler(BaseHTTPRequestHandler):
     def new_instance(self):
         length = int(self.headers.get("Content-Length") or 0)
         raw = self.rfile.read(length).decode() if length else ""
-        chal = ""
+        chal, email = "", ""
         if raw.strip().startswith("{"):
-            try: chal = (json.loads(raw).get("chal") or "").strip()
-            except Exception: chal = ""
+            try:
+                payload = json.loads(raw)
+                chal = (payload.get("chal") or "").strip()
+                email = (payload.get("email") or "").strip()
+            except Exception:
+                chal = ""
         else:
-            for pair in raw.split("&"):
-                if pair.startswith("chal="):
-                    chal = pair.split("=", 1)[1]
+            fields = urllib.parse.parse_qs(raw)
+            chal = (fields.get("chal") or [""])[0]
+            email = (fields.get("email") or [""])[0]
         chal = re.sub(r"[^a-z-]", "", chal)
         if chal not in CHALLENGES:
             return self._send(400, b"unknown challenge")
+        email = normalize_email(email)[:120]
+        # The flag is bound to this address, and it must be the same one used on
+        # the submission form, so a typo here costs the student the flag.
+        if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            return self._send(400, ERROR_PAGE(
+                "That does not look like an email address. Go back and use the "
+                "same address you will submit with."
+            ).encode())
         try:
-            info = launch(chal)
+            info = launch(chal, email)
         except Exception as e:
             return self._send(503, str(e).encode())
         iid = info["id"]; port = info["port"]
@@ -146,6 +220,7 @@ class Handler(BaseHTTPRequestHandler):
                 gw = json.loads(resp.read().decode())
         except Exception:
             gw = {}
+        gw = scrub_flag(gw)
         gw["rpc_url"] = base
         gw["claim_url"] = base + "claim"
         gw["instance_id"] = iid
@@ -200,18 +275,34 @@ LANDING = """<!doctype html><html><head><meta charset=utf-8>
  .c p{color:#aaa;font-size:.9rem;line-height:1.5}
  button{padding:.6rem 1.1rem;background:#7120B0;border:1px solid #7120B0;color:#fff;cursor:pointer;font-size:.9rem}
  button:hover{background:#A855F7}
+ .launch{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+ .launch input{flex:1;min-width:210px;padding:.6rem .7rem;background:#0e0e12;border:1px solid #2a2a33;color:#eee;font-size:.9rem}
+ .launch input:focus{outline:none;border-color:#A855F7}
  small{color:#666}
 </style></head><body><div class=wrap>
 <h1>Boiler Blockchain — Level 2</h1>
 <p style="color:#aaa">Launch your own private instance. Drain the vault, then hit <code>/claim</code> to get your flag. Each instance is yours and expires after 30 minutes of inactivity.</p>
+<p style="color:#C77DFF;font-size:.9rem;line-height:1.5">Your flag is tied to the email you launch with. Use the <b>same address</b> you will submit with on the site, or the flag will not count for you.</p>
 <div class=c><h3>Multisig Mayhem</h3><p>Warm-up · signature / authorization.</p>
-<form method=post action=/new><input type=hidden name=chal value=multisig-mayhem><button>Launch instance</button></form></div>
+<form method=post action=/new class=launch><input type=hidden name=chal value=multisig-mayhem>
+<input type=email name=email required placeholder="you@purdue.edu"><button>Launch instance</button></form></div>
 <div class=c><h3>Flash Crash</h3><p>Medium · EIP-1153 transient storage.</p>
-<form method=post action=/new><input type=hidden name=chal value=flash-crash><button>Launch instance</button></form></div>
+<form method=post action=/new class=launch><input type=hidden name=chal value=flash-crash>
+<input type=email name=email required placeholder="you@purdue.edu"><button>Launch instance</button></form></div>
 <div class=c><h3>Double Down Drain</h3><p>Hard · delegatecall + storage layout.</p>
-<form method=post action=/new><input type=hidden name=chal value=double-down-drain><button>Launch instance</button></form></div>
+<form method=post action=/new class=launch><input type=hidden name=chal value=double-down-drain>
+<input type=email name=email required placeholder="you@purdue.edu"><button>Launch instance</button></form></div>
 <p><small>Point Foundry at the RPC URL you get. Submit your flag on the Boiler Blockchain site.</small></p>
 </div></body></html>"""
+
+def ERROR_PAGE(message):
+    return f"""<!doctype html><html><head><meta charset=utf-8>
+<title>Boiler Blockchain CTF</title>
+<style>body{{margin:0;background:#0b0b0f;color:#eee;font-family:ui-sans-serif,system-ui,sans-serif}}
+ .wrap{{max-width:620px;margin:0 auto;padding:3rem 1.25rem}} a{{color:#C77DFF}}</style>
+</head><body><div class=wrap><h1 style="color:#ff6b6b">Hold on</h1>
+<p style="color:#aaa;line-height:1.6">{message}</p>
+<p><a href=/>&larr; back</a></p></div></body></html>"""
 
 def INSTANCE_PAGE(title, base, gw):
     j = json.dumps(gw, indent=2)
@@ -235,5 +326,7 @@ def INSTANCE_PAGE(title, base, gw):
 </div></body></html>"""
 
 if __name__ == "__main__":
+    if not FLAG_SECRET:
+        raise SystemExit("FLAG_SECRET is not set - refusing to start with unsignable flags")
     threading.Thread(target=reaper, daemon=True).start()
     ThreadingHTTPServer(("127.0.0.1", LISTEN_PORT), Handler).serve_forever()

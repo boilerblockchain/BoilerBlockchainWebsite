@@ -454,7 +454,7 @@ function VaultForm() {
         <Input name="name" required placeholder="Your name" autoComplete="name" />
       </Field>
       <Field>
-        Email
+        Email — the one you launched with
         <Input name="email" type="email" required placeholder="you@purdue.edu" autoComplete="email" />
       </Field>
       <Field>
@@ -609,8 +609,10 @@ export default function Challenges() {
           </Body>
           <Steps>
             <li>
-              <strong>Launch your instance</strong> — you get a private RPC URL, a
-              funded player key, and the contract addresses.
+              <strong>Launch your instance</strong> with your email — you get a
+              private RPC URL, a funded player key, and the contract addresses.
+              Your flag is tied to that email, so use the one you will submit
+              with.
             </li>
             <li>
               <strong>Point Foundry at that RPC</strong> and exploit the bug to{' '}
@@ -626,6 +628,12 @@ export default function Challenges() {
               <strong>Paste the flag</strong> into the form below.
             </li>
           </Steps>
+
+          <AiNote style={{ marginTop: '2rem' }}>
+            <strong>Use the same email twice.</strong> Every instance mints its
+            own flag, tied to the email you launched with. Submit under a
+            different address and the flag will not count for you.
+          </AiNote>
 
           <Note>
             Your instance expires after 30 minutes of inactivity. The source
