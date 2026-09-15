@@ -633,9 +633,9 @@ export default function Challenges() {
             locally first. Needs Foundry.
             <br />
             <br />
-            Every instance mints its <strong>own flag</strong>, so a flag only
-            counts for the person whose instance produced it. Submit the flag
-            from your own run.
+            Every instance mints its <strong>own flag</strong>, tied to the
+            email you launch with. Use the <strong>same email</strong> on the
+            launch page and on this form, or your flag will not count for you.
           </Note>
 
           <div style={{ marginTop: '2.5rem' }}>

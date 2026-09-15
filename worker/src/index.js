@@ -21,7 +21,10 @@ const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'fl
 // (the same secret on both sides), so there is nothing to hardcode here and no
 // call between the two services: a flag verifies on its own signature.
 //   boiler{<challenge-slug>_<nonce>_<signature>}
-const FLAG_PATTERN = /^boiler\{([a-z0-9-]+)_([0-9a-f]{12})_([0-9a-f]{16})\}$/;
+const FLAG_PATTERN = /^boiler\{([a-z0-9-]+)_([0-9a-f]{8})_([0-9a-f]{12})_([0-9a-f]{16})\}$/;
+// Flags minted before launches were bound to an email. Still accepted, but they
+// cannot prove who earned them, so they are marked as such.
+const LEGACY_FLAG_PATTERN = /^boiler\{([a-z0-9-]+)_([0-9a-f]{12})_([0-9a-f]{16})\}$/;
 
 // Challenge name as submitted on the site -> instancer slug.
 const CHALLENGE_SLUGS = {
@@ -30,13 +33,52 @@ const CHALLENGE_SLUGS = {
   'Double Down Drain': 'double-down-drain',
 };
 
+// Every verdict the checker can reach, with the plain-English line the grader
+// sees on the dashboard. `credit` is whether it counts as solved.
+const FLAG_VERDICTS = {
+  valid: {
+    credit: true,
+    label: 'verified',
+    detail: 'Signature checks out and the instance was launched by this same email.',
+  },
+  valid_legacy: {
+    credit: true,
+    label: 'verified (pre-binding)',
+    detail:
+      'Signature checks out, but this flag predates email binding, so it proves a real instance produced it and not who.',
+  },
+  foreign_instance: {
+    credit: true,
+    label: 'someone else\u2019s instance',
+    detail:
+      'Real flag, but minted for a different email. Either they used a friend\u2019s instance or launched under another address. Check the instancer launch log for the owner tag.',
+  },
+  wrong_challenge: {
+    credit: false,
+    label: 'wrong challenge',
+    detail: 'Real flag, but it belongs to a different challenge than the one submitted.',
+  },
+  forged: {
+    credit: false,
+    label: 'bad signature',
+    detail:
+      'Right shape, wrong signature. This string was never produced by an instance \u2014 it was typed or guessed.',
+  },
+  malformed: {
+    credit: false,
+    label: 'not a flag',
+    detail: 'Does not match the flag format at all.',
+  },
+  none: { credit: false, label: '', detail: 'No flag submitted (build task).' },
+};
+
 // Legacy static flags (FLAGS_JSON secret), kept so any flag claimed before the
 // per-instance switch still validates. Safe to drop once nobody holds one.
 function getLegacyFlags(env) {
   try { return JSON.parse(env.FLAGS_JSON || '{}'); } catch { return {}; }
 }
 
-async function signFlag(secret, challengeSlug, nonce) {
+async function hmacHex(secret, message) {
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
@@ -44,15 +86,8 @@ async function signFlag(secret, challengeSlug, nonce) {
     false,
     ['sign']
   );
-  const mac = await crypto.subtle.sign(
-    'HMAC',
-    key,
-    new TextEncoder().encode(`${challengeSlug}:${nonce}`)
-  );
-  return [...new Uint8Array(mac)]
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-    .slice(0, 16);
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(message));
+  return [...new Uint8Array(mac)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 function constantTimeEqual(a, b) {
@@ -62,27 +97,56 @@ function constantTimeEqual(a, b) {
   return difference === 0;
 }
 
-/**
- * True when `flag` is a real flag our instancer minted for `challenge`.
- * Rejects flags minted for a different challenge, so a Multisig flag pasted
- * into the Double Down Drain slot does not count.
- */
-async function isFlagValid(env, challenge, flag) {
-  if (!flag) return false;
-  const legacy = getLegacyFlags(env)[challenge];
-  if (legacy && constantTimeEqual(flag, legacy)) return true;
-  const expectedSlug = CHALLENGE_SLUGS[challenge];
-  const parts = FLAG_PATTERN.exec(flag);
-  if (!env.FLAG_SECRET || !expectedSlug || !parts) return false;
-  const [, slug, nonce, signature] = parts;
-  if (slug !== expectedSlug) return false;
-  return constantTimeEqual(signature, await signFlag(env.FLAG_SECRET, slug, nonce));
+function normalizeEmail(email) {
+  return (email || '').trim().toLowerCase();
+}
+
+/** The instancer's owner tag for an email: HMAC(secret, "owner:<email>")[:8]. */
+async function ownerTag(secret, email) {
+  return (await hmacHex(secret, `owner:${normalizeEmail(email)}`)).slice(0, 8);
 }
 
 /**
- * A per-instance flag belongs to exactly one launch, so the same correct flag
- * arriving from a second person means it was passed around. Recorded silently:
- * the submitter is not told, the dashboard is.
+ * Decides what a submitted flag actually is. Returns one of the FLAG_VERDICTS
+ * keys plus the owner tag the flag carries, so the dashboard can show a reason
+ * rather than an unexplained green tick.
+ */
+async function checkFlag(env, challenge, flag, email) {
+  if (!flag) return { verdict: 'none', owner: '' };
+
+  const staticFlag = getLegacyFlags(env)[challenge];
+  if (staticFlag && constantTimeEqual(flag, staticFlag)) {
+    return { verdict: 'valid_legacy', owner: '' };
+  }
+  if (!env.FLAG_SECRET) return { verdict: 'malformed', owner: '' };
+
+  const bound = FLAG_PATTERN.exec(flag);
+  const legacy = bound ? null : LEGACY_FLAG_PATTERN.exec(flag);
+  if (!bound && !legacy) return { verdict: 'malformed', owner: '' };
+
+  const slug = bound ? bound[1] : legacy[1];
+  const owner = bound ? bound[2] : '';
+  const nonce = bound ? bound[3] : legacy[2];
+  const signature = bound ? bound[4] : legacy[3];
+
+  const signedOver = bound ? `${slug}:${owner}:${nonce}` : `${slug}:${nonce}`;
+  const expected = (await hmacHex(env.FLAG_SECRET, signedOver)).slice(0, 16);
+  if (!constantTimeEqual(signature, expected)) return { verdict: 'forged', owner };
+
+  // Signature is genuine from here on: the remaining questions are whose it is
+  // and whether it was pasted into the right challenge.
+  if (slug !== CHALLENGE_SLUGS[challenge]) return { verdict: 'wrong_challenge', owner };
+  if (!bound) return { verdict: 'valid_legacy', owner: '' };
+  if (!constantTimeEqual(owner, await ownerTag(env.FLAG_SECRET, email))) {
+    return { verdict: 'foreign_instance', owner };
+  }
+  return { verdict: 'valid', owner };
+}
+
+/**
+ * A flag belongs to exactly one launch, so the same correct flag arriving from
+ * a second person means it was passed around. Recorded silently: the submitter
+ * is not told, the dashboard is.
  */
 async function isFlagReused(env, flag, email) {
   const previous = await env.DB.prepare(
@@ -91,7 +155,7 @@ async function isFlagReused(env, flag, email) {
     .bind(flag)
     .first();
   if (!previous) return false;
-  return (previous.email || '').trim().toLowerCase() !== email.trim().toLowerCase();
+  return normalizeEmail(previous.email) !== normalizeEmail(email);
 }
 
 // Live instance URLs (informational, mirrors the site).
@@ -234,14 +298,15 @@ export default {
       if (!row.name || !row.email || !row.challenge) {
         return json({ error: 'name, email and challenge are required' }, 422, env);
       }
-      // Auto-mark: was this flag really minted by our instancer for this challenge?
-      const flagCorrect = (await isFlagValid(env, row.challenge, row.flag)) ? 1 : 0;
+      // Auto-mark: what is this flag, really?
+      const { verdict, owner } = await checkFlag(env, row.challenge, row.flag, row.email);
+      const flagCorrect = FLAG_VERDICTS[verdict].credit ? 1 : 0;
       const flagReused =
         flagCorrect && (await isFlagReused(env, row.flag, row.email)) ? 1 : 0;
       await env.DB.prepare(
         `INSERT INTO submissions
-           (created_at, name, email, challenge, onchain, links, exploit, flag, flag_correct, flag_reused, writeup, ip, ua)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+           (created_at, name, email, challenge, onchain, links, exploit, flag, flag_correct, flag_reused, flag_verdict, flag_owner, writeup, ip, ua)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
       )
         .bind(
           new Date().toISOString(),
@@ -254,6 +319,8 @@ export default {
           row.flag,
           flagCorrect,
           flagReused,
+          verdict,
+          owner,
           row.writeup,
           request.headers.get('CF-Connecting-IP') || '',
           (request.headers.get('User-Agent') || '').slice(0, 300)
@@ -269,7 +336,7 @@ export default {
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 1000`
       ).all();
-      return json({ submissions: results }, 200, env);
+      return json({ submissions: results, verdicts: FLAG_VERDICTS }, 200, env);
     }
 
     // ---- admin CSV ----
@@ -278,7 +345,7 @@ export default {
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'onchain', 'links', 'exploit', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'flag_verdict', 'flag_owner', 'onchain', 'links', 'exploit', 'writeup'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -310,7 +377,7 @@ export default {
     // ---- internal guide (token-gated) ----
     if (url.pathname === '/guide' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
-      return json({ guide: GUIDE, instances: INSTANCES }, 200, env);
+      return json({ guide: GUIDE, instances: INSTANCES, verdicts: FLAG_VERDICTS }, 200, env);
     }
 
     // ---- admin dashboard ----
@@ -364,6 +431,9 @@ const ADMIN_HTML = `<!doctype html>
        font-size:.7rem; position:sticky; top:0; background:#0b0b0f; }
   td.writeup { max-width:340px; white-space:pre-wrap; }
   .chal { color:#C77DFF; white-space:nowrap; }
+  td.verdict { max-width:300px; line-height:1.45; }
+  td.verdict .why { color:#777; font-size:.76rem; }
+  td.verdict .owner { color:#9fe; font-family:ui-monospace,monospace; font-size:.75rem; }
   .err { color:#ff6b6b; }
   code { color:#9fe; word-break:break-all; }
 </style>
@@ -382,6 +452,31 @@ const ADMIN_HTML = `<!doctype html>
 <div id="guide" style="display:none;padding:0 1.5rem 1.5rem"><h2 style="font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#C77DFF;border-bottom:1px solid #222;padding-bottom:.5rem">Internal guide</h2><pre id="guide-body" style="white-space:pre-wrap;background:#111;border:1px solid #1c1c24;padding:1rem;font-size:.82rem"></pre></div>
 <div class="wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
 <script>
+  // One cell that says exactly what the checker concluded and why, so a green
+  // tick is never the whole story a grader has to go on.
+  const VERDICT_STYLE = {
+    valid:            { icon:'✓', color:'#4ade80' },
+    valid_legacy:     { icon:'✓', color:'#4ade80' },
+    foreign_instance: { icon:'⚠', color:'#fbbf24' },
+    wrong_challenge:  { icon:'✗', color:'#ff6b6b' },
+    forged:           { icon:'✗', color:'#ff6b6b' },
+    malformed:        { icon:'✗', color:'#ff6b6b' },
+    none:             { icon:'',  color:'#666'    },
+  };
+  function verdictCell(r){
+    const key = r.flag_verdict || (r.flag ? (r.flag_correct==1?'valid_legacy':'forged') : 'none');
+    const style = VERDICT_STYLE[key] || VERDICT_STYLE.malformed;
+    const meta = (window.VERDICTS||{})[key] || {};
+    const esc = s => String(s??'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+    if(key === 'none') return '';
+    const bits = [
+      '<span style="color:'+style.color+';font-weight:700">'+style.icon+' '+esc(meta.label||key)+'</span>'
+    ];
+    if(r.flag_reused==1) bits.push('<span style="color:#fbbf24">⚠ also submitted by someone else</span>');
+    if(r.flag_owner) bits.push('<span class="owner">owner tag '+esc(r.flag_owner)+'</span>');
+    if(meta.detail) bits.push('<span class="why">'+esc(meta.detail)+'</span>');
+    return bits.join('<br>');
+  }
   const tokenEl = document.getElementById('token');
   try { tokenEl.value = localStorage.getItem('bb_admin_token') || ''; } catch {}
   const msg = document.getElementById('msg');
@@ -391,20 +486,16 @@ const ADMIN_HTML = `<!doctype html>
     msg.textContent = 'Loading…'; msg.className='count';
     const res = await fetch('/list', { headers: headers() });
     if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
-    const { submissions } = await res.json();
-    const cols = ['id','created_at','name','email','challenge','flag_correct','flag_reused','flag','onchain','links','exploit','writeup'];
+    const { submissions, verdicts } = await res.json();
+    window.VERDICTS = verdicts || {};
+    const cols = ['id','created_at','name','email','challenge','verdict','flag','onchain','links','exploit','writeup'];
     document.querySelector('thead').innerHTML =
-      '<tr>' + cols.map(c=>'<th>'+({flag_correct:'ok',flag_reused:'shared'}[c]||c)+'</th>').join('') + '</tr>';
+      '<tr>' + cols.map(c=>'<th>'+c+'</th>').join('') + '</tr>';
     const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
     document.querySelector('tbody').innerHTML = submissions.map(r =>
       '<tr>' + cols.map(c => {
         const v = esc(r[c]);
-        if(c==='flag_correct') return r.flag_correct==1
-          ? '<td style="color:#4ade80;font-weight:700">✓</td>'
-          : (r.flag ? '<td style="color:#ff6b6b">✗</td>' : '<td></td>');
-        if(c==='flag_reused') return r.flag_reused==1
-          ? '<td title="this exact flag was already submitted by someone else" style="color:#fbbf24;font-weight:700">⚠</td>'
-          : '<td></td>';
+        if(c==='verdict') return '<td class="verdict">'+verdictCell(r)+'</td>';
         if(c==='challenge') return '<td class="chal">'+v+'</td>';
         if(c==='writeup') return '<td class="writeup">'+v+'</td>';
         if(c==='exploit') return '<td class="writeup"><pre style="margin:0;white-space:pre-wrap;font-size:.78rem">'+v+'</pre></td>';
@@ -412,10 +503,14 @@ const ADMIN_HTML = `<!doctype html>
         return '<td>'+v+'</td>';
       }).join('') + '</tr>'
     ).join('');
-    const solved = submissions.filter(r=>r.flag_correct==1).length;
-    const shared = submissions.filter(r=>r.flag_reused==1).length;
-    msg.textContent = submissions.length + ' submissions · ' + solved + ' correct flags'
-      + (shared ? ' · ' + shared + ' shared ⚠' : ''); msg.className='count';
+    const solved  = submissions.filter(r=>r.flag_verdict==='valid'||r.flag_verdict==='valid_legacy'||(!r.flag_verdict&&r.flag_correct==1)).length;
+    const shared  = submissions.filter(r=>r.flag_reused==1).length;
+    const foreign = submissions.filter(r=>r.flag_verdict==='foreign_instance').length;
+    const forged  = submissions.filter(r=>r.flag_verdict==='forged').length;
+    msg.textContent = submissions.length + ' submissions · ' + solved + ' verified'
+      + (foreign ? ' · ' + foreign + ' from another email ⚠' : '')
+      + (shared  ? ' · ' + shared  + ' duplicate ⚠' : '')
+      + (forged  ? ' · ' + forged  + ' forged ✗' : ''); msg.className='count';
   }
   function csv(){
     const url = '/export';

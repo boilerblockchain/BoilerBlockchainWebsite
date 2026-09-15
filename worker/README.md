@@ -69,11 +69,31 @@ over the slug and nonce keyed with `FLAG_SECRET`. The instancer and this Worker
 hold the same secret and never talk to each other: the Worker verifies a flag it
 has never seen by recomputing the signature.
 
-That means there is no master flag to leak, a flag from one challenge will not
-validate for another, and a flag cannot be invented. It also makes flag-passing
-visible: a correct flag handed in by a second person is stored with
-`flag_reused = 1` and shows a ⚠ in the dashboard's *shared* column. The
-submitter is not told, so the copy stays worth catching.
+The flag also carries an **owner tag**, `HMAC(secret, "owner:<email>")[:8]`,
+derived from the email used to launch the instance. The Worker recomputes that
+tag from the email on the submission, so a flag earned on someone else's
+instance is caught on the *first* submission rather than showing up later as a
+duplicate.
+
+Every submission is stored with a `flag_verdict` explaining the conclusion, and
+the dashboard prints it in plain English next to the tick:
+
+| verdict | counts? | means |
+|---|---|---|
+| `valid` | yes | signature good, launched by this same email |
+| `valid_legacy` | yes | signature good, minted before email binding |
+| `foreign_instance` | recorded, flagged ⚠ | real flag, minted for a different email |
+| `wrong_challenge` | no | real flag, pasted into the wrong challenge |
+| `forged` | no | right shape, wrong signature — typed or guessed |
+| `malformed` | no | not a flag at all |
+
+`flag_reused = 1` additionally marks a correct flag already handed in by someone
+else. Submitters are never told any of this, so copies stay worth catching.
+
+The instancer writes an append-only ledger to `~/active/bb-challenges/launches.log`
+(one JSON object per launch: timestamp, instance id, challenge, email, owner
+tag, flag). That file is the evidence to point at when a student disputes a
+verdict — match the flag's owner tag to the email that launched it.
 
 Rotate by setting a new `FLAG_SECRET` on both sides. Every previously claimed
 flag stops verifying, so rotate between cohorts, not mid-run.

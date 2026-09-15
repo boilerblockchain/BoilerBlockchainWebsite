@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS submissions (
   -- 1 when this exact (correct) flag was already handed in by someone else.
   -- Flags are minted per instance, so that only happens if it was passed around.
   flag_reused  INTEGER DEFAULT 0,
+  -- Why the checker reached its conclusion: valid / valid_legacy /
+  -- foreign_instance / wrong_challenge / forged / malformed / none.
+  flag_verdict TEXT,
+  -- Owner tag carried by the flag: which email's launch minted it.
+  flag_owner   TEXT,
   writeup    TEXT,
   ip         TEXT,
   ua         TEXT
@@ -23,3 +28,5 @@ CREATE INDEX IF NOT EXISTS idx_submissions_flag ON submissions (flag);
 
 -- Migration for a database created before per-instance flags:
 --   ALTER TABLE submissions ADD COLUMN flag_reused INTEGER DEFAULT 0;
+--   ALTER TABLE submissions ADD COLUMN flag_verdict TEXT;
+--   ALTER TABLE submissions ADD COLUMN flag_owner TEXT;
