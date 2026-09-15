@@ -26,3 +26,8 @@ yarn-error.log*
 
 # real CTF flags — never commit (repo is public)
 hosting/flags.env
+
+# Local Worker secrets (wrangler dev)
+worker/.dev.vars
+worker/.wrangler/
+__pycache__/

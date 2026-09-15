@@ -631,6 +631,11 @@ export default function Challenges() {
             Your instance expires after 30 minutes of inactivity. The source
             download is optional — for reading the code or testing your exploit
             locally first. Needs Foundry.
+            <br />
+            <br />
+            Every instance mints its <strong>own flag</strong>, so a flag only
+            counts for the person whose instance produced it. Submit the flag
+            from your own run.
           </Note>
 
           <div style={{ marginTop: '2.5rem' }}>

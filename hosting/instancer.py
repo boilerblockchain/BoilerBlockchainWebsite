@@ -8,7 +8,7 @@ instance is independent. Instances auto-expire.
 stdlib only. Runs on brach behind the Cloudflare Tunnel.
 """
 from __future__ import annotations
-import json, os, re, secrets, subprocess, threading, time, urllib.request, urllib.error
+import hashlib, hmac, json, os, re, secrets, subprocess, threading, time, urllib.request, urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 LISTEN_PORT = int(os.environ.get("INSTANCER_PORT", "8600"))
@@ -17,11 +17,16 @@ MAX_LIFETIME = int(os.environ.get("MAX_LIFETIME", "10800"))    # hard cap 3 h
 MAX_INSTANCES = int(os.environ.get("MAX_INSTANCES", "150"))
 READY_TIMEOUT = 30
 
-# chal slug -> (docker image, real flag)
+# Shared with the submissions Worker (its FLAG_SECRET). Flags are minted per
+# instance and signed with it, so the Worker can verify a flag it has never seen
+# without the two services talking to each other.
+FLAG_SECRET = os.environ.get("FLAG_SECRET", "")
+
+# chal slug -> docker image. Flags are no longer static; see mint_flag().
 CHALLENGES = {
-    "multisig-mayhem":   ("multisig-mayhem-challenge",   os.environ.get("MULTISIG_FLAG", "")),
-    "flash-crash":       ("flash-crash-challenge",       os.environ.get("FLASHCRASH_FLAG", "")),
-    "double-down-drain": ("double-down-drain-challenge", os.environ.get("DOUBLEDOWN_FLAG", "")),
+    "multisig-mayhem":   "multisig-mayhem-challenge",
+    "flash-crash":       "flash-crash-challenge",
+    "double-down-drain": "double-down-drain-challenge",
 }
 TITLES = {
     "multisig-mayhem": "Multisig Mayhem",
@@ -30,13 +35,31 @@ TITLES = {
 }
 
 _lock = threading.Lock()
-instances: dict[str, dict] = {}   # id -> {port, chal, name, created}
+instances: dict[str, dict] = {}   # id -> {port, chal, name, flag, created, last}
 
 def sh(*args, timeout=60):
     return subprocess.run(args, capture_output=True, text=True, timeout=timeout)
 
+def mint_flag(chal: str) -> str:
+    """One unforgeable flag per instance: boiler{<chal>_<nonce>_<signature>}.
+
+    The signature is an HMAC over the challenge slug and the nonce, so the
+    Worker can verify any flag with the same secret, and two students can never
+    hand in the same string unless one of them copied the other.
+    """
+    nonce = secrets.token_hex(6)
+    signature = hmac.new(
+        FLAG_SECRET.encode(), f"{chal}:{nonce}".encode(), hashlib.sha256
+    ).hexdigest()[:16]
+    return f"boiler{{{chal}_{nonce}_{signature}}}"
+
+def scrub_flag(gateway_info: dict) -> dict:
+    """Never echo the flag back on the instance page, whatever the container reports."""
+    return {k: v for k, v in gateway_info.items() if "flag" not in k.lower()}
+
 def launch(chal: str) -> dict:
-    image, flag = CHALLENGES[chal]
+    image = CHALLENGES[chal]
+    flag = mint_flag(chal)
     with _lock:
         if len(instances) >= MAX_INSTANCES:
             raise RuntimeError("instance limit reached, try again shortly")
@@ -70,7 +93,8 @@ def launch(chal: str) -> dict:
         raise RuntimeError("instance did not become ready")
     with _lock:
         now = time.time()
-        instances[iid] = {"port": port, "chal": chal, "name": name, "created": now, "last": now}
+        instances[iid] = {"port": port, "chal": chal, "name": name,
+                          "flag": flag, "created": now, "last": now}
     return {"id": iid, "port": port}
 
 def reaper():
@@ -146,6 +170,7 @@ class Handler(BaseHTTPRequestHandler):
                 gw = json.loads(resp.read().decode())
         except Exception:
             gw = {}
+        gw = scrub_flag(gw)
         gw["rpc_url"] = base
         gw["claim_url"] = base + "claim"
         gw["instance_id"] = iid
@@ -235,5 +260,7 @@ def INSTANCE_PAGE(title, base, gw):
 </div></body></html>"""
 
 if __name__ == "__main__":
+    if not FLAG_SECRET:
+        raise SystemExit("FLAG_SECRET is not set - refusing to start with unsignable flags")
     threading.Thread(target=reaper, daemon=True).start()
     ThreadingHTTPServer(("127.0.0.1", LISTEN_PORT), Handler).serve_forever()

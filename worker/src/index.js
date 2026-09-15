@@ -9,16 +9,89 @@
  *
  * Secrets/vars:
  *   ADMIN_TOKEN     (secret)  `wrangler secret put ADMIN_TOKEN`
+ *   FLAG_SECRET     (secret)  same value as the instancer's FLAG_SECRET; used to
+ *                             verify the per-instance flags it mints.
  *   ALLOWED_ORIGIN  (var)     site origin allowed to POST; "*" while testing.
  */
 
 const MAX_FIELD = 20000; // per-field char cap (exploit paste can be long)
 const FIELDS = ['name', 'email', 'challenge', 'onchain', 'links', 'exploit', 'flag', 'writeup'];
 
-// Real flags are NOT hardcoded (this repo is public). They come from the
-// FLAGS_JSON Worker secret: {"Multisig Mayhem":"boiler{...}", ...}.
-function getFlags(env) {
+// Flags are minted per instance by the instancer and signed with FLAG_SECRET
+// (the same secret on both sides), so there is nothing to hardcode here and no
+// call between the two services: a flag verifies on its own signature.
+//   boiler{<challenge-slug>_<nonce>_<signature>}
+const FLAG_PATTERN = /^boiler\{([a-z0-9-]+)_([0-9a-f]{12})_([0-9a-f]{16})\}$/;
+
+// Challenge name as submitted on the site -> instancer slug.
+const CHALLENGE_SLUGS = {
+  'Multisig Mayhem': 'multisig-mayhem',
+  'Flash Crash': 'flash-crash',
+  'Double Down Drain': 'double-down-drain',
+};
+
+// Legacy static flags (FLAGS_JSON secret), kept so any flag claimed before the
+// per-instance switch still validates. Safe to drop once nobody holds one.
+function getLegacyFlags(env) {
   try { return JSON.parse(env.FLAGS_JSON || '{}'); } catch { return {}; }
+}
+
+async function signFlag(secret, challengeSlug, nonce) {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const mac = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(`${challengeSlug}:${nonce}`)
+  );
+  return [...new Uint8Array(mac)]
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .slice(0, 16);
+}
+
+function constantTimeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let difference = 0;
+  for (let i = 0; i < a.length; i++) difference |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return difference === 0;
+}
+
+/**
+ * True when `flag` is a real flag our instancer minted for `challenge`.
+ * Rejects flags minted for a different challenge, so a Multisig flag pasted
+ * into the Double Down Drain slot does not count.
+ */
+async function isFlagValid(env, challenge, flag) {
+  if (!flag) return false;
+  const legacy = getLegacyFlags(env)[challenge];
+  if (legacy && constantTimeEqual(flag, legacy)) return true;
+  const expectedSlug = CHALLENGE_SLUGS[challenge];
+  const parts = FLAG_PATTERN.exec(flag);
+  if (!env.FLAG_SECRET || !expectedSlug || !parts) return false;
+  const [, slug, nonce, signature] = parts;
+  if (slug !== expectedSlug) return false;
+  return constantTimeEqual(signature, await signFlag(env.FLAG_SECRET, slug, nonce));
+}
+
+/**
+ * A per-instance flag belongs to exactly one launch, so the same correct flag
+ * arriving from a second person means it was passed around. Recorded silently:
+ * the submitter is not told, the dashboard is.
+ */
+async function isFlagReused(env, flag, email) {
+  const previous = await env.DB.prepare(
+    `SELECT email FROM submissions WHERE flag = ? AND flag_correct = 1 LIMIT 1`
+  )
+    .bind(flag)
+    .first();
+  if (!previous) return false;
+  return (previous.email || '').trim().toLowerCase() !== email.trim().toLowerCase();
 }
 
 // Live instance URLs (informational, mirrors the site).
@@ -117,8 +190,15 @@ HOW A PLAYER SOLVES ONE
   1. Launch an instance -> private RPC URL + player key + contract addresses.
   2. Point Foundry (forge/cast) at the instance RPC URL.
   3. Write the exploit, drive Setup.isSolved() to true (drain the vault).
-  4. POST {"address":"<setup>"} to <rpc>/claim -> real flag (boiler{...}).
+  4. POST {"address":"<setup>"} to <rpc>/claim -> their flag (boiler{...}).
   5. Submit the flag on the Boiler Blockchain site (auto-checked here).
+
+FLAGS ARE PER INSTANCE
+  Every launch mints its own flag, signed with FLAG_SECRET (shared by the
+  instancer and this Worker). There is no master flag to leak, and this Worker
+  verifies a flag by its signature without ever having seen it.
+  A correct flag handed in by a second person is marked "shared" on the
+  dashboard, which is how flag-passing shows up. The submitter is not told.
 
 REFERENCE SOLUTIONS: see the answer key (vuln + solution + fix + flag).
 
@@ -129,7 +209,9 @@ HOSTING / OPS (brach)
   Tunnel:             cloudflared user service -> ctf.pyras.org / ctf.jaeger.lol
   Reset:              automatic. Each launch is a fresh container; idle ones (30m)
                       are reaped. No manual reset needed.
-  Flags live in the instancer CHALLENGES map and this Worker's FLAGS map.`;
+  Rotate flags:       set a new FLAG_SECRET on both sides (instancer env +
+                      wrangler secret put FLAG_SECRET). Every older flag stops
+                      verifying, so rotate between cohorts, not mid-run.`;
 
 export default {
   async fetch(request, env) {
@@ -152,13 +234,14 @@ export default {
       if (!row.name || !row.email || !row.challenge) {
         return json({ error: 'name, email and challenge are required' }, 422, env);
       }
-      // Auto-mark: does the submitted flag match the real flag for this challenge?
-      const expected = getFlags(env)[row.challenge];
-      const flagCorrect = expected && row.flag && row.flag === expected ? 1 : 0;
+      // Auto-mark: was this flag really minted by our instancer for this challenge?
+      const flagCorrect = (await isFlagValid(env, row.challenge, row.flag)) ? 1 : 0;
+      const flagReused =
+        flagCorrect && (await isFlagReused(env, row.flag, row.email)) ? 1 : 0;
       await env.DB.prepare(
         `INSERT INTO submissions
-           (created_at, name, email, challenge, onchain, links, exploit, flag, flag_correct, writeup, ip, ua)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+           (created_at, name, email, challenge, onchain, links, exploit, flag, flag_correct, flag_reused, writeup, ip, ua)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
       )
         .bind(
           new Date().toISOString(),
@@ -170,6 +253,7 @@ export default {
           row.exploit,
           row.flag,
           flagCorrect,
+          flagReused,
           row.writeup,
           request.headers.get('CF-Connecting-IP') || '',
           (request.headers.get('User-Agent') || '').slice(0, 300)
@@ -194,7 +278,7 @@ export default {
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'onchain', 'links', 'exploit', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'onchain', 'links', 'exploit', 'writeup'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -212,18 +296,21 @@ export default {
     // ---- answer key (token-gated) ----
     if (url.pathname === '/answers' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
-      const flags = getFlags(env);
-      const answers = ANSWERS.map((a) => (flags[a.challenge] ? { ...a, flag: flags[a.challenge] } : a));
+      // No shared flag to reveal any more: every instance mints its own, and the
+      // Worker marks them automatically. Graders read the ✓ column, not a flag.
+      const answers = ANSWERS.map((a) => ({
+        ...a,
+        flag: CHALLENGE_SLUGS[a.challenge]
+          ? 'per-instance (boiler{slug_nonce_signature}) — auto-verified on submit'
+          : undefined,
+      }));
       return json({ answers }, 200, env);
     }
 
     // ---- internal guide (token-gated) ----
     if (url.pathname === '/guide' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
-      const flags = getFlags(env);
-      const flagBlock = Object.entries(flags).map(([k, v]) => `  ${k}: ${v}`).join('\n');
-      const guide = GUIDE + (flagBlock ? `\n\nFLAGS\n${flagBlock}` : '');
-      return json({ guide, instances: INSTANCES }, 200, env);
+      return json({ guide: GUIDE, instances: INSTANCES }, 200, env);
     }
 
     // ---- admin dashboard ----
@@ -305,9 +392,9 @@ const ADMIN_HTML = `<!doctype html>
     const res = await fetch('/list', { headers: headers() });
     if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
     const { submissions } = await res.json();
-    const cols = ['id','created_at','name','email','challenge','flag_correct','flag','onchain','links','exploit','writeup'];
+    const cols = ['id','created_at','name','email','challenge','flag_correct','flag_reused','flag','onchain','links','exploit','writeup'];
     document.querySelector('thead').innerHTML =
-      '<tr>' + cols.map(c=>'<th>'+(c==='flag_correct'?'ok':c)+'</th>').join('') + '</tr>';
+      '<tr>' + cols.map(c=>'<th>'+({flag_correct:'ok',flag_reused:'shared'}[c]||c)+'</th>').join('') + '</tr>';
     const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
     document.querySelector('tbody').innerHTML = submissions.map(r =>
       '<tr>' + cols.map(c => {
@@ -315,6 +402,9 @@ const ADMIN_HTML = `<!doctype html>
         if(c==='flag_correct') return r.flag_correct==1
           ? '<td style="color:#4ade80;font-weight:700">✓</td>'
           : (r.flag ? '<td style="color:#ff6b6b">✗</td>' : '<td></td>');
+        if(c==='flag_reused') return r.flag_reused==1
+          ? '<td title="this exact flag was already submitted by someone else" style="color:#fbbf24;font-weight:700">⚠</td>'
+          : '<td></td>';
         if(c==='challenge') return '<td class="chal">'+v+'</td>';
         if(c==='writeup') return '<td class="writeup">'+v+'</td>';
         if(c==='exploit') return '<td class="writeup"><pre style="margin:0;white-space:pre-wrap;font-size:.78rem">'+v+'</pre></td>';
@@ -323,7 +413,9 @@ const ADMIN_HTML = `<!doctype html>
       }).join('') + '</tr>'
     ).join('');
     const solved = submissions.filter(r=>r.flag_correct==1).length;
-    msg.textContent = submissions.length + ' submissions · ' + solved + ' correct flags'; msg.className='count';
+    const shared = submissions.filter(r=>r.flag_reused==1).length;
+    msg.textContent = submissions.length + ' submissions · ' + solved + ' correct flags'
+      + (shared ? ' · ' + shared + ' shared ⚠' : ''); msg.className='count';
   }
   function csv(){
     const url = '/export';

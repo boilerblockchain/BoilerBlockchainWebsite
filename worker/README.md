@@ -20,6 +20,10 @@ wrangler d1 execute bb-challenges --remote --file=./schema.sql
 # 3. set the admin password (any long random string)
 wrangler secret put ADMIN_TOKEN
 
+# 3b. set the flag-signing secret. MUST be byte-identical to the instancer's
+#     FLAG_SECRET (hosting/flags.env) or no Level 2 flag will ever verify.
+wrangler secret put FLAG_SECRET
+
 # 4. lock the form to your site origin: edit ALLOWED_ORIGIN in wrangler.toml
 #    e.g. "https://boilerblockchain.org"  (leave "*" only while testing)
 
@@ -54,6 +58,25 @@ server-side; the form itself (`/submit`) is public.
 | GET    | `/admin`  | none (page) | dashboard (prompts token)   |
 | GET    | `/list`   | Bearer      | JSON of submissions         |
 | GET    | `/export` | Bearer      | CSV of submissions          |
+| GET    | `/answers`| Bearer      | answer key (no flags to leak)|
+| GET    | `/guide`  | Bearer      | internal run sheet          |
+
+## How Level 2 flags are marked
+
+Every launched instance mints its own flag,
+`boiler{<challenge-slug>_<nonce>_<signature>}`, where the signature is an HMAC
+over the slug and nonce keyed with `FLAG_SECRET`. The instancer and this Worker
+hold the same secret and never talk to each other: the Worker verifies a flag it
+has never seen by recomputing the signature.
+
+That means there is no master flag to leak, a flag from one challenge will not
+validate for another, and a flag cannot be invented. It also makes flag-passing
+visible: a correct flag handed in by a second person is stored with
+`flag_reused = 1` and shows a ⚠ in the dashboard's *shared* column. The
+submitter is not told, so the copy stays worth catching.
+
+Rotate by setting a new `FLAG_SECRET` on both sides. Every previously claimed
+flag stops verifying, so rotate between cohorts, not mid-run.
 
 ## Local dev
 
