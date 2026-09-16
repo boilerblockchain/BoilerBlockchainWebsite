@@ -265,18 +265,20 @@ export default function Claim() {
 
         {campaign && (
           <Panel>
-            <PanelTitle>The contract</PanelTitle>
+            <PanelTitle>Where the prizes come from</PanelTitle>
             <Hint>
-              Every prize and its position was committed on chain before the
-              first spin. Nobody, including us, can reorder it now.
+              Prizes are paid from the wallet below. The prize order was
+              shuffled and hashed before the giveaway opened, and that hash is
+              shown here so it can be checked against the copy published
+              beforehand.
             </Hint>
 
-            <Vault href={campaign.solscan.vault} target="_blank" rel="noreferrer">
-              <VaultLabel>Live in the prize vault</VaultLabel>
+            <Vault href={campaign.solscan.wallet} target="_blank" rel="noreferrer">
+              <VaultLabel>Left in the prize wallet</VaultLabel>
               <VaultAmount>
-                {(Number(campaign.vaultLamports) / 1e9).toFixed(4)} SOL
+                {(Number(campaign.walletLamports) / 1e9).toFixed(4)} SOL
               </VaultAmount>
-              <VaultAddress>{campaign.vault}</VaultAddress>
+              <VaultAddress>{campaign.payoutWallet}</VaultAddress>
               <VaultCta>Verify the balance on Solscan</VaultCta>
             </Vault>
 
@@ -284,36 +286,26 @@ export default function Claim() {
               <dt>Network</dt>
               <dd>{campaign.cluster}</dd>
 
-              <dt>Program</dt>
+              <dt>Prize wallet</dt>
               <dd>
-                <Mono>{campaign.programId}</Mono>
+                <Mono>{campaign.payoutWallet}</Mono>
                 <Explorers>
-                  <a href={campaign.solscan.program} target="_blank" rel="noreferrer">
+                  <a href={campaign.solscan.wallet} target="_blank" rel="noreferrer">
                     Solscan
                   </a>
-                  <a href={campaign.links.program} target="_blank" rel="noreferrer">
+                  <a href={campaign.links.wallet} target="_blank" rel="noreferrer">
                     Explorer
                   </a>
                 </Explorers>
               </dd>
 
-              <dt>Prize vault</dt>
-              <dd>
-                <Mono>{campaign.vault}</Mono>
-                <Explorers>
-                  <a href={campaign.solscan.vault} target="_blank" rel="noreferrer">
-                    Solscan
-                  </a>
-                  <a href={campaign.links.vault} target="_blank" rel="noreferrer">
-                    Explorer
-                  </a>
-                </Explorers>
-              </dd>
-
-              <dt>Prize deck root</dt>
+              <dt>Prize deck hash</dt>
               <dd>
                 <Mono>{campaign.deckRoot}</Mono>
               </dd>
+
+              <dt>Eligible</dt>
+              <dd>{campaign.allowlistCount} addresses</dd>
 
               <dt>Claimed</dt>
               <dd>
