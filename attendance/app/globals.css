@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+/**
+ * Boiler Blockchain theme, ported from the main site's design tokens
+ * (src/styles/tokens.js over there). Three rules carried across:
+ *   1. Flat color. One accent hue, no decorative gradients.
+ *   2. Square corners. Borders, not shadows, separate surfaces.
+ *   3. Tomorrow for display, Inter for body.
+ *
+ * Rather than rewrite every utility in every component, the neutral ramp is
+ * remapped onto the site's surface/text tokens, so `bg-neutral-950` is the
+ * site's black and `text-neutral-400` is its muted text.
+ */
+@theme {
+  /* Surfaces */
+  --color-neutral-950: #000000;
+  --color-neutral-900: #0e0e12;
+  --color-neutral-800: #1c1c24;
+
+  /* Hairlines */
+  --color-neutral-700: rgba(255, 255, 255, 0.18);
+  --color-neutral-600: rgba(255, 255, 255, 0.38);
+
+  /* Text ramp */
+  --color-neutral-500: rgba(255, 255, 255, 0.48);
+  --color-neutral-400: rgba(255, 255, 255, 0.72);
+  --color-neutral-300: rgba(255, 255, 255, 0.85);
+  --color-neutral-200: #ffffff;
+  --color-neutral-100: #ffffff;
+
+  /* The one accent hue. deep/bright are for hover and active states only. */
+  --color-accent: #a855f7;
+  --color-accent-deep: #7120b0;
+  --color-accent-bright: #c77dff;
+
+  /* Square by default; 2px only on controls that must read as clickable. */
+  --radius: 2px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-tomorrow), var(--font-inter), sans-serif;
+}
+
+body {
+  background: var(--color-neutral-950);
+  color: #ffffff;
+  font-family: var(--font-sans);
+
+  /* The site's single background treatment: a faint dot grid on a 30px cell. */
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 1px
+  );
+  background-size: 30px 30px;
+  background-attachment: fixed;
+}
+
+/* Display face on headings, so no component has to ask for it by hand. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* Matches the main site's nav and eyebrow labels. */
+.eyebrow {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* Form controls inherit the site's flat, square treatment rather than each
+   input repeating the same six utilities. */
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 2px;
+}

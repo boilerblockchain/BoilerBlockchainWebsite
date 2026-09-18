@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/attendance",
+      "destination": "https://bb-attendance.vercel.app/attendance"
+    },
+    {
+      "source": "/attendance/:path*",
+      "destination": "https://bb-attendance.vercel.app/attendance/:path*"
+    }
+  ]
+}
