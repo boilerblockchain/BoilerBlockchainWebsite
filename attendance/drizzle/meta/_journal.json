@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789686653267,
+      "tag": "0000_brainy_peter_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789696763411,
+      "tag": "0001_puzzling_cargill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789708310366,
+      "tag": "0002_curvy_jack_flag",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790026065370,
+      "tag": "0003_nfc_single_use_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790026798986,
+      "tag": "0004_drop_officers_table",
+      "breakpoints": true
+    }
+  ]
+}
