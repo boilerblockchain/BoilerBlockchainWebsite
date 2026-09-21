@@ -5,10 +5,16 @@ import { shortenAddress } from "@/lib/ui/format";
 import { walletConnectEnabled } from "@/lib/wagmi";
 
 /**
- * Universal connect button.
+ * Universal connect button, laid out phone-first because that is where nearly
+ * every check-in happens.
+ *
  * - "Connect Wallet" uses WalletConnect: on a phone it deep-links straight into
  *   the member's wallet app (any wallet) to connect and sign.
- * - "Browser extension" uses an injected wallet (MetaMask/Coinbase) on desktop.
+ * - "Browser extension" uses an injected wallet (MetaMask/Coinbase) and is
+ *   demoted to a secondary control, since it is desktop-only in practice.
+ *
+ * Buttons are full-width and >=44px tall on small screens so they are a
+ * comfortable tap target, and stop stretching once there is room.
  */
 export function ConnectButton() {
   const { address, isConnected } = useAccount();
@@ -19,7 +25,7 @@ export function ConnectButton() {
     return (
       <button
         onClick={() => disconnect()}
-        className="rounded-lg border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-800"
+        className="min-h-11 w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-800 sm:w-auto"
       >
         {shortenAddress(address)} · Disconnect
       </button>
@@ -30,13 +36,13 @@ export function ConnectButton() {
   const injected = connectors.find((c) => c.id === "injected");
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         {wc && (
           <button
             onClick={() => connect({ connector: wc })}
             disabled={isPending}
-            className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white hover:bg-accent-deep disabled:opacity-50"
+            className="min-h-12 w-full rounded-lg bg-accent px-5 py-3 text-base font-medium text-white hover:bg-accent-deep disabled:opacity-50 sm:w-auto sm:text-sm"
           >
             {isPending ? "Connecting…" : "Connect Wallet"}
           </button>
@@ -45,15 +51,24 @@ export function ConnectButton() {
           <button
             onClick={() => connect({ connector: injected })}
             disabled={isPending}
-            className="rounded-lg border border-neutral-700 px-4 py-2.5 text-sm hover:bg-neutral-800"
+            className="min-h-11 w-full rounded-lg border border-neutral-700 px-4 py-2.5 text-sm text-neutral-300 hover:bg-neutral-800 disabled:opacity-50 sm:w-auto"
           >
             Browser extension
           </button>
         )}
       </div>
+
+      {wc && (
+        <p className="text-xs text-neutral-500">
+          On a phone, this opens your wallet app to approve. Signing is free:
+          no gas, no transaction.
+        </p>
+      )}
+
       {!walletConnectEnabled && (
         <p className="text-xs text-amber-400">
-          Mobile wallets need a WalletConnect id — set NEXT_PUBLIC_WC_PROJECT_ID.
+          Mobile wallets are unavailable: NEXT_PUBLIC_WC_PROJECT_ID is not set,
+          so only a desktop browser extension can connect.
         </p>
       )}
     </div>
