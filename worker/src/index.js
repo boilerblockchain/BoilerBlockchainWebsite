@@ -6,6 +6,8 @@
  *   GET  /admin    HTML dashboard; prompts for the admin token, lists rows.
  *   GET  /list     JSON list of submissions; requires Bearer ADMIN_TOKEN.
  *   GET  /export   CSV of all submissions;   requires Bearer ADMIN_TOKEN.
+ *   POST /hide     soft delete: flips `hidden` on one row; Bearer ADMIN_TOKEN.
+ *                  Nothing is ever removed from D1 — /export still carries it.
  *
  * Secrets/vars:
  *   ADMIN_TOKEN     (secret)  `wrangler secret put ADMIN_TOKEN`
@@ -339,13 +341,40 @@ export default {
       return json({ submissions: results, verdicts: FLAG_VERDICTS }, 200, env);
     }
 
+    // ---- soft delete (token-gated) ----
+    // Hiding is a flag on the row, not a DELETE: the submission stays in D1 and
+    // in the CSV export, it just stops cluttering the dashboard. The state is
+    // stored server-side so it survives a reload and follows the grader to any
+    // other browser.
+    if (url.pathname === '/hide' && request.method === 'POST') {
+      if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
+      let data;
+      try {
+        data = await request.json();
+      } catch {
+        return json({ error: 'invalid JSON' }, 400, env);
+      }
+      const ids = (Array.isArray(data.ids) ? data.ids : [data.id])
+        .map((value) => Number(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+      if (!ids.length) return json({ error: 'id or ids required' }, 422, env);
+      const hidden = data.hidden === false ? 0 : 1;
+      const placeholders = ids.map(() => '?').join(',');
+      await env.DB.prepare(
+        `UPDATE submissions SET hidden = ?, hidden_at = ? WHERE id IN (${placeholders})`
+      )
+        .bind(hidden, hidden ? new Date().toISOString() : null, ...ids)
+        .run();
+      return json({ ok: true, ids, hidden: Boolean(hidden) }, 200, env);
+    }
+
     // ---- admin CSV ----
     if (url.pathname === '/export' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'flag_verdict', 'flag_owner', 'onchain', 'links', 'exploit', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'flag_verdict', 'flag_owner', 'onchain', 'links', 'exploit', 'writeup', 'hidden', 'hidden_at'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -473,6 +502,17 @@ const ADMIN_HTML = `<!doctype html>
           border-top:1px solid var(--line); padding-top:.5rem; }
   .empty { color:var(--dim); padding:2rem 0; }
 
+  /* soft delete */
+  .act { background:transparent; border:1px solid #3a3a46; color:#9b9baa;
+         font-size:.7rem; padding:.18rem .5rem; border-radius:3px; cursor:pointer; }
+  .act:hover { background:#241014; border-color:#5b1d1d; color:#ff8f8f; }
+  .act.restore:hover { background:#0e2317; border-color:#1d5b34; color:#7ef0a6; }
+  details.hidden-row > summary { opacity:.45; }
+  details.hidden-row { border-left:2px solid #5b1d1d; }
+  .toggle-hidden { color:var(--dim); font-size:.78rem; cursor:pointer;
+                   user-select:none; display:flex; align-items:center; gap:.35rem; }
+  .toggle-hidden input { min-width:0; }
+
   /* panels */
   #answers, #guide { padding:0 1.5rem 1.5rem; display:none; max-width:1100px; }
   #answers h2, #guide h2 { font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
@@ -496,6 +536,7 @@ const ADMIN_HTML = `<!doctype html>
   <button class="ghost" onclick="csv()">Export CSV</button>
   <button class="ghost" onclick="toggleAnswers()">Answer key</button>
   <button class="ghost" onclick="toggleGuide()">Guide</button>
+  <label class="toggle-hidden"><input type="checkbox" id="showHidden" onchange="onShowHidden()" /> <span id="hiddenCount">show hidden</span></label>
   <span id="msg" class="count"></span>
 </header>
 <div id="answers"><h2>Answer key</h2><div id="answers-body"></div></div>
@@ -532,14 +573,25 @@ const ADMIN_HTML = `<!doctype html>
 
   const tokenEl  = document.getElementById('token');
   const searchEl = document.getElementById('search');
+  const showHiddenEl = document.getElementById('showHidden');
   const msg = document.getElementById('msg');
-  try { tokenEl.value = localStorage.getItem('bb_admin_token') || ''; } catch {}
   function headers(){ return { Authorization: 'Bearer ' + tokenEl.value }; }
+
+  // Small bits of UI state that should survive a reload: the token, the filter,
+  // whether hidden rows are shown, and which cards were left open.
+  function store(key, value){ try { localStorage.setItem('bb_admin_'+key, value); } catch {} }
+  function recall(key, fallback){ try { return localStorage.getItem('bb_admin_'+key) ?? fallback; } catch { return fallback; } }
+  tokenEl.value  = recall('token', '');
+  searchEl.value = recall('search', '');
+  showHiddenEl.checked = recall('show_hidden', '') === '1';
+  let OPEN = new Set();
+  try { OPEN = new Set(JSON.parse(recall('open', '[]'))); } catch {}
+  function rememberOpen(){ store('open', JSON.stringify([...OPEN])); }
 
   let ROWS = [];
 
   async function load(){
-    try { localStorage.setItem('bb_admin_token', tokenEl.value); } catch {}
+    store('token', tokenEl.value);
     msg.textContent = 'Loading…'; msg.className='count';
     const res = await fetch('/list', { headers: headers() });
     if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
@@ -586,10 +638,17 @@ const ADMIN_HTML = `<!doctype html>
     const meta = (window.VERDICTS||{})[key] || {};
     const warn = [];
     if(r.flag_reused==1) warn.push('<span class="chip warn">⚠ same flag from someone else</span>');
+    const hidden = r.hidden==1;
+    const action = hidden
+      ? '<button class="act restore" onclick="setHidden(event,['+r.id+'],false)">restore</button>'
+      : '<button class="act" onclick="setHidden(event,['+r.id+'],true)">hide</button>';
+    const openKey = 's'+r.id;
     const head = '<summary><span class="caret">▶</span>'
       + '<span class="chal">'+esc(r.challenge)+'</span>'
       + badge(r) + warn.join('')
-      + '<span class="spacer"></span><span class="when">'+when(r.created_at)+'</span></summary>';
+      + (hidden ? '<span class="chip">hidden</span>' : '')
+      + '<span class="spacer"></span>' + action
+      + '<span class="when">'+when(r.created_at)+'</span></summary>';
     const why = meta.detail ? '<div class="why">'+esc(meta.detail)+'</div>' : '';
     const body = '<div class="body">'
       + (key!=='none' || r.flag
@@ -604,7 +663,8 @@ const ADMIN_HTML = `<!doctype html>
       + field('writeup', r.writeup, true)
       + '<div class="meta">#'+r.id+' · '+esc(r.created_at)+' · '+esc(r.ip||'')+'<br>'+esc(r.ua||'')+'</div>'
       + '</div>';
-    return '<details class="sub">'+head+body+'</details>';
+    return '<details class="sub'+(hidden?' hidden-row':'')+'" data-key="'+openKey+'"'
+      + (OPEN.has(openKey)?' open':'') + '>'+head+body+'</details>';
   }
 
   function personCard(p){
@@ -614,21 +674,33 @@ const ADMIN_HTML = `<!doctype html>
     if(p.foreign) chips.push('<span class="chip warn">⚠ '+p.foreign+' other instance</span>');
     if(p.shared)  chips.push('<span class="chip warn">⚠ '+p.shared+' shared flag</span>');
     if(p.forged)  chips.push('<span class="chip bad">✗ '+p.forged+' bad flag</span>');
-    return '<details class="person"><summary>'
+    // Hiding a person hides the submissions currently shown for them, so the
+    // button does the same thing whether or not hidden rows are on screen.
+    const ids = p.subs.filter(r=>r.hidden!=1).map(r=>r.id);
+    const action = ids.length
+      ? '<button class="act" onclick="setHidden(event,['+ids.join(',')+'],true)">hide all</button>'
+      : '<button class="act restore" onclick="setHidden(event,['+p.subs.map(r=>r.id).join(',')+'],false)">restore all</button>';
+    const openKey = 'p'+p.email;
+    return '<details class="person" data-key="'+esc(openKey)+'"'+(OPEN.has(openKey)?' open':'')+'><summary>'
       + '<span class="caret">▶</span>'
       + '<span class="who">'+esc(p.name || '(no name)')+'</span>'
       + '<span class="mail">'+esc(p.email)+'</span>'
       + chips.join(' ')
-      + '<span class="spacer"></span><span class="when">'+when(p.latest)+'</span>'
+      + '<span class="spacer"></span>' + action
+      + '<span class="when">'+when(p.latest)+'</span>'
       + '</summary><div class="subs">' + p.subs.map(subCard).join('') + '</div></details>';
   }
 
   function render(){
+    store('search', searchEl.value||'');
     const q = (searchEl.value||'').trim().toLowerCase();
-    const rows = q
-      ? ROWS.filter(r => [r.name,r.email,r.challenge,r.flag].some(v => String(v||'').toLowerCase().includes(q)))
-      : ROWS;
+    const showHidden = showHiddenEl.checked;
+    let rows = showHidden ? ROWS : ROWS.filter(r => r.hidden!=1);
+    if(q) rows = rows.filter(r => [r.name,r.email,r.challenge,r.flag].some(v => String(v||'').toLowerCase().includes(q)));
     const people = group(rows);
+    const hiddenTotal = ROWS.filter(r=>r.hidden==1).length;
+    document.getElementById('hiddenCount').textContent =
+      hiddenTotal ? 'show hidden ('+hiddenTotal+')' : 'show hidden';
 
     const solved = new Set(rows.filter(isSolved).map(r => (r.email||'').toLowerCase()+'|'+r.challenge)).size;
     const stats = [
@@ -645,7 +717,44 @@ const ADMIN_HTML = `<!doctype html>
   }
 
   function setAll(open){
-    document.querySelectorAll('#people details').forEach(d => { d.open = open; });
+    document.querySelectorAll('#people details').forEach(d => {
+      d.open = open;
+      if(open) OPEN.add(d.dataset.key); else OPEN.delete(d.dataset.key);
+    });
+    rememberOpen();
+  }
+
+  // Which cards are open is part of the state worth keeping: a grader who
+  // reloads mid-read lands back where they were.
+  document.getElementById('people').addEventListener('toggle', (e) => {
+    const key = e.target.dataset && e.target.dataset.key;
+    if(!key) return;
+    if(e.target.open) OPEN.add(key); else OPEN.delete(key);
+    rememberOpen();
+  }, true);
+
+  function onShowHidden(){
+    store('show_hidden', showHiddenEl.checked ? '1' : '');
+    render();
+  }
+
+  // Soft delete. The row stays in D1 and in the CSV export; only the dashboard
+  // stops showing it. Server-side, so it holds across reloads and browsers.
+  async function setHidden(event, ids, hidden){
+    event.preventDefault();
+    event.stopPropagation();
+    const res = await fetch('/hide', {
+      method:'POST',
+      headers: Object.assign({ 'Content-Type':'application/json' }, headers()),
+      body: JSON.stringify({ ids, hidden }),
+    });
+    if(!res.ok){ msg.textContent = 'Hide failed ('+res.status+')'; msg.className='err'; return; }
+    const set = new Set(ids);
+    for(const r of ROWS) if(set.has(r.id)) r.hidden = hidden ? 1 : 0;
+    msg.textContent = ids.length + (hidden ? ' hidden' : ' restored')
+      + (hidden ? ' — still in the database and the CSV export' : '');
+    msg.className='count';
+    render();
   }
 
   function csv(){

@@ -19,7 +19,11 @@ CREATE TABLE IF NOT EXISTS submissions (
   flag_owner   TEXT,
   writeup    TEXT,
   ip         TEXT,
-  ua         TEXT
+  ua         TEXT,
+  -- Soft delete: 1 hides the row from the dashboard. The row itself is never
+  -- deleted, and /export still carries it with hidden=1.
+  hidden     INTEGER DEFAULT 0,
+  hidden_at  TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_submissions_created ON submissions (created_at DESC);
@@ -30,3 +34,7 @@ CREATE INDEX IF NOT EXISTS idx_submissions_flag ON submissions (flag);
 --   ALTER TABLE submissions ADD COLUMN flag_reused INTEGER DEFAULT 0;
 --   ALTER TABLE submissions ADD COLUMN flag_verdict TEXT;
 --   ALTER TABLE submissions ADD COLUMN flag_owner TEXT;
+
+-- Migration for a database created before soft delete:
+--   ALTER TABLE submissions ADD COLUMN hidden    INTEGER DEFAULT 0;
+--   ALTER TABLE submissions ADD COLUMN hidden_at TEXT;
