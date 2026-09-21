@@ -522,14 +522,37 @@ const ADMIN_HTML = `<!doctype html>
   .akey .name { color:var(--purple); font-weight:600; margin-bottom:.4rem; }
   .akey .row { font-size:.85rem; line-height:1.5; margin:.25rem 0; }
   .akey .lab { display:inline; margin-right:.4rem; }
+  /* sign-in gate: nothing else renders until the token checks out */
+  #gate { position:fixed; inset:0; background:var(--bg); display:flex;
+          align-items:center; justify-content:center; padding:1.5rem; z-index:20; }
+  #gate .card { width:100%; max-width:360px; background:var(--panel);
+                border:1px solid var(--line); border-radius:6px; padding:1.6rem; }
+  #gate .lock { font-size:1.4rem; }
+  #gate h2 { margin:.6rem 0 .2rem; font-size:1rem; letter-spacing:.14em;
+             text-transform:uppercase; color:var(--purple); }
+  #gate p { margin:0 0 1.1rem; color:var(--dim); font-size:.82rem; line-height:1.5; }
+  #gate input { width:100%; margin-bottom:.7rem; padding:.6rem .7rem; }
+  #gate button { width:100%; padding:.6rem; }
+  #gate .err { margin-top:.7rem; font-size:.82rem; min-height:1.1rem; }
+  #app { display:none; }
   @media (max-width:640px){ .mail { width:100%; } .when { display:none; } }
 </style>
 </head>
 <body>
+<div id="gate">
+  <form class="card" onsubmit="signIn(event)">
+    <div class="lock">🔒</div>
+    <h2>Submissions</h2>
+    <p>Organizers only. Enter the admin password to read student submissions.</p>
+    <input id="token" type="password" placeholder="password" autocomplete="current-password" autofocus />
+    <button type="submit">Sign in</button>
+    <div id="gate-err" class="err"></div>
+  </form>
+</div>
+<div id="app">
 <header>
   <h1>Submissions</h1>
-  <input id="token" type="password" placeholder="admin token" />
-  <button onclick="load()">Load</button>
+  <button onclick="load()">Reload</button>
   <input id="search" type="search" placeholder="filter name / email / challenge" oninput="render()" />
   <button class="ghost" onclick="setAll(true)">Expand all</button>
   <button class="ghost" onclick="setAll(false)">Collapse all</button>
@@ -538,12 +561,15 @@ const ADMIN_HTML = `<!doctype html>
   <button class="ghost" onclick="toggleGuide()">Guide</button>
   <label class="toggle-hidden"><input type="checkbox" id="showHidden" onchange="onShowHidden()" /> <span id="hiddenCount">show hidden</span></label>
   <span id="msg" class="count"></span>
+  <span class="spacer"></span>
+  <button class="ghost" onclick="signOut()">Sign out</button>
 </header>
 <div id="answers"><h2>Answer key</h2><div id="answers-body"></div></div>
 <div id="guide"><h2>Internal guide</h2><pre id="guide-body" class="val" style="background:#0d0d13;border:1px solid #1e1e28;padding:1rem;font-size:.82rem"></pre></div>
 <div class="wrap">
   <div class="totals" id="totals"></div>
   <div id="people"></div>
+</div>
 </div>
 <script>
   // What the checker concluded, in one badge. A green tick is never the whole
@@ -590,16 +616,62 @@ const ADMIN_HTML = `<!doctype html>
 
   let ROWS = [];
 
+  const gate = document.getElementById('gate');
+  const gateErr = document.getElementById('gate-err');
+
+  function showGate(message){
+    gate.style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    gateErr.textContent = message || '';
+    gateErr.className = message ? 'err' : 'count';
+    tokenEl.focus();
+  }
+  function showApp(){
+    gateErr.textContent = '';
+    gate.style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  }
+
+  // The gate is a convenience, not the security boundary: every endpoint checks
+  // the token server-side, so a hidden form is never what keeps data private.
+  async function signIn(event){
+    if(event) event.preventDefault();
+    if(!tokenEl.value){ showGate('Enter the password.'); return; }
+    gateErr.textContent = 'Checking…'; gateErr.className = 'count';
+    const ok = await load();
+    if(ok){ store('token', tokenEl.value); showApp(); }
+    else { showGate('Wrong password.'); }
+  }
+
+  function signOut(){
+    store('token', '');
+    tokenEl.value = '';
+    ROWS = [];
+    showGate('');
+  }
+
+  // Returns whether the token was accepted, so the gate can react to it.
   async function load(){
-    store('token', tokenEl.value);
     msg.textContent = 'Loading…'; msg.className='count';
-    const res = await fetch('/list', { headers: headers() });
-    if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
+    let res;
+    try {
+      res = await fetch('/list', { headers: headers() });
+    } catch {
+      msg.textContent = 'Network error'; msg.className='err';
+      return false;
+    }
+    if(res.status === 401 || res.status === 403){
+      msg.textContent = '';
+      showGate('Wrong password.');
+      return false;
+    }
+    if(!res.ok){ msg.textContent = 'Load failed ('+res.status+')'; msg.className='err'; return false; }
     const { submissions, verdicts } = await res.json();
     window.VERDICTS = verdicts || {};
     ROWS = submissions || [];
     msg.textContent = ''; msg.className='count';
     render();
+    return true;
   }
 
   // One card per person (keyed on email), newest activity first.
@@ -748,7 +820,11 @@ const ADMIN_HTML = `<!doctype html>
       headers: Object.assign({ 'Content-Type':'application/json' }, headers()),
       body: JSON.stringify({ ids, hidden }),
     });
-    if(!res.ok){ msg.textContent = 'Hide failed ('+res.status+')'; msg.className='err'; return; }
+    if(!res.ok){
+      if(res.status===401||res.status===403) showGate('Session expired — sign in again.');
+      else { msg.textContent = 'Hide failed ('+res.status+')'; msg.className='err'; }
+      return;
+    }
     const set = new Set(ids);
     for(const r of ROWS) if(set.has(r.id)) r.hidden = hidden ? 1 : 0;
     msg.textContent = ids.length + (hidden ? ' hidden' : ' restored')
@@ -759,7 +835,7 @@ const ADMIN_HTML = `<!doctype html>
 
   function csv(){
     fetch('/export', { headers: headers() }).then(r => {
-      if(!r.ok){ msg.textContent='Auth failed'; msg.className='err'; return; }
+      if(!r.ok){ showGate('Session expired — sign in again.'); return; }
       return r.blob();
     }).then(b => { if(!b) return;
       const a = document.createElement('a');
@@ -774,7 +850,7 @@ const ADMIN_HTML = `<!doctype html>
     box.style.display = 'block';
     if(answersLoaded) return;
     const res = await fetch('/answers', { headers: headers() });
-    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    if(!res.ok){ box.style.display='none'; showGate('Session expired — sign in again.'); return; }
     const { answers } = await res.json();
     const row = (lab,val) => val ? '<div class="row"><span class="lab">'+lab+'</span>'+esc(val)+'</div>' : '';
     document.getElementById('answers-body').innerHTML = answers.map(a =>
@@ -792,13 +868,14 @@ const ADMIN_HTML = `<!doctype html>
     box.style.display='block';
     if(guideLoaded) return;
     const res = await fetch('/guide', { headers: headers() });
-    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    if(!res.ok){ box.style.display='none'; showGate('Session expired — sign in again.'); return; }
     const { guide } = await res.json();
     document.getElementById('guide-body').textContent = guide;
     guideLoaded = true;
   }
 
-  if(tokenEl.value) load();
+  // A remembered password signs in silently; anything else lands on the gate.
+  if(tokenEl.value) signIn(); else showGate('');
 </script>
 </body>
 </html>`;
