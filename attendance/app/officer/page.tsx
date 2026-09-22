@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useSignTypedData } from "wagmi";
-import { ConnectButton } from "@/components/ConnectButton";
+import { ConnectButton, SigningHint } from "@/components/ConnectButton";
 import { LiveQR } from "@/components/officer/LiveQR";
 import { buildOfficerLoginTypedData } from "@/lib/officerLogin";
 import { shortenAddress, formatDateTime } from "@/lib/ui/format";
@@ -93,6 +93,7 @@ export default function OfficerPage() {
           Connect an allowlisted officer wallet and sign in to manage meetings.
         </p>
         <ConnectButton />
+        <SigningHint active={busy} />
         {isConnected && (
           <button
             onClick={signIn}

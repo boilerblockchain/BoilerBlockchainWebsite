@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { shortenAddress } from "@/lib/ui/format";
 import { walletConnectEnabled } from "@/lib/wagmi";
@@ -8,16 +9,14 @@ import { walletConnectEnabled } from "@/lib/wagmi";
  * Universal connect button, laid out phone-first because that is where nearly
  * every check-in happens.
  *
- * - "Connect Wallet" uses WalletConnect: on a phone it deep-links straight into
- *   the member's wallet app (any wallet) to connect and sign.
- * - "Browser extension" uses an injected wallet (MetaMask/Coinbase) and is
- *   demoted to a secondary control, since it is desktop-only in practice.
- *
- * Buttons are full-width and >=44px tall on small screens so they are a
- * comfortable tap target, and stop stretching once there is room.
+ * Every discovered wallet is listed by name rather than collapsing them into
+ * one "Browser extension" button. With several extensions installed they all
+ * race for `window.ethereum`, and the generic injected connector can attach to
+ * one wallet while the signing request goes to another, which looks like a
+ * hang with no popup. Naming each one makes the choice explicit.
  */
 export function ConnectButton() {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector: active } = useAccount();
   const { connectors, connect, isPending } = useConnect();
   const { disconnect } = useDisconnect();
 
@@ -27,13 +26,21 @@ export function ConnectButton() {
         onClick={() => disconnect()}
         className="min-h-11 w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm hover:bg-neutral-800 sm:w-auto"
       >
-        {shortenAddress(address)} · Disconnect
+        {shortenAddress(address)}
+        {active?.name ? ` · ${active.name}` : ""} · Disconnect
       </button>
     );
   }
 
   const wc = connectors.find((c) => c.id === "walletConnect");
-  const injected = connectors.find((c) => c.id === "injected");
+
+  // EIP-6963 gives one connector per installed wallet. Prefer those; fall back
+  // to the generic injected connector only when nothing announced itself.
+  const discovered = connectors.filter(
+    (c) => c.type === "injected" && c.id !== "injected",
+  );
+  const generic = connectors.find((c) => c.id === "injected");
+  const browserWallets = discovered.length > 0 ? discovered : generic ? [generic] : [];
 
   return (
     <div className="space-y-3">
@@ -47,15 +54,16 @@ export function ConnectButton() {
             {isPending ? "Connecting…" : "Connect Wallet"}
           </button>
         )}
-        {injected && (
+        {browserWallets.map((c) => (
           <button
-            onClick={() => connect({ connector: injected })}
+            key={c.uid}
+            onClick={() => connect({ connector: c })}
             disabled={isPending}
             className="min-h-11 w-full rounded-lg border border-neutral-700 px-4 py-2.5 text-sm text-neutral-300 hover:bg-neutral-800 disabled:opacity-50 sm:w-auto"
           >
-            Browser extension
+            {c.id === "injected" ? "Browser extension" : c.name}
           </button>
-        )}
+        ))}
       </div>
 
       {wc && (
@@ -72,5 +80,32 @@ export function ConnectButton() {
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * Nudge shown while a signature is outstanding. A wallet popup that opens
+ * behind the window, or an extension that never surfaces one, otherwise leaves
+ * the button sitting on "Signing…" with nothing to act on.
+ */
+export function SigningHint({ active }: { active: boolean }) {
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!active) {
+      setSlow(false);
+      return;
+    }
+    const t = setTimeout(() => setSlow(true), 6000);
+    return () => clearTimeout(t);
+  }, [active]);
+
+  if (!active || !slow) return null;
+  return (
+    <p className="text-xs text-amber-400">
+      Still waiting on your wallet. Open the extension from your browser
+      toolbar to approve the request. With several wallets installed, check
+      that the popup didn&apos;t open in the wrong one.
+    </p>
   );
 }

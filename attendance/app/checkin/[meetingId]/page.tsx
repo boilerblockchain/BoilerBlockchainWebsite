@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useAccount, useSignTypedData } from "wagmi";
-import { ConnectButton } from "@/components/ConnectButton";
+import { ConnectButton, SigningHint } from "@/components/ConnectButton";
 import { buildCheckInTypedData } from "@/lib/checkin/typedData";
 
 export default function CheckInPage() {
@@ -177,6 +177,7 @@ function CheckInFlow() {
             free signature — no gas, no transaction, nothing sent on-chain.
           </p>
           <ConnectButton />
+          <SigningHint active={phase === "checking"} />
           {isConnected && needsName && (
             <label className="block space-y-1">
               <span className="text-sm text-neutral-300">
