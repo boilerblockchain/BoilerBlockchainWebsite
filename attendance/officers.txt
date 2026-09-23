@@ -1,0 +1,10 @@
+# Officer allowlist. One wallet per line:
+#
+#   <address>  <officer|admin>  <label>
+#
+# Role defaults to "officer" if omitted. Anything after the role is a label
+# shown in the dashboard. Lines starting with # are ignored.
+#
+# Edits take effect on the next sign-in. No restart, no migration.
+
+0x4003459e17b584B539290722a379922FDB4616Fb  admin  Joey

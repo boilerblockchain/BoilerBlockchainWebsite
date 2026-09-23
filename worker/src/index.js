@@ -6,6 +6,8 @@
  *   GET  /admin    HTML dashboard; prompts for the admin token, lists rows.
  *   GET  /list     JSON list of submissions; requires Bearer ADMIN_TOKEN.
  *   GET  /export   CSV of all submissions;   requires Bearer ADMIN_TOKEN.
+ *   POST /hide     soft delete: flips `hidden` on one row; Bearer ADMIN_TOKEN.
+ *                  Nothing is ever removed from D1 — /export still carries it.
  *
  * Secrets/vars:
  *   ADMIN_TOKEN     (secret)  `wrangler secret put ADMIN_TOKEN`
@@ -339,13 +341,40 @@ export default {
       return json({ submissions: results, verdicts: FLAG_VERDICTS }, 200, env);
     }
 
+    // ---- soft delete (token-gated) ----
+    // Hiding is a flag on the row, not a DELETE: the submission stays in D1 and
+    // in the CSV export, it just stops cluttering the dashboard. The state is
+    // stored server-side so it survives a reload and follows the grader to any
+    // other browser.
+    if (url.pathname === '/hide' && request.method === 'POST') {
+      if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
+      let data;
+      try {
+        data = await request.json();
+      } catch {
+        return json({ error: 'invalid JSON' }, 400, env);
+      }
+      const ids = (Array.isArray(data.ids) ? data.ids : [data.id])
+        .map((value) => Number(value))
+        .filter((value) => Number.isInteger(value) && value > 0);
+      if (!ids.length) return json({ error: 'id or ids required' }, 422, env);
+      const hidden = data.hidden === false ? 0 : 1;
+      const placeholders = ids.map(() => '?').join(',');
+      await env.DB.prepare(
+        `UPDATE submissions SET hidden = ?, hidden_at = ? WHERE id IN (${placeholders})`
+      )
+        .bind(hidden, hidden ? new Date().toISOString() : null, ...ids)
+        .run();
+      return json({ ok: true, ids, hidden: Boolean(hidden) }, 200, env);
+    }
+
     // ---- admin CSV ----
     if (url.pathname === '/export' && request.method === 'GET') {
       if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401, env);
       const { results } = await env.DB.prepare(
         `SELECT * FROM submissions ORDER BY created_at DESC LIMIT 5000`
       ).all();
-      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'flag_verdict', 'flag_owner', 'onchain', 'links', 'exploit', 'writeup'];
+      const cols = ['id', 'created_at', 'name', 'email', 'challenge', 'flag', 'flag_correct', 'flag_reused', 'flag_verdict', 'flag_owner', 'onchain', 'links', 'exploit', 'writeup', 'hidden', 'hidden_at'];
       const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
       const csv = [cols.join(',')]
         .concat(results.map((r) => cols.map((c) => esc(r[c])).join(',')))
@@ -399,129 +428,421 @@ const ADMIN_HTML = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>BB Challenges — Submissions</title>
 <style>
-  :root { color-scheme: dark; }
-  body { margin:0; background:#0b0b0f; color:#eee;
-         font-family:ui-sans-serif,system-ui,sans-serif; }
-  header { padding:1rem 1.5rem; border-bottom:1px solid #222;
-           display:flex; gap:1rem; align-items:center; flex-wrap:wrap; }
-  h1 { font-size:1rem; letter-spacing:.14em; text-transform:uppercase; margin:0;
-       color:#C77DFF; }
-  input { padding:.55rem .7rem; background:#16161c; border:1px solid #333;
-          color:#fff; border-radius:0; min-width:280px; }
-  button { padding:.55rem 1rem; background:#7120B0; border:1px solid #7120B0;
-           color:#fff; cursor:pointer; }
+  :root { color-scheme: dark; --bg:#0b0b0f; --panel:#111118; --line:#1e1e28;
+          --purple:#C77DFF; --deep:#7120B0; --dim:#8b8b99; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:#eee;
+         font-family:ui-sans-serif,system-ui,sans-serif; font-size:15px; }
+  header { padding:1rem 1.5rem; border-bottom:1px solid var(--line);
+           display:flex; gap:.6rem; align-items:center; flex-wrap:wrap;
+           position:sticky; top:0; background:var(--bg); z-index:5; }
+  h1 { font-size:1rem; letter-spacing:.14em; text-transform:uppercase; margin:0 .5rem 0 0;
+       color:var(--purple); }
+  input { padding:.5rem .7rem; background:#16161c; border:1px solid #333;
+          color:#fff; border-radius:3px; }
+  #token { min-width:220px; }
+  #search { min-width:200px; }
+  button { padding:.5rem .9rem; background:var(--deep); border:1px solid var(--deep);
+           color:#fff; cursor:pointer; border-radius:3px; font-size:.85rem; }
   button:hover { background:#A855F7; }
-  button.ghost { background:transparent; border-color:#444; }
-  a { color:#C77DFF; }
-  .wrap { padding:1.5rem; }
-  .count { color:#888; font-size:.85rem; }
-  #answers { padding:0 1.5rem 1.5rem; display:none; }
-  #answers h2 { font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
-                color:#C77DFF; border-bottom:1px solid #222; padding-bottom:.5rem; }
-  .akey { border:1px solid #1c1c24; background:#111; padding:.8rem 1rem;
-          margin-bottom:.8rem; }
-  .akey .name { color:#C77DFF; font-weight:600; margin-bottom:.4rem; }
-  .akey .row { font-size:.85rem; line-height:1.5; margin:.25rem 0; }
-  .akey .lab { color:#888; text-transform:uppercase; letter-spacing:.08em;
-               font-size:.7rem; margin-right:.4rem; }
-  table { width:100%; border-collapse:collapse; font-size:.85rem; }
-  th,td { text-align:left; padding:.5rem .6rem; border-bottom:1px solid #1c1c24;
-          vertical-align:top; }
-  th { color:#888; text-transform:uppercase; letter-spacing:.1em;
-       font-size:.7rem; position:sticky; top:0; background:#0b0b0f; }
-  td.writeup { max-width:340px; white-space:pre-wrap; }
-  .chal { color:#C77DFF; white-space:nowrap; }
-  td.verdict { max-width:300px; line-height:1.45; }
-  td.verdict .why { color:#777; font-size:.76rem; }
-  td.verdict .owner { color:#9fe; font-family:ui-monospace,monospace; font-size:.75rem; }
+  button.ghost { background:transparent; border-color:#3a3a46; color:#cfcfda; }
+  button.ghost:hover { background:#1b1b24; }
+  a { color:var(--purple); }
+  .wrap { padding:1.25rem 1.5rem 3rem; max-width:1100px; }
+  .count { color:var(--dim); font-size:.85rem; }
   .err { color:#ff6b6b; }
-  code { color:#9fe; word-break:break-all; }
+  code { color:#9fe; font-family:ui-monospace,monospace; word-break:break-all; }
+
+  /* summary strip of totals */
+  .totals { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:4px;
+          padding:.5rem .8rem; min-width:104px; }
+  .stat b { display:block; font-size:1.3rem; line-height:1.2; }
+  .stat span { color:var(--dim); font-size:.7rem; text-transform:uppercase;
+               letter-spacing:.1em; }
+
+  /* person row */
+  details.person { background:var(--panel); border:1px solid var(--line);
+                   border-radius:4px; margin-bottom:.5rem; }
+  details.person[open] { border-color:#2e2e3c; }
+  summary { cursor:pointer; list-style:none; padding:.7rem .9rem;
+            display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; }
+  summary::-webkit-details-marker { display:none; }
+  summary:hover { background:#15151d; }
+  .caret { color:var(--dim); font-size:.7rem; width:.8rem; flex:none;
+           transition:transform .12s ease; }
+  details[open] > summary .caret { transform:rotate(90deg); }
+  .who { font-weight:600; }
+  .mail { color:var(--dim); font-size:.85rem; }
+  .spacer { flex:1 1 auto; }
+  .when { color:#6f6f80; font-size:.75rem; white-space:nowrap; }
+
+  /* chips */
+  .chip { font-size:.72rem; padding:.15rem .5rem; border-radius:999px;
+          border:1px solid #333; color:#bbb; white-space:nowrap; }
+  .chip.ok   { color:#4ade80; border-color:#1d5b34; background:#0e2317; }
+  .chip.warn { color:#fbbf24; border-color:#5b471d; background:#241d0e; }
+  .chip.bad  { color:#ff6b6b; border-color:#5b1d1d; background:#240e0e; }
+
+  /* submission row inside a person */
+  .subs { padding:0 .9rem .7rem 1.9rem; }
+  details.sub { border-top:1px solid var(--line); }
+  details.sub > summary { padding:.55rem .2rem; font-size:.88rem; }
+  .chal { color:var(--purple); }
+  .body { padding:.2rem .2rem 1rem; }
+  .field { margin:.65rem 0; }
+  .lab { display:block; color:var(--dim); text-transform:uppercase;
+         letter-spacing:.09em; font-size:.68rem; margin-bottom:.2rem; }
+  .val { white-space:pre-wrap; line-height:1.5; font-size:.88rem; }
+  pre.val { margin:0; background:#0d0d13; border:1px solid var(--line);
+            border-radius:3px; padding:.6rem .7rem; font-size:.8rem;
+            overflow-x:auto; max-height:420px; }
+  .why { color:#8a8a99; font-size:.8rem; line-height:1.45; margin-top:.2rem; }
+  .meta { color:#5f5f70; font-size:.72rem; margin-top:.8rem;
+          border-top:1px solid var(--line); padding-top:.5rem; }
+  .empty { color:var(--dim); padding:2rem 0; }
+
+  /* soft delete */
+  .act { background:transparent; border:1px solid #3a3a46; color:#9b9baa;
+         font-size:.7rem; padding:.18rem .5rem; border-radius:3px; cursor:pointer; }
+  .act:hover { background:#241014; border-color:#5b1d1d; color:#ff8f8f; }
+  .act.restore:hover { background:#0e2317; border-color:#1d5b34; color:#7ef0a6; }
+  details.hidden-row > summary { opacity:.45; }
+  details.hidden-row { border-left:2px solid #5b1d1d; }
+  .toggle-hidden { color:var(--dim); font-size:.78rem; cursor:pointer;
+                   user-select:none; display:flex; align-items:center; gap:.35rem; }
+  .toggle-hidden input { min-width:0; }
+
+  /* panels */
+  #answers, #guide { padding:0 1.5rem 1.5rem; display:none; max-width:1100px; }
+  #answers h2, #guide h2 { font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
+                color:var(--purple); border-bottom:1px solid var(--line); padding-bottom:.5rem; }
+  .akey { border:1px solid var(--line); background:var(--panel); padding:.8rem 1rem;
+          margin-bottom:.8rem; border-radius:4px; }
+  .akey .name { color:var(--purple); font-weight:600; margin-bottom:.4rem; }
+  .akey .row { font-size:.85rem; line-height:1.5; margin:.25rem 0; }
+  .akey .lab { display:inline; margin-right:.4rem; }
+  /* sign-in gate: nothing else renders until the token checks out */
+  #gate { position:fixed; inset:0; background:var(--bg); display:flex;
+          align-items:center; justify-content:center; padding:1.5rem; z-index:20; }
+  #gate .card { width:100%; max-width:360px; background:var(--panel);
+                border:1px solid var(--line); border-radius:6px; padding:1.6rem; }
+  #gate .lock { font-size:1.4rem; }
+  #gate h2 { margin:.6rem 0 .2rem; font-size:1rem; letter-spacing:.14em;
+             text-transform:uppercase; color:var(--purple); }
+  #gate p { margin:0 0 1.1rem; color:var(--dim); font-size:.82rem; line-height:1.5; }
+  #gate input { width:100%; margin-bottom:.7rem; padding:.6rem .7rem; }
+  #gate button { width:100%; padding:.6rem; }
+  #gate .err { margin-top:.7rem; font-size:.82rem; min-height:1.1rem; }
+  #app { display:none; }
+  @media (max-width:640px){ .mail { width:100%; } .when { display:none; } }
 </style>
 </head>
 <body>
+<div id="gate">
+  <form class="card" onsubmit="signIn(event)">
+    <div class="lock">🔒</div>
+    <h2>Submissions</h2>
+    <p>Organizers only. Enter the admin password to read student submissions.</p>
+    <input id="token" type="password" placeholder="password" autocomplete="current-password" autofocus />
+    <button type="submit">Sign in</button>
+    <div id="gate-err" class="err"></div>
+  </form>
+</div>
+<div id="app">
 <header>
   <h1>Submissions</h1>
-  <input id="token" type="password" placeholder="admin token" />
-  <button onclick="load()">Load</button>
-  <button onclick="csv()">Export CSV</button>
+  <button onclick="load()">Reload</button>
+  <input id="search" type="search" placeholder="filter name / email / challenge" oninput="render()" />
+  <button class="ghost" onclick="setAll(true)">Expand all</button>
+  <button class="ghost" onclick="setAll(false)">Collapse all</button>
+  <button class="ghost" onclick="csv()">Export CSV</button>
   <button class="ghost" onclick="toggleAnswers()">Answer key</button>
   <button class="ghost" onclick="toggleGuide()">Guide</button>
+  <label class="toggle-hidden"><input type="checkbox" id="showHidden" onchange="onShowHidden()" /> <span id="hiddenCount">show hidden</span></label>
   <span id="msg" class="count"></span>
+  <span class="spacer"></span>
+  <button class="ghost" onclick="signOut()">Sign out</button>
 </header>
 <div id="answers"><h2>Answer key</h2><div id="answers-body"></div></div>
-<div id="guide" style="display:none;padding:0 1.5rem 1.5rem"><h2 style="font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#C77DFF;border-bottom:1px solid #222;padding-bottom:.5rem">Internal guide</h2><pre id="guide-body" style="white-space:pre-wrap;background:#111;border:1px solid #1c1c24;padding:1rem;font-size:.82rem"></pre></div>
-<div class="wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+<div id="guide"><h2>Internal guide</h2><pre id="guide-body" class="val" style="background:#0d0d13;border:1px solid #1e1e28;padding:1rem;font-size:.82rem"></pre></div>
+<div class="wrap">
+  <div class="totals" id="totals"></div>
+  <div id="people"></div>
+</div>
+</div>
 <script>
-  // One cell that says exactly what the checker concluded and why, so a green
-  // tick is never the whole story a grader has to go on.
+  // What the checker concluded, in one badge. A green tick is never the whole
+  // story, so the reason travels with it into the expanded view.
   const VERDICT_STYLE = {
-    valid:            { icon:'✓', color:'#4ade80' },
-    valid_legacy:     { icon:'✓', color:'#4ade80' },
-    foreign_instance: { icon:'⚠', color:'#fbbf24' },
-    wrong_challenge:  { icon:'✗', color:'#ff6b6b' },
-    forged:           { icon:'✗', color:'#ff6b6b' },
-    malformed:        { icon:'✗', color:'#ff6b6b' },
-    none:             { icon:'',  color:'#666'    },
+    valid:            { icon:'✓', cls:'ok'   },
+    valid_legacy:     { icon:'✓', cls:'ok'   },
+    foreign_instance: { icon:'⚠', cls:'warn' },
+    wrong_challenge:  { icon:'✗', cls:'bad'  },
+    forged:           { icon:'✗', cls:'bad'  },
+    malformed:        { icon:'✗', cls:'bad'  },
+    none:             { icon:'·', cls:''     },
   };
-  function verdictCell(r){
-    const key = r.flag_verdict || (r.flag ? (r.flag_correct==1?'valid_legacy':'forged') : 'none');
+  const esc = s => String(s??'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+  const verdictKey = r => r.flag_verdict || (r.flag ? (r.flag_correct==1?'valid_legacy':'forged') : 'none');
+  const isSolved = r => { const k = verdictKey(r); return k==='valid' || k==='valid_legacy'; };
+  const when = s => { const d = new Date(s); return isNaN(d) ? esc(s)
+      : d.toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); };
+
+  function badge(r){
+    const key = verdictKey(r);
     const style = VERDICT_STYLE[key] || VERDICT_STYLE.malformed;
     const meta = (window.VERDICTS||{})[key] || {};
-    const esc = s => String(s??'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-    if(key === 'none') return '';
-    const bits = [
-      '<span style="color:'+style.color+';font-weight:700">'+style.icon+' '+esc(meta.label||key)+'</span>'
-    ];
-    if(r.flag_reused==1) bits.push('<span style="color:#fbbf24">⚠ also submitted by someone else</span>');
-    if(r.flag_owner) bits.push('<span class="owner">owner tag '+esc(r.flag_owner)+'</span>');
-    if(meta.detail) bits.push('<span class="why">'+esc(meta.detail)+'</span>');
-    return bits.join('<br>');
+    const label = key==='none' ? 'no flag' : (meta.label || key);
+    return '<span class="chip '+style.cls+'">'+style.icon+' '+esc(label)+'</span>';
   }
-  const tokenEl = document.getElementById('token');
-  try { tokenEl.value = localStorage.getItem('bb_admin_token') || ''; } catch {}
+
+  const tokenEl  = document.getElementById('token');
+  const searchEl = document.getElementById('search');
+  const showHiddenEl = document.getElementById('showHidden');
   const msg = document.getElementById('msg');
   function headers(){ return { Authorization: 'Bearer ' + tokenEl.value }; }
+
+  // Small bits of UI state that should survive a reload: the token, the filter,
+  // whether hidden rows are shown, and which cards were left open.
+  function store(key, value){ try { localStorage.setItem('bb_admin_'+key, value); } catch {} }
+  function recall(key, fallback){ try { return localStorage.getItem('bb_admin_'+key) ?? fallback; } catch { return fallback; } }
+  tokenEl.value  = recall('token', '');
+  searchEl.value = recall('search', '');
+  showHiddenEl.checked = recall('show_hidden', '') === '1';
+  let OPEN = new Set();
+  try { OPEN = new Set(JSON.parse(recall('open', '[]'))); } catch {}
+  function rememberOpen(){ store('open', JSON.stringify([...OPEN])); }
+
+  let ROWS = [];
+
+  const gate = document.getElementById('gate');
+  const gateErr = document.getElementById('gate-err');
+
+  function showGate(message){
+    gate.style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    gateErr.textContent = message || '';
+    gateErr.className = message ? 'err' : 'count';
+    tokenEl.focus();
+  }
+  function showApp(){
+    gateErr.textContent = '';
+    gate.style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  }
+
+  // The gate is a convenience, not the security boundary: every endpoint checks
+  // the token server-side, so a hidden form is never what keeps data private.
+  async function signIn(event){
+    if(event) event.preventDefault();
+    if(!tokenEl.value){ showGate('Enter the password.'); return; }
+    gateErr.textContent = 'Checking…'; gateErr.className = 'count';
+    const ok = await load();
+    if(ok){ store('token', tokenEl.value); showApp(); }
+    else { showGate('Wrong password.'); }
+  }
+
+  function signOut(){
+    store('token', '');
+    tokenEl.value = '';
+    ROWS = [];
+    showGate('');
+  }
+
+  // Returns whether the token was accepted, so the gate can react to it.
   async function load(){
-    try { localStorage.setItem('bb_admin_token', tokenEl.value); } catch {}
     msg.textContent = 'Loading…'; msg.className='count';
-    const res = await fetch('/list', { headers: headers() });
-    if(!res.ok){ msg.textContent = 'Auth failed ('+res.status+')'; msg.className='err'; return; }
+    let res;
+    try {
+      res = await fetch('/list', { headers: headers() });
+    } catch {
+      msg.textContent = 'Network error'; msg.className='err';
+      return false;
+    }
+    if(res.status === 401 || res.status === 403){
+      msg.textContent = '';
+      showGate('Wrong password.');
+      return false;
+    }
+    if(!res.ok){ msg.textContent = 'Load failed ('+res.status+')'; msg.className='err'; return false; }
     const { submissions, verdicts } = await res.json();
     window.VERDICTS = verdicts || {};
-    const cols = ['id','created_at','name','email','challenge','verdict','flag','onchain','links','exploit','writeup'];
-    document.querySelector('thead').innerHTML =
-      '<tr>' + cols.map(c=>'<th>'+c+'</th>').join('') + '</tr>';
-    const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-    document.querySelector('tbody').innerHTML = submissions.map(r =>
-      '<tr>' + cols.map(c => {
-        const v = esc(r[c]);
-        if(c==='verdict') return '<td class="verdict">'+verdictCell(r)+'</td>';
-        if(c==='challenge') return '<td class="chal">'+v+'</td>';
-        if(c==='writeup') return '<td class="writeup">'+v+'</td>';
-        if(c==='exploit') return '<td class="writeup"><pre style="margin:0;white-space:pre-wrap;font-size:.78rem">'+v+'</pre></td>';
-        if(c==='flag'||c==='onchain'||c==='links') return '<td><code>'+v+'</code></td>';
-        return '<td>'+v+'</td>';
-      }).join('') + '</tr>'
-    ).join('');
-    const solved  = submissions.filter(r=>r.flag_verdict==='valid'||r.flag_verdict==='valid_legacy'||(!r.flag_verdict&&r.flag_correct==1)).length;
-    const shared  = submissions.filter(r=>r.flag_reused==1).length;
-    const foreign = submissions.filter(r=>r.flag_verdict==='foreign_instance').length;
-    const forged  = submissions.filter(r=>r.flag_verdict==='forged').length;
-    msg.textContent = submissions.length + ' submissions · ' + solved + ' verified'
-      + (foreign ? ' · ' + foreign + ' from another email ⚠' : '')
-      + (shared  ? ' · ' + shared  + ' duplicate ⚠' : '')
-      + (forged  ? ' · ' + forged  + ' forged ✗' : ''); msg.className='count';
+    ROWS = submissions || [];
+    msg.textContent = ''; msg.className='count';
+    render();
+    return true;
   }
+
+  // One card per person (keyed on email), newest activity first.
+  function group(rows){
+    const byPerson = new Map();
+    for(const r of rows){
+      const key = (r.email||'').trim().toLowerCase() || ('#'+r.id);
+      if(!byPerson.has(key)) byPerson.set(key, { email:r.email||'(no email)', name:r.name, subs:[] });
+      const person = byPerson.get(key);
+      person.subs.push(r);
+      if(new Date(r.created_at) > new Date(person.subs[0].created_at)) person.name = r.name;
+    }
+    const people = [...byPerson.values()];
+    for(const p of people){
+      p.subs.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+      p.latest    = p.subs[0].created_at;
+      p.solved    = new Set(p.subs.filter(isSolved).map(r=>r.challenge)).size;
+      p.attempted = new Set(p.subs.map(r=>r.challenge)).size;
+      p.shared    = p.subs.filter(r=>r.flag_reused==1).length;
+      p.foreign   = p.subs.filter(r=>verdictKey(r)==='foreign_instance').length;
+      p.forged    = p.subs.filter(r=>['forged','malformed','wrong_challenge'].includes(verdictKey(r))).length;
+    }
+    people.sort((a,b)=> b.solved - a.solved || new Date(b.latest) - new Date(a.latest));
+    return people;
+  }
+
+  function field(lab, val, mono){
+    if(!val) return '';
+    return '<div class="field"><span class="lab">'+lab+'</span>'
+      + (mono ? '<pre class="val">'+esc(val)+'</pre>' : '<div class="val">'+esc(val)+'</div>')
+      + '</div>';
+  }
+
+  function subCard(r){
+    const key = verdictKey(r);
+    const meta = (window.VERDICTS||{})[key] || {};
+    const warn = [];
+    if(r.flag_reused==1) warn.push('<span class="chip warn">⚠ same flag from someone else</span>');
+    const hidden = r.hidden==1;
+    const action = hidden
+      ? '<button class="act restore" onclick="setHidden(event,['+r.id+'],false)">restore</button>'
+      : '<button class="act" onclick="setHidden(event,['+r.id+'],true)">hide</button>';
+    const openKey = 's'+r.id;
+    const head = '<summary><span class="caret">▶</span>'
+      + '<span class="chal">'+esc(r.challenge)+'</span>'
+      + badge(r) + warn.join('')
+      + (hidden ? '<span class="chip">hidden</span>' : '')
+      + '<span class="spacer"></span>' + action
+      + '<span class="when">'+when(r.created_at)+'</span></summary>';
+    const why = meta.detail ? '<div class="why">'+esc(meta.detail)+'</div>' : '';
+    const body = '<div class="body">'
+      + (key!=='none' || r.flag
+          ? '<div class="field"><span class="lab">flag</span><div class="val"><code>'
+            + esc(r.flag||'(none)') + '</code></div>' + why
+            + (r.flag_owner ? '<div class="why">owner tag <code>'+esc(r.flag_owner)+'</code></div>' : '')
+            + '</div>'
+          : why)
+      + field('on-chain address', r.onchain)
+      + field('links', r.links)
+      + field('exploit', r.exploit, true)
+      + field('writeup', r.writeup, true)
+      + '<div class="meta">#'+r.id+' · '+esc(r.created_at)+' · '+esc(r.ip||'')+'<br>'+esc(r.ua||'')+'</div>'
+      + '</div>';
+    return '<details class="sub'+(hidden?' hidden-row':'')+'" data-key="'+openKey+'"'
+      + (OPEN.has(openKey)?' open':'') + '>'+head+body+'</details>';
+  }
+
+  function personCard(p){
+    const chips = [];
+    chips.push('<span class="chip">'+p.subs.length+' submission'+(p.subs.length==1?'':'s')+'</span>');
+    if(p.solved)  chips.push('<span class="chip ok">✓ '+p.solved+' solved</span>');
+    if(p.foreign) chips.push('<span class="chip warn">⚠ '+p.foreign+' other instance</span>');
+    if(p.shared)  chips.push('<span class="chip warn">⚠ '+p.shared+' shared flag</span>');
+    if(p.forged)  chips.push('<span class="chip bad">✗ '+p.forged+' bad flag</span>');
+    // Hiding a person hides the submissions currently shown for them, so the
+    // button does the same thing whether or not hidden rows are on screen.
+    const ids = p.subs.filter(r=>r.hidden!=1).map(r=>r.id);
+    const action = ids.length
+      ? '<button class="act" onclick="setHidden(event,['+ids.join(',')+'],true)">hide all</button>'
+      : '<button class="act restore" onclick="setHidden(event,['+p.subs.map(r=>r.id).join(',')+'],false)">restore all</button>';
+    const openKey = 'p'+p.email;
+    return '<details class="person" data-key="'+esc(openKey)+'"'+(OPEN.has(openKey)?' open':'')+'><summary>'
+      + '<span class="caret">▶</span>'
+      + '<span class="who">'+esc(p.name || '(no name)')+'</span>'
+      + '<span class="mail">'+esc(p.email)+'</span>'
+      + chips.join(' ')
+      + '<span class="spacer"></span>' + action
+      + '<span class="when">'+when(p.latest)+'</span>'
+      + '</summary><div class="subs">' + p.subs.map(subCard).join('') + '</div></details>';
+  }
+
+  function render(){
+    store('search', searchEl.value||'');
+    const q = (searchEl.value||'').trim().toLowerCase();
+    const showHidden = showHiddenEl.checked;
+    let rows = showHidden ? ROWS : ROWS.filter(r => r.hidden!=1);
+    if(q) rows = rows.filter(r => [r.name,r.email,r.challenge,r.flag].some(v => String(v||'').toLowerCase().includes(q)));
+    const people = group(rows);
+    const hiddenTotal = ROWS.filter(r=>r.hidden==1).length;
+    document.getElementById('hiddenCount').textContent =
+      hiddenTotal ? 'show hidden ('+hiddenTotal+')' : 'show hidden';
+
+    const solved = new Set(rows.filter(isSolved).map(r => (r.email||'').toLowerCase()+'|'+r.challenge)).size;
+    const stats = [
+      ['people', people.length],
+      ['submissions', rows.length],
+      ['solves', solved],
+      ['flagged', rows.filter(r=>r.flag_reused==1 || verdictKey(r)==='foreign_instance').length],
+    ];
+    document.getElementById('totals').innerHTML = stats.map(s =>
+      '<div class="stat"><b>'+s[1]+'</b><span>'+s[0]+'</span></div>').join('');
+    document.getElementById('people').innerHTML = people.length
+      ? people.map(personCard).join('')
+      : '<div class="empty">' + (ROWS.length ? 'Nothing matches that filter.' : 'No submissions yet.') + '</div>';
+  }
+
+  function setAll(open){
+    document.querySelectorAll('#people details').forEach(d => {
+      d.open = open;
+      if(open) OPEN.add(d.dataset.key); else OPEN.delete(d.dataset.key);
+    });
+    rememberOpen();
+  }
+
+  // Which cards are open is part of the state worth keeping: a grader who
+  // reloads mid-read lands back where they were.
+  document.getElementById('people').addEventListener('toggle', (e) => {
+    const key = e.target.dataset && e.target.dataset.key;
+    if(!key) return;
+    if(e.target.open) OPEN.add(key); else OPEN.delete(key);
+    rememberOpen();
+  }, true);
+
+  function onShowHidden(){
+    store('show_hidden', showHiddenEl.checked ? '1' : '');
+    render();
+  }
+
+  // Soft delete. The row stays in D1 and in the CSV export; only the dashboard
+  // stops showing it. Server-side, so it holds across reloads and browsers.
+  async function setHidden(event, ids, hidden){
+    event.preventDefault();
+    event.stopPropagation();
+    const res = await fetch('/hide', {
+      method:'POST',
+      headers: Object.assign({ 'Content-Type':'application/json' }, headers()),
+      body: JSON.stringify({ ids, hidden }),
+    });
+    if(!res.ok){
+      if(res.status===401||res.status===403) showGate('Session expired — sign in again.');
+      else { msg.textContent = 'Hide failed ('+res.status+')'; msg.className='err'; }
+      return;
+    }
+    const set = new Set(ids);
+    for(const r of ROWS) if(set.has(r.id)) r.hidden = hidden ? 1 : 0;
+    msg.textContent = ids.length + (hidden ? ' hidden' : ' restored')
+      + (hidden ? ' — still in the database and the CSV export' : '');
+    msg.className='count';
+    render();
+  }
+
   function csv(){
-    const url = '/export';
-    fetch(url, { headers: headers() }).then(r => {
-      if(!r.ok){ msg.textContent='Auth failed'; msg.className='err'; return; }
+    fetch('/export', { headers: headers() }).then(r => {
+      if(!r.ok){ showGate('Session expired — sign in again.'); return; }
       return r.blob();
     }).then(b => { if(!b) return;
       const a = document.createElement('a');
       a.href = URL.createObjectURL(b); a.download='submissions.csv'; a.click();
     });
   }
+
   let answersLoaded = false;
   async function toggleAnswers(){
     const box = document.getElementById('answers');
@@ -529,9 +850,8 @@ const ADMIN_HTML = `<!doctype html>
     box.style.display = 'block';
     if(answersLoaded) return;
     const res = await fetch('/answers', { headers: headers() });
-    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    if(!res.ok){ box.style.display='none'; showGate('Session expired — sign in again.'); return; }
     const { answers } = await res.json();
-    const esc = s => String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
     const row = (lab,val) => val ? '<div class="row"><span class="lab">'+lab+'</span>'+esc(val)+'</div>' : '';
     document.getElementById('answers-body').innerHTML = answers.map(a =>
       '<div class="akey"><div class="name">'+esc(a.challenge)+'</div>'
@@ -540,6 +860,7 @@ const ADMIN_HTML = `<!doctype html>
     ).join('');
     answersLoaded = true;
   }
+
   let guideLoaded = false;
   async function toggleGuide(){
     const box = document.getElementById('guide');
@@ -547,12 +868,14 @@ const ADMIN_HTML = `<!doctype html>
     box.style.display='block';
     if(guideLoaded) return;
     const res = await fetch('/guide', { headers: headers() });
-    if(!res.ok){ msg.textContent='Auth failed'; msg.className='err'; box.style.display='none'; return; }
+    if(!res.ok){ box.style.display='none'; showGate('Session expired — sign in again.'); return; }
     const { guide } = await res.json();
     document.getElementById('guide-body').textContent = guide;
     guideLoaded = true;
   }
-  if(tokenEl.value) load();
+
+  // A remembered password signs in silently; anything else lands on the gate.
+  if(tokenEl.value) signIn(); else showGate('');
 </script>
 </body>
 </html>`;
