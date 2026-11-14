@@ -53,6 +53,12 @@ const METEORA_MARK =
   'M25.9321 9.62981C26.3919 9.17001 27.1044 9.19668 27.3989 9.68352C27.7174 10.2064 27.9581 10.7713 28.1294 11.3632C28.2255 11.6997 28.1139 12.0935 27.8345 12.373L18.8276 21.3798C18.2837 21.9237 17.6074 22.2998 16.8892 22.4531L16.1411 22.6122C15.4259 22.7685 14.7435 23.1436 14.2026 23.6845L7.2876 30.5995C6.99316 29.4638 6.86427 28.6978 7.78662 27.7753L25.9321 9.62981ZM27.8833 13.5097C28.1838 13.2095 28.6458 13.3836 28.6157 13.7802C28.4294 16.2083 27.2728 18.7656 25.2114 20.8271C23.6397 22.549 19.2042 25.1822 16.0337 26.9462C15.3846 27.3068 14.8555 26.5377 15.3872 26.0058L27.8794 13.5126L27.8833 13.5097ZM23.7388 5.98724C24.0242 5.70215 24.4445 5.64176 24.7329 5.83977C25.334 6.24849 25.8956 6.84133 26.1841 7.55657C26.2922 7.83303 26.1998 8.17271 25.9624 8.41009L16.2612 18.1103C15.7173 18.6542 15.041 19.0303 14.3228 19.1835L13.5747 19.3427C12.8595 19.499 12.1772 19.875 11.6362 20.4159L5.65283 26.3993C5.35832 25.2634 5.49976 24.2262 6.42236 23.3036L23.7388 5.98724ZM19.6274 4.26263C20.1684 3.72191 20.9436 3.51151 21.5806 3.75188C21.98 3.90507 22.3646 4.09124 22.728 4.31048C23.2089 4.59898 23.2335 5.30305 22.7827 5.75384L13.9106 14.6249C13.4029 15.1325 12.7122 15.4033 12.0513 15.3554C11.3571 15.3043 10.6263 15.5899 10.0884 16.1279L5.229 20.9872C4.9345 19.8513 5.31623 18.5739 6.23877 17.6513L19.6274 4.26263ZM18.2056 3.40032C18.6323 3.39431 18.7977 3.90193 18.4731 4.22649L13.8667 8.83392L9.04346 13.6572C9.04045 13.6602 9.03955 13.6601 9.03955 13.6601L7.54639 15.1533C7.23384 15.4658 6.7715 15.1837 6.9458 14.787L8.3999 11.4814C8.48104 11.28 8.57124 11.0755 8.67041 10.8681L8.6792 10.8476C9.51761 9.07159 10.8671 7.18708 12.1353 5.91888C14.1697 3.88445 15.9969 3.42141 18.2056 3.40032Z';
 
 const CLUB_LOGO_URL = '/images/logos/boiler_blockchain_logo_svg.webp';
+/* UBC lockup is orange and white; the light ticket uses an ink recolor. */
+const UBC_LOGO_URLS = {
+  light: '/images/logos/ubc_on_light.svg',
+  dark: '/images/logos/ubc_on_dark.svg',
+};
+const UBC_LOGO = { height: 40, aspect: 2048 / 608 };
 const CANVAS_FONTS = [
   '400 16px Inter',
   '500 16px Inter',
@@ -241,7 +247,7 @@ function drawTicket(context, ticket) {
   });
   const handle = ticket.handle.trim().replace(/^@*/, '');
   const affiliation = 'Boiler Blockchain, Purdue University';
-  const subtitle = handle ? `@${handle} · ${affiliation}` : affiliation;
+  const subtitle = handle ? `@${handle} on X · ${affiliation}` : affiliation;
   drawText(context, subtitle, textX, cardY + 186, {
     font: sans(fitFontSize(context, subtitle, 400, 18, textWidth), 400),
     color: palette.muted,
@@ -294,6 +300,17 @@ function drawTicket(context, ticket) {
     color: palette.faint,
     spacing: 1,
   });
+  const ubcLogo = ticket.ubcLogos[ticket.style];
+  if (ubcLogo) {
+    const ubcWidth = UBC_LOGO.height * UBC_LOGO.aspect;
+    context.drawImage(
+      ubcLogo,
+      CARD.x + CARD.width - ubcWidth,
+      height - 44 - UBC_LOGO.height / 2,
+      ubcWidth,
+      UBC_LOGO.height,
+    );
+  }
 }
 
 /* X handles tagged in the prefilled post. LinkedIn cannot tag from prefilled
@@ -328,6 +345,7 @@ export default function Ticket() {
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [walkInNumber, setWalkInNumber] = useState(randomNumber);
   const [clubLogo, setClubLogo] = useState(null);
+  const [ubcLogos, setUbcLogos] = useState({});
   const [fontsReady, setFontsReady] = useState(false);
   const [dropActive, setDropActive] = useState(false);
   const [editedCaption, setEditedCaption] = useState(null);
@@ -344,6 +362,11 @@ export default function Ticket() {
     const logo = new Image();
     logo.onload = () => setClubLogo(logo);
     logo.src = CLUB_LOGO_URL;
+    Object.entries(UBC_LOGO_URLS).forEach(([key, url]) => {
+      const ubcLogo = new Image();
+      ubcLogo.onload = () => setUbcLogos((loaded) => ({ ...loaded, [key]: ubcLogo }));
+      ubcLogo.src = url;
+    });
     /* Canvas text silently falls back to a system font unless the faces are
        loaded first; nothing else on the page may have requested them yet. */
     Promise.all(CANVAS_FONTS.map((font) => document.fonts.load(font))).finally(() =>
@@ -368,8 +391,9 @@ export default function Ticket() {
       panX: pan.x,
       panY: pan.y,
       clubLogo,
+      ubcLogos,
     });
-  }, [name, handle, style, format, number, photo, zoom, pan, clubLogo, fontsReady, width, height]);
+  }, [name, handle, style, format, number, photo, zoom, pan, clubLogo, ubcLogos, fontsReady, width, height]);
 
   useEffect(() => {
     if (!notice) return undefined;
