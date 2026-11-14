@@ -31,6 +31,7 @@ import PartnersPage from "./components/sections/PartnersPage";
 import ContactPage from "./components/sections/ContactPage";
 import Challenges from "./components/sections/Challenges";
 import Claim from "./components/sections/Claim";
+import Ticket from "./components/sections/Ticket";
 import NotFound from "./components/sections/NotFound";
 
 const root = createRoot(document.getElementById("root"));
@@ -60,6 +61,7 @@ root.render(
         <Route path="hackathons" element={<Hackathons />} />
         <Route path="challenges" element={<Challenges />} />
         <Route path="claim" element={<Claim />} />
+        <Route path="ticket" element={<Ticket />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
