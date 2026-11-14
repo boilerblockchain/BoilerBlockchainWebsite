@@ -58,7 +58,7 @@ const UBC_LOGO_URLS = {
   light: '/images/logos/ubc_on_light.svg',
   dark: '/images/logos/ubc_on_dark.svg',
 };
-const UBC_LOGO = { height: 40, aspect: 2048 / 608 };
+const UBC_LOGO = { height: 22, aspect: 2048 / 608 };
 const CANVAS_FONTS = [
   '400 16px Inter',
   '500 16px Inter',
@@ -295,7 +295,9 @@ function drawTicket(context, ticket) {
     spacing: 3,
   });
 
-  drawText(context, '#UBC2026 · #MeteoraHackerHouse', CARD.x, height - 40, {
+  /* Footer row: hashtags left, UBC lockup right, sharing one centre line. */
+  const footerCenterY = height - 41;
+  drawText(context, '#UBC2026 · #MeteoraHackerHouse', CARD.x, footerCenterY + 5, {
     font: mono(13),
     color: palette.faint,
     spacing: 1,
@@ -306,7 +308,7 @@ function drawTicket(context, ticket) {
     context.drawImage(
       ubcLogo,
       CARD.x + CARD.width - ubcWidth,
-      height - 44 - UBC_LOGO.height / 2,
+      footerCenterY - UBC_LOGO.height / 2,
       ubcWidth,
       UBC_LOGO.height,
     );
