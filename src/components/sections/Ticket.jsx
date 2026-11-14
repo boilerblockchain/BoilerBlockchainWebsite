@@ -64,6 +64,7 @@ const CANVAS_FONTS = [
 const CARD = { x: 80, width: 1040, height: 462, radius: 22, stubX: 860 };
 const PHOTO = { x: 136, offsetY: 54, size: 156, radius: 18 };
 
+const cardTop = (format) => (FORMATS[format].height > 900 ? 523 : 132);
 const randomNumber = () => 100 + Math.floor(Math.random() * 900);
 const formatNumber = (number) => String(number).padStart(3, '0');
 const clamp = (value, low, high) => Math.min(high, Math.max(low, value));
@@ -112,7 +113,7 @@ function drawTicket(context, ticket) {
   const palette = PALETTES[ticket.style];
   const isSquare = height > 900;
   const headerY = isSquare ? 104 : 72;
-  const cardY = isSquare ? 523 : 132;
+  const cardY = cardTop(ticket.format);
   const mono = (size, weight = 500) => `${weight} ${size}px Tomorrow`;
   const sans = (size, weight = 600) => `${weight} ${size}px Inter`;
 
@@ -295,11 +296,27 @@ function drawTicket(context, ticket) {
   });
 }
 
-const CAPTION =
-  'I’m in the Meteora Hacker House with Boiler Blockchain at University Blockchain Conference 2026. Nov 20–21, UT Austin. See you there.\n\n#UBC2026 #MeteoraHackerHouse';
+/* X handles tagged in the prefilled post. LinkedIn cannot tag from prefilled
+   text, so its caption uses plain names. */
+const captionFor = (format, number) =>
+  format === 'x'
+    ? `I’m in the @MeteoraAG Hacker House with @BoilerChain at @UBC_Conference. Ticket Nº ${formatNumber(number)}.\n\nNov 20–21, UT Austin. See you there.\n\n#UBC2026 #MeteoraHackerHouse`
+    : `I’m in the Meteora Hacker House with Boiler Blockchain at University Blockchain Conference 2026. Ticket Nº ${formatNumber(number)}.\n\nNov 20–21 at UT Austin. See you there.\n\n#UBC2026 #MeteoraHackerHouse`;
+
+const composerUrl = (format, caption) =>
+  format === 'x'
+    ? `https://x.com/intent/post?text=${encodeURIComponent(caption)}`
+    : `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(caption)}`;
+
+const canCopyImage = typeof window !== 'undefined' && 'ClipboardItem' in window;
+/* Phones get the native share sheet, which attaches the image for them. */
+const canShareFiles =
+  typeof navigator !== 'undefined' &&
+  Boolean(navigator.canShare?.({ files: [new File([''], 'ticket.png', { type: 'image/png' })] }));
 
 export default function Ticket() {
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
   const dragRef = useRef(null);
 
   const [name, setName] = useState('');
@@ -313,11 +330,15 @@ export default function Ticket() {
   const [clubLogo, setClubLogo] = useState(null);
   const [fontsReady, setFontsReady] = useState(false);
   const [dropActive, setDropActive] = useState(false);
-  const [captionCopied, setCaptionCopied] = useState(false);
+  const [editedCaption, setEditedCaption] = useState(null);
+  const [notice, setNotice] = useState('');
 
   const reserved = reservedNumber(name);
   const number = reserved ?? walkInNumber;
   const { width, height } = FORMATS[format];
+  const caption = editedCaption ?? captionFor(format, number);
+  const platform = format === 'x' ? 'X' : 'LinkedIn';
+  const fileName = `meteora-hacker-house-${formatNumber(number)}-${format}.png`;
 
   useEffect(() => {
     const logo = new Image();
@@ -350,6 +371,12 @@ export default function Ticket() {
     });
   }, [name, handle, style, format, number, photo, zoom, pan, clubLogo, fontsReady, width, height]);
 
+  useEffect(() => {
+    if (!notice) return undefined;
+    const timer = setTimeout(() => setNotice(''), 4000);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
   const loadPhoto = (file) => {
     if (!file || !file.type.startsWith('image/')) return;
     const image = new Image();
@@ -359,6 +386,24 @@ export default function Ticket() {
       setPan({ x: 0, y: 0 });
     };
     image.src = URL.createObjectURL(file);
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    fileInputRef.current.value = '';
+  };
+
+  const dropHandlers = {
+    onDragOver: (event) => {
+      event.preventDefault();
+      setDropActive(true);
+    },
+    onDragLeave: () => setDropActive(false),
+    onDrop: (event) => {
+      event.preventDefault();
+      setDropActive(false);
+      loadPhoto(event.dataTransfer.files[0]);
+    },
   };
 
   const startDrag = (event) => {
@@ -384,205 +429,306 @@ export default function Ticket() {
     dragRef.current = null;
   };
 
-  const download = () => {
-    canvasRef.current.toBlob((blob) => {
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `meteora-hacker-house-${formatNumber(number)}-${format}.png`;
-      link.click();
-      URL.revokeObjectURL(link.href);
-    }, 'image/png');
+  const ticketBlob = () =>
+    new Promise((resolve) => canvasRef.current.toBlob(resolve, 'image/png'));
+
+  const download = async () => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(await ticketBlob());
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    setNotice(`Saved ${fileName}. Attach it to your post.`);
+  };
+
+  const copyImage = async () => {
+    try {
+      /* Safari only allows the write if the blob is handed over as a promise. */
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': ticketBlob() })]);
+      setNotice(`Image copied. Paste it into your ${platform} post.`);
+    } catch {
+      setNotice('Your browser blocked the copy. Use Download instead.');
+    }
   };
 
   const copyCaption = async () => {
-    await navigator.clipboard.writeText(CAPTION);
-    setCaptionCopied(true);
-    setTimeout(() => setCaptionCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(caption);
+      setNotice('Caption copied.');
+    } catch {
+      setNotice('Your browser blocked the copy. Select the caption text instead.');
+    }
+  };
+
+  const share = async () => {
+    const file = new File([await ticketBlob()], fileName, { type: 'image/png' });
+    try {
+      await navigator.share({ files: [file], text: caption });
+    } catch {
+      /* Closing the share sheet rejects; nothing to report. */
+    }
   };
 
   return (
-    <Section $divided={false}>
+    <Page $divided={false}>
       <GridBackdrop />
       <Container>
         <Head>
-          <Eyebrow>UBC 2026 · Austin, TX · Nov 20–21</Eyebrow>
+          <Eyebrow>Meteora Hacker House · UBC 2026 · Austin, TX</Eyebrow>
           <Title>
-            Your <span>Hacker House</span> ticket
+            Make your <span>Hacker House</span> ticket
           </Title>
-          <Lede>
-            Make your Meteora Hacker House ticket for University Blockchain Conference
-            2026, then post it on X or LinkedIn.
-          </Lede>
+          <Lede>Add your name and a photo, then post it on X or LinkedIn.</Lede>
         </Head>
 
         <Layout>
           <Preview>
-            <Canvas
-              ref={canvasRef}
-              role="img"
-              aria-label={`Meteora Hacker House ticket number ${formatNumber(number)} for ${
-                name.trim() || 'you'
-              }`}
-              $draggable={Boolean(photo)}
-              onPointerDown={startDrag}
-              onPointerMove={moveDrag}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
-            />
+            <Toolbar>
+              <Segmented role="group" aria-label="Format">
+                {Object.entries(FORMATS).map(([key, { label }]) => (
+                  <Segment
+                    key={key}
+                    type="button"
+                    aria-pressed={format === key}
+                    onClick={() => setFormat(key)}
+                  >
+                    {label}
+                  </Segment>
+                ))}
+              </Segmented>
+              <Segmented role="group" aria-label="Style">
+                {Object.keys(PALETTES).map((key) => (
+                  <Segment
+                    key={key}
+                    type="button"
+                    aria-pressed={style === key}
+                    onClick={() => setStyle(key)}
+                  >
+                    {key}
+                  </Segment>
+                ))}
+              </Segmented>
+            </Toolbar>
+
+            <Stage $active={dropActive} $square={format !== 'x'} {...dropHandlers}>
+              <Canvas
+                ref={canvasRef}
+                role="img"
+                aria-label={`Meteora Hacker House ticket number ${formatNumber(number)} for ${
+                  name.trim() || 'you'
+                }`}
+                $draggable={Boolean(photo)}
+                onPointerDown={startDrag}
+                onPointerMove={moveDrag}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
+              />
+              {!photo && (
+                <PhotoHotspot
+                  type="button"
+                  onClick={() => fileInputRef.current.click()}
+                  style={{
+                    left: `${(PHOTO.x / width) * 100}%`,
+                    top: `${((cardTop(format) + PHOTO.offsetY) / height) * 100}%`,
+                    width: `${(PHOTO.size / width) * 100}%`,
+                  }}
+                >
+                  <span>+ Photo</span>
+                </PhotoHotspot>
+              )}
+            </Stage>
             <Hint>
               {photo
-                ? 'Drag the photo on the ticket to reposition it. Use the slider to zoom.'
-                : 'Add a photo, then drag it on the ticket to reposition.'}
+                ? 'Drag your photo on the ticket to reposition it.'
+                : 'Click the photo square or drop an image anywhere on the ticket.'}
             </Hint>
           </Preview>
 
           <Controls>
-            <Field>
-              <Label htmlFor="ticket-name">Name</Label>
-              <Input
-                id="ticket-name"
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder="First and last name"
-                maxLength={40}
-                autoComplete="name"
-              />
-              <NumberRow>
-                <NumberBadge $reserved={reserved !== null}>Nº {formatNumber(number)}</NumberBadge>
-                {reserved !== null ? (
-                  <NumberNote>Reserved for you on the Hacker House list.</NumberNote>
-                ) : (
-                  <>
-                    <NumberNote>
-                      {name.trim()
-                        ? 'Not on the house list, so this one is random. On the list? Use your full name.'
-                        : 'House members get their reserved number once the name matches.'}
-                    </NumberNote>
-                    <SmallButton type="button" onClick={() => setWalkInNumber(randomNumber())}>
-                      Shuffle
-                    </SmallButton>
-                  </>
-                )}
-              </NumberRow>
-            </Field>
+            <Step>
+              <StepTitle>
+                <StepIndex>01</StepIndex> Your details
+              </StepTitle>
+              <Field>
+                <Label htmlFor="ticket-name">Name</Label>
+                <Input
+                  id="ticket-name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="First and last name"
+                  maxLength={40}
+                  autoComplete="name"
+                />
+                <NumberRow>
+                  <NumberBadge $reserved={reserved !== null}>Nº {formatNumber(number)}</NumberBadge>
+                  {reserved !== null ? (
+                    <NumberNote>Your reserved Hacker House number.</NumberNote>
+                  ) : (
+                    <>
+                      <NumberNote>
+                        {name.trim()
+                          ? 'Random number. In the house? Use your full name to get yours.'
+                          : 'House members get their reserved number.'}
+                      </NumberNote>
+                      <SmallButton type="button" onClick={() => setWalkInNumber(randomNumber())}>
+                        Shuffle
+                      </SmallButton>
+                    </>
+                  )}
+                </NumberRow>
+              </Field>
 
-            <Field>
-              <Label htmlFor="ticket-handle">
-                X handle <Optional>optional</Optional>
-              </Label>
-              <Input
-                id="ticket-handle"
-                value={handle}
-                onChange={(event) => setHandle(event.target.value)}
-                placeholder="@yourhandle"
-                maxLength={20}
-                autoCapitalize="none"
-                spellCheck={false}
-              />
-            </Field>
+              <Field>
+                <Label htmlFor="ticket-handle">
+                  X handle <Optional>optional</Optional>
+                </Label>
+                <Affixed>
+                  <span aria-hidden="true">@</span>
+                  <Input
+                    id="ticket-handle"
+                    value={handle}
+                    onChange={(event) => setHandle(event.target.value.replace(/[^A-Za-z0-9_]/g, ''))}
+                    placeholder="yourhandle"
+                    maxLength={15}
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                  />
+                </Affixed>
+              </Field>
+            </Step>
 
-            <Field>
-              <Label htmlFor="ticket-photo">Photo</Label>
-              <Dropzone
-                htmlFor="ticket-photo"
-                $active={dropActive}
-                onDragOver={(event) => {
-                  event.preventDefault();
-                  setDropActive(true);
-                }}
-                onDragLeave={() => setDropActive(false)}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  setDropActive(false);
-                  loadPhoto(event.dataTransfer.files[0]);
-                }}
-              >
-                <strong>{photo ? 'Change photo' : 'Choose a photo'}</strong> or drop it here
-                <small>A headshot works best. It stays on your device.</small>
-              </Dropzone>
+            <Step>
+              <StepTitle>
+                <StepIndex>02</StepIndex> Photo
+              </StepTitle>
               <HiddenFile
+                ref={fileInputRef}
                 id="ticket-photo"
                 type="file"
                 accept="image/*"
                 onChange={(event) => loadPhoto(event.target.files[0])}
               />
-              <Range
-                type="range"
-                aria-label="Photo zoom"
-                min="1"
-                max="3"
-                step="0.01"
-                value={zoom}
-                disabled={!photo}
-                onChange={(event) => setZoom(Number(event.target.value))}
-              />
-            </Field>
+              {photo ? (
+                <>
+                  <ZoomRow>
+                    <Label htmlFor="ticket-zoom">Zoom</Label>
+                    <Range
+                      id="ticket-zoom"
+                      type="range"
+                      min="1"
+                      max="3"
+                      step="0.01"
+                      value={zoom}
+                      onChange={(event) => setZoom(Number(event.target.value))}
+                    />
+                  </ZoomRow>
+                  <ButtonRow>
+                    <SmallButton as="label" htmlFor="ticket-photo">
+                      Replace
+                    </SmallButton>
+                    <SmallButton type="button" onClick={removePhoto}>
+                      Remove
+                    </SmallButton>
+                  </ButtonRow>
+                </>
+              ) : (
+                <Dropzone htmlFor="ticket-photo" $active={dropActive} {...dropHandlers}>
+                  <strong>Choose a photo</strong> or drop it here
+                  <small>A headshot works best. It never leaves your device.</small>
+                </Dropzone>
+              )}
+            </Step>
 
-            <Split>
+            <Step>
+              <StepTitle>
+                <StepIndex>03</StepIndex> Post it
+              </StepTitle>
               <Field>
-                <Label as="span">Style</Label>
-                <Segmented role="group" aria-label="Style">
-                  {Object.keys(PALETTES).map((key) => (
-                    <Segment
-                      key={key}
-                      type="button"
-                      aria-pressed={style === key}
-                      onClick={() => setStyle(key)}
-                    >
-                      {key}
-                    </Segment>
-                  ))}
-                </Segmented>
+                <LabelRow>
+                  <Label htmlFor="ticket-caption">{platform} caption</Label>
+                  {editedCaption !== null && (
+                    <TextButton type="button" onClick={() => setEditedCaption(null)}>
+                      Reset
+                    </TextButton>
+                  )}
+                </LabelRow>
+                <Caption
+                  id="ticket-caption"
+                  rows={7}
+                  value={caption}
+                  onChange={(event) => setEditedCaption(event.target.value)}
+                />
+                {format !== 'x' && (
+                  <NumberNote>
+                    LinkedIn only tags from inside the post: type @Meteora and @Boiler Blockchain
+                    there.
+                  </NumberNote>
+                )}
               </Field>
-              <Field>
-                <Label as="span">Format</Label>
-                <Segmented role="group" aria-label="Format">
-                  {Object.entries(FORMATS).map(([key, { label }]) => (
-                    <Segment
-                      key={key}
-                      type="button"
-                      aria-pressed={format === key}
-                      onClick={() => setFormat(key)}
-                    >
-                      {label}
-                    </Segment>
-                  ))}
-                </Segmented>
-              </Field>
-            </Split>
 
-            <Actions>
-              <Primary type="button" onClick={download}>
-                Download PNG
-              </Primary>
-              <Secondary type="button" onClick={copyCaption}>
-                {captionCopied ? 'Caption copied' : 'Copy a caption'}
+              {canShareFiles ? (
+                <Primary type="button" onClick={share}>
+                  Share ticket
+                </Primary>
+              ) : (
+                <Primary type="button" onClick={download}>
+                  Download PNG
+                </Primary>
+              )}
+              <ButtonRow>
+                {canShareFiles && (
+                  <Secondary type="button" onClick={download}>
+                    Download
+                  </Secondary>
+                )}
+                {canCopyImage && (
+                  <Secondary type="button" onClick={copyImage}>
+                    Copy image
+                  </Secondary>
+                )}
+                <Secondary type="button" onClick={copyCaption}>
+                  Copy caption
+                </Secondary>
+              </ButtonRow>
+              <Secondary
+                as="a"
+                href={composerUrl(format, caption)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open {platform} with caption ↗
               </Secondary>
-              <Hint>
-                {width} × {height}, exported at {width * EXPORT_SCALE} × {height * EXPORT_SCALE}
-              </Hint>
-            </Actions>
+              <Status role="status">
+                {notice ||
+                  `${platform} can’t attach the image from a link: download or copy it, then add it to the post.`}
+              </Status>
+            </Step>
           </Controls>
         </Layout>
       </Container>
-    </Section>
+    </Page>
   );
 }
 
 /* Styles ------------------------------------------------------------------ */
 
+const Page = styled(Section)`
+  padding-top: ${({ theme }) => theme.space[12]};
+`;
+
 const Head = styled.div`
-  margin-bottom: ${({ theme }) => theme.space[10]};
+  margin-bottom: ${({ theme }) => theme.space[8]};
 `;
 
 const Title = styled.h1`
   font-family: ${({ theme }) => theme.fontFamily.display};
-  font-size: ${({ theme }) => theme.fontSize.h1};
+  font-size: ${({ theme }) => theme.fontSize.h2};
   font-weight: ${({ theme }) => theme.fontWeight.bold};
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: ${({ theme }) => theme.color.text};
-  margin: 0 0 ${({ theme }) => theme.space[4]};
+  margin: 0 0 ${({ theme }) => theme.space[3]};
 
   span {
     color: ${({ theme }) => theme.color.accent};
@@ -593,7 +739,6 @@ const Lede = styled.p`
   font-size: ${({ theme }) => theme.fontSize.bodyLarge};
   line-height: 1.6;
   color: ${({ theme }) => theme.color.textMuted};
-  max-width: ${({ theme }) => theme.layout.maxWidthText};
   margin: 0;
 `;
 
@@ -603,7 +748,7 @@ const Layout = styled.div`
   align-items: start;
 
   ${({ theme }) => theme.media.lg} {
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: minmax(0, 1fr) 380px;
     gap: ${({ theme }) => theme.space[8]};
   }
 `;
@@ -617,14 +762,29 @@ const Preview = styled.div`
   }
 `;
 
+const Toolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.space[3]};
+  margin-bottom: ${({ theme }) => theme.space[3]};
+`;
+
+/* Shrink-wraps the canvas so the photo hotspot can be placed in percentages.
+   The square format is capped by height so it never outgrows the viewport. */
+const Stage = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: ${({ $square }) => ($square ? 'min(100%, 70vh)' : '100%')};
+  margin-inline: auto;
+  outline: 1px solid
+    ${({ theme, $active }) => ($active ? theme.color.accent : theme.color.border)};
+`;
+
 const Canvas = styled.canvas`
   display: block;
   width: 100%;
   height: auto;
-  max-height: 78vh;
-  object-fit: contain;
-  border: 1px solid ${({ theme }) => theme.color.border};
-  background: ${({ theme }) => theme.color.surface};
   cursor: ${({ $draggable }) => ($draggable ? 'grab' : 'default')};
   touch-action: ${({ $draggable }) => ($draggable ? 'none' : 'auto')};
 
@@ -633,29 +793,80 @@ const Canvas = styled.canvas`
   }
 `;
 
+const PhotoHotspot = styled.button`
+  position: absolute;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: end center;
+  padding: 0 0 6%;
+  border: 0;
+  border-radius: 11.5%;
+  background: transparent;
+  cursor: pointer;
+  container-type: inline-size;
+
+  span {
+    padding: 0.2em 0.6em;
+    border-radius: ${({ theme }) => theme.radius.pill};
+    background: ${({ theme }) => theme.color.accentDeep};
+    color: #ffffff;
+    font-family: ${({ theme }) => theme.fontFamily.body};
+    font-size: clamp(9px, 13cqw, 13px);
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.color.accent};
+    outline-offset: 2px;
+  }
+`;
+
 const Hint = styled.p`
   margin: ${({ theme }) => theme.space[3]} 0 0;
   font-size: ${({ theme }) => theme.fontSize.small};
   color: ${({ theme }) => theme.color.textFaint};
+  text-align: center;
 `;
 
 const Controls = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.space[6]};
-  padding: ${({ theme }) => theme.space[6]};
   border: 1px solid ${({ theme }) => theme.color.border};
   background: ${({ theme }) => theme.color.surface};
+`;
+
+const Step = styled.section`
+  display: grid;
+  gap: ${({ theme }) => theme.space[4]};
+  padding: ${({ theme }) => theme.space[5]};
+
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.color.border};
+  }
+`;
+
+const StepTitle = styled.h2`
+  display: flex;
+  align-items: baseline;
+  gap: ${({ theme }) => theme.space[3]};
+  margin: 0;
+  font-family: ${({ theme }) => theme.fontFamily.display};
+  font-size: ${({ theme }) => theme.fontSize.body};
+  font-weight: ${({ theme }) => theme.fontWeight.semibold};
+  color: ${({ theme }) => theme.color.text};
+`;
+
+const StepIndex = styled.span`
+  font-family: ${({ theme }) => theme.fontFamily.mono};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  letter-spacing: 0.12em;
+  color: ${({ theme }) => theme.color.accent};
 `;
 
 const Field = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.space[2]};
   min-width: 0;
-`;
-
-const Split = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.space[6]};
 `;
 
 const Label = styled.label`
@@ -665,6 +876,13 @@ const Label = styled.label`
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.color.textMuted};
+`;
+
+const LabelRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.space[3]};
 `;
 
 const Optional = styled.span`
@@ -692,6 +910,29 @@ const Input = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.color.accent};
   }
+`;
+
+const Affixed = styled.div`
+  position: relative;
+
+  > span {
+    position: absolute;
+    left: ${({ theme }) => theme.space[4]};
+    top: 50%;
+    transform: translateY(-50%);
+    color: ${({ theme }) => theme.color.textFaint};
+    pointer-events: none;
+  }
+
+  input {
+    padding-left: calc(${({ theme }) => theme.space[4]} + 1.1em);
+  }
+`;
+
+const Caption = styled(Input).attrs({ as: 'textarea' })`
+  resize: vertical;
+  font-size: ${({ theme }) => theme.fontSize.small};
+  line-height: 1.5;
 `;
 
 const NumberRow = styled.div`
@@ -730,6 +971,7 @@ const SmallButton = styled.button`
   font-size: ${({ theme }) => theme.fontSize.micro};
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  text-align: center;
   cursor: pointer;
   transition: border-color ${({ theme }) => theme.motion.fast},
               color ${({ theme }) => theme.motion.fast};
@@ -739,6 +981,21 @@ const SmallButton = styled.button`
     outline: none;
     border-color: ${({ theme }) => theme.color.accent};
     color: ${({ theme }) => theme.color.accent};
+  }
+`;
+
+const TextButton = styled.button`
+  padding: 0;
+  border: 0;
+  background: none;
+  color: ${({ theme }) => theme.color.accent};
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
   }
 `;
 
@@ -772,30 +1029,32 @@ const Dropzone = styled.label`
   }
 `;
 
-/* Visually hidden but focusable, so the dropzone label works from the keyboard. */
 const HiddenFile = styled.input`
   position: absolute;
   width: 1px;
   height: 1px;
   opacity: 0;
   pointer-events: none;
+`;
 
-  &:focus-visible + input,
-  label:has(+ &:focus-visible) {
-    border-color: ${({ theme }) => theme.color.accent};
-  }
+const ZoomRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[4]};
 `;
 
 const Range = styled.input`
-  width: 100%;
-  margin: ${({ theme }) => theme.space[2]} 0 0;
+  flex: 1;
+  min-width: 0;
   accent-color: ${({ theme }) => theme.color.accent};
   cursor: pointer;
+`;
 
-  &:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
+const ButtonRow = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: ${({ theme }) => theme.space[3]};
 `;
 
 const Segmented = styled.div`
@@ -803,10 +1062,11 @@ const Segmented = styled.div`
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   border: 1px solid ${({ theme }) => theme.color.border};
+  background: ${({ theme }) => theme.color.surface};
 `;
 
 const Segment = styled.button`
-  padding: ${({ theme }) => `${theme.space[3]} ${theme.space[2]}`};
+  padding: ${({ theme }) => `${theme.space[2]} ${theme.space[4]}`};
   border: 0;
   background: transparent;
   color: ${({ theme }) => theme.color.textMuted};
@@ -814,6 +1074,7 @@ const Segment = styled.button`
   font-size: ${({ theme }) => theme.fontSize.micro};
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
   transition: background ${({ theme }) => theme.motion.fast},
               color ${({ theme }) => theme.motion.fast};
@@ -833,20 +1094,8 @@ const Segment = styled.button`
   }
 `;
 
-const Actions = styled.div`
-  display: grid;
-  gap: ${({ theme }) => theme.space[3]};
-  padding-top: ${({ theme }) => theme.space[6]};
-  border-top: 1px solid ${({ theme }) => theme.color.border};
-
-  ${Hint} {
-    margin: 0;
-    text-align: center;
-    font-size: ${({ theme }) => theme.fontSize.micro};
-  }
-`;
-
 const Primary = styled.button`
+  display: block;
   padding: ${({ theme }) => theme.space[4]};
   border: 1px solid ${({ theme }) => theme.color.accentDeep};
   border-radius: ${({ theme }) => theme.radius.none};
@@ -857,9 +1106,12 @@ const Primary = styled.button`
   font-weight: ${({ theme }) => theme.fontWeight.semibold};
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
   transition: background ${({ theme }) => theme.motion.base},
-              border-color ${({ theme }) => theme.motion.base};
+              border-color ${({ theme }) => theme.motion.base},
+              color ${({ theme }) => theme.motion.base};
 
   &:hover,
   &:focus-visible {
@@ -870,9 +1122,11 @@ const Primary = styled.button`
 `;
 
 const Secondary = styled(Primary)`
+  padding: ${({ theme }) => `${theme.space[3]} ${theme.space[2]}`};
   background: transparent;
   border-color: ${({ theme }) => theme.color.borderStrong};
   color: ${({ theme }) => theme.color.text};
+  font-size: ${({ theme }) => theme.fontSize.micro};
 
   &:hover,
   &:focus-visible {
@@ -880,4 +1134,13 @@ const Secondary = styled(Primary)`
     border-color: ${({ theme }) => theme.color.accent};
     color: ${({ theme }) => theme.color.accent};
   }
+`;
+
+const Status = styled.p`
+  margin: 0;
+  min-height: 2.8em;
+  font-size: ${({ theme }) => theme.fontSize.micro};
+  line-height: 1.4;
+  text-align: center;
+  color: ${({ theme }) => theme.color.textFaint};
 `;
