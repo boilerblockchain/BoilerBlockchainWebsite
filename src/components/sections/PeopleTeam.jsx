@@ -59,7 +59,6 @@ const sohumImage = '/images/pfps/res/sohum_kashyap.webp';
 // Operations Team
 const anubhutiImage = '/images/pfps/ops/anubhuti_mittal.webp';
 const emilyImage = '/images/pfps/ops/emily_zhang.webp';
-const jacobImage = '/images/pfps/ops/jacob_gutwein.webp';
 const sahilImage = '/images/pfps/ops/sahil_shaikh.webp';
 const shariqImage = '/images/pfps/ops/shariq_kapadia.webp';
 const garvImage = '/images/pfps/ops/garv_tayade.webp';
@@ -419,7 +418,6 @@ const allTeamMembersUnsorted = [
   // Operations Team
   { id: 40, image: anubhutiImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/anubhutimittal/", twitter: "https://x.com/anu_m03?s=11" } },
   { id: 41, image: emilyImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/emilyxizhang", twitter: "https://x.com/zhangemily_?s=11&t=VK1kWg_xbZkHBnzoe87yAw" } },
-  { id: 42, image: jacobImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/jacobgutwein27/", twitter: "https://x.com/jacob6gutwein" } },
   { id: 43, image: sahilImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/sahil-shk", twitter: "https://x.com/sasasenor" } },
   { id: 44, image: shariqImage, category: "operations", socials: { linkedin: "http://linkedin.com/in/shariq-kapadia", twitter: "https://x.com/KapadiaShariq" } },
   { id: 45, image: garvImage, category: "operations", socials: { linkedin: "https://www.linkedin.com/in/garv-tayade/", twitter: "https://x.com/0xgt_27" } },
