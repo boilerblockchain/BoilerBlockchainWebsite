@@ -31,7 +31,6 @@ type Player struct {
 	Name    string    `json:"name"`
 	OrgID   int       `json:"orgId"`
 	TeamID  int       `json:"teamId"`
-	Looking bool      `json:"looking"`
 	Created time.Time `json:"created"`
 }
 
@@ -39,7 +38,6 @@ type Team struct {
 	ID      int       `json:"id"`
 	Name    string    `json:"name"`
 	OrgID   int       `json:"orgId"`
-	Code    string    `json:"code"`
 	Status  string    `json:"status"` // idle | ready | playing
 	ReadyAt time.Time `json:"readyAt"`
 }
@@ -121,30 +119,6 @@ func randomHex(bytes int) string {
 	return hex.EncodeToString(buffer)
 }
 
-func (s *State) inviteCode() string {
-	const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
-	for {
-		buffer := make([]byte, 4)
-		rand.Read(buffer)
-		for index := range buffer {
-			buffer[index] = alphabet[int(buffer[index])%len(alphabet)]
-		}
-		code := string(buffer)
-		if s.teamByCode(code) == nil {
-			return code
-		}
-	}
-}
-
-func (s *State) teamByCode(code string) *Team {
-	for _, team := range s.Teams {
-		if team.Code == strings.ToUpper(strings.TrimSpace(code)) {
-			return team
-		}
-	}
-	return nil
-}
-
 func (s *State) playerByToken(token string) *Player {
 	if token == "" {
 		return nil
@@ -212,7 +186,13 @@ func (s *State) setTeams(match *Match, status string) {
 }
 
 func (s *State) finish(match *Match, winner int, now time.Time) {
-	if match.Status == "playing" {
+	if match.Status == "playing" && !match.Final {
+		for _, teamID := range []int{match.TeamA, match.TeamB} {
+			if team, ok := s.Teams[teamID]; ok {
+				team.Status, team.ReadyAt = "ready", now
+			}
+		}
+	} else if match.Status == "playing" {
 		s.setTeams(match, "idle")
 	}
 	match.Status, match.Winner, match.Finished = "done", winner, now
@@ -435,19 +415,13 @@ func (s *State) publicView(token string) map[string]any {
 		orgs = append(orgs, *org)
 	}
 	sort.Slice(orgs, func(i, j int) bool { return strings.ToLower(orgs[i].Name) < strings.ToLower(orgs[j].Name) })
-	looking := 0
-	for _, player := range s.Players {
-		if player.Looking && player.TeamID == 0 {
-			looking++
-		}
-	}
 	view := map[string]any{"paused": s.Paused, "courts": courts, "queue": queue, "recent": recent,
-		"final": final, "leaderboard": s.leaderboard(), "orgs": orgs, "looking": looking,
+		"final": final, "leaderboard": s.leaderboard(), "orgs": orgs,
 		"players": len(s.Players), "teams": len(s.Teams), "info": s.Info}
 	if player := s.playerByToken(token); player != nil {
-		me := map[string]any{"id": player.ID, "name": player.Name, "orgId": player.OrgID, "looking": player.Looking}
+		me := map[string]any{"id": player.ID, "name": player.Name, "orgId": player.OrgID}
 		if team, ok := s.Teams[player.TeamID]; ok {
-			me["team"] = map[string]any{"view": s.teamView(team.ID), "code": team.Code, "status": team.Status,
+			me["team"] = map[string]any{"view": s.teamView(team.ID), "status": team.Status,
 				"orgId": team.OrgID, "name": team.Name, "position": s.queuePosition(team.ID)}
 			if match := s.liveMatch(team.ID); match != nil {
 				me["match"] = s.matchView(match)
@@ -478,23 +452,24 @@ func (s *State) queuePosition(teamID int) int {
 // ---------- player actions ----------
 
 type Request struct {
-	Token  string `json:"token"`
-	Op     string `json:"op"`
-	ID     int    `json:"id"`
-	To     int    `json:"to"`
-	Name   string `json:"name"`
-	Label  string `json:"label"`
-	Org    string `json:"org"`
-	OrgID  int    `json:"orgId"`
-	Code   string `json:"code"`
-	On     bool   `json:"on"`
-	Winner int    `json:"winner"`
-	Court  int    `json:"court"`
-	A      int    `json:"a"`
-	B      int    `json:"b"`
-	Final  bool   `json:"final"`
-	Status string `json:"status"`
-	Info   *Info  `json:"info"`
+	Token    string `json:"token"`
+	Op       string `json:"op"`
+	ID       int    `json:"id"`
+	To       int    `json:"to"`
+	Name     string `json:"name"`
+	Label    string `json:"label"`
+	Org      string `json:"org"`
+	OrgID    int    `json:"orgId"`
+	Partner  string `json:"partner"`
+	TeamName string `json:"teamName"`
+	On       bool   `json:"on"`
+	Winner   int    `json:"winner"`
+	Court    int    `json:"court"`
+	A        int    `json:"a"`
+	B        int    `json:"b"`
+	Final    bool   `json:"final"`
+	Status   string `json:"status"`
+	Info     *Info  `json:"info"`
 }
 
 func cleanName(name string) (string, error) {
@@ -505,28 +480,36 @@ func cleanName(name string) (string, error) {
 	return name, nil
 }
 
-func (s *State) newTeam(orgID int, members ...*Player) *Team {
-	team := &Team{ID: s.id(), OrgID: orgID, Code: s.inviteCode(), Status: "idle"}
-	s.Teams[team.ID] = team
-	for _, player := range members {
-		player.TeamID, player.Looking = team.ID, false
+// register creates both players of a pair and queues the team. The partner
+// gets no separate login: the captain shares their link.
+func (s *State) register(req Request, now time.Time) (any, error) {
+	name, err := cleanName(req.Name)
+	if err != nil {
+		return nil, err
 	}
-	return team
+	partner, err := cleanName(req.Partner)
+	if err != nil {
+		return nil, fail("partner " + strings.TrimSpace(err.Error()))
+	}
+	teamName := strings.Join(strings.Fields(req.TeamName), " ")
+	if len(teamName) > 40 {
+		return nil, fail("team name max 40 characters")
+	}
+	orgID, err := s.resolveOrg(req.OrgID, req.Org)
+	if err != nil {
+		return nil, err
+	}
+	team := &Team{ID: s.id(), Name: teamName, OrgID: orgID, Status: "ready", ReadyAt: now}
+	s.Teams[team.ID] = team
+	captain := &Player{ID: s.id(), Token: randomHex(16), Name: name, OrgID: orgID, TeamID: team.ID, Created: now}
+	second := &Player{ID: s.id(), Token: randomHex(16), Name: partner, OrgID: orgID, TeamID: team.ID, Created: now}
+	s.Players[captain.ID], s.Players[second.ID] = captain, second
+	return map[string]string{"token": captain.Token}, nil
 }
 
 func (s *State) playerAction(path string, req Request, now time.Time) (any, error) {
 	if path == "register" {
-		name, err := cleanName(req.Name)
-		if err != nil {
-			return nil, err
-		}
-		orgID, err := s.resolveOrg(req.OrgID, req.Org)
-		if err != nil {
-			return nil, err
-		}
-		player := &Player{ID: s.id(), Token: randomHex(16), Name: name, OrgID: orgID, Created: now}
-		s.Players[player.ID] = player
-		return map[string]string{"token": player.Token}, nil
+		return s.register(req, now)
 	}
 	player := s.playerByToken(req.Token)
 	if player == nil {
@@ -534,45 +517,6 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 	}
 	team := s.Teams[player.TeamID]
 	switch path {
-	case "profile":
-		name, err := cleanName(req.Name)
-		if err != nil {
-			return nil, err
-		}
-		orgID, err := s.resolveOrg(req.OrgID, req.Org)
-		if err != nil {
-			return nil, err
-		}
-		player.Name, player.OrgID = name, orgID
-	case "team/create":
-		if team != nil {
-			return nil, fail("you're already on a team")
-		}
-		s.newTeam(player.OrgID, player)
-	case "team/join":
-		if team != nil {
-			return nil, fail("leave your current team first")
-		}
-		target := s.teamByCode(req.Code)
-		if target == nil {
-			return nil, fail("no team with that code")
-		}
-		if len(s.members(target.ID)) >= 2 {
-			return nil, fail("that team is full")
-		}
-		player.TeamID, player.Looking = target.ID, false
-	case "team/leave":
-		if team == nil {
-			return nil, fail("you're not on a team")
-		}
-		if team.Status == "playing" {
-			return nil, fail("finish your match first")
-		}
-		player.TeamID = 0
-		team.Status = "idle"
-		if len(s.members(team.ID)) == 0 {
-			delete(s.Teams, team.ID)
-		}
 	case "team/update":
 		if team == nil {
 			return nil, fail("you're not on a team")
@@ -586,31 +530,6 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 			return nil, err
 		}
 		team.Name, team.OrgID = name, orgID
-	case "looking":
-		if team != nil {
-			return nil, fail("you already have a team")
-		}
-		player.Looking = req.On
-		if !req.On {
-			break
-		}
-		// Pair with the longest-waiting solo player, same org first.
-		var partner *Player
-		better := func(other *Player) bool {
-			sameOther, samePartner := other.OrgID == player.OrgID, partner.OrgID == player.OrgID
-			if sameOther != samePartner {
-				return sameOther
-			}
-			return other.Created.Before(partner.Created)
-		}
-		for _, other := range s.Players {
-			if other.ID != player.ID && other.Looking && other.TeamID == 0 && (partner == nil || better(other)) {
-				partner = other
-			}
-		}
-		if partner != nil {
-			s.newTeam(partner.OrgID, partner, player)
-		}
 	case "ready":
 		if team == nil {
 			return nil, fail("you need a team")
@@ -729,7 +648,7 @@ func (s *State) adminAction(req Request, now time.Time) error {
 			return fail("can't remove a team mid-match")
 		}
 		for _, player := range s.members(team.ID) {
-			player.TeamID = 0
+			delete(s.Players, player.ID)
 		}
 		delete(s.Teams, team.ID)
 	case "player_remove":
@@ -788,7 +707,7 @@ func (s *State) adminView() map[string]any {
 	view := s.publicView("")
 	teams := []map[string]any{}
 	for _, team := range s.Teams {
-		teams = append(teams, map[string]any{"view": s.teamView(team.ID), "status": team.Status, "code": team.Code,
+		teams = append(teams, map[string]any{"view": s.teamView(team.ID), "status": team.Status,
 			"orgId": team.OrgID, "size": len(s.members(team.ID)), "readyAt": team.ReadyAt})
 	}
 	matches := []MatchView{}
@@ -802,7 +721,7 @@ func (s *State) adminView() map[string]any {
 			org = found.Name
 		}
 		players = append(players, map[string]any{"id": player.ID, "name": player.Name, "org": org,
-			"teamId": player.TeamID, "looking": player.Looking, "token": player.Token})
+			"teamId": player.TeamID, "token": player.Token})
 	}
 	view["allTeams"], view["matches"], view["allPlayers"] = teams, matches, players
 	return view

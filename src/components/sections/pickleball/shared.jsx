@@ -162,7 +162,7 @@ export function EventInfo({ state }) {
     <>
       {info.announcement && <Box className="hot"><h2>📣 Announcement</h2><div style={{ whiteSpace: 'pre-line' }}>{info.announcement}</div></Box>}
       <Box>
-        <h2>{until ? `Cup starts in ${until}` : state.paused ? 'Schedule' : 'Cup is live'}</h2>
+        <h2>{!state.paused ? '🏓 Cup is live' : until ? `Cup starts in ${until}` : 'Schedule'}</h2>
         <Muted style={{ whiteSpace: 'pre-line' }}>{info.schedule}</Muted>
       </Box>
     </>
