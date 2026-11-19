@@ -191,11 +191,11 @@ function Teams({ state, op }) {
           {[...state.allTeams].sort((x, y) => x.view.name.localeCompare(y.view.name)).map((team) => (
             <tr key={team.view.id}>
               <td>{teamLabel(team.view)}<br /><Muted as="span">{team.view.players?.join(', ')}</Muted></td>
-              <td>{team.status === 'idle' ? 'on break' : team.status === 'ready' ? 'in queue' : team.status}</td>
+              <td>{team.status === 'idle' ? 'out of queue' : team.status === 'ready' ? 'in queue' : team.status}</td>
               <td>
                 {team.status !== 'playing' && team.size === 2 && (
                   <Btn className="ghost small" onClick={() => op('team_status', { id: team.view.id, status: team.status === 'ready' ? 'idle' : 'ready' })}>
-                    {team.status === 'ready' ? 'Dequeue' : 'Queue'}
+                    {team.status === 'ready' ? 'Kick from queue' : 'Add to queue'}
                   </Btn>
                 )}{' '}
                 {team.status !== 'playing' && <Btn className="danger small" onClick={() => window.confirm(`Remove ${team.view.name}?`) && op('team_remove', { id: team.view.id })}>Remove</Btn>}
