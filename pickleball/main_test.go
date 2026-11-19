@@ -122,6 +122,28 @@ func TestCupFlow(t *testing.T) {
 			t.Fatal("the no-show team goes to the back of the line")
 		}
 	}
+	// A second missed call in a row takes the team out of the queue.
+	s.adminAction(Request{Op: "pause", On: true}, now)
+	if again := s.liveMatch(absent); again != nil {
+		s.adminAction(Request{Op: "match_void", ID: again.ID}, now)
+	}
+	gus := team(register("Gus", "Hal", "Columbia")).ID
+	s.adminAction(Request{Op: "court_add", Label: "Spare"}, now)
+	var spare int
+	for _, court := range s.Courts {
+		if court.Label == "Spare" {
+			spare = court.ID
+		}
+	}
+	if err := s.adminAction(Request{Op: "match_create", Court: spare, A: absent, B: gus}, now); err != nil {
+		t.Fatal(err)
+	}
+	s.adminAction(Request{Op: "no_show", ID: s.liveMatch(absent).ID, Team: absent}, now)
+	if s.Teams[absent].Status != "idle" || s.Teams[absent].NoShows != maxNoShows {
+		t.Fatal("two missed calls in a row should take a team out of the queue")
+	}
+	s.adminAction(Request{Op: "pause", On: false}, now)
+	s.tick(now)
 	if s.liveMatch(team(cal).ID) == nil {
 		s.adminAction(Request{Op: "court_add"}, now)
 		s.tick(now)

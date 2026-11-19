@@ -123,11 +123,13 @@ function TeamPanel({ state, me, act, busy, forget }) {
             <>
               <Big>{state.paused ? `#${team.position} in line` : `#${team.position} in line · stay close`}</Big>
               <Muted>{state.paused ? 'Courts open when the cup starts. You keep your spot.' : "Your court shows up here when it's your turn."}</Muted>
-              <Row><Btn className="ghost small" disabled={busy} onClick={() => act('ready', { on: false })}>Take a break</Btn></Row>
+              <Row><Btn className="ghost small" disabled={busy} onClick={() => act('ready', { on: false })}>Leave queue</Btn></Row>
+              <Muted>Taking a break or heading out? Leave the queue so a court doesn't wait on you. Your org keeps its points.</Muted>
             </>
           ) : (
             <>
-              <Big>On a break</Big>
+              <Big>Not in the queue</Big>
+              {team.noShows >= 2 && <Muted>You missed 2 court calls in a row, so we took you out of the queue.</Muted>}
               <Row><Btn className="huge" disabled={busy} onClick={() => act('ready', { on: true })}>Rejoin queue</Btn></Row>
             </>
           )}
@@ -202,7 +204,7 @@ function MatchPanel({ match, teamId, act, busy }) {
 function LastResult({ match, teamId }) {
   const won = match.winner === teamId;
   const them = match.a.id === teamId ? match.b : match.a;
-  if (match.noShow === teamId) return <Box><h2>Missed your court</h2>You weren't on court within 3 minutes, so you're at the back of the queue. Stay close for the next call!</Box>;
+  if (match.noShow === teamId) return <Box><h2>Missed your court</h2>You weren't on court within 3 minutes.</Box>;
   if (match.status === 'disputed') return <Box><h2>Last match</h2>Result vs {them.name} is disputed. Find an organizer, then rejoin the queue.</Box>;
   if (match.status !== 'done') return null;
   return <Box><h2>Last match</h2>{won ? `🏆 You beat ${them.name}. +1 for your org!` : `Lost to ${them.name}.`} You're back in line.</Box>;

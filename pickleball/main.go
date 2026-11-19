@@ -40,6 +40,7 @@ type Team struct {
 	OrgID   int       `json:"orgId"`
 	Status  string    `json:"status"` // idle | ready | playing
 	ReadyAt time.Time `json:"readyAt"`
+	NoShows int       `json:"noShows"` // consecutive missed court calls
 }
 
 type Court struct {
@@ -90,10 +91,10 @@ var defaultInfo = Info{
 
 • Register your pair once on this page and pick the org you're playing for. Mixed-org pairs are fine, just pick one.
 • You go straight into the queue. When it's your turn, this page tells you which court to go to.
-• Be on your court within 3 minutes of being called, or you get sent to the back of the queue.
+• Be on your court within 3 minutes of being called, or you get sent to the back of the queue. Miss 2 calls in a row and you're taken out of the queue (tap "Rejoin queue" to come back).
 • Every game is 1 game to 11, win by 2.
 • Report the result right after your game: the winners tap "We won", the other team confirms. Disagreements go to an organizer.
-• Every win is 1 point for your org on the Meteora leaderboard. You rejoin the queue automatically after each game. Need a breather? Tap "Take a break".
+• Every win is 1 point for your org on the Meteora leaderboard. You rejoin the queue automatically after each game. Taking a break or heading out? Tap "Leave queue" so courts don't wait on you.
 • At the end of the night the top two orgs play the final (1 game to 11, win by 2) for the grand prize.
 • Grand prize: announced soon!
 • All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`,
@@ -204,6 +205,7 @@ func (s *State) finish(match *Match, winner int, now time.Time) {
 		if !ok {
 			continue
 		}
+		team.NoShows = 0
 		// Back of the line after a live match, or after an admin settles a
 		// dispute (disputes park both teams). Never touch a team that has
 		// already moved on to another match.
@@ -229,6 +231,9 @@ func (s *State) timesPlayed(a, b int) int {
 	}
 	return count
 }
+
+// maxNoShows consecutive missed calls takes a team out of the queue.
+const maxNoShows = 2
 
 // tick auto-confirms stale claims, then fills free courts from the ready queue.
 func (s *State) tick(now time.Time) {
@@ -449,7 +454,7 @@ func (s *State) publicView(token string) map[string]any {
 		me := map[string]any{"id": player.ID, "name": player.Name, "orgId": player.OrgID}
 		if team, ok := s.Teams[player.TeamID]; ok {
 			me["team"] = map[string]any{"view": s.teamView(team.ID), "status": team.Status,
-				"orgId": team.OrgID, "name": team.Name, "position": s.queuePosition(team.ID)}
+				"orgId": team.OrgID, "name": team.Name, "position": s.queuePosition(team.ID), "noShows": team.NoShows}
 			if match := s.liveMatch(team.ID); match != nil {
 				me["match"] = s.matchView(match)
 			}
@@ -569,7 +574,7 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 			return nil, fail("you need a teammate first")
 		}
 		if req.On && team.Status != "ready" {
-			team.Status, team.ReadyAt = "ready", now
+			team.Status, team.ReadyAt, team.NoShows = "ready", now, 0
 		} else if !req.On {
 			team.Status = "idle"
 		}
@@ -674,11 +679,15 @@ func (s *State) adminAction(req Request, now time.Time) error {
 		}
 		match.Status, match.NoShow, match.Finished = "void", req.Team, now
 		for _, teamID := range []int{match.TeamA, match.TeamB} {
-			if team, ok := s.Teams[teamID]; ok {
-				team.Status, team.ReadyAt = "ready", now
-				if teamID != req.Team {
-					team.ReadyAt = time.Time{}
-				}
+			team, ok := s.Teams[teamID]
+			if !ok {
+				continue
+			}
+			team.Status, team.ReadyAt = "ready", now
+			if teamID != req.Team {
+				team.ReadyAt = time.Time{}
+			} else if team.NoShows++; team.NoShows >= maxNoShows {
+				team.Status = "idle" // probably went home; they can tap Rejoin
 			}
 		}
 	case "match_void":
