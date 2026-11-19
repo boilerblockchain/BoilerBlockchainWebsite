@@ -546,7 +546,7 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 			return nil, fail("you need a team")
 		}
 		if team.Status == "playing" {
-			return nil, fail("you're already playing")
+			break // stale screen: they were just called to a court
 		}
 		if req.On && len(s.members(team.ID)) < 2 {
 			return nil, fail("you need a teammate first")
@@ -562,7 +562,17 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 		}
 		match := s.liveMatch(team.ID)
 		if match == nil {
-			return nil, fail("no match in progress")
+			// Stale screen: the other team already confirmed. Fine unless
+			// they are disagreeing with what was recorded.
+			for _, last := range s.matchesSorted(func(m *Match) bool {
+				return (m.TeamA == team.ID || m.TeamB == team.ID) && m.Status != "void"
+			}) {
+				if last.Status == "done" && last.Winner != req.Winner {
+					return nil, fail("that match was already recorded the other way; find an organizer")
+				}
+				break
+			}
+			break
 		}
 		if req.Winner != match.TeamA && req.Winner != match.TeamB {
 			return nil, fail("bad winner")
