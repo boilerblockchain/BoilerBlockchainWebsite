@@ -186,14 +186,20 @@ func (s *State) setTeams(match *Match, status string) {
 }
 
 func (s *State) finish(match *Match, winner int, now time.Time) {
-	if match.Status == "playing" && !match.Final {
-		for _, teamID := range []int{match.TeamA, match.TeamB} {
-			if team, ok := s.Teams[teamID]; ok {
-				team.Status, team.ReadyAt = "ready", now
-			}
+	for _, teamID := range []int{match.TeamA, match.TeamB} {
+		team, ok := s.Teams[teamID]
+		if !ok {
+			continue
 		}
-	} else if match.Status == "playing" {
-		s.setTeams(match, "idle")
+		// Back of the line after a live match, or after an admin settles a
+		// dispute (disputes park both teams). Never touch a team that has
+		// already moved on to another match.
+		requeue := !match.Final && (match.Status == "playing" || match.Status == "disputed" && team.Status == "idle")
+		if requeue {
+			team.Status, team.ReadyAt = "ready", now
+		} else if match.Status == "playing" {
+			team.Status = "idle"
+		}
 	}
 	match.Status, match.Winner, match.Finished = "done", winner, now
 	if team, ok := s.Teams[winner]; ok {
@@ -261,7 +267,12 @@ func (s *State) queue() []*Team {
 			list = append(list, team)
 		}
 	}
-	sort.Slice(list, func(i, j int) bool { return list[i].ReadyAt.Before(list[j].ReadyAt) })
+	sort.Slice(list, func(i, j int) bool {
+		if !list[i].ReadyAt.Equal(list[j].ReadyAt) {
+			return list[i].ReadyAt.Before(list[j].ReadyAt)
+		}
+		return list[i].ID < list[j].ID
+	})
 	return list
 }
 
