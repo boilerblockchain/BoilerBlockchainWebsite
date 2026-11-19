@@ -113,6 +113,7 @@ export const Btn = styled.button`
 
 export const Input = styled.input`
   font: inherit;
+  font-size: 16px; /* below 16px iOS Safari zooms the page on focus */
   padding: 0.7rem 0.8rem;
   background: ${({ theme }) => theme.color.black};
   color: ${({ theme }) => theme.color.text};
@@ -185,7 +186,7 @@ export function EventInfo({ state }) {
         <h2>{!state.paused ? '🏓 Cup is live' : until ? `Cup starts in ${until}` : 'Schedule'}</h2>
         <Muted style={{ whiteSpace: 'pre-line' }}>{info.schedule}</Muted>
         {info.rules && (
-          <Rules open={!state.me}>
+          <Rules>
             <summary>About the cup & rules</summary>
             <div>{info.rules}</div>
           </Rules>

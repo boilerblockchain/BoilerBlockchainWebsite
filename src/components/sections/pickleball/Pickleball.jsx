@@ -66,7 +66,7 @@ export default function Pickleball() {
 function OrgInput({ state, value, onChange }) {
   return (
     <>
-      <Input list="pb-orgs" placeholder="Org you're playing for (school / company)" value={value} onChange={(event) => onChange(event.target.value)} maxLength={60} required />
+      <Input list="pb-orgs" placeholder="Your org (school or company)" value={value} onChange={(event) => onChange(event.target.value)} maxLength={60} required />
       <datalist id="pb-orgs">{state.orgs.map((org) => <option key={org.id} value={org.name} />)}</datalist>
     </>
   );
