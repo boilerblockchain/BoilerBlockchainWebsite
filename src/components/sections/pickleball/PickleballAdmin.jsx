@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
-  call, usePoll, LiveView, teamLabel,
+  call, usePoll, LiveView, teamLabel, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Row, Btn, Input, Select, Error,
 } from './shared';
 
@@ -75,6 +75,7 @@ export default function PickleballAdmin() {
               <MatchTable matches={attention} op={op} teamName={teamName} />
             </Box>
           )}
+          <CourtBoard state={state} op={op} />
           <InfoEditor info={state.info} op={op} />
           <Courts state={state} op={op} />
           <ManualMatch state={state} op={op} />
@@ -164,7 +165,7 @@ function MatchTable({ matches, op, teamName }) {
             <td>{match.court}</td>
             <td>{teamLabel(match.a)}<br />{teamLabel(match.b)}</td>
             <td>
-              {match.status}
+              {match.status}{match.noShow ? ' (no-show)' : ''}
               {match.status === 'done' && <><br />won: {teamName(match.winner)}</>}
               {match.status === 'playing' && match.claimBy > 0 && <><br />claim: {teamName(match.claimWinner)} won</>}
             </td>
@@ -288,11 +289,70 @@ function InfoEditor({ info, op }) {
       <Row><Input as="textarea" rows={2} value={draft.announcement} onChange={set('announcement')} maxLength={500} /></Row>
       <Muted>Schedule / details, one per line</Muted>
       <Row><Input as="textarea" rows={4} value={draft.schedule} onChange={set('schedule')} maxLength={2000} /></Row>
+      <Muted>About & rules (players see this under the schedule)</Muted>
+      <Row><Input as="textarea" rows={12} value={draft.rules} onChange={set('rules')} maxLength={5000} /></Row>
       <Muted>Cup start (your local time) drives the countdown. Matchmaking still starts when you hit Start.</Muted>
       <Row>
         <Input type="datetime-local" value={draft.cupStart} onChange={set('cupStart')} />
         <Btn onClick={save}>Save info</Btn>
       </Row>
+    </Box>
+  );
+}
+
+const Cards = styled.div`
+  display: grid;
+  gap: ${({ theme }) => theme.space[3]};
+  ${({ theme }) => theme.media.sm} { grid-template-columns: 1fr 1fr; }
+`;
+
+const Card = styled.div`
+  border: 1px solid ${({ theme }) => theme.color.border};
+  padding: ${({ theme }) => theme.space[3]};
+  &.late { border-color: #ff7a7a; }
+  &.claimed { border-color: ${({ theme }) => theme.color.accent}; }
+  header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: ${({ theme }) => theme.space[2]}; }
+  .vs { font-size: ${({ theme }) => theme.fontSize.small}; line-height: 1.5; }
+`;
+
+/** One card per court with one-tap result / no-show buttons. */
+function CourtBoard({ state, op }) {
+  const now = useNow();
+  const noShow = (match, team) =>
+    window.confirm(`${team.name} didn't show? They go to the back of the queue and ${match.a.id === team.id ? match.b.name : match.a.name} gets the next court.`) &&
+    op('no_show', { id: match.id, team: team.id });
+  return (
+    <Box>
+      <h2>Courts · tap the winner when a game ends</h2>
+      {state.courts.length === 0 && <Muted>No courts yet. Add them below.</Muted>}
+      <Cards>
+        {state.courts.map((court) => {
+          const match = court.match;
+          if (!match) return <Card key={court.id}><header><span>{court.label}</span><Muted as="span">{court.active ? (state.paused ? 'paused' : 'waiting for teams') : 'closed'}</Muted></header></Card>;
+          const elapsed = (now - new Date(match.created)) / 1000;
+          const late = elapsed > SHOW_UP_SECONDS && match.claimBy === 0;
+          const claimer = [match.a, match.b].find((team) => team.id === match.claimWinner);
+          return (
+            <Card key={court.id} className={match.claimBy ? 'claimed' : late ? 'late' : ''}>
+              <header><span>{court.label}{match.final ? ' · FINAL' : ''}</span><span>{clock(elapsed)}</span></header>
+              <div className="vs">
+                <b>A</b> {teamLabel(match.a)}<br /><Muted as="span">{match.a.players?.join(' & ')}</Muted><br />
+                <b>B</b> {teamLabel(match.b)}<br /><Muted as="span">{match.b.players?.join(' & ')}</Muted>
+              </div>
+              {match.claimBy > 0 && <Muted>Reported: <b>{claimer?.name}</b> won, waiting for confirm</Muted>}
+              {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min. Did both teams show?</Muted>}
+              <Row>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id })}>A won</Btn>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id })}>B won</Btn>
+              </Row>
+              <Row>
+                <Btn className="ghost small" onClick={() => noShow(match, match.a)}>No-show A</Btn>
+                <Btn className="ghost small" onClick={() => noShow(match, match.b)}>No-show B</Btn>
+              </Row>
+            </Card>
+          );
+        })}
+      </Cards>
     </Box>
   );
 }

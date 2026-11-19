@@ -60,6 +60,7 @@ type Match struct {
 	ClaimWinner int       `json:"claimWinner"`
 	ClaimAt     time.Time `json:"claimAt"`
 	Final       bool      `json:"final"`
+	NoShow      int       `json:"noShow"`
 	Created     time.Time `json:"created"`
 	Finished    time.Time `json:"finished"`
 }
@@ -79,11 +80,23 @@ type State struct {
 type Info struct {
 	Announcement string    `json:"announcement"`
 	Schedule     string    `json:"schedule"`
+	Rules        string    `json:"rules"`
 	CupStart     time.Time `json:"cupStart"`
 }
 
 var defaultInfo = Info{
 	Schedule: "6:00 PM CST · Open play\n7:00 PM CST · Cup begins\nWhitaker Courts, 4901 Guadalupe St\nPaddles, snacks and drinks provided",
+	Rules: `Boiler Blockchain and Meteora are taking over 8 courts for a night of doubles. Who has the best pickleball team at UBC?
+
+• Register your pair once on this page and pick the org you're playing for. Mixed-org pairs are fine, just pick one.
+• You go straight into the queue. When it's your turn, this page tells you which court to go to.
+• Be on your court within 3 minutes of being called, or you get sent to the back of the queue.
+• Every game is 1 game to 11, win by 2.
+• Report the result right after your game: the winners tap "We won", the other team confirms. Disagreements go to an organizer.
+• Every win is 1 point for your org on the Meteora leaderboard. You rejoin the queue automatically after each game. Need a breather? Tap "Take a break".
+• At the end of the night the top two orgs play the final (1 game to 11, win by 2) for the grand prize.
+• Grand prize: announced soon!
+• All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`,
 	CupStart: time.Date(2026, 11, 21, 1, 0, 0, 0, time.UTC),
 }
 
@@ -210,7 +223,7 @@ func (s *State) finish(match *Match, winner int, now time.Time) {
 func (s *State) timesPlayed(a, b int) int {
 	count := 0
 	for _, match := range s.Matches {
-		if match.Status != "void" && ((match.TeamA == a && match.TeamB == b) || (match.TeamA == b && match.TeamB == a)) {
+		if (match.TeamA == a && match.TeamB == b) || (match.TeamA == b && match.TeamB == a) {
 			count++
 		}
 	}
@@ -241,7 +254,9 @@ func (s *State) tick(now time.Time) {
 		if len(queue) < 2 {
 			return
 		}
-		first, rest := queue[0], queue[1:]
+		// Opponent comes from the next few in line only, so nobody at the back
+		// jumps the queue just because they haven't met this team yet.
+		first, rest := queue[0], queue[1:min(len(queue), 5)]
 		sort.SliceStable(rest, func(i, j int) bool {
 			playedI, playedJ := s.timesPlayed(first.ID, rest[i].ID), s.timesPlayed(first.ID, rest[j].ID)
 			if playedI != playedJ {
@@ -304,6 +319,7 @@ type MatchView struct {
 	ClaimBy     int       `json:"claimBy"`
 	ClaimWinner int       `json:"claimWinner"`
 	Final       bool      `json:"final"`
+	NoShow      int       `json:"noShow"`
 	Created     time.Time `json:"created"`
 	Finished    time.Time `json:"finished"`
 }
@@ -328,7 +344,7 @@ func (s *State) teamView(teamID int) TeamView {
 
 func (s *State) matchView(match *Match) MatchView {
 	view := MatchView{ID: match.ID, A: s.teamView(match.TeamA), B: s.teamView(match.TeamB), Status: match.Status,
-		Winner: match.Winner, ClaimBy: match.ClaimBy, ClaimWinner: match.ClaimWinner, Final: match.Final,
+		Winner: match.Winner, ClaimBy: match.ClaimBy, ClaimWinner: match.ClaimWinner, Final: match.Final, NoShow: match.NoShow,
 		Created: match.Created, Finished: match.Finished}
 	if court, ok := s.Courts[match.CourtID]; ok {
 		view.Court = court.Label
@@ -481,6 +497,7 @@ type Request struct {
 	Final    bool   `json:"final"`
 	Status   string `json:"status"`
 	Info     *Info  `json:"info"`
+	Team     int    `json:"team"`
 }
 
 func cleanName(name string) (string, error) {
@@ -599,7 +616,7 @@ func (s *State) adminAction(req Request, now time.Time) error {
 	case "pause":
 		s.Paused = req.On
 	case "info":
-		if req.Info == nil || len(req.Info.Announcement) > 500 || len(req.Info.Schedule) > 2000 {
+		if req.Info == nil || len(req.Info.Announcement) > 500 || len(req.Info.Schedule) > 2000 || len(req.Info.Rules) > 5000 {
 			return fail("info too long")
 		}
 		s.Info = *req.Info
@@ -648,6 +665,22 @@ func (s *State) adminAction(req Request, now time.Time) error {
 			return fail("bad match or winner")
 		}
 		s.finish(match, req.Winner, now)
+	case "no_show":
+		// The absent team goes to the back of the line, the team that showed
+		// up goes to the front, and tick() refills the court.
+		match, ok := s.Matches[req.ID]
+		if !ok || match.Status != "playing" || (req.Team != match.TeamA && req.Team != match.TeamB) {
+			return fail("pick a live match and the team that didn't show")
+		}
+		match.Status, match.NoShow, match.Finished = "void", req.Team, now
+		for _, teamID := range []int{match.TeamA, match.TeamB} {
+			if team, ok := s.Teams[teamID]; ok {
+				team.Status, team.ReadyAt = "ready", now
+				if teamID != req.Team {
+					team.ReadyAt = time.Time{}
+				}
+			}
+		}
 	case "match_void":
 		match, ok := s.Matches[req.ID]
 		if !ok {
@@ -791,7 +824,7 @@ func mutate(writer http.ResponseWriter, action func(now time.Time) (any, error))
 
 func decode(request *http.Request) (Request, error) {
 	var req Request
-	err := json.NewDecoder(http.MaxBytesReader(nil, request.Body, 8192)).Decode(&req)
+	err := json.NewDecoder(http.MaxBytesReader(nil, request.Body, 16384)).Decode(&req)
 	if err != nil {
 		return req, fail("bad request body")
 	}
@@ -867,6 +900,9 @@ func main() {
 	}
 	if st.Info == (Info{}) {
 		st.Info = defaultInfo
+	}
+	if st.Info.Rules == "" {
+		st.Info.Rules = defaultInfo.Rules
 	}
 	go func() {
 		for range time.Tick(10 * time.Second) {

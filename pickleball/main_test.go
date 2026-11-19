@@ -105,6 +105,28 @@ func TestCupFlow(t *testing.T) {
 	act(cal, "ready", Request{On: true})
 	s.tick(now)
 	stale := s.liveMatch(team(cal).ID)
+	register("Eve", "Fay", "MIT") // someone else waiting, so a rematch is avoidable
+	present, absent := stale.TeamA, stale.TeamB
+	if err := s.adminAction(Request{Op: "no_show", ID: stale.ID, Team: absent}, now); err != nil {
+		t.Fatal(err)
+	}
+	s.tick(now)
+	if stale.Status != "void" || stale.NoShow != absent || s.liveMatch(present) == nil {
+		t.Fatal("no-show voids the match and the team that showed up gets the court right back")
+	}
+	if rematch := s.liveMatch(present); rematch.TeamA == absent || rematch.TeamB == absent {
+		t.Fatal("the no-show team must not be paired straight back in")
+	}
+	for _, other := range s.queue() {
+		if other.ID != absent && other.ReadyAt.After(s.Teams[absent].ReadyAt) {
+			t.Fatal("the no-show team goes to the back of the line")
+		}
+	}
+	if s.liveMatch(team(cal).ID) == nil {
+		s.adminAction(Request{Op: "court_add"}, now)
+		s.tick(now)
+	}
+	stale = s.liveMatch(team(cal).ID)
 	act(cal, "report", Request{Winner: team(cal).ID})
 	s.tick(now.Add(autoConfirmAfter + 2*time.Second))
 	if stale.Status != "done" || stale.Winner != team(cal).ID {

@@ -93,7 +93,7 @@ export const Row = styled.div`
   gap: ${({ theme }) => theme.space[2]};
   align-items: center;
   margin-top: ${({ theme }) => theme.space[3]};
-  & > input, & > select { flex: 1; min-width: 8rem; }
+  & > input, & > select, & > textarea { flex: 1; min-width: 8rem; }
 `;
 
 export const Btn = styled.button`
@@ -146,6 +146,26 @@ export const List = styled.ol`
 export const teamLabel = (team) =>
   team ? `${team.name}${team.org ? ` · ${team.org}` : ''}` : '';
 
+const Rules = styled.details`
+  margin-top: ${({ theme }) => theme.space[3]};
+  summary { cursor: pointer; font-weight: 600; color: ${({ theme }) => theme.color.accentBright}; }
+  div { white-space: pre-line; margin-top: ${({ theme }) => theme.space[2]}; color: ${({ theme }) => theme.color.textMuted}; font-size: ${({ theme }) => theme.fontSize.small}; line-height: 1.6; }
+`;
+
+/** Re-renders every second; for countdowns. */
+export function useNow() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
+  return now;
+}
+
+export const SHOW_UP_SECONDS = 180;
+
+export function clock(seconds) {
+  const whole = Math.max(0, Math.floor(seconds));
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+}
+
 function countdown(cupStart) {
   const ms = new Date(cupStart) - Date.now();
   if (!cupStart || ms <= 0) return null;
@@ -164,6 +184,12 @@ export function EventInfo({ state }) {
       <Box>
         <h2>{!state.paused ? '🏓 Cup is live' : until ? `Cup starts in ${until}` : 'Schedule'}</h2>
         <Muted style={{ whiteSpace: 'pre-line' }}>{info.schedule}</Muted>
+        {info.rules && (
+          <Rules open={!state.me}>
+            <summary>About the cup & rules</summary>
+            <div>{info.rules}</div>
+          </Rules>
+        )}
       </Box>
     </>
   );
