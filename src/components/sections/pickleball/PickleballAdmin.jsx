@@ -57,7 +57,7 @@ export default function PickleballAdmin() {
   return (
     <Page className="wide">
       <Title>Cup <span>admin</span></Title>
-      <Muted>{state.players} players · {state.teams} teams · {state.queue.length} in queue · {state.looking} looking for partner</Muted>
+      <Muted>{state.players} players · {state.teams} teams · {state.queue.length} in queue</Muted>
       {error && <Error>{error}</Error>}
       {pollError && <Error>{pollError}</Error>}
       <Row>
@@ -105,6 +105,7 @@ function Courts({ state, op }) {
       <Row as="form" onSubmit={(event) => { event.preventDefault(); op('court_add', { label }); setLabel(''); }}>
         <Input placeholder={`Court ${state.courts.length + 1}`} value={label} onChange={(event) => setLabel(event.target.value)} />
         <Btn>Add court</Btn>
+        {state.courts.length === 0 && <Btn type="button" className="ghost" onClick={async () => { for (let i = 1; i <= 8; i += 1) await op('court_add', { label: `Court ${i}` }); }}>Create 8 courts</Btn>}
       </Row>
     </Box>
   );
@@ -184,20 +185,19 @@ function Teams({ state, op }) {
     <Box>
       <h2>Teams ({state.allTeams.length})</h2>
       <Table>
-        <thead><tr><th>Team</th><th>Code</th><th>Status</th><th /></tr></thead>
+        <thead><tr><th>Team</th><th>Status</th><th /></tr></thead>
         <tbody>
           {[...state.allTeams].sort((x, y) => x.view.name.localeCompare(y.view.name)).map((team) => (
             <tr key={team.view.id}>
               <td>{teamLabel(team.view)}<br /><Muted as="span">{team.view.players?.join(', ')}</Muted></td>
-              <td>{team.code}</td>
-              <td>{team.status}{team.size < 2 ? ' (needs partner)' : ''}</td>
+              <td>{team.status === 'idle' ? 'on break' : team.status === 'ready' ? 'in queue' : team.status}</td>
               <td>
                 {team.status !== 'playing' && team.size === 2 && (
                   <Btn className="ghost small" onClick={() => op('team_status', { id: team.view.id, status: team.status === 'ready' ? 'idle' : 'ready' })}>
                     {team.status === 'ready' ? 'Dequeue' : 'Queue'}
                   </Btn>
                 )}{' '}
-                {team.status !== 'playing' && <Btn className="danger small" onClick={() => op('team_remove', { id: team.view.id })}>Disband</Btn>}
+                {team.status !== 'playing' && <Btn className="danger small" onClick={() => window.confirm(`Remove ${team.view.name}?`) && op('team_remove', { id: team.view.id })}>Remove</Btn>}
               </td>
             </tr>
           ))}
@@ -223,7 +223,7 @@ function Players({ state, op }) {
             <tr key={player.id}>
               <td>{player.name}</td>
               <td>{player.org}</td>
-              <td>{player.teamId ? 'on team' : player.looking ? 'looking' : 'solo'}</td>
+              <td>{player.teamId ? 'on team' : 'no team'}</td>
               <td>
                 <Btn className="ghost small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/pickleball?t=${player.token}`)}>Link</Btn>{' '}
                 <Btn className="danger small" onClick={() => op('player_remove', { id: player.id })}>✕</Btn>
