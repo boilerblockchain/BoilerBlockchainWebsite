@@ -74,6 +74,19 @@ type State struct {
 	Teams   map[int]*Team   `json:"teams"`
 	Courts  map[int]*Court  `json:"courts"`
 	Matches map[int]*Match  `json:"matches"`
+	Info    Info            `json:"info"`
+}
+
+// Info is the admin-editable event copy shown at the top of every page.
+type Info struct {
+	Announcement string    `json:"announcement"`
+	Schedule     string    `json:"schedule"`
+	CupStart     time.Time `json:"cupStart"`
+}
+
+var defaultInfo = Info{
+	Schedule: "6:00 PM CST · Open play\n7:00 PM CST · Cup begins\nWhitaker Courts, 4901 Guadalupe St\nPaddles, snacks and drinks provided",
+	CupStart: time.Date(2026, 11, 21, 1, 0, 0, 0, time.UTC),
 }
 
 const autoConfirmAfter = 2 * time.Minute
@@ -88,7 +101,7 @@ var (
 
 func newState() *State {
 	return &State{NextID: 1, Paused: true, Orgs: map[int]*Org{}, Players: map[int]*Player{},
-		Teams: map[int]*Team{}, Courts: map[int]*Court{}, Matches: map[int]*Match{}}
+		Teams: map[int]*Team{}, Courts: map[int]*Court{}, Matches: map[int]*Match{}, Info: defaultInfo}
 }
 
 func envOr(key, fallback string) string {
@@ -365,7 +378,7 @@ func (s *State) leaderboard() []OrgScore {
 			}
 		}
 	}
-	var list []OrgScore
+	list := []OrgScore{}
 	for _, score := range scores {
 		if score.Teams > 0 || score.Points > 0 {
 			list = append(list, *score)
@@ -430,7 +443,7 @@ func (s *State) publicView(token string) map[string]any {
 	}
 	view := map[string]any{"paused": s.Paused, "courts": courts, "queue": queue, "recent": recent,
 		"final": final, "leaderboard": s.leaderboard(), "orgs": orgs, "looking": looking,
-		"players": len(s.Players), "teams": len(s.Teams)}
+		"players": len(s.Players), "teams": len(s.Teams), "info": s.Info}
 	if player := s.playerByToken(token); player != nil {
 		me := map[string]any{"id": player.ID, "name": player.Name, "orgId": player.OrgID, "looking": player.Looking}
 		if team, ok := s.Teams[player.TeamID]; ok {
@@ -479,6 +492,7 @@ type Request struct {
 	B      int    `json:"b"`
 	Final  bool   `json:"final"`
 	Status string `json:"status"`
+	Info   *Info  `json:"info"`
 }
 
 func cleanName(name string) (string, error) {
@@ -642,6 +656,11 @@ func (s *State) adminAction(req Request, now time.Time) error {
 	switch req.Op {
 	case "pause":
 		s.Paused = req.On
+	case "info":
+		if req.Info == nil || len(req.Info.Announcement) > 500 || len(req.Info.Schedule) > 2000 {
+			return fail("info too long")
+		}
+		s.Info = *req.Info
 	case "court_add":
 		label := strings.TrimSpace(req.Label)
 		if label == "" {
@@ -830,7 +849,7 @@ func mutate(writer http.ResponseWriter, action func(now time.Time) (any, error))
 
 func decode(request *http.Request) (Request, error) {
 	var req Request
-	err := json.NewDecoder(http.MaxBytesReader(nil, request.Body, 4096)).Decode(&req)
+	err := json.NewDecoder(http.MaxBytesReader(nil, request.Body, 8192)).Decode(&req)
 	if err != nil {
 		return req, fail("bad request body")
 	}
@@ -903,6 +922,9 @@ func main() {
 		if err := json.Unmarshal(raw, st); err != nil {
 			log.Fatalf("corrupt %s: %v", dataPath, err)
 		}
+	}
+	if st.Info == (Info{}) {
+		st.Info = defaultInfo
 	}
 	go func() {
 		for range time.Tick(10 * time.Second) {

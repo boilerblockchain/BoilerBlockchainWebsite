@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  call, usePoll, LiveView, teamLabel,
+  call, usePoll, LiveView, EventInfo, teamLabel,
   Page, Title, Muted, Box, Big, Row, Btn, Input, Error,
 } from './shared';
 
@@ -59,6 +59,7 @@ export default function Pickleball() {
         <Btn className={tab === 'play' ? '' : 'ghost'} onClick={() => setTab('play')}>Play</Btn>
         <Btn className={tab === 'live' ? '' : 'ghost'} onClick={() => setTab('live')}>Live leaderboard</Btn>
       </Row>
+      <EventInfo state={state} />
       {pollError && <Error>Connection issue: {pollError}. Retrying…</Error>}
       {error && <Error>{error}</Error>}
       {tab === 'live' ? <LiveView state={state} /> : !state ? <Muted>Loading…</Muted> : !me ? (

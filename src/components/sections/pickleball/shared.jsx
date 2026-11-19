@@ -142,6 +142,29 @@ export const List = styled.ol`
 export const teamLabel = (team) =>
   team ? `${team.name}${team.org ? ` · ${team.org}` : ''}` : '';
 
+function countdown(cupStart) {
+  const ms = new Date(cupStart) - Date.now();
+  if (!cupStart || ms <= 0) return null;
+  const minutes = Math.ceil(ms / 60000);
+  return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`;
+}
+
+/** Admin-editable announcement, schedule and cup countdown. */
+export function EventInfo({ state }) {
+  const info = state?.info;
+  if (!info) return null;
+  const until = countdown(info.cupStart);
+  return (
+    <>
+      {info.announcement && <Box className="hot"><h2>📣 Announcement</h2><div style={{ whiteSpace: 'pre-line' }}>{info.announcement}</div></Box>}
+      <Box>
+        <h2>{until ? `Cup starts in ${until}` : state.paused ? 'Schedule' : 'Cup is live'}</h2>
+        <Muted style={{ whiteSpace: 'pre-line' }}>{info.schedule}</Muted>
+      </Box>
+    </>
+  );
+}
+
 /** Leaderboard, final, courts, queue, results. Used by players, spectators and admins. */
 export function LiveView({ state }) {
   if (!state) return <Muted>Loading…</Muted>;

@@ -75,6 +75,7 @@ export default function PickleballAdmin() {
               <MatchTable matches={attention} op={op} teamName={teamName} />
             </Box>
           )}
+          <InfoEditor info={state.info} op={op} />
           <Courts state={state} op={op} />
           <ManualMatch state={state} op={op} />
           <Box>
@@ -268,5 +269,30 @@ function OrgRow({ org, op }) {
   const [name, setName] = useState(org.name);
   return (
     <tr><td><Input value={name} onChange={(event) => setName(event.target.value)} onBlur={() => name !== org.name && op('org_rename', { id: org.id, name })} /></td></tr>
+  );
+}
+
+const toLocalInput = (iso) => {
+  const date = new Date(iso);
+  return new Date(date - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+};
+
+function InfoEditor({ info, op }) {
+  const [draft, setDraft] = useState({ ...info, cupStart: toLocalInput(info.cupStart) });
+  const set = (key) => (event) => setDraft({ ...draft, [key]: event.target.value });
+  const save = () => op('info', { info: { ...draft, cupStart: new Date(draft.cupStart).toISOString() } });
+  return (
+    <Box>
+      <h2>Event info (shows on every phone)</h2>
+      <Muted>Announcement banner (leave empty to hide)</Muted>
+      <Row><Input as="textarea" rows={2} value={draft.announcement} onChange={set('announcement')} maxLength={500} /></Row>
+      <Muted>Schedule / details, one per line</Muted>
+      <Row><Input as="textarea" rows={4} value={draft.schedule} onChange={set('schedule')} maxLength={2000} /></Row>
+      <Muted>Cup start (your local time) drives the countdown. Matchmaking still starts when you hit Start.</Muted>
+      <Row>
+        <Input type="datetime-local" value={draft.cupStart} onChange={set('cupStart')} />
+        <Btn onClick={save}>Save info</Btn>
+      </Row>
+    </Box>
   );
 }
