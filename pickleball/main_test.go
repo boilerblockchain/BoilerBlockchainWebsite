@@ -75,8 +75,35 @@ func TestCupFlow(t *testing.T) {
 		t.Fatal("conflicting reports should dispute and take both teams out of the queue")
 	}
 
+	if err := s.adminAction(Request{Op: "match_result", ID: next.ID, Winner: opponent}, now); err != nil {
+		t.Fatal(err)
+	}
+	s.tick(now)
+	if next.Status != "done" || s.liveMatch(team(cal).ID) == nil {
+		t.Fatal("admin settling a dispute scores it and puts both teams back in line")
+	}
+	points := func(org string) int {
+		for _, score := range s.leaderboard() {
+			if score.Name == org {
+				return score.Points
+			}
+		}
+		return -1
+	}
+	before := points("Purdue")
+	if err := s.adminAction(Request{Op: "match_result", ID: match.ID, Winner: ut}, now); err != nil {
+		t.Fatal(err)
+	}
+	if points("Purdue") != before-1 || points("UT") < 1 {
+		t.Fatal("admin flipping a finished result moves the point")
+	}
+	s.adminAction(Request{Op: "match_void", ID: match.ID}, now)
+	if points("UT") != 0 && opponent != ut {
+		t.Fatal("voiding a match removes its point")
+	}
+	s.adminAction(Request{Op: "match_void", ID: s.liveMatch(team(cal).ID).ID}, now)
 	act(cal, "ready", Request{On: true})
-	act(otherToken, "ready", Request{On: true})
+	s.tick(now)
 	stale := s.liveMatch(team(cal).ID)
 	act(cal, "report", Request{Winner: team(cal).ID})
 	s.tick(now.Add(autoConfirmAfter + 2*time.Second))
