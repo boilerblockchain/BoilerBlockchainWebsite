@@ -32,6 +32,8 @@ import ContactPage from "./components/sections/ContactPage";
 import Challenges from "./components/sections/Challenges";
 import Claim from "./components/sections/Claim";
 import Ticket from "./components/sections/Ticket";
+import Pickleball from "./components/sections/pickleball/Pickleball";
+import PickleballAdmin from "./components/sections/pickleball/PickleballAdmin";
 import NotFound from "./components/sections/NotFound";
 
 const root = createRoot(document.getElementById("root"));
@@ -62,6 +64,8 @@ root.render(
         <Route path="challenges" element={<Challenges />} />
         <Route path="claim" element={<Claim />} />
         <Route path="ticket" element={<Ticket />} />
+        <Route path="pickleball" element={<Pickleball />} />
+        <Route path="pickleball/admin" element={<PickleballAdmin />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
