@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 export const API =
@@ -22,11 +22,15 @@ export async function call(path, body, adminToken) {
 export function usePoll(path, adminToken) {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
+  const latest = useRef(0);
   const refresh = useCallback(() => {
     if (!path) return;
+    // Only the newest request may update state, so a slow response from
+    // before login (or a token change) can never overwrite a fresher one.
+    const request = ++latest.current;
     call(path, null, adminToken)
-      .then((next) => { setData(next); setError(''); })
-      .catch((err) => setError(err.message));
+      .then((next) => { if (request === latest.current) { setData(next); setError(''); } })
+      .catch((err) => { if (request === latest.current) setError(err.message); });
   }, [path, adminToken]);
   useEffect(() => {
     refresh();
