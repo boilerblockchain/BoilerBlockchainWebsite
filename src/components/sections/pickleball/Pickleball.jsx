@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  call, usePoll, LiveView, EventInfo, teamLabel,
+  call, usePoll, LiveView, EventInfo, teamLabel, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Big, Row, Btn, Input, Error,
 } from './shared';
 
@@ -163,11 +163,14 @@ function EditTeam({ state, team, act, busy, done }) {
 function MatchPanel({ match, teamId, act, busy }) {
   const [us, them] = match.a.id === teamId ? [match.a, match.b] : [match.b, match.a];
   const report = (winner) => act('report', { winner });
+  const now = useNow();
+  const left = SHOW_UP_SECONDS - (now - new Date(match.created)) / 1000;
   return (
     <Box className="hot">
       <h2>You're up{match.final ? ' · FINAL' : ''}</h2>
       <Big>Go to {match.court}</Big>
-      <Muted>vs {teamLabel(them)}</Muted>
+      <Muted>vs {teamLabel(them)} · 1 game to 11, win by 2</Muted>
+      {match.claimBy === 0 && left > 0 && <Muted><b>Be on the court within {clock(left)}</b> or you go to the back of the queue.</Muted>}
       {match.claimBy === 0 && (
         <>
           <Muted>When you're done, one of you report the result:</Muted>
@@ -199,6 +202,7 @@ function MatchPanel({ match, teamId, act, busy }) {
 function LastResult({ match, teamId }) {
   const won = match.winner === teamId;
   const them = match.a.id === teamId ? match.b : match.a;
+  if (match.noShow === teamId) return <Box><h2>Missed your court</h2>You weren't on court within 3 minutes, so you're at the back of the queue. Stay close for the next call!</Box>;
   if (match.status === 'disputed') return <Box><h2>Last match</h2>Result vs {them.name} is disputed. Find an organizer, then rejoin the queue.</Box>;
   if (match.status !== 'done') return null;
   return <Box><h2>Last match</h2>{won ? `🏆 You beat ${them.name}. +1 for your org!` : `Lost to ${them.name}.`} You're back in line.</Box>;
