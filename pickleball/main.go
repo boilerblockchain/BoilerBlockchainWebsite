@@ -95,8 +95,8 @@ var defaultInfo = Info{
 • Every game is 1 game to 11, win by 2.
 • Report the result right after your game: the winners tap "We won", the other team confirms. Disagreements go to an organizer.
 • Every win is 1 point for your org on the Meteora leaderboard. You rejoin the queue automatically after each game. Taking a break or heading out? Tap "Leave queue" so courts don't wait on you.
-• At the end of the night the top two orgs play the final (1 game to 11, win by 2) for the grand prize.
-• Grand prize: announced soon!
+• At the end of the night the top two orgs play the final (1 game to 11, win by 2).
+• Prizes: 🥇 the final winners get a pickleball set, 🥈 the runners-up get a poker set.
 • All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`,
 	CupStart: time.Date(2026, 11, 21, 1, 0, 0, 0, time.UTC),
 }
