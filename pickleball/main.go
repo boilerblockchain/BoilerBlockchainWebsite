@@ -460,6 +460,8 @@ func (s *State) publicView(token string) map[string]any {
 			}
 		}
 		view["me"] = me
+	} else if token != "" {
+		view["unknownToken"] = token
 	}
 	return view
 }

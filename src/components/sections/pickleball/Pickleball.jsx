@@ -36,9 +36,10 @@ export default function Pickleball() {
     }
   };
 
-  // Token from another device that the server no longer knows.
+  // Forget a saved login only when the server says that exact token is unknown
+  // (e.g. the event data was reset), never just because `me` is missing.
   useEffect(() => {
-    if (state && token && !state.me) { localStorage.removeItem(TOKEN_KEY); setToken(''); }
+    if (state?.unknownToken === token && token) { localStorage.removeItem(TOKEN_KEY); setToken(''); }
   }, [state, token]);
 
   // Auto-join from an invite link once registered.
@@ -111,7 +112,8 @@ function Play({ state, me, act, busy }) {
       <Box>
         <h2>You</h2>
         <Big>{me.name}</Big>
-        <Muted>{myOrg} · Bookmark this page. Your spot is saved on this device.</Muted>
+        <Muted>{myOrg} · You stay logged in on this browser. Switching phones or browsers? Save your login link first.</Muted>
+        <Row><Btn className="ghost small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/pickleball?t=${localStorage.getItem(TOKEN_KEY)}`)}>Copy my login link</Btn></Row>
       </Box>
       {state.paused && <Box className="hot"><h2>Heads up</h2>Matchmaking hasn't started or is paused. Get your team ready and you'll be called to a court.</Box>}
       {!team ? <NoTeam state={state} me={me} act={act} busy={busy} /> : <TeamPanel state={state} team={team} me={me} act={act} busy={busy} />}
