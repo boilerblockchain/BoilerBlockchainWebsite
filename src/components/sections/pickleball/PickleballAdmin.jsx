@@ -7,6 +7,17 @@ import {
 
 const KEY = 'bb_pickleball_admin';
 
+const Notice = styled.p`
+  position: sticky;
+  top: ${({ theme }) => theme.layout.navHeight};
+  z-index: 5;
+  padding: ${({ theme }) => theme.space[3]};
+  background: #12351f;
+  border: 1px solid #2fbf71;
+  color: #b9f5d0;
+  font-weight: 600;
+`;
+
 const Grid = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.space[4]};
@@ -27,11 +38,14 @@ export default function PickleballAdmin() {
   const [state, pollError, refresh] = usePoll(token ? '/admin/state' : null, token);
   const [error, setError] = useState('');
 
-  const op = async (name, body = {}) => {
+  const [notice, setNotice] = useState('');
+  const op = async (name, body = {}, done = '') => {
     setError('');
+    setNotice('');
     try {
       await call('/admin', { op: name, ...body }, token);
       refresh();
+      if (done) { setNotice(done); setTimeout(() => setNotice(''), 6000); }
     } catch (err) {
       setError(err.message);
     }
@@ -59,6 +73,7 @@ export default function PickleballAdmin() {
       <Title>Cup <span>admin</span></Title>
       <Muted>{state.players} players · {state.teams} teams · {state.queue.length} in queue</Muted>
       {error && <Error>{error}</Error>}
+      {notice && <Notice>✓ {notice}</Notice>}
       {pollError && <Error>{pollError}</Error>}
       <Row>
         <Btn className={state.paused ? '' : 'danger'} onClick={() => op('pause', { on: !state.paused })}>
@@ -170,8 +185,8 @@ function MatchTable({ matches, op, teamName }) {
               {match.status === 'playing' && match.claimBy > 0 && <><br />claim: {teamName(match.claimWinner)} won</>}
             </td>
             <td>
-              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.a.id })}>{match.a.name}</Btn>{' '}
-              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.b.id })}>{match.b.name}</Btn>{' '}
+              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won (+1 ${match.a.org}). Both teams are back in the queue.`)}>{match.a.name}</Btn>{' '}
+              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won (+1 ${match.b.org}). Both teams are back in the queue.`)}>{match.b.name}</Btn>{' '}
               {match.status !== 'void' && <Btn className="danger small" onClick={() => op('match_void', { id: match.id })}>Void</Btn>}
             </td>
           </tr>
@@ -320,7 +335,7 @@ function CourtBoard({ state, op }) {
   const now = useNow();
   const noShow = (match, team) =>
     window.confirm(`${team.name} didn't show? They go to the back of the queue and ${match.a.id === team.id ? match.b.name : match.a.name} gets the next court.`) &&
-    op('no_show', { id: match.id, team: team.id });
+    op('no_show', { id: match.id, team: team.id }, `${team.name} marked no-show and sent to the back of the queue.`);
   return (
     <Box>
       <h2>Courts · tap the winner when a game ends</h2>
@@ -342,8 +357,8 @@ function CourtBoard({ state, op }) {
               {match.claimBy > 0 && <Muted>Reported: <b>{claimer?.name}</b> won, waiting for confirm</Muted>}
               {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min. Did both teams show?</Muted>}
               <Row>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id })}>A won</Btn>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id })}>B won</Btn>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won (+1 ${match.a.org}). Both teams are back in the queue.`)}>A won</Btn>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won (+1 ${match.b.org}). Both teams are back in the queue.`)}>B won</Btn>
               </Row>
               <Row>
                 <Btn className="ghost small" onClick={() => noShow(match, match.a)}>No-show A</Btn>
