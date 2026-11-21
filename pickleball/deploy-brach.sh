@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 go test ./...
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /tmp/pickleball-linux .
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o /tmp/pickleball-linux .
 
 ssh brach 'mkdir -p ~/active/pickleball'
 scp -q /tmp/pickleball-linux brach:active/pickleball/pickleball.new
