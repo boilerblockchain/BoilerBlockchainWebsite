@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
-  call, usePoll, LiveView, Bracket, teamLabel, useNow, clock, SHOW_UP_SECONDS,
+  call, usePoll, Bracket, List, teamLabel, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Row, Btn, Input, Error,
 } from './shared';
 
@@ -9,7 +9,7 @@ const KEY = 'bb_pickleball_admin';
 
 const Notice = styled.p`
   position: sticky;
-  top: ${({ theme }) => theme.layout.navHeight};
+  top: calc(${({ theme }) => theme.layout.navHeight} + 4rem);
   z-index: 5;
   padding: ${({ theme }) => theme.space[3]};
   background: #12351f;
@@ -18,10 +18,35 @@ const Notice = styled.p`
   font-weight: 600;
 `;
 
-const Grid = styled.div`
+const Bar = styled.div`
+  position: sticky;
+  top: ${({ theme }) => theme.layout.navHeight};
+  z-index: 6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: ${({ theme }) => theme.space[3]};
+  padding: ${({ theme }) => theme.space[3]} 0;
+  background: ${({ theme }) => theme.color.black};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+  p { margin: 0; }
+`;
+
+const Tabs = styled.nav`
   display: grid;
-  gap: ${({ theme }) => theme.space[4]};
-  ${({ theme }) => theme.media.lg} { grid-template-columns: 2fr 1fr; align-items: start; }
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: ${({ theme }) => theme.space[3]};
+  border: 1px solid ${({ theme }) => theme.color.borderStrong};
+  button {
+    font: inherit;
+    font-weight: 600;
+    padding: 0.9rem 0.2rem;
+    background: transparent;
+    color: ${({ theme }) => theme.color.text};
+    border: 0;
+    cursor: pointer;
+  }
+  button.on { background: ${({ theme }) => theme.color.accent}; color: #fff; }
 `;
 
 const Table = styled.table`
@@ -39,6 +64,7 @@ export default function PickleballAdmin() {
   const [error, setError] = useState('');
 
   const [notice, setNotice] = useState('');
+  const [tab, setTab] = useState('Courts');
   const op = async (name, body = {}, done = '') => {
     setError('');
     setNotice('');
@@ -57,7 +83,7 @@ export default function PickleballAdmin() {
         <Title>Cup <span>admin</span></Title>
         {pollError && <Error>Wrong token.</Error>}
         <Row as="form" onSubmit={(event) => { event.preventDefault(); localStorage.setItem(KEY, draft); setToken(draft); }}>
-          <Input type="password" placeholder="Admin token" value={draft} onChange={(event) => setDraft(event.target.value)} />
+          <Input type="password" placeholder="Admin password" value={draft} onChange={(event) => setDraft(event.target.value)} />
           <Btn>Sign in</Btn>
         </Row>
       </Page>
@@ -65,43 +91,84 @@ export default function PickleballAdmin() {
   }
   if (!state) return <Page><Muted>Loading… {pollError}</Muted></Page>;
 
-  const teamName = (id) => state.allTeams.find((team) => team.view.id === id)?.view.name || '?';
+  const pick = (match, team) =>
+    match.winner !== team.id && match.a.id && match.b.id &&
+    window.confirm(`${team.name} beat ${match.a.id === team.id ? match.b.name : match.a.name}?`) &&
+    op('match_result', { id: match.id, winner: team.id }, `${team.name} won and advances.`);
+  const live = state.courts.filter((court) => court.match).length;
 
   return (
     <Page className="wide">
-      <Title>Cup <span>admin</span></Title>
-      <Muted>{state.players} players · {state.teams} teams · {state.bracket.length ? `bracket: ${state.upNext.length} matches waiting for a court` : 'no bracket yet'}</Muted>
+      <Bar>
+        <div>
+          <b>Cup admin</b>
+          <Muted>{state.teams} teams · {state.bracket.length ? `${live} playing · ${state.upNext.length} waiting` : 'no bracket yet'}</Muted>
+        </div>
+        {state.bracket.length > 0 && (
+          <Btn className={state.paused ? '' : 'danger'} onClick={() => op('pause', { on: !state.paused })}>
+            {state.paused ? '▶ Start' : '⏸ Pause'}
+          </Btn>
+        )}
+      </Bar>
       {error && <Error>{error}</Error>}
       {notice && <Notice>✓ {notice}</Notice>}
       {pollError && <Error>{pollError}</Error>}
-      <Row>
-        <Btn className={state.paused ? '' : 'danger'} onClick={() => op('pause', { on: !state.paused })}>
-          {state.paused ? '▶ Start calling matches' : '⏸ Pause calling matches'}
-        </Btn>
-        {state.bracket.length === 0
-          ? <Btn onClick={() => window.confirm(`Draw the bracket with ${state.allTeams.filter((team) => team.size === 2).length} teams? Registration closes.`) && op('bracket_build', {}, 'Bracket drawn. Hit Start to call matches to courts.')}>🎲 Build bracket</Btn>
-          : <Btn className="danger" onClick={() => window.confirm('Delete the whole bracket and every result? Teams stay registered.') && op('bracket_reset', {}, 'Bracket deleted. Registration is open again.')}>Reset bracket</Btn>}
-        <Btn className="ghost" onClick={() => { localStorage.removeItem(KEY); setToken(''); }}>Sign out</Btn>
-      </Row>
+      <Tabs>
+        {['Courts', 'Bracket', 'Teams', 'Setup'].map((name) => (
+          <button key={name} className={tab === name ? 'on' : ''} onClick={() => setTab(name)}>{name}</button>
+        ))}
+      </Tabs>
 
-      <Box className="hot">
-        <h2>Bracket · tap the team that won</h2>
-        <Bracket state={state} onPick={(match, team) => match.winner !== team.id && window.confirm(`${team.name} beat ${match.a.id === team.id ? match.b.name : match.a.name}?`) && op('match_result', { id: match.id, winner: team.id }, `${team.name} won and advances.`)} />
-      </Box>
-      <Grid>
-        <div>
+      {tab === 'Courts' && (
+        <>
+          {state.bracket.length === 0 && <Box className="hot"><h2>No bracket yet</h2><Muted>Go to Setup and tap Build bracket when registration is done.</Muted></Box>}
+          {state.bracket.length > 0 && state.paused && <Box className="hot"><h2>Paused</h2><Muted>Tap ▶ Start up top to call matches to courts.</Muted></Box>}
           <CourtBoard state={state} op={op} />
-          <InfoEditor info={state.info} op={op} />
-          <Courts state={state} op={op} />
-          <Box>
-            <h2>All matches</h2>
-            <MatchTable matches={state.bracket.flat().filter((match) => match.a.id && match.b.id)} op={op} teamName={teamName} />
+          {state.upNext.length > 0 && (
+            <Box>
+              <h2>Waiting for a court ({state.upNext.length})</h2>
+              <List>{state.upNext.map((match) => <li key={match.id}><span>{match.a.name} vs {match.b.name}</span><Muted as="span">R{match.round}</Muted></li>)}</List>
+            </Box>
+          )}
+        </>
+      )}
+
+      {tab === 'Bracket' && (
+        <>
+          <Box className="hot">
+            <h2>Tap the team that won · swipe sideways for later rounds</h2>
+            <Bracket state={state} onPick={pick} />
           </Box>
+          <Matches state={state} op={op} />
+        </>
+      )}
+
+      {tab === 'Teams' && (
+        <>
           <Teams state={state} op={op} />
           <Players state={state} op={op} />
-        </div>
-        <div><LiveView state={state} /></div>
-      </Grid>
+        </>
+      )}
+
+      {tab === 'Setup' && (
+        <>
+          <Box>
+            <h2>Bracket</h2>
+            {state.bracket.length === 0
+              ? <>
+                  <Muted>Draws a random bracket from every complete pair ({state.allTeams.filter((team) => team.size === 2).length} now). Registration closes.</Muted>
+                  <Row><Btn className="huge" onClick={() => window.confirm('Draw the bracket now? Registration closes.') && op('bracket_build', {}, 'Bracket drawn. Tap ▶ Start to call matches.')}>🎲 Build bracket</Btn></Row>
+                </>
+              : <>
+                  <Muted>Deletes every match and result and reopens registration. Teams stay.</Muted>
+                  <Row><Btn className="danger" onClick={() => window.confirm('Delete the whole bracket and every result?') && op('bracket_reset', {}, 'Bracket deleted. Registration is open again.')}>Reset bracket</Btn></Row>
+                </>}
+          </Box>
+          <Courts state={state} op={op} />
+          <InfoEditor info={state.info} op={op} />
+          <Row><Btn className="ghost" onClick={() => { localStorage.removeItem(KEY); setToken(''); }}>Sign out</Btn></Row>
+        </>
+      )}
     </Page>
   );
 }
@@ -139,30 +206,28 @@ function CourtRow({ court, op }) {
   );
 }
 
-function MatchTable({ matches, op, teamName }) {
-  const win = (match, team) => op('match_result', { id: match.id, winner: team.id }, `${team.name} won and advances.`);
+/** Every real match with its status; Reopen replays it or undoes a result. */
+function Matches({ state, op }) {
+  const matches = state.bracket.flat().filter((match) => match.a.id && match.b.id);
+  if (!matches.length) return null;
   return (
-    <Table>
-      <thead><tr><th>Round</th><th>Court</th><th>Teams</th><th>Status</th><th>Set winner</th></tr></thead>
-      <tbody>
+    <Box>
+      <h2>Matches</h2>
+      <List>
         {matches.map((match) => (
-          <tr key={match.id}>
-            <td>{match.round}{match.final ? ' 🏆' : ''}</td>
-            <td>{match.court}</td>
-            <td>{teamLabel(match.a)}<br />{teamLabel(match.b)}</td>
-            <td>
-              {match.status}{match.noShow ? ' (forfeit)' : ''}
-              {match.status === 'done' && <><br />won: {teamName(match.winner)}</>}
-            </td>
-            <td>
-              <Btn className="ghost small" onClick={() => win(match, match.a)}>{match.a.name}</Btn>{' '}
-              <Btn className="ghost small" onClick={() => win(match, match.b)}>{match.b.name}</Btn>{' '}
-              {match.status !== 'pending' && <Btn className="danger small" onClick={() => window.confirm('Reopen this match? Its result is cleared and it gets called to a court again.') && op('match_reopen', { id: match.id }, 'Match reopened.')}>Reopen</Btn>}
-            </td>
-          </tr>
+          <li key={match.id}>
+            <span style={{ whiteSpace: 'normal' }}>
+              R{match.round}{match.final ? ' 🏆' : ''} · {match.a.name} vs {match.b.name}<br />
+              <Muted as="span">
+                {match.status === 'done' ? `${match.winner === match.a.id ? match.a.name : match.b.name} won${match.noShow ? ' (forfeit)' : ''}`
+                  : match.status === 'playing' ? `on ${match.court}` : 'waiting'}
+              </Muted>
+            </span>
+            {match.status !== 'pending' && <Btn className="ghost small" onClick={() => window.confirm('Reopen this match? Its result is cleared and it gets called to a court again.') && op('match_reopen', { id: match.id }, 'Match reopened.')}>Reopen</Btn>}
+          </li>
         ))}
-      </tbody>
-    </Table>
+      </List>
+    </Box>
   );
 }
 
@@ -266,7 +331,7 @@ function CourtBoard({ state, op }) {
   return (
     <Box>
       <h2>Courts · tap the winner when a game ends</h2>
-      {state.courts.length === 0 && <Muted>No courts yet. Add them below.</Muted>}
+      {state.courts.length === 0 && <Muted>No courts yet. Add them in Setup.</Muted>}
       <Cards>
         {state.courts.map((court) => {
           const match = court.match;
@@ -280,14 +345,14 @@ function CourtBoard({ state, op }) {
                 <b>A</b> {teamLabel(match.a)}<br /><Muted as="span">{match.a.players?.join(' & ')}</Muted><br />
                 <b>B</b> {teamLabel(match.b)}<br /><Muted as="span">{match.b.players?.join(' & ')}</Muted>
               </div>
-              {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min since called. Forfeit whoever isn't here.</Muted>}
+              {late && <Muted style={{ color: '#ff7a7a' }}>3+ min since called. If a team never showed up, forfeit them.</Muted>}
               <Row>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won and advances.`)}>A won</Btn>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won and advances.`)}>B won</Btn>
+                <Btn style={{ flex: 1 }} onClick={() => window.confirm(`${match.a.name} won?`) && op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won and advances.`)}>🏆 A won</Btn>
+                <Btn style={{ flex: 1 }} onClick={() => window.confirm(`${match.b.name} won?`) && op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won and advances.`)}>🏆 B won</Btn>
               </Row>
               <Row>
-                <Btn className="ghost small" onClick={() => noShow(match, match.a)}>Forfeit A</Btn>
-                <Btn className="ghost small" onClick={() => noShow(match, match.b)}>Forfeit B</Btn>
+                <Btn className="ghost small" style={{ flex: 1 }} onClick={() => noShow(match, match.a)}>Forfeit A</Btn>
+                <Btn className="ghost small" style={{ flex: 1 }} onClick={() => noShow(match, match.b)}>Forfeit B</Btn>
               </Row>
             </Card>
           );
