@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
-  call, usePoll, LiveView, teamLabel, useNow, clock, SHOW_UP_SECONDS,
+  call, usePoll, LiveView, Bracket, teamLabel, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Row, Btn, Input, Error,
 } from './shared';
 
@@ -66,7 +66,6 @@ export default function PickleballAdmin() {
   if (!state) return <Page><Muted>Loading… {pollError}</Muted></Page>;
 
   const teamName = (id) => state.allTeams.find((team) => team.view.id === id)?.view.name || '?';
-  const attention = state.bracket.flat().filter((match) => match.status === 'disputed' || (match.status === 'playing' && match.claimBy));
 
   return (
     <Page className="wide">
@@ -85,14 +84,12 @@ export default function PickleballAdmin() {
         <Btn className="ghost" onClick={() => { localStorage.removeItem(KEY); setToken(''); }}>Sign out</Btn>
       </Row>
 
+      <Box className="hot">
+        <h2>Bracket · tap the team that won</h2>
+        <Bracket state={state} onPick={(match, team) => match.winner !== team.id && window.confirm(`${team.name} beat ${match.a.id === team.id ? match.b.name : match.a.name}?`) && op('match_result', { id: match.id, winner: team.id }, `${team.name} won and advances.`)} />
+      </Box>
       <Grid>
         <div>
-          {attention.length > 0 && (
-            <Box className="hot">
-              <h2>Needs attention</h2>
-              <MatchTable matches={attention} op={op} teamName={teamName} />
-            </Box>
-          )}
           <CourtBoard state={state} op={op} />
           <InfoEditor info={state.info} op={op} />
           <Courts state={state} op={op} />
@@ -156,7 +153,6 @@ function MatchTable({ matches, op, teamName }) {
             <td>
               {match.status}{match.noShow ? ' (forfeit)' : ''}
               {match.status === 'done' && <><br />won: {teamName(match.winner)}</>}
-              {match.status === 'playing' && match.claimBy > 0 && <><br />claim: {teamName(match.claimWinner)} won</>}
             </td>
             <td>
               <Btn className="ghost small" onClick={() => win(match, match.a)}>{match.a.name}</Btn>{' '}
@@ -257,7 +253,6 @@ const Card = styled.div`
   border: 1px solid ${({ theme }) => theme.color.border};
   padding: ${({ theme }) => theme.space[3]};
   &.late { border-color: #ff7a7a; }
-  &.claimed { border-color: ${({ theme }) => theme.color.accent}; }
   header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: ${({ theme }) => theme.space[2]}; }
   .vs { font-size: ${({ theme }) => theme.fontSize.small}; line-height: 1.5; }
 `;
@@ -277,16 +272,14 @@ function CourtBoard({ state, op }) {
           const match = court.match;
           if (!match) return <Card key={court.id}><header><span>{court.label}</span><Muted as="span">{court.active ? (state.paused ? 'paused' : 'waiting for a match') : 'closed'}</Muted></header></Card>;
           const elapsed = (now - new Date(match.created)) / 1000;
-          const late = elapsed > SHOW_UP_SECONDS && match.claimBy === 0;
-          const claimer = [match.a, match.b].find((team) => team.id === match.claimWinner);
+          const late = elapsed > SHOW_UP_SECONDS;
           return (
-            <Card key={court.id} className={match.claimBy ? 'claimed' : late ? 'late' : ''}>
+            <Card key={court.id} className={late ? 'late' : ''}>
               <header><span>{court.label} · {match.final ? 'FINAL' : `R${match.round}`}</span><span>{clock(elapsed)}</span></header>
               <div className="vs">
                 <b>A</b> {teamLabel(match.a)}<br /><Muted as="span">{match.a.players?.join(' & ')}</Muted><br />
                 <b>B</b> {teamLabel(match.b)}<br /><Muted as="span">{match.b.players?.join(' & ')}</Muted>
               </div>
-              {match.claimBy > 0 && <Muted>Reported: <b>{claimer?.name}</b> won, waiting for confirm</Muted>}
               {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min since called. Forfeit whoever isn't here.</Muted>}
               <Row>
                 <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won and advances.`)}>A won</Btn>

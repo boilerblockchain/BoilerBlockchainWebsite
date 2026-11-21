@@ -218,7 +218,7 @@ const Slot = styled.div`
   font-size: ${({ theme }) => theme.fontSize.small};
   &.playing { border-color: ${({ theme }) => theme.color.accent}; }
   &.mine { background: ${({ theme }) => theme.color.accentWash}; }
-  div { padding: 0.3rem 0.5rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+  div { padding: 0.45rem 0.5rem; display: flex; justify-content: space-between; gap: 0.5rem; }
   div + div { border-top: 1px solid ${({ theme }) => theme.color.border}; }
   .won { font-weight: 700; color: ${({ theme }) => theme.color.accentBright}; }
   .lost, .tbd { color: ${({ theme }) => theme.color.textFaint}; }
@@ -226,12 +226,17 @@ const Slot = styled.div`
   small { color: ${({ theme }) => theme.color.textMuted}; padding: 0.15rem 0.5rem; display: block; }
 `;
 
-function BracketMatch({ match, mine }) {
+function BracketMatch({ match, mine, onPick }) {
+  const pickable = onPick && match.a.id && match.b.id;
   const side = (team) => {
     const className = match.status === 'done' && team.id ? (match.winner === team.id ? 'won' : 'lost') : team.id ? '' : 'tbd';
-    return <div className={className}><span>{team.name}</span>{match.noShow === team.id && <span>FF</span>}</div>;
+    return (
+      <div className={className} onClick={pickable ? () => onPick(match, team) : undefined} style={pickable ? { cursor: 'pointer' } : undefined}>
+        <span>{team.name}</span>{match.noShow === team.id && <span>FF</span>}
+      </div>
+    );
   };
-  const note = match.status === 'playing' ? `🏓 ${match.court}` : match.status === 'disputed' ? 'disputed' : '';
+  const note = match.status === 'playing' ? `🏓 ${match.court}` : '';
   return (
     <Slot className={`${match.status} ${mine ? 'mine' : ''}`}>
       {side(match.a)}{side(match.b)}
@@ -240,7 +245,7 @@ function BracketMatch({ match, mine }) {
   );
 }
 
-export function Bracket({ state, teamId }) {
+export function Bracket({ state, teamId, onPick }) {
   const rounds = state.bracket || [];
   if (rounds.length === 0) return <Muted>The bracket is drawn when registration closes. {state.teams} teams registered so far.</Muted>;
   return (
@@ -248,7 +253,7 @@ export function Bracket({ state, teamId }) {
       {rounds.map((matches, index) => (
         <div key={index}>
           <h3>{roundName(index + 1, rounds.length)}</h3>
-          {matches.map((match) => <BracketMatch key={match.id} match={match} mine={teamId && (match.a.id === teamId || match.b.id === teamId)} />)}
+          {matches.map((match) => <BracketMatch key={match.id} match={match} mine={teamId && (match.a.id === teamId || match.b.id === teamId)} onPick={onPick} />)}
         </div>
       ))}
     </BracketGrid>
