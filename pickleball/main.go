@@ -419,6 +419,9 @@ func (s *State) publicView(token string) map[string]any {
 			me["team"] = map[string]any{"view": s.teamView(team.ID), "status": team.Status, "name": team.Name}
 			if match := s.openMatch(team.ID); match != nil {
 				me["match"] = s.matchView(match)
+				if feeder := s.feeder(match); feeder != nil {
+					me["waitingOn"] = s.matchView(feeder)
+				}
 				for index, waiting := range s.upNext() {
 					if waiting.ID == match.ID {
 						me["position"] = index + 1
@@ -440,6 +443,23 @@ func (s *State) publicView(token string) map[string]any {
 		view["unknownToken"] = token
 	}
 	return view
+}
+
+// feeder is the earlier match that will decide this match's missing team.
+func (s *State) feeder(match *Match) *Match {
+	if match.Status != "pending" || match.Round == 1 || (match.TeamA != 0 && match.TeamB != 0) {
+		return nil
+	}
+	slot := match.Slot * 2
+	if match.TeamA != 0 {
+		slot++
+	}
+	for _, candidate := range s.Matches {
+		if candidate.Round == match.Round-1 && candidate.Slot == slot {
+			return candidate
+		}
+	}
+	return nil
 }
 
 func (s *State) courtMatch(courtID int) *Match {

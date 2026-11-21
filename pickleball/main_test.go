@@ -43,6 +43,15 @@ func TestBracketFlow(t *testing.T) {
 		t.Fatalf("want 3 byes, got %d", byes)
 	}
 
+	for _, match := range s.Matches {
+		if match.Round == 2 && (match.TeamA == 0) != (match.TeamB == 0) {
+			feeder := s.feeder(match)
+			waiting := match.TeamA + match.TeamB
+			if feeder == nil || feeder.Round != 1 || feeder.TeamA == waiting || feeder.TeamB == waiting || feeder.TeamA == 0 {
+				t.Fatal("a bye team waits on the real round 1 match feeding its empty side")
+			}
+		}
+	}
 	s.tick(now)
 	if len(s.upNext()) == 0 || s.liveMatchCount() != 0 {
 		t.Fatal("nothing is called while paused")
