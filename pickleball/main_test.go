@@ -1,157 +1,175 @@
 package main
 
 import (
+	"strconv"
 	"testing"
 	"time"
 )
 
-func TestCupFlow(t *testing.T) {
+func TestBracketFlow(t *testing.T) {
 	s := newState()
 	now := time.Now()
-	register := func(name, partner, org string) string {
-		t.Helper()
-		result, err := s.playerAction("register", Request{Name: name, Partner: partner, Org: org}, now)
+	tokens := map[int]string{}
+	for index := range 5 {
+		result, err := s.playerAction("register", Request{Name: "P" + strconv.Itoa(index), Partner: "Q"}, now)
 		if err != nil {
 			t.Fatal(err)
 		}
-		return result.(map[string]string)["token"]
+		token := result.(map[string]string)["token"]
+		tokens[s.playerByToken(token).TeamID] = token
 	}
-	act := func(token, path string, req Request) {
-		t.Helper()
-		req.Token = token
-		if _, err := s.playerAction(path, req, now); err != nil {
-			t.Fatal(err)
-		}
-		s.tick(now)
-	}
-	team := func(token string) *Team { return s.Teams[s.playerByToken(token).TeamID] }
-
-	if _, err := s.playerAction("register", Request{Name: "Solo", Org: "X"}, now); err == nil {
+	if _, err := s.playerAction("register", Request{Name: "Solo"}, now); err == nil {
 		t.Fatal("registration without a partner must fail")
 	}
-	joey, ana, cal := register("Joey", "Sam", "Purdue"), register("Ana", "Ben", "UT"), register("Cal", "Dee", "purdue ")
-	if len(s.Orgs) != 2 || len(s.members(team(joey).ID)) != 2 {
-		t.Fatal("pairs register together and org names match case-insensitively")
+	for range 2 {
+		s.adminAction(Request{Op: "court_add"}, now)
 	}
-
-	s.adminAction(Request{Op: "court_add"}, now)
-	s.tick(now)
-	if s.liveMatch(team(joey).ID) != nil {
-		t.Fatal("nothing starts while paused")
-	}
-	s.adminAction(Request{Op: "pause", On: false}, now)
-	s.tick(now)
-	match := s.liveMatch(team(joey).ID)
-	if match == nil || s.liveMatch(team(ana).ID) != match {
-		t.Fatal("first two registered teams should be called first")
-	}
-	if team(cal).Status != "ready" {
-		t.Fatal("third team waits in the queue")
-	}
-
-	purdue, ut := team(joey).ID, team(ana).ID
-	later := now.Add(time.Second)
-	act(joey, "report", Request{Winner: purdue})
-	if _, err := s.playerAction("report", Request{Token: ana, Winner: purdue}, later); err != nil {
+	if err := s.adminAction(Request{Op: "bracket_build"}, now); err != nil {
 		t.Fatal(err)
 	}
-	s.tick(later)
-	if match.Status != "done" || s.leaderboard()[0].Name != "Purdue" || s.leaderboard()[0].Points != 1 {
-		t.Fatalf("confirmed win should score for Purdue: %+v", s.leaderboard())
+	if len(s.Matches) != 7 {
+		t.Fatalf("5 teams -> 8-slot bracket, 7 matches; got %d", len(s.Matches))
 	}
-	next := s.liveMatch(team(cal).ID)
-	if next == nil || team(joey).Status != "ready" && team(ana).Status != "ready" {
-		t.Fatal("waiting team plays next and finished teams rejoin the back of the queue")
+	if _, err := s.playerAction("register", Request{Name: "Late", Partner: "X"}, now); err == nil {
+		t.Fatal("registration closes once the bracket is built")
 	}
-
-	act(cal, "report", Request{Winner: team(cal).ID})
-	opponent := next.TeamA + next.TeamB - team(cal).ID
-	otherToken := joey
-	if opponent == ut {
-		otherToken = ana
-	}
-	act(otherToken, "report", Request{Winner: opponent})
-	if next.Status != "disputed" || team(cal).Status != "idle" {
-		t.Fatal("conflicting reports should dispute and take both teams out of the queue")
-	}
-
-	if err := s.adminAction(Request{Op: "match_result", ID: next.ID, Winner: opponent}, now); err != nil {
-		t.Fatal(err)
-	}
-	s.tick(now)
-	if next.Status != "done" || s.liveMatch(team(cal).ID) == nil {
-		t.Fatal("admin settling a dispute scores it and puts both teams back in line")
-	}
-	points := func(org string) int {
-		for _, score := range s.leaderboard() {
-			if score.Name == org {
-				return score.Points
+	byes := 0
+	for _, match := range s.Matches {
+		if match.Round == 1 && match.Status == "done" {
+			byes++
+			if match.TeamB != 0 || s.nextMatch(match).TeamA+s.nextMatch(match).TeamB == 0 {
+				t.Fatal("bye winners advance into round 2")
 			}
 		}
-		return -1
 	}
-	before := points("Purdue")
-	if err := s.adminAction(Request{Op: "match_result", ID: match.ID, Winner: ut}, now); err != nil {
-		t.Fatal(err)
+	if byes != 3 {
+		t.Fatalf("want 3 byes, got %d", byes)
 	}
-	if points("Purdue") != before-1 || points("UT") < 1 {
-		t.Fatal("admin flipping a finished result moves the point")
-	}
-	s.adminAction(Request{Op: "match_void", ID: match.ID}, now)
-	if points("UT") != 0 && opponent != ut {
-		t.Fatal("voiding a match removes its point")
-	}
-	s.adminAction(Request{Op: "match_void", ID: s.liveMatch(team(cal).ID).ID}, now)
-	act(cal, "ready", Request{On: true})
+
 	s.tick(now)
-	stale := s.liveMatch(team(cal).ID)
-	register("Eve", "Fay", "MIT") // someone else waiting, so a rematch is avoidable
-	present, absent := stale.TeamA, stale.TeamB
-	if err := s.adminAction(Request{Op: "no_show", ID: stale.ID, Team: absent}, now); err != nil {
-		t.Fatal(err)
-	}
-	s.tick(now)
-	if stale.Status != "void" || stale.NoShow != absent || s.liveMatch(present) == nil {
-		t.Fatal("no-show voids the match and the team that showed up gets the court right back")
-	}
-	if rematch := s.liveMatch(present); rematch.TeamA == absent || rematch.TeamB == absent {
-		t.Fatal("the no-show team must not be paired straight back in")
-	}
-	for _, other := range s.queue() {
-		if other.ID != absent && other.ReadyAt.After(s.Teams[absent].ReadyAt) {
-			t.Fatal("the no-show team goes to the back of the line")
-		}
-	}
-	// A second missed call in a row takes the team out of the queue.
-	s.adminAction(Request{Op: "pause", On: true}, now)
-	if again := s.liveMatch(absent); again != nil {
-		s.adminAction(Request{Op: "match_void", ID: again.ID}, now)
-	}
-	gus := team(register("Gus", "Hal", "Columbia")).ID
-	s.adminAction(Request{Op: "court_add", Label: "Spare"}, now)
-	var spare int
-	for _, court := range s.Courts {
-		if court.Label == "Spare" {
-			spare = court.ID
-		}
-	}
-	if err := s.adminAction(Request{Op: "match_create", Court: spare, A: absent, B: gus}, now); err != nil {
-		t.Fatal(err)
-	}
-	s.adminAction(Request{Op: "no_show", ID: s.liveMatch(absent).ID, Team: absent}, now)
-	if s.Teams[absent].Status != "idle" || s.Teams[absent].NoShows != maxNoShows {
-		t.Fatal("two missed calls in a row should take a team out of the queue")
+	if len(s.upNext()) == 0 || s.liveMatchCount() != 0 {
+		t.Fatal("nothing is called while paused")
 	}
 	s.adminAction(Request{Op: "pause", On: false}, now)
 	s.tick(now)
-	if s.liveMatch(team(cal).ID) == nil {
-		s.adminAction(Request{Op: "court_add"}, now)
+	if s.liveMatchCount() != 2 {
+		t.Fatalf("both courts should be filled, got %d", s.liveMatchCount())
+	}
+	var first *Match
+	for _, match := range s.Matches {
+		if match.Status == "playing" && match.Round == 1 {
+			first = match
+		}
+	}
+	if first == nil {
+		t.Fatal("the round 1 match must be called before later rounds")
+	}
+
+	// Players report and confirm; the winner advances, the loser is out.
+	report := func(teamID, winner int, at time.Time) {
+		t.Helper()
+		if _, err := s.playerAction("report", Request{Token: tokens[teamID], Winner: winner}, at); err != nil {
+			t.Fatal(err)
+		}
+		s.tick(at)
+	}
+	report(first.TeamA, first.TeamA, now)
+	report(first.TeamB, first.TeamA, now)
+	next := s.nextMatch(first)
+	if first.Status != "done" || s.Teams[first.TeamB].Status != "out" || (next.TeamA != first.TeamA && next.TeamB != first.TeamA) {
+		t.Fatal("confirmed winner advances and loser is out")
+	}
+
+	// Reopen undoes the advance while the next match hasn't started.
+	if next.Status == "pending" {
+		if err := s.adminAction(Request{Op: "match_reopen", ID: first.ID}, now); err != nil {
+			t.Fatal(err)
+		}
+		if first.Status != "pending" || next.TeamA == first.TeamA || next.TeamB == first.TeamA {
+			t.Fatal("reopen clears the advanced team")
+		}
+		s.adminAction(Request{Op: "match_result", ID: first.ID, Winner: first.TeamB}, now)
+	}
+
+	// Disputes free the court until an admin settles them.
+	s.tick(now)
+	var live *Match
+	for _, match := range s.Matches {
+		if match.Status == "playing" {
+			live = match
+			break
+		}
+	}
+	report(live.TeamA, live.TeamA, now)
+	report(live.TeamB, live.TeamB, now)
+	if live.Status != "disputed" || s.courtMatch(live.CourtID) == live {
+		t.Fatal("conflicting reports dispute the match")
+	}
+	s.adminAction(Request{Op: "match_result", ID: live.ID, Winner: live.TeamB}, now)
+
+	// Forfeit everything that's left, then check a single champion remains.
+	for range 10 {
 		s.tick(now)
+		for _, match := range s.Matches {
+			if match.Status == "playing" {
+				if err := s.adminAction(Request{Op: "no_show", ID: match.ID, Team: match.TeamB}, now); err != nil {
+					t.Fatal(err)
+				}
+			}
+		}
 	}
-	stale = s.liveMatch(team(cal).ID)
-	act(cal, "report", Request{Winner: team(cal).ID})
-	s.tick(now.Add(autoConfirmAfter + 2*time.Second))
-	if stale.Status != "done" || stale.Winner != team(cal).ID {
-		t.Fatal("unanswered claim should auto-confirm")
+	champions := 0
+	for _, team := range s.Teams {
+		if team.Status == "champion" {
+			champions++
+		} else if team.Status != "out" {
+			t.Fatalf("team %d left as %q", team.ID, team.Status)
+		}
 	}
+	if champions != 1 {
+		t.Fatalf("want one champion, got %d", champions)
+	}
+
+	// Auto-confirm still works on a fresh bracket.
+	s.adminAction(Request{Op: "bracket_reset"}, now)
+	s.adminAction(Request{Op: "bracket_build"}, now)
+	s.adminAction(Request{Op: "pause", On: false}, now)
+	s.tick(now)
+	for _, match := range s.Matches {
+		if match.Status == "playing" {
+			report(match.TeamA, match.TeamA, now)
+			s.tick(now.Add(autoConfirmAfter + time.Second))
+			if match.Status != "done" || match.Winner != match.TeamA {
+				t.Fatal("unanswered claim should auto-confirm")
+			}
+			break
+		}
+	}
+}
+
+func TestBracketSizes(t *testing.T) {
+	for teams := 2; teams <= 33; teams++ {
+		s := newState()
+		for index := range teams {
+			s.playerAction("register", Request{Name: "P" + strconv.Itoa(index), Partner: "Q"}, time.Now())
+		}
+		if err := s.buildBracket(time.Now()); err != nil {
+			t.Fatal(err)
+		}
+		for _, match := range s.Matches {
+			if match.Round == 1 && match.TeamA == 0 {
+				t.Fatalf("%d teams: bye vs bye", teams)
+			}
+		}
+	}
+}
+
+func (s *State) liveMatchCount() int {
+	count := 0
+	for _, match := range s.Matches {
+		if match.Status == "playing" {
+			count++
+		}
+	}
+	return count
 }

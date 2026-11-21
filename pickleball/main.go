@@ -1,6 +1,6 @@
-// Pickleball Cup API: registration, teams, auto court queue, org leaderboard.
-// All state lives in memory behind one mutex and is snapshotted to a JSON file
-// after every change.
+// Pickleball Cup API: pair registration, then a single-elimination bracket
+// whose matches are called to the next free court. All state lives in memory
+// behind one mutex and is snapshotted to a JSON file after every change.
 package main
 
 import (
@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	mrand "math/rand/v2"
 	"net/http"
 	"os"
 	"sort"
@@ -20,6 +21,7 @@ import (
 
 // ponytail: one global lock + full JSON rewrite per mutation; fine for a few hundred players.
 
+// Org is legacy: kept so old snapshots load untouched; the bracket ignores it.
 type Org struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -35,12 +37,10 @@ type Player struct {
 }
 
 type Team struct {
-	ID      int       `json:"id"`
-	Name    string    `json:"name"`
-	OrgID   int       `json:"orgId"`
-	Status  string    `json:"status"` // idle | ready | playing
-	ReadyAt time.Time `json:"readyAt"`
-	NoShows int       `json:"noShows"` // consecutive missed court calls
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	OrgID  int    `json:"orgId"`
+	Status string `json:"status"` // ready | playing | out | champion
 }
 
 type Court struct {
@@ -49,20 +49,24 @@ type Court struct {
 	Active bool   `json:"active"`
 }
 
+// Match is one bracket slot. Round 1 is the first round; the winner of
+// (round, slot) moves to (round+1, slot/2), side A if slot is even. TeamA or
+// TeamB of 0 means TBD, or a bye in round 1.
 type Match struct {
 	ID          int       `json:"id"`
+	Round       int       `json:"round"`
+	Slot        int       `json:"slot"`
 	CourtID     int       `json:"courtId"`
 	TeamA       int       `json:"teamA"`
 	TeamB       int       `json:"teamB"`
-	Status      string    `json:"status"` // playing | done | disputed | void
+	Status      string    `json:"status"` // pending | playing | done | disputed
 	Winner      int       `json:"winner"`
-	WinnerOrg   int       `json:"winnerOrg"`
 	ClaimBy     int       `json:"claimBy"`
 	ClaimWinner int       `json:"claimWinner"`
 	ClaimAt     time.Time `json:"claimAt"`
 	Final       bool      `json:"final"`
-	NoShow      int       `json:"noShow"`
-	Created     time.Time `json:"created"`
+	NoShow      int       `json:"noShow"`  // team that forfeited
+	Created     time.Time `json:"created"` // when it was called to a court
 	Finished    time.Time `json:"finished"`
 }
 
@@ -85,19 +89,19 @@ type Info struct {
 	CupStart     time.Time `json:"cupStart"`
 }
 
-var defaultInfo = Info{
-	Schedule: "6:00 PM CST · Open play\n7:00 PM CST · Cup begins\nWhitaker Courts, 4901 Guadalupe St\nPaddles, snacks and drinks provided",
-	Rules: `Boiler Blockchain and Meteora are taking over 8 courts for a night of doubles. Who has the best pickleball team at UBC?
+const defaultRules = `Boiler Blockchain and Meteora are taking over 8 courts for a single-elimination doubles bracket. Who has the best pickleball team at UBC?
 
-• Register your pair once on this page and pick the org you're playing for. Mixed-org pairs are fine, just pick one.
-• You go straight into the queue. When it's your turn, this page tells you which court to go to.
-• Be on your court within 3 minutes of being called, or you get sent to the back of the queue. Miss 2 calls in a row and you're taken out of the queue (tap "Rejoin queue" to come back).
+• Register your pair once on this page before the bracket is drawn. Late pairs can't be added once it's set.
+• The bracket is drawn at random. Lose once and you're out; win and you move on.
+• When your match is up, this page tells you which court to go to. Be there within 3 minutes or an organizer can forfeit you.
 • Every game is 1 game to 11, win by 2.
 • Report the result right after your game: the winners tap "We won", the other team confirms. Disagreements go to an organizer.
-• Every win is 1 point for your org on the Meteora leaderboard. You rejoin the queue automatically after each game. Taking a break or heading out? Tap "Leave queue" so courts don't wait on you.
-• At the end of the night the top two orgs play the final (1 game to 11, win by 2).
-• Prizes: 🥇 the final winners get a pickleball set, 🥈 the runners-up get a poker set.
-• All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`,
+• Prizes: 🥇 the champions get a pickleball set, 🥈 the runners-up get a poker set.
+• All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`
+
+var defaultInfo = Info{
+	Schedule: "6:00 PM CST · Open play\n7:00 PM CST · Cup begins\nWhitaker Courts, 4901 Guadalupe St\nPaddles, snacks and drinks provided",
+	Rules:    defaultRules,
 	CupStart: time.Date(2026, 11, 21, 1, 0, 0, 0, time.UTC),
 }
 
@@ -156,35 +160,19 @@ func (s *State) members(teamID int) []*Player {
 	return list
 }
 
-func (s *State) orgByName(name string) *Org {
-	for _, org := range s.Orgs {
-		if strings.EqualFold(org.Name, name) {
-			return org
+func (s *State) liveMatch(teamID int) *Match {
+	for _, match := range s.Matches {
+		if match.Status == "playing" && (match.TeamA == teamID || match.TeamB == teamID) {
+			return match
 		}
 	}
 	return nil
 }
 
-// resolveOrg takes an org id or a name; unknown names create the org.
-func (s *State) resolveOrg(orgID int, name string) (int, error) {
-	if org, ok := s.Orgs[orgID]; ok {
-		return org.ID, nil
-	}
-	name = strings.TrimSpace(name)
-	if name == "" || len(name) > 60 {
-		return 0, fail("pick an org (1-60 characters)")
-	}
-	if org := s.orgByName(name); org != nil {
-		return org.ID, nil
-	}
-	org := &Org{ID: s.id(), Name: name}
-	s.Orgs[org.ID] = org
-	return org.ID, nil
-}
-
-func (s *State) liveMatch(teamID int) *Match {
+// openMatch is the team's unfinished bracket match, if any.
+func (s *State) openMatch(teamID int) *Match {
 	for _, match := range s.Matches {
-		if match.Status == "playing" && (match.TeamA == teamID || match.TeamB == teamID) {
+		if match.Status != "done" && (match.TeamA == teamID || match.TeamB == teamID) {
 			return match
 		}
 	}
@@ -199,43 +187,101 @@ func (s *State) setTeams(match *Match, status string) {
 	}
 }
 
+func (s *State) nextMatch(match *Match) *Match {
+	for _, next := range s.Matches {
+		if next.Round == match.Round+1 && next.Slot == match.Slot/2 {
+			return next
+		}
+	}
+	return nil
+}
+
+// placeWinner writes teamID into the side of the next match this match feeds.
+func (s *State) placeWinner(match *Match, teamID int) {
+	if next := s.nextMatch(match); next != nil {
+		if match.Slot%2 == 0 {
+			next.TeamA = teamID
+		} else {
+			next.TeamB = teamID
+		}
+	}
+}
+
 func (s *State) finish(match *Match, winner int, now time.Time) {
-	for _, teamID := range []int{match.TeamA, match.TeamB} {
-		team, ok := s.Teams[teamID]
-		if !ok {
-			continue
-		}
-		team.NoShows = 0
-		// Back of the line after a live match, or after an admin settles a
-		// dispute (disputes park both teams). Never touch a team that has
-		// already moved on to another match.
-		requeue := !match.Final && (match.Status == "playing" || match.Status == "disputed" && team.Status == "idle")
-		if requeue {
-			team.Status, team.ReadyAt = "ready", now
-		} else if match.Status == "playing" {
-			team.Status = "idle"
-		}
-	}
+	loser := match.TeamA + match.TeamB - winner
 	match.Status, match.Winner, match.Finished = "done", winner, now
-	if team, ok := s.Teams[winner]; ok {
-		match.WinnerOrg = team.OrgID
+	if team, ok := s.Teams[loser]; ok {
+		team.Status = "out"
 	}
-}
-
-func (s *State) timesPlayed(a, b int) int {
-	count := 0
-	for _, match := range s.Matches {
-		if (match.TeamA == a && match.TeamB == b) || (match.TeamA == b && match.TeamB == a) {
-			count++
+	if team, ok := s.Teams[winner]; ok {
+		team.Status = "ready"
+		if match.Final {
+			team.Status = "champion"
 		}
 	}
-	return count
+	s.placeWinner(match, winner)
 }
 
-// maxNoShows consecutive missed calls takes a team out of the queue.
-const maxNoShows = 2
+// buildBracket seeds every complete pair at random into a power-of-two
+// bracket. Byes go to the top seeds (standard seed order), so two byes never
+// meet, and they resolve immediately.
+func (s *State) buildBracket(now time.Time) error {
+	if len(s.Matches) > 0 {
+		return fail("bracket already built; reset it first")
+	}
+	var teams []int
+	for _, team := range s.Teams {
+		if len(s.members(team.ID)) == 2 {
+			teams = append(teams, team.ID)
+		}
+	}
+	if len(teams) < 2 {
+		return fail("need at least 2 teams")
+	}
+	mrand.Shuffle(len(teams), func(i, j int) { teams[i], teams[j] = teams[j], teams[i] })
+	order := []int{1}
+	for len(order) < len(teams) {
+		size := len(order) * 2
+		var next []int
+		for _, seed := range order {
+			next = append(next, seed, size+1-seed)
+		}
+		order = next
+	}
+	seedTeam := func(seed int) int {
+		if seed > len(teams) {
+			return 0
+		}
+		return teams[seed-1]
+	}
+	rounds := 0
+	for size := len(order); size > 1; size /= 2 {
+		rounds++
+	}
+	var byes []*Match
+	for round := 1; round <= rounds; round++ {
+		for slot := 0; slot < len(order)>>round; slot++ {
+			match := &Match{ID: s.id(), Round: round, Slot: slot, Status: "pending", Final: round == rounds}
+			if round == 1 {
+				match.TeamA, match.TeamB = seedTeam(order[2*slot]), seedTeam(order[2*slot+1])
+				if match.TeamB == 0 {
+					byes = append(byes, match)
+				}
+			}
+			s.Matches[match.ID] = match
+		}
+	}
+	for _, teamID := range teams {
+		s.Teams[teamID].Status = "ready"
+	}
+	for _, match := range byes {
+		s.finish(match, match.TeamA, now)
+	}
+	return nil
+}
 
-// tick auto-confirms stale claims, then fills free courts from the ready queue.
+// tick auto-confirms stale claims, then calls the earliest ready bracket
+// matches to free courts.
 func (s *State) tick(now time.Time) {
 	for _, match := range s.Matches {
 		if match.Status == "playing" && match.ClaimBy != 0 && now.Sub(match.ClaimAt) > autoConfirmAfter {
@@ -251,49 +297,40 @@ func (s *State) tick(now time.Time) {
 			busy[match.CourtID] = true
 		}
 	}
+	waiting := s.upNext()
 	for _, court := range sortedCourts(s) {
+		if len(waiting) == 0 {
+			return
+		}
 		if !court.Active || busy[court.ID] {
 			continue
 		}
-		queue := s.queue()
-		if len(queue) < 2 {
-			return
-		}
-		// Opponent comes from the next few in line only, so nobody at the back
-		// jumps the queue just because they haven't met this team yet.
-		first, rest := queue[0], queue[1:min(len(queue), 5)]
-		sort.SliceStable(rest, func(i, j int) bool {
-			playedI, playedJ := s.timesPlayed(first.ID, rest[i].ID), s.timesPlayed(first.ID, rest[j].ID)
-			if playedI != playedJ {
-				return playedI < playedJ
-			}
-			return rest[i].OrgID != first.OrgID && rest[j].OrgID == first.OrgID
-		})
-		s.startMatch(court.ID, first.ID, rest[0].ID, false, now)
+		match := waiting[0]
+		waiting = waiting[1:]
+		match.CourtID, match.Status, match.Created = court.ID, "playing", now
+		s.setTeams(match, "playing")
 	}
 }
 
-func (s *State) startMatch(courtID, a, b int, final bool, now time.Time) *Match {
-	match := &Match{ID: s.id(), CourtID: courtID, TeamA: a, TeamB: b, Status: "playing", Final: final, Created: now}
-	s.Matches[match.ID] = match
-	s.setTeams(match, "playing")
-	return match
-}
-
-func (s *State) queue() []*Team {
-	var list []*Team
-	for _, team := range s.Teams {
-		if team.Status == "ready" {
-			list = append(list, team)
+// upNext lists pending matches with both teams known, earliest round first.
+func (s *State) upNext() []*Match {
+	var list []*Match
+	for _, match := range s.Matches {
+		if match.Status == "pending" && match.TeamA != 0 && match.TeamB != 0 {
+			list = append(list, match)
 		}
 	}
-	sort.Slice(list, func(i, j int) bool {
-		if !list[i].ReadyAt.Equal(list[j].ReadyAt) {
-			return list[i].ReadyAt.Before(list[j].ReadyAt)
-		}
-		return list[i].ID < list[j].ID
-	})
+	sortBracket(list)
 	return list
+}
+
+func sortBracket(list []*Match) {
+	sort.Slice(list, func(i, j int) bool {
+		if list[i].Round != list[j].Round {
+			return list[i].Round < list[j].Round
+		}
+		return list[i].Slot < list[j].Slot
+	})
 }
 
 func sortedCourts(s *State) []*Court {
@@ -310,12 +347,13 @@ func sortedCourts(s *State) []*Court {
 type TeamView struct {
 	ID      int      `json:"id"`
 	Name    string   `json:"name"`
-	Org     string   `json:"org"`
 	Players []string `json:"players"`
 }
 
 type MatchView struct {
 	ID          int       `json:"id"`
+	Round       int       `json:"round"`
+	Slot        int       `json:"slot"`
 	Court       string    `json:"court"`
 	A           TeamView  `json:"a"`
 	B           TeamView  `json:"b"`
@@ -335,9 +373,6 @@ func (s *State) teamView(teamID int) TeamView {
 		return TeamView{ID: teamID, Name: "(removed team)"}
 	}
 	view := TeamView{ID: team.ID, Name: team.Name}
-	if org, ok := s.Orgs[team.OrgID]; ok {
-		view.Org = org.Name
-	}
 	for _, player := range s.members(team.ID) {
 		view.Players = append(view.Players, player.Name)
 	}
@@ -348,121 +383,70 @@ func (s *State) teamView(teamID int) TeamView {
 }
 
 func (s *State) matchView(match *Match) MatchView {
-	view := MatchView{ID: match.ID, A: s.teamView(match.TeamA), B: s.teamView(match.TeamB), Status: match.Status,
-		Winner: match.Winner, ClaimBy: match.ClaimBy, ClaimWinner: match.ClaimWinner, Final: match.Final, NoShow: match.NoShow,
-		Created: match.Created, Finished: match.Finished}
+	view := MatchView{ID: match.ID, Round: match.Round, Slot: match.Slot, A: s.teamView(match.TeamA), B: s.teamView(match.TeamB),
+		Status: match.Status, Winner: match.Winner, ClaimBy: match.ClaimBy, ClaimWinner: match.ClaimWinner,
+		Final: match.Final, NoShow: match.NoShow, Created: match.Created, Finished: match.Finished}
+	for _, side := range []*TeamView{&view.A, &view.B} {
+		if side.ID == 0 {
+			side.Name = "TBD"
+			if match.Round == 1 {
+				side.Name = "BYE"
+			}
+		}
+	}
 	if court, ok := s.Courts[match.CourtID]; ok {
 		view.Court = court.Label
 	}
 	return view
 }
 
-type OrgScore struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Points int    `json:"points"`
-	Played int    `json:"played"`
-	Teams  int    `json:"teams"`
-}
-
-func (s *State) leaderboard() []OrgScore {
-	scores := map[int]*OrgScore{}
-	for _, org := range s.Orgs {
-		scores[org.ID] = &OrgScore{ID: org.ID, Name: org.Name}
-	}
-	for _, team := range s.Teams {
-		if score, ok := scores[team.OrgID]; ok {
-			score.Teams++
-		}
-	}
-	for _, match := range s.Matches {
-		if match.Status != "done" || match.Final {
-			continue
-		}
-		if score, ok := scores[match.WinnerOrg]; ok {
-			score.Points++
-		}
-		for _, teamID := range []int{match.TeamA, match.TeamB} {
-			if team, ok := s.Teams[teamID]; ok {
-				if score, ok := scores[team.OrgID]; ok {
-					score.Played++
-				}
-			}
-		}
-	}
-	list := []OrgScore{}
-	for _, score := range scores {
-		if score.Teams > 0 || score.Points > 0 {
-			list = append(list, *score)
-		}
-	}
-	sort.Slice(list, func(i, j int) bool {
-		if list[i].Points != list[j].Points {
-			return list[i].Points > list[j].Points
-		}
-		return list[i].Name < list[j].Name
-	})
-	return list
-}
-
-func (s *State) matchesSorted(filter func(*Match) bool) []*Match {
-	var list []*Match
-	for _, match := range s.Matches {
-		if filter(match) {
-			list = append(list, match)
-		}
-	}
-	sort.Slice(list, func(i, j int) bool { return list[i].ID > list[j].ID })
-	return list
-}
-
 func (s *State) publicView(token string) map[string]any {
 	courts := []map[string]any{}
 	for _, court := range sortedCourts(s) {
 		entry := map[string]any{"id": court.ID, "label": court.Label, "active": court.Active}
-		for _, match := range s.Matches {
-			if match.CourtID == court.ID && match.Status == "playing" {
-				entry["match"] = s.matchView(match)
-			}
+		if match := s.courtMatch(court.ID); match != nil {
+			entry["match"] = s.matchView(match)
 		}
 		courts = append(courts, entry)
 	}
-	queue := []TeamView{}
-	for _, team := range s.queue() {
-		queue = append(queue, s.teamView(team.ID))
+	var all []*Match
+	for _, match := range s.Matches {
+		all = append(all, match)
 	}
-	recent := []MatchView{}
-	for _, match := range s.matchesSorted(func(m *Match) bool { return m.Status == "done" && !m.Final }) {
-		if len(recent) == 12 {
-			break
+	sortBracket(all)
+	bracket := [][]MatchView{}
+	for _, match := range all {
+		if match.Round > len(bracket) {
+			bracket = append(bracket, []MatchView{})
 		}
-		recent = append(recent, s.matchView(match))
+		bracket[match.Round-1] = append(bracket[match.Round-1], s.matchView(match))
 	}
-	var final any
-	if finals := s.matchesSorted(func(m *Match) bool { return m.Final && m.Status != "void" }); len(finals) > 0 {
-		final = s.matchView(finals[0])
+	upNext := []MatchView{}
+	for _, match := range s.upNext() {
+		upNext = append(upNext, s.matchView(match))
 	}
-	orgs := []Org{}
-	for _, org := range s.Orgs {
-		orgs = append(orgs, *org)
-	}
-	sort.Slice(orgs, func(i, j int) bool { return strings.ToLower(orgs[i].Name) < strings.ToLower(orgs[j].Name) })
-	view := map[string]any{"paused": s.Paused, "courts": courts, "queue": queue, "recent": recent,
-		"final": final, "leaderboard": s.leaderboard(), "orgs": orgs,
+	view := map[string]any{"paused": s.Paused, "courts": courts, "bracket": bracket, "upNext": upNext,
 		"players": len(s.Players), "teams": len(s.Teams), "info": s.Info}
 	if player := s.playerByToken(token); player != nil {
-		me := map[string]any{"id": player.ID, "name": player.Name, "orgId": player.OrgID}
+		me := map[string]any{"id": player.ID, "name": player.Name}
 		if team, ok := s.Teams[player.TeamID]; ok {
-			me["team"] = map[string]any{"view": s.teamView(team.ID), "status": team.Status,
-				"orgId": team.OrgID, "name": team.Name, "position": s.queuePosition(team.ID), "noShows": team.NoShows}
-			if match := s.liveMatch(team.ID); match != nil {
+			me["team"] = map[string]any{"view": s.teamView(team.ID), "status": team.Status, "name": team.Name}
+			if match := s.openMatch(team.ID); match != nil {
 				me["match"] = s.matchView(match)
+				for index, waiting := range s.upNext() {
+					if waiting.ID == match.ID {
+						me["position"] = index + 1
+					}
+				}
 			}
-			for _, match := range s.matchesSorted(func(m *Match) bool {
-				return (m.TeamA == team.ID || m.TeamB == team.ID) && m.Status != "playing"
-			}) {
-				me["last"] = s.matchView(match)
-				break
+			var last *Match
+			for _, match := range all {
+				if match.Status == "done" && match.TeamA != 0 && match.TeamB != 0 && (match.TeamA == team.ID || match.TeamB == team.ID) {
+					last = match
+				}
+			}
+			if last != nil {
+				me["last"] = s.matchView(last)
 			}
 		}
 		view["me"] = me
@@ -472,13 +456,13 @@ func (s *State) publicView(token string) map[string]any {
 	return view
 }
 
-func (s *State) queuePosition(teamID int) int {
-	for index, team := range s.queue() {
-		if team.ID == teamID {
-			return index + 1
+func (s *State) courtMatch(courtID int) *Match {
+	for _, match := range s.Matches {
+		if match.CourtID == courtID && match.Status == "playing" {
+			return match
 		}
 	}
-	return 0
+	return nil
 }
 
 // ---------- player actions ----------
@@ -487,20 +471,12 @@ type Request struct {
 	Token    string `json:"token"`
 	Op       string `json:"op"`
 	ID       int    `json:"id"`
-	To       int    `json:"to"`
 	Name     string `json:"name"`
 	Label    string `json:"label"`
-	Org      string `json:"org"`
-	OrgID    int    `json:"orgId"`
 	Partner  string `json:"partner"`
 	TeamName string `json:"teamName"`
 	On       bool   `json:"on"`
 	Winner   int    `json:"winner"`
-	Court    int    `json:"court"`
-	A        int    `json:"a"`
-	B        int    `json:"b"`
-	Final    bool   `json:"final"`
-	Status   string `json:"status"`
 	Info     *Info  `json:"info"`
 	Team     int    `json:"team"`
 }
@@ -513,9 +489,12 @@ func cleanName(name string) (string, error) {
 	return name, nil
 }
 
-// register creates both players of a pair and queues the team. The partner
-// gets no separate login: the captain shares their link.
+// register creates both players of a pair. The partner gets no separate
+// login: the captain shares their link.
 func (s *State) register(req Request, now time.Time) (any, error) {
+	if len(s.Matches) > 0 {
+		return nil, fail("the bracket is set, registration is closed. Find an organizer")
+	}
 	name, err := cleanName(req.Name)
 	if err != nil {
 		return nil, err
@@ -528,14 +507,10 @@ func (s *State) register(req Request, now time.Time) (any, error) {
 	if len(teamName) > 40 {
 		return nil, fail("team name max 40 characters")
 	}
-	orgID, err := s.resolveOrg(req.OrgID, req.Org)
-	if err != nil {
-		return nil, err
-	}
-	team := &Team{ID: s.id(), Name: teamName, OrgID: orgID, Status: "ready", ReadyAt: now}
+	team := &Team{ID: s.id(), Name: teamName, Status: "ready"}
 	s.Teams[team.ID] = team
-	captain := &Player{ID: s.id(), Token: randomHex(16), Name: name, OrgID: orgID, TeamID: team.ID, Created: now}
-	second := &Player{ID: s.id(), Token: randomHex(16), Name: partner, OrgID: orgID, TeamID: team.ID, Created: now}
+	captain := &Player{ID: s.id(), Token: randomHex(16), Name: name, TeamID: team.ID, Created: now}
+	second := &Player{ID: s.id(), Token: randomHex(16), Name: partner, TeamID: team.ID, Created: now}
 	s.Players[captain.ID], s.Players[second.ID] = captain, second
 	return map[string]string{"token": captain.Token}, nil
 }
@@ -549,50 +524,30 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 		return nil, fail("not registered")
 	}
 	team := s.Teams[player.TeamID]
+	if team == nil {
+		return nil, fail("you're not on a team")
+	}
 	switch path {
 	case "team/update":
-		if team == nil {
-			return nil, fail("you're not on a team")
-		}
 		name := strings.Join(strings.Fields(req.Name), " ")
 		if len(name) > 40 {
 			return nil, fail("team name max 40 characters")
 		}
-		orgID, err := s.resolveOrg(req.OrgID, req.Org)
-		if err != nil {
-			return nil, err
-		}
-		team.Name, team.OrgID = name, orgID
-	case "ready":
-		if team == nil {
-			return nil, fail("you need a team")
-		}
-		if team.Status == "playing" {
-			break // stale screen: they were just called to a court
-		}
-		if req.On && len(s.members(team.ID)) < 2 {
-			return nil, fail("you need a teammate first")
-		}
-		if req.On && team.Status != "ready" {
-			team.Status, team.ReadyAt, team.NoShows = "ready", now, 0
-		} else if !req.On {
-			team.Status = "idle"
-		}
+		team.Name = name
 	case "report":
-		if team == nil {
-			return nil, fail("you're not on a team")
-		}
 		match := s.liveMatch(team.ID)
 		if match == nil {
 			// Stale screen: the other team already confirmed. Fine unless
 			// they are disagreeing with what was recorded.
-			for _, last := range s.matchesSorted(func(m *Match) bool {
-				return (m.TeamA == team.ID || m.TeamB == team.ID) && m.Status != "void"
-			}) {
-				if last.Status == "done" && last.Winner != req.Winner {
-					return nil, fail("that match was already recorded the other way; find an organizer")
+			var last *Match
+			for _, candidate := range s.Matches {
+				if candidate.Status == "done" && (candidate.TeamA == team.ID || candidate.TeamB == team.ID) &&
+					(last == nil || candidate.Round > last.Round) {
+					last = candidate
 				}
-				break
+			}
+			if last != nil && last.Winner != req.Winner {
+				return nil, fail("that match was already recorded the other way; find an organizer")
 			}
 			break
 		}
@@ -605,8 +560,8 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 		case match.ClaimWinner == req.Winner:
 			s.finish(match, req.Winner, now)
 		default:
-			match.Status = "disputed"
-			s.setTeams(match, "idle")
+			match.Status = "disputed" // frees the court; an admin settles it
+			s.setTeams(match, "ready")
 		}
 	default:
 		return nil, fail("unknown action")
@@ -642,73 +597,54 @@ func (s *State) adminAction(req Request, now time.Time) error {
 		}
 		court.Active = req.On
 	case "court_remove":
-		for _, match := range s.Matches {
-			if match.CourtID == req.ID && match.Status == "playing" {
-				return fail("court has a live match")
-			}
+		if s.courtMatch(req.ID) != nil {
+			return fail("court has a live match")
 		}
 		delete(s.Courts, req.ID)
-	case "match_create":
-		if _, ok := s.Courts[req.Court]; !ok {
-			return fail("pick a court")
+	case "bracket_build":
+		return s.buildBracket(now)
+	case "bracket_reset":
+		s.Matches = map[int]*Match{}
+		for _, team := range s.Teams {
+			team.Status = "ready"
 		}
-		if req.A == req.B || s.Teams[req.A] == nil || s.Teams[req.B] == nil {
-			return fail("pick two different teams")
-		}
-		for _, match := range s.Matches {
-			if match.Status == "playing" && match.CourtID == req.Court {
-				return fail("that court is busy")
-			}
-		}
-		if s.liveMatch(req.A) != nil || s.liveMatch(req.B) != nil {
-			return fail("a team is already playing")
-		}
-		s.startMatch(req.Court, req.A, req.B, req.Final, now)
+		s.Paused = true
 	case "match_result":
 		match, ok := s.Matches[req.ID]
-		if !ok || (req.Winner != match.TeamA && req.Winner != match.TeamB) {
+		if !ok || match.TeamA == 0 || match.TeamB == 0 || (req.Winner != match.TeamA && req.Winner != match.TeamB) {
 			return fail("bad match or winner")
+		}
+		if next := s.nextMatch(match); match.Status == "done" && match.Winner != req.Winner && next != nil && next.Status != "pending" {
+			return fail("the next round already started; reopen that match first")
 		}
 		s.finish(match, req.Winner, now)
 	case "no_show":
-		// The absent team goes to the back of the line, the team that showed
-		// up goes to the front, and tick() refills the court.
+		// Forfeit: the team that didn't show is out, the other advances.
 		match, ok := s.Matches[req.ID]
-		if !ok || match.Status != "playing" || (req.Team != match.TeamA && req.Team != match.TeamB) {
-			return fail("pick a live match and the team that didn't show")
+		if !ok || match.Status == "done" || match.TeamA == 0 || match.TeamB == 0 || (req.Team != match.TeamA && req.Team != match.TeamB) {
+			return fail("pick an open match and the team that didn't show")
 		}
-		match.Status, match.NoShow, match.Finished = "void", req.Team, now
-		for _, teamID := range []int{match.TeamA, match.TeamB} {
-			team, ok := s.Teams[teamID]
-			if !ok {
-				continue
-			}
-			team.Status, team.ReadyAt = "ready", now
-			if teamID != req.Team {
-				team.ReadyAt = time.Time{}
-			} else if team.NoShows++; team.NoShows >= maxNoShows {
-				team.Status = "idle" // probably went home; they can tap Rejoin
-			}
-		}
-	case "match_void":
+		match.NoShow = req.Team
+		s.finish(match, match.TeamA+match.TeamB-req.Team, now)
+	case "match_reopen":
+		// Back to pending so it gets called again (replay or undo a result).
 		match, ok := s.Matches[req.ID]
-		if !ok {
-			return fail("no such match")
+		if !ok || match.TeamA == 0 || match.TeamB == 0 {
+			return fail("can't reopen that match")
 		}
-		if match.Status == "playing" {
-			s.setTeams(match, "idle")
+		if next := s.nextMatch(match); match.Status == "done" && next != nil {
+			if next.Status != "pending" {
+				return fail("the next round already started; reopen that match first")
+			}
+			s.placeWinner(match, 0)
 		}
-		match.Status = "void"
-	case "team_status":
-		team, ok := s.Teams[req.ID]
-		if !ok || team.Status == "playing" || (req.Status != "idle" && req.Status != "ready") {
-			return fail("can't change that team")
-		}
-		team.Status, team.ReadyAt = req.Status, now
+		*match = Match{ID: match.ID, Round: match.Round, Slot: match.Slot, TeamA: match.TeamA, TeamB: match.TeamB,
+			Final: match.Final, Status: "pending"}
+		s.setTeams(match, "ready")
 	case "team_remove":
 		team, ok := s.Teams[req.ID]
-		if !ok || team.Status == "playing" {
-			return fail("can't remove a team mid-match")
+		if !ok || s.openMatch(team.ID) != nil {
+			return fail("team is still in the bracket; forfeit their match first")
 		}
 		for _, player := range s.members(team.ID) {
 			delete(s.Players, player.ID)
@@ -720,46 +656,15 @@ func (s *State) adminAction(req Request, now time.Time) error {
 			return fail("no such player")
 		}
 		if team, ok := s.Teams[player.TeamID]; ok {
-			if team.Status == "playing" {
-				return fail("player is mid-match")
+			if s.openMatch(team.ID) != nil {
+				return fail("player's team is still in the bracket")
 			}
-			team.Status = "idle"
 			player.TeamID = 0
 			if len(s.members(team.ID)) == 0 {
 				delete(s.Teams, team.ID)
 			}
 		}
 		delete(s.Players, player.ID)
-	case "org_rename":
-		org, ok := s.Orgs[req.ID]
-		name := strings.TrimSpace(req.Name)
-		if !ok || name == "" {
-			return fail("bad org or name")
-		}
-		org.Name = name
-	case "org_add":
-		_, err := s.resolveOrg(0, req.Name)
-		return err
-	case "org_merge":
-		if s.Orgs[req.ID] == nil || s.Orgs[req.To] == nil || req.ID == req.To {
-			return fail("pick two different orgs")
-		}
-		for _, player := range s.Players {
-			if player.OrgID == req.ID {
-				player.OrgID = req.To
-			}
-		}
-		for _, team := range s.Teams {
-			if team.OrgID == req.ID {
-				team.OrgID = req.To
-			}
-		}
-		for _, match := range s.Matches {
-			if match.WinnerOrg == req.ID {
-				match.WinnerOrg = req.To
-			}
-		}
-		delete(s.Orgs, req.ID)
 	default:
 		return fail("unknown op")
 	}
@@ -771,22 +676,14 @@ func (s *State) adminView() map[string]any {
 	teams := []map[string]any{}
 	for _, team := range s.Teams {
 		teams = append(teams, map[string]any{"view": s.teamView(team.ID), "status": team.Status,
-			"orgId": team.OrgID, "size": len(s.members(team.ID)), "readyAt": team.ReadyAt})
-	}
-	matches := []MatchView{}
-	for _, match := range s.matchesSorted(func(*Match) bool { return true }) {
-		matches = append(matches, s.matchView(match))
+			"size": len(s.members(team.ID))})
 	}
 	players := []map[string]any{}
 	for _, player := range s.Players {
-		org := ""
-		if found, ok := s.Orgs[player.OrgID]; ok {
-			org = found.Name
-		}
-		players = append(players, map[string]any{"id": player.ID, "name": player.Name, "org": org,
+		players = append(players, map[string]any{"id": player.ID, "name": player.Name,
 			"teamId": player.TeamID, "token": player.Token})
 	}
-	view["allTeams"], view["matches"], view["allPlayers"] = teams, matches, players
+	view["allTeams"], view["allPlayers"] = teams, players
 	return view
 }
 
@@ -813,7 +710,9 @@ func reply(writer http.ResponseWriter, status int, body any) {
 	json.NewEncoder(writer).Encode(body)
 }
 
-func mutate(writer http.ResponseWriter, action func(now time.Time) (any, error)) {
+// mutate runs action under the lock, refills courts and saves. If view is set,
+// the response is view() taken after that, so the client skips a refetch.
+func mutate(writer http.ResponseWriter, action func(now time.Time) (any, error), view func() any) {
 	mu.Lock()
 	defer mu.Unlock()
 	now := time.Now()
@@ -828,6 +727,9 @@ func mutate(writer http.ResponseWriter, action func(now time.Time) (any, error))
 	}
 	st.tick(now)
 	save()
+	if view != nil {
+		result = view()
+	}
 	reply(writer, http.StatusOK, result)
 }
 
@@ -860,7 +762,7 @@ func handler() http.Handler {
 				return nil, err
 			}
 			return st.playerAction(request.PathValue("action"), req, now)
-		})
+		}, nil)
 	})
 	mux.HandleFunc("GET /admin/state", func(writer http.ResponseWriter, request *http.Request) {
 		if !isAdmin(request) {
@@ -882,8 +784,8 @@ func handler() http.Handler {
 			if err != nil {
 				return nil, err
 			}
-			return map[string]bool{"ok": true}, st.adminAction(req, now)
-		})
+			return nil, st.adminAction(req, now)
+		}, func() any { return st.adminView() })
 	})
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -910,8 +812,9 @@ func main() {
 	if st.Info == (Info{}) {
 		st.Info = defaultInfo
 	}
-	if st.Info.Rules == "" {
-		st.Info.Rules = defaultInfo.Rules
+	// Swap the old queue-era default rules for the bracket ones; custom rules stay.
+	if st.Info.Rules == "" || strings.Contains(st.Info.Rules, "Meteora leaderboard") {
+		st.Info.Rules = defaultRules
 	}
 	go func() {
 		for range time.Tick(10 * time.Second) {

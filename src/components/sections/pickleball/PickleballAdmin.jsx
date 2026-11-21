@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import {
   call, usePoll, LiveView, teamLabel, useNow, clock, SHOW_UP_SECONDS,
-  Page, Title, Muted, Box, Row, Btn, Input, Select, Error,
+  Page, Title, Muted, Box, Row, Btn, Input, Error,
 } from './shared';
 
 const KEY = 'bb_pickleball_admin';
@@ -35,7 +35,7 @@ const Table = styled.table`
 export default function PickleballAdmin() {
   const [token, setToken] = useState(() => localStorage.getItem(KEY) || '');
   const [draft, setDraft] = useState('');
-  const [state, pollError, refresh] = usePoll(token ? '/admin/state' : null, token);
+  const [state, pollError, , setState] = usePoll(token ? '/admin/state' : null, token, 1500);
   const [error, setError] = useState('');
 
   const [notice, setNotice] = useState('');
@@ -43,8 +43,8 @@ export default function PickleballAdmin() {
     setError('');
     setNotice('');
     try {
-      await call('/admin', { op: name, ...body }, token);
-      refresh();
+      // The server answers with the updated board, so no refetch round trip.
+      setState(await call('/admin', { op: name, ...body }, token));
       if (done) { setNotice(done); setTimeout(() => setNotice(''), 6000); }
     } catch (err) {
       setError(err.message);
@@ -66,19 +66,22 @@ export default function PickleballAdmin() {
   if (!state) return <Page><Muted>Loading… {pollError}</Muted></Page>;
 
   const teamName = (id) => state.allTeams.find((team) => team.view.id === id)?.view.name || '?';
-  const attention = state.matches.filter((match) => match.status === 'disputed' || (match.status === 'playing' && match.claimBy));
+  const attention = state.bracket.flat().filter((match) => match.status === 'disputed' || (match.status === 'playing' && match.claimBy));
 
   return (
     <Page className="wide">
       <Title>Cup <span>admin</span></Title>
-      <Muted>{state.players} players · {state.teams} teams · {state.queue.length} in queue</Muted>
+      <Muted>{state.players} players · {state.teams} teams · {state.bracket.length ? `bracket: ${state.upNext.length} matches waiting for a court` : 'no bracket yet'}</Muted>
       {error && <Error>{error}</Error>}
       {notice && <Notice>✓ {notice}</Notice>}
       {pollError && <Error>{pollError}</Error>}
       <Row>
         <Btn className={state.paused ? '' : 'danger'} onClick={() => op('pause', { on: !state.paused })}>
-          {state.paused ? '▶ Start matchmaking' : '⏸ Pause matchmaking'}
+          {state.paused ? '▶ Start calling matches' : '⏸ Pause calling matches'}
         </Btn>
+        {state.bracket.length === 0
+          ? <Btn onClick={() => window.confirm(`Draw the bracket with ${state.allTeams.filter((team) => team.size === 2).length} teams? Registration closes.`) && op('bracket_build', {}, 'Bracket drawn. Hit Start to call matches to courts.')}>🎲 Build bracket</Btn>
+          : <Btn className="danger" onClick={() => window.confirm('Delete the whole bracket and every result? Teams stay registered.') && op('bracket_reset', {}, 'Bracket deleted. Registration is open again.')}>Reset bracket</Btn>}
         <Btn className="ghost" onClick={() => { localStorage.removeItem(KEY); setToken(''); }}>Sign out</Btn>
       </Row>
 
@@ -93,14 +96,12 @@ export default function PickleballAdmin() {
           <CourtBoard state={state} op={op} />
           <InfoEditor info={state.info} op={op} />
           <Courts state={state} op={op} />
-          <ManualMatch state={state} op={op} />
           <Box>
             <h2>All matches</h2>
-            <MatchTable matches={state.matches} op={op} teamName={teamName} />
+            <MatchTable matches={state.bracket.flat().filter((match) => match.a.id && match.b.id)} op={op} teamName={teamName} />
           </Box>
           <Teams state={state} op={op} />
           <Players state={state} op={op} />
-          <Orgs state={state} op={op} />
         </div>
         <div><LiveView state={state} /></div>
       </Grid>
@@ -141,53 +142,26 @@ function CourtRow({ court, op }) {
   );
 }
 
-function ManualMatch({ state, op }) {
-  const [form, setForm] = useState({ court: 0, a: 0, b: 0, final: false });
-  const set = (key) => (event) => setForm({ ...form, [key]: key === 'final' ? event.target.checked : Number(event.target.value) });
-  const free = state.courts.filter((court) => !court.match);
-  const available = state.allTeams.filter((team) => team.status !== 'playing' && team.size === 2);
-  const top = state.leaderboard.slice(0, 2).map((org) => org.name).join(' vs ');
-  return (
-    <Box>
-      <h2>Manual match / final</h2>
-      {top && <Muted>Current top two: <b>{top}</b>. For the final, pick one team from each and tick Final.</Muted>}
-      <Row>
-        <Select value={form.court} onChange={set('court')}>
-          <option value={0}>Court…</option>
-          {free.map((court) => <option key={court.id} value={court.id}>{court.label}</option>)}
-        </Select>
-        {['a', 'b'].map((side) => (
-          <Select key={side} value={form[side]} onChange={set(side)}>
-            <option value={0}>Team {side.toUpperCase()}…</option>
-            {available.map((team) => <option key={team.view.id} value={team.view.id}>{teamLabel(team.view)}</option>)}
-          </Select>
-        ))}
-        <label><input type="checkbox" checked={form.final} onChange={set('final')} /> Final</label>
-        <Btn onClick={() => op('match_create', form)}>Start</Btn>
-      </Row>
-    </Box>
-  );
-}
-
 function MatchTable({ matches, op, teamName }) {
+  const win = (match, team) => op('match_result', { id: match.id, winner: team.id }, `${team.name} won and advances.`);
   return (
     <Table>
-      <thead><tr><th>#</th><th>Court</th><th>Teams</th><th>Status</th><th>Set winner</th></tr></thead>
+      <thead><tr><th>Round</th><th>Court</th><th>Teams</th><th>Status</th><th>Set winner</th></tr></thead>
       <tbody>
         {matches.map((match) => (
           <tr key={match.id}>
-            <td>{match.id}{match.final ? ' 🏆' : ''}</td>
+            <td>{match.round}{match.final ? ' 🏆' : ''}</td>
             <td>{match.court}</td>
             <td>{teamLabel(match.a)}<br />{teamLabel(match.b)}</td>
             <td>
-              {match.status}{match.noShow ? ' (no-show)' : ''}
+              {match.status}{match.noShow ? ' (forfeit)' : ''}
               {match.status === 'done' && <><br />won: {teamName(match.winner)}</>}
               {match.status === 'playing' && match.claimBy > 0 && <><br />claim: {teamName(match.claimWinner)} won</>}
             </td>
             <td>
-              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won (+1 ${match.a.org}). Both teams are back in the queue.`)}>{match.a.name}</Btn>{' '}
-              <Btn className="ghost small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won (+1 ${match.b.org}). Both teams are back in the queue.`)}>{match.b.name}</Btn>{' '}
-              {match.status !== 'void' && <Btn className="danger small" onClick={() => op('match_void', { id: match.id })}>Void</Btn>}
+              <Btn className="ghost small" onClick={() => win(match, match.a)}>{match.a.name}</Btn>{' '}
+              <Btn className="ghost small" onClick={() => win(match, match.b)}>{match.b.name}</Btn>{' '}
+              {match.status !== 'pending' && <Btn className="danger small" onClick={() => window.confirm('Reopen this match? Its result is cleared and it gets called to a court again.') && op('match_reopen', { id: match.id }, 'Match reopened.')}>Reopen</Btn>}
             </td>
           </tr>
         ))}
@@ -206,13 +180,8 @@ function Teams({ state, op }) {
           {[...state.allTeams].sort((x, y) => x.view.name.localeCompare(y.view.name)).map((team) => (
             <tr key={team.view.id}>
               <td>{teamLabel(team.view)}<br /><Muted as="span">{team.view.players?.join(', ')}</Muted></td>
-              <td>{team.status === 'idle' ? 'out of queue' : team.status === 'ready' ? 'in queue' : team.status}</td>
+              <td>{team.size < 2 ? 'missing a player' : team.status === 'ready' ? (state.bracket.length ? 'alive' : 'registered') : team.status}</td>
               <td>
-                {team.status !== 'playing' && team.size === 2 && (
-                  <Btn className="ghost small" onClick={() => op('team_status', { id: team.view.id, status: team.status === 'ready' ? 'idle' : 'ready' })}>
-                    {team.status === 'ready' ? 'Kick from queue' : 'Add to queue'}
-                  </Btn>
-                )}{' '}
                 {team.status !== 'playing' && <Btn className="danger small" onClick={() => window.confirm(`Remove ${team.view.name}?`) && op('team_remove', { id: team.view.id })}>Remove</Btn>}
               </td>
             </tr>
@@ -226,7 +195,7 @@ function Teams({ state, op }) {
 function Players({ state, op }) {
   const [filter, setFilter] = useState('');
   const shown = state.allPlayers
-    .filter((player) => (player.name + player.org).toLowerCase().includes(filter.toLowerCase()))
+    .filter((player) => player.name.toLowerCase().includes(filter.toLowerCase()))
     .sort((x, y) => x.name.localeCompare(y.name));
   return (
     <Box>
@@ -238,7 +207,6 @@ function Players({ state, op }) {
           {shown.map((player) => (
             <tr key={player.id}>
               <td>{player.name}</td>
-              <td>{player.org}</td>
               <td>{player.teamId ? 'on team' : 'no team'}</td>
               <td>
                 <Btn className="ghost small" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/pickleball?t=${player.token}`)}>Link</Btn>{' '}
@@ -249,42 +217,6 @@ function Players({ state, op }) {
         </tbody>
       </Table>
     </Box>
-  );
-}
-
-function Orgs({ state, op }) {
-  const [merge, setMerge] = useState({ id: 0, to: 0 });
-  const [name, setName] = useState('');
-  return (
-    <Box>
-      <h2>Orgs</h2>
-      <Muted>Merge duplicates (e.g. "UT" into "UT Austin"): players, teams and points all move.</Muted>
-      <Row>
-        <Select value={merge.id} onChange={(event) => setMerge({ ...merge, id: Number(event.target.value) })}>
-          <option value={0}>Merge…</option>
-          {state.orgs.map((org) => <option key={org.id} value={org.id}>{org.name}</option>)}
-        </Select>
-        <Select value={merge.to} onChange={(event) => setMerge({ ...merge, to: Number(event.target.value) })}>
-          <option value={0}>…into</option>
-          {state.orgs.map((org) => <option key={org.id} value={org.id}>{org.name}</option>)}
-        </Select>
-        <Btn onClick={() => op('org_merge', merge)}>Merge</Btn>
-      </Row>
-      <Row as="form" onSubmit={(event) => { event.preventDefault(); op('org_add', { name }); setName(''); }}>
-        <Input placeholder="Pre-add an org (shows in signup list)" value={name} onChange={(event) => setName(event.target.value)} />
-        <Btn>Add</Btn>
-      </Row>
-      <Table>
-        <tbody>{state.orgs.map((org) => <OrgRow key={org.id} org={org} op={op} />)}</tbody>
-      </Table>
-    </Box>
-  );
-}
-
-function OrgRow({ org, op }) {
-  const [name, setName] = useState(org.name);
-  return (
-    <tr><td><Input value={name} onChange={(event) => setName(event.target.value)} onBlur={() => name !== org.name && op('org_rename', { id: org.id, name })} /></td></tr>
   );
 }
 
@@ -306,7 +238,7 @@ function InfoEditor({ info, op }) {
       <Row><Input as="textarea" rows={4} value={draft.schedule} onChange={set('schedule')} maxLength={2000} /></Row>
       <Muted>About & rules (players see this under the schedule)</Muted>
       <Row><Input as="textarea" rows={12} value={draft.rules} onChange={set('rules')} maxLength={5000} /></Row>
-      <Muted>Cup start (your local time) drives the countdown. Matchmaking still starts when you hit Start.</Muted>
+      <Muted>Cup start (your local time) drives the countdown. Matches are only called after you hit Start.</Muted>
       <Row>
         <Input type="datetime-local" value={draft.cupStart} onChange={set('cupStart')} />
         <Btn onClick={save}>Save info</Btn>
@@ -334,8 +266,8 @@ const Card = styled.div`
 function CourtBoard({ state, op }) {
   const now = useNow();
   const noShow = (match, team) =>
-    window.confirm(`${team.name} didn't show? They go to the back of the queue and ${match.a.id === team.id ? match.b.name : match.a.name} gets the next court.`) &&
-    op('no_show', { id: match.id, team: team.id }, `${team.name} marked no-show and sent to the back of the queue.`);
+    window.confirm(`Forfeit ${team.name}? They're out and ${match.a.id === team.id ? match.b.name : match.a.name} advances.`) &&
+    op('no_show', { id: match.id, team: team.id }, `${team.name} forfeited. ${match.a.id === team.id ? match.b.name : match.a.name} advances.`);
   return (
     <Box>
       <h2>Courts · tap the winner when a game ends</h2>
@@ -343,26 +275,26 @@ function CourtBoard({ state, op }) {
       <Cards>
         {state.courts.map((court) => {
           const match = court.match;
-          if (!match) return <Card key={court.id}><header><span>{court.label}</span><Muted as="span">{court.active ? (state.paused ? 'paused' : 'waiting for teams') : 'closed'}</Muted></header></Card>;
+          if (!match) return <Card key={court.id}><header><span>{court.label}</span><Muted as="span">{court.active ? (state.paused ? 'paused' : 'waiting for a match') : 'closed'}</Muted></header></Card>;
           const elapsed = (now - new Date(match.created)) / 1000;
           const late = elapsed > SHOW_UP_SECONDS && match.claimBy === 0;
           const claimer = [match.a, match.b].find((team) => team.id === match.claimWinner);
           return (
             <Card key={court.id} className={match.claimBy ? 'claimed' : late ? 'late' : ''}>
-              <header><span>{court.label}{match.final ? ' · FINAL' : ''}</span><span>{clock(elapsed)}</span></header>
+              <header><span>{court.label} · {match.final ? 'FINAL' : `R${match.round}`}</span><span>{clock(elapsed)}</span></header>
               <div className="vs">
                 <b>A</b> {teamLabel(match.a)}<br /><Muted as="span">{match.a.players?.join(' & ')}</Muted><br />
                 <b>B</b> {teamLabel(match.b)}<br /><Muted as="span">{match.b.players?.join(' & ')}</Muted>
               </div>
               {match.claimBy > 0 && <Muted>Reported: <b>{claimer?.name}</b> won, waiting for confirm</Muted>}
-              {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min. Did both teams show?</Muted>}
+              {late && <Muted style={{ color: '#ff7a7a' }}>Over 3 min since called. Forfeit whoever isn't here.</Muted>}
               <Row>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won (+1 ${match.a.org}). Both teams are back in the queue.`)}>A won</Btn>
-                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won (+1 ${match.b.org}). Both teams are back in the queue.`)}>B won</Btn>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.a.id }, `${match.a.name} won and advances.`)}>A won</Btn>
+                <Btn className="small" onClick={() => op('match_result', { id: match.id, winner: match.b.id }, `${match.b.name} won and advances.`)}>B won</Btn>
               </Row>
               <Row>
-                <Btn className="ghost small" onClick={() => noShow(match, match.a)}>No-show A</Btn>
-                <Btn className="ghost small" onClick={() => noShow(match, match.b)}>No-show B</Btn>
+                <Btn className="ghost small" onClick={() => noShow(match, match.a)}>Forfeit A</Btn>
+                <Btn className="ghost small" onClick={() => noShow(match, match.b)}>Forfeit B</Btn>
               </Row>
             </Card>
           );

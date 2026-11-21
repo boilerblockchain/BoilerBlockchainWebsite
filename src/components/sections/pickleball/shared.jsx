@@ -18,8 +18,8 @@ export async function call(path, body, adminToken) {
   return data;
 }
 
-/** Polls `path` every 3s while the tab is visible. Returns [data, error, refresh]. */
-export function usePoll(path, adminToken) {
+/** Polls `path` every `every` ms while the tab is visible. Returns [data, error, refresh, setData]. */
+export function usePoll(path, adminToken, every = 3000) {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const latest = useRef(0);
@@ -34,11 +34,13 @@ export function usePoll(path, adminToken) {
   }, [path, adminToken]);
   useEffect(() => {
     refresh();
-    const timer = setInterval(() => { if (!document.hidden) refresh(); }, 3000);
+    const timer = setInterval(() => { if (!document.hidden) refresh(); }, every);
     document.addEventListener('visibilitychange', refresh);
     return () => { clearInterval(timer); document.removeEventListener('visibilitychange', refresh); };
-  }, [refresh]);
-  return [data, error, refresh];
+  }, [refresh, every]);
+  // setData also bumps the sequence so an older in-flight poll can't overwrite it.
+  const set = useCallback((next) => { latest.current += 1; setData(next); }, []);
+  return [data, error, refresh, set];
 }
 
 export const Page = styled.div`
@@ -144,8 +146,7 @@ export const List = styled.ol`
   b { font-family: ${({ theme }) => theme.fontFamily.mono}; color: ${({ theme }) => theme.color.accentBright}; }
 `;
 
-export const teamLabel = (team) =>
-  team ? `${team.name}${team.org ? ` · ${team.org}` : ''}` : '';
+export const teamLabel = (team) => team?.name || '';
 
 const Rules = styled.details`
   margin-top: ${({ theme }) => theme.space[3]};
@@ -196,68 +197,98 @@ export function EventInfo({ state }) {
   );
 }
 
-/** Leaderboard, final, courts, queue, results. Used by players, spectators and admins. */
-export function LiveView({ state }) {
+export function roundName(round, rounds) {
+  const fromEnd = rounds - round;
+  return ['Final', 'Semifinals', 'Quarterfinals'][fromEnd] || `Round ${round}`;
+}
+
+const BracketGrid = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(170px, 1fr);
+  gap: ${({ theme }) => theme.space[3]};
+  overflow-x: auto;
+  padding-bottom: ${({ theme }) => theme.space[2]};
+  & > div { display: flex; flex-direction: column; justify-content: space-around; gap: ${({ theme }) => theme.space[2]}; }
+  h3 { font-size: ${({ theme }) => theme.fontSize.micro}; text-transform: uppercase; letter-spacing: 0.1em; color: ${({ theme }) => theme.color.textFaint}; margin: 0; }
+`;
+
+const Slot = styled.div`
+  border: 1px solid ${({ theme }) => theme.color.border};
+  font-size: ${({ theme }) => theme.fontSize.small};
+  &.playing { border-color: ${({ theme }) => theme.color.accent}; }
+  &.mine { background: ${({ theme }) => theme.color.accentWash}; }
+  div { padding: 0.3rem 0.5rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+  div + div { border-top: 1px solid ${({ theme }) => theme.color.border}; }
+  .won { font-weight: 700; color: ${({ theme }) => theme.color.accentBright}; }
+  .lost, .tbd { color: ${({ theme }) => theme.color.textFaint}; }
+  .lost { text-decoration: line-through; }
+  small { color: ${({ theme }) => theme.color.textMuted}; padding: 0.15rem 0.5rem; display: block; }
+`;
+
+function BracketMatch({ match, mine }) {
+  const side = (team) => {
+    const className = match.status === 'done' && team.id ? (match.winner === team.id ? 'won' : 'lost') : team.id ? '' : 'tbd';
+    return <div className={className}><span>{team.name}</span>{match.noShow === team.id && <span>FF</span>}</div>;
+  };
+  const note = match.status === 'playing' ? `🏓 ${match.court}` : match.status === 'disputed' ? 'disputed' : '';
+  return (
+    <Slot className={`${match.status} ${mine ? 'mine' : ''}`}>
+      {side(match.a)}{side(match.b)}
+      {note && <small>{note}</small>}
+    </Slot>
+  );
+}
+
+export function Bracket({ state, teamId }) {
+  const rounds = state.bracket || [];
+  if (rounds.length === 0) return <Muted>The bracket is drawn when registration closes. {state.teams} teams registered so far.</Muted>;
+  return (
+    <BracketGrid>
+      {rounds.map((matches, index) => (
+        <div key={index}>
+          <h3>{roundName(index + 1, rounds.length)}</h3>
+          {matches.map((match) => <BracketMatch key={match.id} match={match} mine={teamId && (match.a.id === teamId || match.b.id === teamId)} />)}
+        </div>
+      ))}
+    </BracketGrid>
+  );
+}
+
+/** Champion, courts, up next, bracket. Used by players, spectators and admins. */
+export function LiveView({ state, teamId }) {
   if (!state) return <Muted>Loading…</Muted>;
-  const final = state.final;
+  const rounds = state.bracket || [];
+  const final = rounds.length ? rounds[rounds.length - 1][0] : null;
+  const champion = final?.status === 'done' && [final.a, final.b].find((team) => team.id === final.winner);
   return (
     <>
-      {final && (
-        <Box className="hot">
-          <h2>{final.status === 'done' ? 'Champion' : 'Final'}</h2>
-          {final.status === 'done' ? (
-            <Big>🏆 {[final.a, final.b].find((team) => team.id === final.winner)?.org}</Big>
-          ) : (
-            <Big>{teamLabel(final.a)} vs {teamLabel(final.b)}</Big>
-          )}
-          <Muted>{final.court}</Muted>
-        </Box>
-      )}
-      <Box>
-        <h2>Org leaderboard</h2>
-        {state.leaderboard.length === 0 && <Muted>No teams yet.</Muted>}
-        <List>
-          {state.leaderboard.map((org, index) => (
-            <li key={org.id}>
-              <span>{index + 1}. {org.name} <Muted as="span">({org.teams} teams)</Muted></span>
-              <b>{org.points} pt{org.points === 1 ? '' : 's'}</b>
-            </li>
-          ))}
-        </List>
-      </Box>
+      {champion && <Box className="hot"><h2>Champion</h2><Big>🏆 {champion.name}</Big><Muted>{champion.players?.join(' & ')}</Muted></Box>}
       <Box>
         <h2>Courts</h2>
-        {state.paused && <Muted>Matchmaking is paused.</Muted>}
+        {state.paused && rounds.length > 0 && <Muted>Matches are paused.</Muted>}
         <List>
           {state.courts.filter((court) => court.active).map((court) => (
             <li key={court.id}>
               <span>{court.label}</span>
-              <span>{court.match ? `${teamLabel(court.match.a)} vs ${teamLabel(court.match.b)}` : <Muted as="span">open</Muted>}</span>
+              <span>{court.match ? `${court.match.a.name} vs ${court.match.b.name}` : <Muted as="span">open</Muted>}</span>
             </li>
           ))}
         </List>
       </Box>
+      {state.upNext?.length > 0 && (
+        <Box>
+          <h2>Up next</h2>
+          <List>
+            {state.upNext.map((match, index) => (
+              <li key={match.id}><span>{index + 1}. {match.a.name} vs {match.b.name}</span><Muted as="span">{roundName(match.round, rounds.length)}</Muted></li>
+            ))}
+          </List>
+        </Box>
+      )}
       <Box>
-        <h2>Up next ({state.queue.length} in queue)</h2>
-        <List>
-          {state.queue.map((team, index) => (
-            <li key={team.id}><span>{index + 1}. {teamLabel(team)}</span></li>
-          ))}
-        </List>
-      </Box>
-      <Box>
-        <h2>Recent results</h2>
-        <List>
-          {state.recent.map((match) => {
-            const [winner, loser] = match.winner === match.a.id ? [match.a, match.b] : [match.b, match.a];
-            return (
-              <li key={match.id}>
-                <span><b>{winner.name}</b> beat {loser.name}</span>
-                <Muted as="span">+1 {winner.org}</Muted>
-              </li>
-            );
-          })}
-        </List>
+        <h2>Bracket</h2>
+        <Bracket state={state} teamId={teamId} />
       </Box>
     </>
   );
