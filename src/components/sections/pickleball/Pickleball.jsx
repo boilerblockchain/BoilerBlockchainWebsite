@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  call, usePoll, LiveView, EventInfo, teamLabel, useNow, clock, SHOW_UP_SECONDS,
+  call, usePoll, LiveView, EventInfo, teamLabel, roundName, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Big, Row, Btn, Input, Error,
 } from './shared';
 
@@ -45,16 +45,16 @@ export default function Pickleball() {
   return (
     <Page>
       <Title>UBC Pickleball <span>Cup</span></Title>
-      <Muted>Boiler Blockchain × Meteora · doubles, win a match to earn a point for your org. Top two orgs play the final.</Muted>
+      <Muted>Boiler Blockchain × Meteora · single-elimination doubles bracket. Lose once and you're out.</Muted>
       <Row>
         <Btn className={tab === 'play' ? '' : 'ghost'} onClick={() => setTab('play')}>{me?.team ? 'My team' : 'Register'}</Btn>
-        <Btn className={tab === 'live' ? '' : 'ghost'} onClick={() => setTab('live')}>Courts & leaderboard</Btn>
+        <Btn className={tab === 'live' ? '' : 'ghost'} onClick={() => setTab('live')}>Courts & bracket</Btn>
       </Row>
       <EventInfo state={state} />
       {pollError && <Error>Connection issue: {pollError}. Retrying…</Error>}
       {error && <Error>{error}</Error>}
-      {tab === 'live' ? <LiveView state={state} /> : !state ? <Muted>Loading…</Muted> : !me?.team ? (
-        <Register state={state} busy={busy} setBusy={setBusy} setError={setError}
+      {tab === 'live' ? <LiveView state={state} teamId={me?.team?.view.id} /> : !state ? <Muted>Loading…</Muted> : !me?.team ? (
+        <Register busy={busy} setBusy={setBusy} setError={setError}
           onDone={(newToken) => { localStorage.setItem(TOKEN_KEY, newToken); setToken(newToken); }} />
       ) : (
         <TeamPanel state={state} me={me} act={act} busy={busy} forget={forget} />
@@ -63,17 +63,8 @@ export default function Pickleball() {
   );
 }
 
-function OrgInput({ state, value, onChange }) {
-  return (
-    <>
-      <Input list="pb-orgs" placeholder="Your org (school or company)" value={value} onChange={(event) => onChange(event.target.value)} maxLength={60} required />
-      <datalist id="pb-orgs">{state.orgs.map((org) => <option key={org.id} value={org.name} />)}</datalist>
-    </>
-  );
-}
-
-function Register({ state, busy, setBusy, setError, onDone }) {
-  const [form, setForm] = useState({ name: '', partner: '', org: '', teamName: '' });
+function Register({ busy, setBusy, setError, onDone }) {
+  const [form, setForm] = useState({ name: '', partner: '', teamName: '' });
   const set = (key) => (event) => setForm({ ...form, [key]: event.target.value });
   const submit = async (event) => {
     event.preventDefault();
@@ -91,13 +82,11 @@ function Register({ state, busy, setBusy, setError, onDone }) {
   return (
     <Box as="form" onSubmit={submit}>
       <h2>Register your pair</h2>
-      <Muted>One of you registers for both. You'll go straight into the court queue.</Muted>
+      <Muted>One of you registers for both. Registration closes when the bracket is drawn.</Muted>
       <Row><Input placeholder="Your name" value={form.name} onChange={set('name')} maxLength={40} required /></Row>
       <Row><Input placeholder="Partner's name" value={form.partner} onChange={set('partner')} maxLength={40} required /></Row>
-      <Row><OrgInput state={state} value={form.org} onChange={(org) => setForm({ ...form, org })} /></Row>
-      <Muted>Pick your org from the list if it's there, so your points stack with everyone else's.</Muted>
       <Row><Input placeholder="Team name (optional)" value={form.teamName} onChange={set('teamName')} maxLength={40} /></Row>
-      <Row><Btn className="huge" disabled={busy}>Register & join queue</Btn></Row>
+      <Row><Btn className="huge" disabled={busy}>Register</Btn></Row>
     </Box>
   );
 }
@@ -105,7 +94,6 @@ function Register({ state, busy, setBusy, setError, onDone }) {
 function TeamPanel({ state, me, act, busy, forget }) {
   const [editing, setEditing] = useState(false);
   const team = me.team;
-  const match = me.match;
   const loginLink = `${window.location.origin}/pickleball?t=${localStorage.getItem('bb_pickleball_token')}`;
   const share = () =>
     navigator.share
@@ -114,50 +102,51 @@ function TeamPanel({ state, me, act, busy, forget }) {
 
   return (
     <>
-      {match && <MatchPanel match={match} teamId={team.view.id} act={act} busy={busy} />}
-      {!match && me.last && <LastResult match={me.last} teamId={team.view.id} />}
-      {!match && (
-        <Box className={team.status === 'ready' ? 'hot' : ''}>
-          <h2>Queue</h2>
-          {team.status === 'ready' ? (
-            <>
-              <Big>{state.paused ? `#${team.position} in line` : `#${team.position} in line · stay close`}</Big>
-              <Muted>{state.paused ? 'Courts open when the cup starts. You keep your spot.' : "Your court shows up here when it's your turn."}</Muted>
-              <Row><Btn className="ghost small" disabled={busy} onClick={() => act('ready', { on: false })}>Leave queue</Btn></Row>
-              <Muted>Taking a break or heading out? Leave the queue so a court doesn't wait on you. Your org keeps its points.</Muted>
-            </>
-          ) : (
-            <>
-              <Big>Not in the queue</Big>
-              {team.noShows >= 2 && <Muted>You missed 2 court calls in a row, so we took you out of the queue.</Muted>}
-              <Row><Btn className="huge" disabled={busy} onClick={() => act('ready', { on: true })}>Rejoin queue</Btn></Row>
-            </>
-          )}
-        </Box>
-      )}
+      <Status state={state} me={me} act={act} busy={busy} />
       <Box>
         <h2>Your team</h2>
         <Big>{team.view.name}</Big>
-        <Muted>{team.view.players?.join(' & ')} · playing for <b>{team.view.org}</b></Muted>
+        <Muted>{team.view.players?.join(' & ')}</Muted>
         <Row>
           <Btn className="ghost small" onClick={share}>Send this page to your partner</Btn>
-          {!match && <Btn className="ghost small" onClick={() => setEditing(!editing)}>Edit team</Btn>}
+          <Btn className="ghost small" onClick={() => setEditing(!editing)}>Edit team</Btn>
         </Row>
-        {editing && <EditTeam state={state} team={team} act={act} busy={busy} done={() => setEditing(false)} />}
+        {editing && <EditTeam team={team} act={act} busy={busy} done={() => setEditing(false)} />}
         <Muted>Wrong team on this phone? <a href="#" onClick={(event) => { event.preventDefault(); forget(); }} style={{ color: 'inherit' }}>Log out</a></Muted>
       </Box>
     </>
   );
 }
 
-function EditTeam({ state, team, act, busy, done }) {
+function EditTeam({ team, act, busy, done }) {
   const [name, setName] = useState(team.name);
-  const [org, setOrg] = useState(team.view.org);
   return (
     <>
       <Row><Input placeholder="Team name (optional)" value={name} onChange={(event) => setName(event.target.value)} maxLength={40} /></Row>
-      <Row><OrgInput state={state} value={org} onChange={setOrg} /></Row>
-      <Row><Btn disabled={busy} onClick={async () => { await act('team/update', { name, org }); done(); }}>Save</Btn></Row>
+      <Row><Btn disabled={busy} onClick={async () => { await act('team/update', { name }); done(); }}>Save</Btn></Row>
+    </>
+  );
+}
+
+function Status({ state, me, act, busy }) {
+  const team = me.team;
+  const match = me.match;
+  const rounds = state.bracket?.length || 0;
+  if (team.status === 'champion') return <Box className="hot"><h2>Champions</h2><Big>🏆 You won the cup!</Big></Box>;
+  if (team.status === 'out') return <LastResult match={me.last} teamId={team.view.id} />;
+  if (!rounds) return <Box><h2>Registered</h2><Big>You're in.</Big><Muted>The bracket is drawn when registration closes. This page tells you when and where you play.</Muted></Box>;
+  if (match?.status === 'playing') return <MatchPanel match={match} teamId={team.view.id} act={act} busy={busy} />;
+  const round = match ? roundName(match.round, rounds) : '';
+  return (
+    <>
+      {me.last && <LastResult match={me.last} teamId={team.view.id} />}
+      <Box className="hot">
+        <h2>{round}</h2>
+        {match?.status === 'disputed' ? <Big>Result disputed: find an organizer</Big>
+          : me.position ? <Big>{state.paused ? 'Waiting for the cup to start' : `#${me.position} for the next free court · stay close`}</Big>
+          : <Big>Waiting for your opponent's match to finish</Big>}
+        {match && <Muted>vs {[match.a, match.b].find((side) => side.id !== team.view.id)?.name}</Muted>}
+      </Box>
     </>
   );
 }
@@ -172,7 +161,7 @@ function MatchPanel({ match, teamId, act, busy }) {
       <h2>You're up{match.final ? ' · FINAL' : ''}</h2>
       <Big>Go to {match.court}</Big>
       <Muted>vs {teamLabel(them)} · 1 game to 11, win by 2</Muted>
-      {match.claimBy === 0 && left > 0 && <Muted><b>Be on the court within {clock(left)}</b> or you go to the back of the queue.</Muted>}
+      {match.claimBy === 0 && left > 0 && <Muted><b>Be on the court within {clock(left)}</b> or you can be forfeited.</Muted>}
       {match.claimBy === 0 && (
         <>
           <Muted>When you're done, one of you report the result:</Muted>
@@ -202,10 +191,9 @@ function MatchPanel({ match, teamId, act, busy }) {
 }
 
 function LastResult({ match, teamId }) {
-  const won = match.winner === teamId;
+  if (!match) return null;
   const them = match.a.id === teamId ? match.b : match.a;
-  if (match.noShow === teamId) return <Box><h2>Missed your court</h2>You weren't on court within 3 minutes.</Box>;
-  if (match.status === 'disputed') return <Box><h2>Last match</h2>Result vs {them.name} is disputed. Find an organizer, then rejoin the queue.</Box>;
-  if (match.status !== 'done') return null;
-  return <Box><h2>Last match</h2>{won ? `🏆 You beat ${them.name}. +1 for your org!` : `Lost to ${them.name}.`} You're back in line.</Box>;
+  if (match.noShow === teamId) return <Box><h2>Forfeited</h2>You weren't on court in time vs {them.name}. Thanks for playing!</Box>;
+  if (match.winner === teamId) return <Box><h2>Last match</h2>🏆 You beat {them.name}. On to the next round!</Box>;
+  return <Box><h2>Eliminated</h2>Lost to {them.name}. Thanks for playing! Stick around and watch the bracket.</Box>;
 }
