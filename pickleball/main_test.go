@@ -52,6 +52,22 @@ func TestBracketFlow(t *testing.T) {
 			}
 		}
 	}
+	before := len(s.Teams)
+	if err := s.adminAction(Request{Op: "team_add", Name: "Late", Partner: "Comer"}, now); err != nil {
+		t.Fatal(err)
+	}
+	byes = 0
+	for _, match := range s.Matches {
+		if match.Round == 1 && match.TeamB == 0 {
+			byes++
+			if next := s.nextMatch(match); next.TeamA+next.TeamB == 0 {
+				t.Fatal("remaining byes still advance")
+			}
+		}
+	}
+	if byes != 2 || len(s.Teams) != before+1 {
+		t.Fatal("late team takes one bye")
+	}
 	s.tick(now)
 	if len(s.upNext()) == 0 || s.liveMatchCount() != 0 {
 		t.Fatal("nothing is called while paused")
