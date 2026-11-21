@@ -145,6 +145,7 @@ export default function PickleballAdmin() {
 
       {tab === 'Teams' && (
         <>
+          <AddTeam state={state} op={op} />
           <Teams state={state} op={op} />
           <Players state={state} op={op} />
         </>
@@ -227,6 +228,28 @@ function Matches({ state, op }) {
           </li>
         ))}
       </List>
+    </Box>
+  );
+}
+
+function AddTeam({ state, op }) {
+  const empty = { name: '', partner: '', teamName: '' };
+  const [form, setForm] = useState(empty);
+  const set = (key) => (event) => setForm({ ...form, [key]: event.target.value });
+  const late = state.bracket.length > 0;
+  const submit = (event) => {
+    event.preventDefault();
+    if (late && !window.confirm(`Add ${form.teamName || form.name + ' & ' + form.partner} into an open bye slot?`)) return;
+    op('team_add', form, late ? 'Team added into a bye slot. Find them in the bracket.' : 'Team added.');
+    setForm(empty);
+  };
+  return (
+    <Box as="form" onSubmit={submit}>
+      <h2>Add a team</h2>
+      {late && <Muted>Bracket is set: they take an open bye, so that top seed plays them in round 1.</Muted>}
+      <Row><Input placeholder="Player 1" value={form.name} onChange={set('name')} maxLength={40} required /></Row>
+      <Row><Input placeholder="Player 2" value={form.partner} onChange={set('partner')} maxLength={40} required /></Row>
+      <Row><Input placeholder="Team name (optional)" value={form.teamName} onChange={set('teamName')} maxLength={40} /><Btn>Add</Btn></Row>
     </Box>
   );
 }

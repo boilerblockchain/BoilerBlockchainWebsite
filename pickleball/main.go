@@ -501,6 +501,14 @@ func (s *State) register(req Request, now time.Time) (any, error) {
 	if len(s.Matches) > 0 {
 		return nil, fail("the bracket is set, registration is closed. Find an organizer")
 	}
+	team, err := s.createTeam(req, now)
+	if err != nil {
+		return nil, err
+	}
+	return map[string]string{"token": s.members(team.ID)[0].Token}, nil
+}
+
+func (s *State) createTeam(req Request, now time.Time) (*Team, error) {
 	name, err := cleanName(req.Name)
 	if err != nil {
 		return nil, err
@@ -518,7 +526,31 @@ func (s *State) register(req Request, now time.Time) (any, error) {
 	captain := &Player{ID: s.id(), Token: randomHex(16), Name: name, TeamID: team.ID, Created: now}
 	second := &Player{ID: s.id(), Token: randomHex(16), Name: partner, TeamID: team.ID, Created: now}
 	s.Players[captain.ID], s.Players[second.ID] = captain, second
-	return map[string]string{"token": captain.Token}, nil
+	return team, nil
+}
+
+// addLateTeam drops a new pair into a round 1 bye whose next match hasn't
+// started, so the bye team plays them instead of advancing for free.
+func (s *State) addLateTeam(req Request, now time.Time) error {
+	var slot *Match
+	for _, match := range s.Matches {
+		if match.Round == 1 && match.TeamB == 0 && match.Status == "done" {
+			if next := s.nextMatch(match); next != nil && next.Status == "pending" && (slot == nil || match.Slot > slot.Slot) {
+				slot = match
+			}
+		}
+	}
+	if slot == nil {
+		return fail("no open bye left to put a late team into")
+	}
+	team, err := s.createTeam(req, now)
+	if err != nil {
+		return err
+	}
+	s.placeWinner(slot, 0)
+	*slot = Match{ID: slot.ID, Round: 1, Slot: slot.Slot, TeamA: slot.TeamA, TeamB: team.ID, Status: "pending"}
+	s.setTeams(slot, "ready")
+	return nil
 }
 
 func (s *State) playerAction(path string, req Request, now time.Time) (any, error) {
@@ -578,6 +610,12 @@ func (s *State) adminAction(req Request, now time.Time) error {
 			return fail("court has a live match")
 		}
 		delete(s.Courts, req.ID)
+	case "team_add":
+		if len(s.Matches) == 0 {
+			_, err := s.createTeam(req, now)
+			return err
+		}
+		return s.addLateTeam(req, now)
 	case "bracket_build":
 		return s.buildBracket(now)
 	case "bracket_reset":
