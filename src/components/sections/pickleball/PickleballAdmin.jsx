@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import {
   call, usePoll, Bracket, List, teamLabel, useNow, clock, SHOW_UP_SECONDS,
-  Page, Title, Muted, Box, Row, Btn, Input, Error,
+  Page, Title, Muted, Box, Row, Btn, Input, ErrorText,
 } from './shared';
 
 const KEY = 'bb_pickleball_admin';
@@ -81,7 +81,7 @@ export default function PickleballAdmin() {
     return (
       <Page>
         <Title>Cup <span>admin</span></Title>
-        {pollError && <Error>Wrong token.</Error>}
+        {pollError && <ErrorText>Wrong token.</ErrorText>}
         <Row as="form" onSubmit={(event) => { event.preventDefault(); localStorage.setItem(KEY, draft); setToken(draft); }}>
           <Input type="password" placeholder="Admin password" value={draft} onChange={(event) => setDraft(event.target.value)} />
           <Btn>Sign in</Btn>
@@ -110,9 +110,9 @@ export default function PickleballAdmin() {
           </Btn>
         )}
       </Bar>
-      {error && <Error>{error}</Error>}
+      {error && <ErrorText>{error}</ErrorText>}
       {notice && <Notice>✓ {notice}</Notice>}
-      {pollError && <Error>{pollError}</Error>}
+      {pollError && <ErrorText>{pollError}</ErrorText>}
       <Tabs>
         {['Courts', 'Bracket', 'Teams', 'Setup'].map((name) => (
           <button key={name} className={tab === name ? 'on' : ''} onClick={() => setTab(name)}>{name}</button>

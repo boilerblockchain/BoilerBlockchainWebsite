@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   call, usePoll, LiveView, Bracket, EventInfo, teamLabel, roundName, useNow, clock, SHOW_UP_SECONDS,
-  Page, Title, Muted, Box, Big, Row, Btn, Input, Error,
+  Page, Title, Muted, Box, Big, Row, Btn, Input, ErrorText,
 } from './shared';
 
 const TOKEN_KEY = 'bb_pickleball_token';
@@ -51,8 +51,8 @@ export default function Pickleball() {
         <Btn className={tab === 'live' ? '' : 'ghost'} onClick={() => setTab('live')}>Courts & bracket</Btn>
       </Row>
       <EventInfo state={state} />
-      {pollError && <Error>Connection issue: {pollError}. Retrying…</Error>}
-      {error && <Error>{error}</Error>}
+      {pollError && <ErrorText>Connection issue: {pollError}. Retrying…</ErrorText>}
+      {error && <ErrorText>{error}</ErrorText>}
       {tab === 'live' ? <LiveView state={state} teamId={me?.team?.view.id} /> : !state ? <Muted>Loading…</Muted> : !me?.team ? (
         <Register busy={busy} setBusy={setBusy} setError={setError}
           onDone={(newToken) => { localStorage.setItem(TOKEN_KEY, newToken); setToken(newToken); }} />

@@ -125,7 +125,7 @@ export const Input = styled.input`
 
 export const Select = styled(Input).attrs({ as: 'select' })``;
 
-export const Error = styled.p`
+export const ErrorText = styled.p`
   color: #ff7a7a;
   font-size: ${({ theme }) => theme.fontSize.small};
 `;
