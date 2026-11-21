@@ -138,14 +138,28 @@ function Status({ state, me }) {
   if (!rounds) return <Box><h2>Registered</h2><Big>You're in.</Big><Muted>The bracket is drawn when registration closes. This page tells you when and where you play.</Muted></Box>;
   if (match?.status === 'playing') return <MatchPanel match={match} teamId={team.view.id} />;
   const round = match ? roundName(match.round, rounds) : '';
+  const opponent = match && [match.a, match.b].find((side) => side.id && side.id !== team.view.id);
+  const feeder = me.waitingOn;
   return (
     <>
       {me.last && <LastResult match={me.last} teamId={team.view.id} />}
       <Box className="hot">
-        <h2>{round}</h2>
-        {me.position ? <Big>{state.paused ? 'Waiting for the cup to start' : `#${me.position} for the next free court · stay close`}</Big>
-          : <Big>Waiting for your opponent's match to finish</Big>}
-        {match && <Muted>vs {[match.a, match.b].find((side) => side.id !== team.view.id)?.name}</Muted>}
+        <h2>Up next · {round}</h2>
+        {opponent ? (
+          <>
+            <Big>vs {opponent.name}</Big>
+            <Muted>{state.paused ? 'Matches start soon. Stay close.' : `Waiting for a free court (#${me.position} in line). Stay close, this page shows your court the moment it opens.`}</Muted>
+          </>
+        ) : feeder ? (
+          <>
+            <Big>vs winner of {feeder.a.name} / {feeder.b.name}</Big>
+            <Muted>
+              {feeder.status === 'playing' ? `They're playing on ${feeder.court} right now. Wait for them to finish.`
+                : feeder.a.id && feeder.b.id ? "Their match hasn't started yet. Hang tight."
+                : 'Their earlier matches are still being played. Hang tight.'}
+            </Muted>
+          </>
+        ) : <Big>Waiting for your opponent</Big>}
       </Box>
     </>
   );
