@@ -199,7 +199,7 @@ export function EventInfo({ state }) {
 
 export function roundName(round, rounds) {
   const fromEnd = rounds - round;
-  return ['Final', 'Semifinals', 'Quarterfinals'][fromEnd] || `Round ${round}`;
+  return ['Final', 'Semifinals', 'Quarterfinals'][fromEnd] || (round === 1 && rounds > 1 ? 'Play-in' : `Round ${round}`);
 }
 
 const BracketGrid = styled.div`
@@ -217,6 +217,7 @@ const Slot = styled.div`
   border: 1px solid ${({ theme }) => theme.color.border};
   font-size: ${({ theme }) => theme.fontSize.small};
   &.playing { border-color: ${({ theme }) => theme.color.accent}; }
+  &.bye { opacity: 0.35; div + div { display: none; } }
   &.mine { background: ${({ theme }) => theme.color.accentWash}; }
   div { padding: 0.45rem 0.5rem; display: flex; justify-content: space-between; gap: 0.5rem; }
   div + div { border-top: 1px solid ${({ theme }) => theme.color.border}; }
@@ -229,16 +230,17 @@ const Slot = styled.div`
 function BracketMatch({ match, mine, onPick }) {
   const pickable = onPick && match.a.id && match.b.id;
   const side = (team) => {
-    const className = match.status === 'done' && team.id ? (match.winner === team.id ? 'won' : 'lost') : team.id ? '' : 'tbd';
+    const bye = match.round === 1 && !(match.a.id && match.b.id);
+    const className = bye ? '' : match.status === 'done' && team.id ? (match.winner === team.id ? 'won' : 'lost') : team.id ? '' : 'tbd';
     return (
       <div className={className} onClick={pickable ? () => onPick(match, team) : undefined} style={pickable ? { cursor: 'pointer' } : undefined}>
-        <span>{team.name}</span>{match.noShow === team.id && <span>FF</span>}
+        <span>{team.name}</span>{bye && <span>bye</span>}{match.noShow === team.id && <span>FF</span>}
       </div>
     );
   };
   const note = match.status === 'playing' ? `🏓 ${match.court}` : '';
   return (
-    <Slot className={`${match.status} ${mine ? 'mine' : ''}`}>
+    <Slot className={`${match.status} ${mine ? 'mine' : ''} ${match.round === 1 && !(match.a.id && match.b.id) ? 'bye' : ''}`}>
       {side(match.a)}{side(match.b)}
       {note && <small>{note}</small>}
     </Slot>
