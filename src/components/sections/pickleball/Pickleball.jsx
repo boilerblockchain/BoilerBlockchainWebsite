@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  call, usePoll, LiveView, EventInfo, teamLabel, roundName, useNow, clock, SHOW_UP_SECONDS,
+  call, usePoll, LiveView, Bracket, EventInfo, teamLabel, roundName, useNow, clock, SHOW_UP_SECONDS,
   Page, Title, Muted, Box, Big, Row, Btn, Input, Error,
 } from './shared';
 
@@ -59,6 +59,7 @@ export default function Pickleball() {
       ) : (
         <TeamPanel state={state} me={me} act={act} busy={busy} forget={forget} />
       )}
+      {tab === 'play' && state && <Box><h2>Bracket · live</h2><Bracket state={state} teamId={me?.team?.view.id} /></Box>}
     </Page>
   );
 }
@@ -102,7 +103,7 @@ function TeamPanel({ state, me, act, busy, forget }) {
 
   return (
     <>
-      <Status state={state} me={me} act={act} busy={busy} />
+      <Status state={state} me={me} />
       <Box>
         <h2>Your team</h2>
         <Big>{team.view.name}</Big>
@@ -128,22 +129,21 @@ function EditTeam({ team, act, busy, done }) {
   );
 }
 
-function Status({ state, me, act, busy }) {
+function Status({ state, me }) {
   const team = me.team;
   const match = me.match;
   const rounds = state.bracket?.length || 0;
   if (team.status === 'champion') return <Box className="hot"><h2>Champions</h2><Big>🏆 You won the cup!</Big></Box>;
   if (team.status === 'out') return <LastResult match={me.last} teamId={team.view.id} />;
   if (!rounds) return <Box><h2>Registered</h2><Big>You're in.</Big><Muted>The bracket is drawn when registration closes. This page tells you when and where you play.</Muted></Box>;
-  if (match?.status === 'playing') return <MatchPanel match={match} teamId={team.view.id} act={act} busy={busy} />;
+  if (match?.status === 'playing') return <MatchPanel match={match} teamId={team.view.id} />;
   const round = match ? roundName(match.round, rounds) : '';
   return (
     <>
       {me.last && <LastResult match={me.last} teamId={team.view.id} />}
       <Box className="hot">
         <h2>{round}</h2>
-        {match?.status === 'disputed' ? <Big>Result disputed: find an organizer</Big>
-          : me.position ? <Big>{state.paused ? 'Waiting for the cup to start' : `#${me.position} for the next free court · stay close`}</Big>
+        {me.position ? <Big>{state.paused ? 'Waiting for the cup to start' : `#${me.position} for the next free court · stay close`}</Big>
           : <Big>Waiting for your opponent's match to finish</Big>}
         {match && <Muted>vs {[match.a, match.b].find((side) => side.id !== team.view.id)?.name}</Muted>}
       </Box>
@@ -151,9 +151,8 @@ function Status({ state, me, act, busy }) {
   );
 }
 
-function MatchPanel({ match, teamId, act, busy }) {
-  const [us, them] = match.a.id === teamId ? [match.a, match.b] : [match.b, match.a];
-  const report = (winner) => act('report', { winner });
+function MatchPanel({ match, teamId }) {
+  const them = match.a.id === teamId ? match.b : match.a;
   const now = useNow();
   const left = SHOW_UP_SECONDS - (now - new Date(match.created)) / 1000;
   return (
@@ -161,31 +160,8 @@ function MatchPanel({ match, teamId, act, busy }) {
       <h2>You're up{match.final ? ' · FINAL' : ''}</h2>
       <Big>Go to {match.court}</Big>
       <Muted>vs {teamLabel(them)} · 1 game to 11, win by 2</Muted>
-      {match.claimBy === 0 && left > 0 && <Muted><b>Be on the court within {clock(left)}</b> or you can be forfeited.</Muted>}
-      {match.claimBy === 0 && (
-        <>
-          <Muted>When you're done, one of you report the result:</Muted>
-          <Row>
-            <Btn disabled={busy} onClick={() => report(us.id)}>We won</Btn>
-            <Btn className="ghost" disabled={busy} onClick={() => report(them.id)}>We lost</Btn>
-          </Row>
-        </>
-      )}
-      {match.claimBy === us.id && (
-        <>
-          <Muted>You reported {match.claimWinner === us.id ? 'a win' : 'a loss'}. Waiting for {them.name} to confirm (auto-confirms in 2 min).</Muted>
-          <Row><Btn className="ghost small" disabled={busy} onClick={() => report(match.claimWinner === us.id ? them.id : us.id)}>Oops, flip it</Btn></Row>
-        </>
-      )}
-      {match.claimBy === them.id && (
-        <>
-          <Big>{them.name} says {match.claimWinner === us.id ? 'you' : 'they'} won.</Big>
-          <Row>
-            <Btn disabled={busy} onClick={() => report(match.claimWinner)}>Confirm</Btn>
-            <Btn className="danger" disabled={busy} onClick={() => report(match.claimWinner === us.id ? them.id : us.id)}>That's wrong</Btn>
-          </Row>
-        </>
-      )}
+      {left > 0 && <Muted><b>Be on the court within {clock(left)}</b> or you can be forfeited.</Muted>}
+      <Muted>When the game ends, both teams come tell an organizer who won.</Muted>
     </Box>
   );
 }

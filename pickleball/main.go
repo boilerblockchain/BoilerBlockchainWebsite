@@ -53,21 +53,18 @@ type Court struct {
 // (round, slot) moves to (round+1, slot/2), side A if slot is even. TeamA or
 // TeamB of 0 means TBD, or a bye in round 1.
 type Match struct {
-	ID          int       `json:"id"`
-	Round       int       `json:"round"`
-	Slot        int       `json:"slot"`
-	CourtID     int       `json:"courtId"`
-	TeamA       int       `json:"teamA"`
-	TeamB       int       `json:"teamB"`
-	Status      string    `json:"status"` // pending | playing | done | disputed
-	Winner      int       `json:"winner"`
-	ClaimBy     int       `json:"claimBy"`
-	ClaimWinner int       `json:"claimWinner"`
-	ClaimAt     time.Time `json:"claimAt"`
-	Final       bool      `json:"final"`
-	NoShow      int       `json:"noShow"`  // team that forfeited
-	Created     time.Time `json:"created"` // when it was called to a court
-	Finished    time.Time `json:"finished"`
+	ID       int       `json:"id"`
+	Round    int       `json:"round"`
+	Slot     int       `json:"slot"`
+	CourtID  int       `json:"courtId"`
+	TeamA    int       `json:"teamA"`
+	TeamB    int       `json:"teamB"`
+	Status   string    `json:"status"` // pending | playing | done
+	Winner   int       `json:"winner"`
+	Final    bool      `json:"final"`
+	NoShow   int       `json:"noShow"`  // team that forfeited
+	Created  time.Time `json:"created"` // when it was called to a court
+	Finished time.Time `json:"finished"`
 }
 
 type State struct {
@@ -95,7 +92,7 @@ const defaultRules = `Boiler Blockchain and Meteora are taking over 8 courts for
 • The bracket is drawn at random. Lose once and you're out; win and you move on.
 • When your match is up, this page tells you which court to go to. Be there within 3 minutes or an organizer can forfeit you.
 • Every game is 1 game to 11, win by 2.
-• Report the result right after your game: the winners tap "We won", the other team confirms. Disagreements go to an organizer.
+• When your game ends, both teams come tell an organizer who won. The bracket updates live on this page.
 • Prizes: 🥇 the champions get a pickleball set, 🥈 the runners-up get a poker set.
 • All skill levels and spectators welcome. Paddles, snacks and refreshments provided.`
 
@@ -104,8 +101,6 @@ var defaultInfo = Info{
 	Rules:    defaultRules,
 	CupStart: time.Date(2026, 11, 21, 1, 0, 0, 0, time.UTC),
 }
-
-const autoConfirmAfter = 2 * time.Minute
 
 var (
 	mu        sync.Mutex
@@ -280,14 +275,8 @@ func (s *State) buildBracket(now time.Time) error {
 	return nil
 }
 
-// tick auto-confirms stale claims, then calls the earliest ready bracket
-// matches to free courts.
+// tick calls the earliest ready bracket matches to free courts.
 func (s *State) tick(now time.Time) {
-	for _, match := range s.Matches {
-		if match.Status == "playing" && match.ClaimBy != 0 && now.Sub(match.ClaimAt) > autoConfirmAfter {
-			s.finish(match, match.ClaimWinner, now)
-		}
-	}
 	if s.Paused {
 		return
 	}
@@ -351,20 +340,18 @@ type TeamView struct {
 }
 
 type MatchView struct {
-	ID          int       `json:"id"`
-	Round       int       `json:"round"`
-	Slot        int       `json:"slot"`
-	Court       string    `json:"court"`
-	A           TeamView  `json:"a"`
-	B           TeamView  `json:"b"`
-	Status      string    `json:"status"`
-	Winner      int       `json:"winner"`
-	ClaimBy     int       `json:"claimBy"`
-	ClaimWinner int       `json:"claimWinner"`
-	Final       bool      `json:"final"`
-	NoShow      int       `json:"noShow"`
-	Created     time.Time `json:"created"`
-	Finished    time.Time `json:"finished"`
+	ID       int       `json:"id"`
+	Round    int       `json:"round"`
+	Slot     int       `json:"slot"`
+	Court    string    `json:"court"`
+	A        TeamView  `json:"a"`
+	B        TeamView  `json:"b"`
+	Status   string    `json:"status"`
+	Winner   int       `json:"winner"`
+	Final    bool      `json:"final"`
+	NoShow   int       `json:"noShow"`
+	Created  time.Time `json:"created"`
+	Finished time.Time `json:"finished"`
 }
 
 func (s *State) teamView(teamID int) TeamView {
@@ -384,8 +371,7 @@ func (s *State) teamView(teamID int) TeamView {
 
 func (s *State) matchView(match *Match) MatchView {
 	view := MatchView{ID: match.ID, Round: match.Round, Slot: match.Slot, A: s.teamView(match.TeamA), B: s.teamView(match.TeamB),
-		Status: match.Status, Winner: match.Winner, ClaimBy: match.ClaimBy, ClaimWinner: match.ClaimWinner,
-		Final: match.Final, NoShow: match.NoShow, Created: match.Created, Finished: match.Finished}
+		Status: match.Status, Winner: match.Winner, Final: match.Final, NoShow: match.NoShow, Created: match.Created, Finished: match.Finished}
 	for _, side := range []*TeamView{&view.A, &view.B} {
 		if side.ID == 0 {
 			side.Name = "TBD"
@@ -534,35 +520,6 @@ func (s *State) playerAction(path string, req Request, now time.Time) (any, erro
 			return nil, fail("team name max 40 characters")
 		}
 		team.Name = name
-	case "report":
-		match := s.liveMatch(team.ID)
-		if match == nil {
-			// Stale screen: the other team already confirmed. Fine unless
-			// they are disagreeing with what was recorded.
-			var last *Match
-			for _, candidate := range s.Matches {
-				if candidate.Status == "done" && (candidate.TeamA == team.ID || candidate.TeamB == team.ID) &&
-					(last == nil || candidate.Round > last.Round) {
-					last = candidate
-				}
-			}
-			if last != nil && last.Winner != req.Winner {
-				return nil, fail("that match was already recorded the other way; find an organizer")
-			}
-			break
-		}
-		if req.Winner != match.TeamA && req.Winner != match.TeamB {
-			return nil, fail("bad winner")
-		}
-		switch {
-		case match.ClaimBy == 0 || match.ClaimBy == team.ID:
-			match.ClaimBy, match.ClaimWinner, match.ClaimAt = team.ID, req.Winner, now
-		case match.ClaimWinner == req.Winner:
-			s.finish(match, req.Winner, now)
-		default:
-			match.Status = "disputed" // frees the court; an admin settles it
-			s.setTeams(match, "ready")
-		}
 	default:
 		return nil, fail("unknown action")
 	}

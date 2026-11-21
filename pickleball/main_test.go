@@ -9,14 +9,11 @@ import (
 func TestBracketFlow(t *testing.T) {
 	s := newState()
 	now := time.Now()
-	tokens := map[int]string{}
 	for index := range 5 {
-		result, err := s.playerAction("register", Request{Name: "P" + strconv.Itoa(index), Partner: "Q"}, now)
+		_, err := s.playerAction("register", Request{Name: "P" + strconv.Itoa(index), Partner: "Q"}, now)
 		if err != nil {
 			t.Fatal(err)
 		}
-		token := result.(map[string]string)["token"]
-		tokens[s.playerByToken(token).TeamID] = token
 	}
 	if _, err := s.playerAction("register", Request{Name: "Solo"}, now); err == nil {
 		t.Fatal("registration without a partner must fail")
@@ -65,19 +62,12 @@ func TestBracketFlow(t *testing.T) {
 		t.Fatal("the round 1 match must be called before later rounds")
 	}
 
-	// Players report and confirm; the winner advances, the loser is out.
-	report := func(teamID, winner int, at time.Time) {
-		t.Helper()
-		if _, err := s.playerAction("report", Request{Token: tokens[teamID], Winner: winner}, at); err != nil {
-			t.Fatal(err)
-		}
-		s.tick(at)
-	}
-	report(first.TeamA, first.TeamA, now)
-	report(first.TeamB, first.TeamA, now)
+	// Admin records the result; the winner advances, the loser is out.
+	s.adminAction(Request{Op: "match_result", ID: first.ID, Winner: first.TeamA}, now)
+	s.tick(now)
 	next := s.nextMatch(first)
 	if first.Status != "done" || s.Teams[first.TeamB].Status != "out" || (next.TeamA != first.TeamA && next.TeamB != first.TeamA) {
-		t.Fatal("confirmed winner advances and loser is out")
+		t.Fatal("winner advances and loser is out")
 	}
 
 	// Reopen undoes the advance while the next match hasn't started.
@@ -90,22 +80,6 @@ func TestBracketFlow(t *testing.T) {
 		}
 		s.adminAction(Request{Op: "match_result", ID: first.ID, Winner: first.TeamB}, now)
 	}
-
-	// Disputes free the court until an admin settles them.
-	s.tick(now)
-	var live *Match
-	for _, match := range s.Matches {
-		if match.Status == "playing" {
-			live = match
-			break
-		}
-	}
-	report(live.TeamA, live.TeamA, now)
-	report(live.TeamB, live.TeamB, now)
-	if live.Status != "disputed" || s.courtMatch(live.CourtID) == live {
-		t.Fatal("conflicting reports dispute the match")
-	}
-	s.adminAction(Request{Op: "match_result", ID: live.ID, Winner: live.TeamB}, now)
 
 	// Forfeit everything that's left, then check a single champion remains.
 	for range 10 {
@@ -130,21 +104,6 @@ func TestBracketFlow(t *testing.T) {
 		t.Fatalf("want one champion, got %d", champions)
 	}
 
-	// Auto-confirm still works on a fresh bracket.
-	s.adminAction(Request{Op: "bracket_reset"}, now)
-	s.adminAction(Request{Op: "bracket_build"}, now)
-	s.adminAction(Request{Op: "pause", On: false}, now)
-	s.tick(now)
-	for _, match := range s.Matches {
-		if match.Status == "playing" {
-			report(match.TeamA, match.TeamA, now)
-			s.tick(now.Add(autoConfirmAfter + time.Second))
-			if match.Status != "done" || match.Winner != match.TeamA {
-				t.Fatal("unanswered claim should auto-confirm")
-			}
-			break
-		}
-	}
 }
 
 func TestBracketSizes(t *testing.T) {
